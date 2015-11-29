@@ -207,8 +207,8 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 	}
 
 	private void initKDF() {
-		saltStore = new File(System.getProperty("user.home")
-				+ "/.vJournal/salt");
+		saltStore = new File(Configuration.getDataDir().getAbsolutePath()
+				+ "/salt");
 		rand = new SecureRandom();
 		saltForKDF = new byte[10];
 		try {

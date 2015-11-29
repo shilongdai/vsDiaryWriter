@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="7" failures="0" name="test.java.OperationTest" time="1.009" errors="0" skipped="0">
+<testsuite tests="7" failures="0" name="test.java.OperationTest" time="1.131" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/local/openjdk8/jre/lib/amd64"/>
@@ -24,7 +24,7 @@
 "/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="FreeBSD"/>
-    <property name="classworlds.conf" value="/usr/home/sdai/workspace/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf8562020318829947435.tmp"/>
+    <property name="classworlds.conf" value="/usr/home/sdai/workspace/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf5019823653651462416.tmp"/>
     <property name="sun.jnu.encoding" value="US-ASCII"/>
     <property name="java.library.path" value="/usr/local/lib"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
@@ -58,11 +58,11 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="test.java.OperationTest" name="testAddEntryOperation" time="0.381"/>
-  <testcase classname="test.java.OperationTest" name="testGetAllOperation" time="0.435"/>
+  <testcase classname="test.java.OperationTest" name="testAddEntryOperation" time="0.481"/>
+  <testcase classname="test.java.OperationTest" name="testGetAllOperation" time="0.45"/>
   <testcase classname="test.java.OperationTest" name="testGetEntryOperation" time="0.014"/>
-  <testcase classname="test.java.OperationTest" name="testEditSubjectOperation" time="0.035"/>
+  <testcase classname="test.java.OperationTest" name="testEditSubjectOperation" time="0.032"/>
   <testcase classname="test.java.OperationTest" name="testDeleteEntryOperation" time="0.014"/>
-  <testcase classname="test.java.OperationTest" name="testEditContentOperation" time="0.029"/>
-  <testcase classname="test.java.OperationTest" name="testSearchEntryOperation" time="0.101"/>
+  <testcase classname="test.java.OperationTest" name="testEditContentOperation" time="0.025"/>
+  <testcase classname="test.java.OperationTest" name="testSearchEntryOperation" time="0.115"/>
 </testsuite>

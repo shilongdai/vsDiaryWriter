@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import net.viperfish.journal.Configuration;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.utils.index.Indexer;
 
@@ -110,8 +111,8 @@ public class JournalIndexer extends Indexer<Journal> {
 	protected Directory getDir() {
 		if (dir == null) {
 			try {
-				dir = FSDirectory.open(new File(System.getProperty("user.home")
-						+ "/.vJournal/index").toPath());
+				dir = FSDirectory.open(new File(Configuration.getDataDir()
+						.getCanonicalPath() + "/index").toPath());
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

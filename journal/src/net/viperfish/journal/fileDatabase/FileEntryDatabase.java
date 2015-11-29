@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.viperfish.journal.Configuration;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.json.JsonGenerator;
@@ -127,7 +128,8 @@ public abstract class FileEntryDatabase implements EntryDatabase {
 	protected abstract void writeFile(File path, String data);
 
 	public FileEntryDatabase() {
-		fStorage = new File(System.getProperty("user.home") + "/.vJournal/data");
+		fStorage = new File(Configuration.getDataDir().getAbsolutePath()
+				+ "/data");
 		json = new JsonGenerator();
 		buffer = new HashMap<Long, Journal>();
 		nextId = new Long(0);

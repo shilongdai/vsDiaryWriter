@@ -170,6 +170,10 @@ public class Configuration {
 		getProperty().loadFromXML(getConfigIn());
 	}
 
+	public static File getDataDir() {
+		return dataDir;
+	}
+
 	public static void main(String[] arg) {
 		ui = new CommandLineUserInterface();
 		try {
