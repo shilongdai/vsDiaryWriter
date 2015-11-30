@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="6" failures="0" name="test.java.DatabaseTest" time="0.317" errors="0" skipped="0">
+<testsuite tests="6" failures="0" name="test.java.DatabaseTest" time="0.326" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/local/openjdk8/jre/lib/amd64"/>
@@ -14,7 +14,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.os.patch.level" value="unknown"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="user.dir" value="/usr/home/sdai/git/journal/journal"/>
+    <property name="user.dir" value="/usr/home/sdai/git/journal-2/journal"/>
     <property name="java.runtime.version" value="1.8.0_60-b24"/>
     <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
     <property name="java.endorsed.dirs" value="/usr/local/openjdk8/jre/lib/endorsed"/>
@@ -24,7 +24,7 @@
 "/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="FreeBSD"/>
-    <property name="classworlds.conf" value="/usr/home/sdai/workspace/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf5019823653651462416.tmp"/>
+    <property name="classworlds.conf" value="/usr/home/sdai/workspace/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf574295692867103290.tmp"/>
     <property name="sun.jnu.encoding" value="US-ASCII"/>
     <property name="java.library.path" value="/usr/local/lib"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
@@ -51,7 +51,7 @@
     <property name="java.ext.dirs" value="/usr/local/openjdk8/jre/lib/ext:/usr/java/packages/lib/ext"/>
     <property name="sun.boot.class.path" value="/usr/local/openjdk8/jre/lib/resources.jar:/usr/local/openjdk8/jre/lib/rt.jar:/usr/local/openjdk8/jre/lib/sunrsasign.jar:/usr/local/openjdk8/jre/lib/jsse.jar:/usr/local/openjdk8/jre/lib/jce.jar:/usr/local/openjdk8/jre/lib/charsets.jar:/usr/local/openjdk8/jre/lib/jfr.jar:/usr/local/openjdk8/jre/classes"/>
     <property name="java.vendor" value="Oracle Corporation"/>
-    <property name="maven.home" value="/usr/home/sdai/git/journal/journal/EMBEDDED"/>
+    <property name="maven.home" value="/usr/home/sdai/git/journal-2/journal/EMBEDDED"/>
     <property name="file.separator" value="/"/>
     <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -60,8 +60,8 @@
   </properties>
   <testcase classname="test.java.DatabaseTest" name="testAdd" time="0"/>
   <testcase classname="test.java.DatabaseTest" name="testGet" time="0"/>
-  <testcase classname="test.java.DatabaseTest" name="testClear" time="0.313"/>
+  <testcase classname="test.java.DatabaseTest" name="testClear" time="0.323"/>
   <testcase classname="test.java.DatabaseTest" name="testEdit" time="0.001"/>
-  <testcase classname="test.java.DatabaseTest" name="testDelete" time="0.002"/>
+  <testcase classname="test.java.DatabaseTest" name="testDelete" time="0.001"/>
   <testcase classname="test.java.DatabaseTest" name="testGetAll" time="0.001"/>
 </testsuite>

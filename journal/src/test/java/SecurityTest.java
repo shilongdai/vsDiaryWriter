@@ -16,7 +16,8 @@ public class SecurityTest {
 		Configuration.defaultConfig();
 		Configuration.getProperty().setProperty("user.password", "password");
 		db = new DatabaseStub();
-		wrapper = new SecureEntryDatabaseWrapper(db);
+		wrapper = new SecureEntryDatabaseWrapper(db,
+				Configuration.getProperty());
 		wrapper.setPassword("password");
 
 	}

@@ -31,12 +31,12 @@ import test.java.StubDataSourceFactory;
 public class Configuration {
 	private static DataSourceFactory df;
 	private static IndexerFactory indexerFactory;
-	private static File dataDir;
 	private static Properties properties;
 	private static UserInterface ui;
 	private static OperationExecutor worker;
 	private static File configFile;
 	private static boolean firstRun;
+	private static File dataDir;
 	private static final boolean unitTest = false;
 	static {
 		Security.addProvider(new BouncyCastleProvider());
@@ -79,13 +79,12 @@ public class Configuration {
 
 	private static void initFileStructure() {
 		configFile = new File("config.xml");
-		dataDir = new File(System.getProperty("user.home") + "/.vJournal");
+		if (!configFile.exists()) {
+			firstRun = true;
+		}
+		dataDir = new File("data");
 		if (!dataDir.exists()) {
 			dataDir.mkdir();
-		}
-		if (!configFile.exists()) {
-
-			firstRun = true;
 		}
 	}
 
@@ -120,9 +119,10 @@ public class Configuration {
 							.getProperty("DataSourceFactory"));
 					DataSourceFactory tmp = (DataSourceFactory) selected
 							.newInstance();
+					tmp.setDataDirectory(dataDir);
 					if (getProperty().getProperty("UseSecureWrapper").equals(
 							"true")) {
-						df = new SecureFactoryWrapper(tmp);
+						df = new SecureFactoryWrapper(tmp, getProperty());
 					}
 				} catch (ClassNotFoundException | InstantiationException
 						| IllegalAccessException e) {
@@ -139,6 +139,7 @@ public class Configuration {
 				indexerFactory = (IndexerFactory) Class.forName(
 						getProperty().getProperty("IndexerFactory"))
 						.newInstance();
+				indexerFactory.setDataDir(dataDir);
 			} catch (InstantiationException | IllegalAccessException
 					| ClassNotFoundException e) {
 				throw new RuntimeException(e);
@@ -168,10 +169,6 @@ public class Configuration {
 			return;
 		}
 		getProperty().loadFromXML(getConfigIn());
-	}
-
-	public static File getDataDir() {
-		return dataDir;
 	}
 
 	public static void main(String[] arg) {

@@ -2,5 +2,5 @@ test/java/OperationTest$1.class
 test/java/OperationTest.class
 test/java/DatabaseStub.class
 test/java/DatabaseTest.class
-test/java/StubDataSourceFactory.class
 test/java/SecurityTest.class
+test/java/StubDataSourceFactory.class

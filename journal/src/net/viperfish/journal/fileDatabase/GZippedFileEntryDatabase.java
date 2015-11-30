@@ -15,8 +15,8 @@ import java.util.zip.GZIPOutputStream;
 
 public class GZippedFileEntryDatabase extends FileEntryDatabase {
 
-	public GZippedFileEntryDatabase() {
-		// TODO Auto-generated constructor stub
+	public GZippedFileEntryDatabase(File dataDir) {
+		super(dataDir);
 	}
 
 	private Byte[] readAllByte(DataInputStream in) throws IOException {

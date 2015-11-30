@@ -1,5 +1,7 @@
 package test.java;
 
+import java.io.File;
+
 import net.viperfish.journal.persistent.DataSourceFactory;
 import net.viperfish.journal.persistent.EntryDatabase;
 
@@ -18,6 +20,12 @@ public class StubDataSourceFactory implements DataSourceFactory {
 
 	@Override
 	public void cleanUp() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setDataDirectory(File dir) {
 		// TODO Auto-generated method stub
 
 	}

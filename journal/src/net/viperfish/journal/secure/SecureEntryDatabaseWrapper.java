@@ -18,6 +18,7 @@ import java.security.spec.KeySpec;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.crypto.BadPaddingException;
@@ -26,7 +27,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import net.viperfish.journal.Configuration;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
@@ -51,6 +51,7 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 	private Encryptor enc;
 	private JCEDigester dig;
 	private JCEMacDigester mac;
+	private Properties config;
 
 	private String encryptData(byte[] bytes) throws InvalidKeyException,
 			InvalidAlgorithmParameterException, IllegalBlockSizeException,
@@ -201,14 +202,13 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 		enc = new BCBlockCipherEncryptor();
 		dig = new JCEDigester();
 		mac = new JCEMacDigester();
-		mac.setMode(Configuration.getProperty().getProperty("MacMethod"));
-		enc.setMode(Configuration.getProperty().getProperty("EncryptionMethod"));
+		mac.setMode(config.getProperty("MacMethod"));
+		enc.setMode(config.getProperty("EncryptionMethod"));
 		dig.setMode("SHA-512");
 	}
 
 	private void initKDF() {
-		saltStore = new File(Configuration.getDataDir().getAbsolutePath()
-				+ "/salt");
+		saltStore = new File("data/salt");
 		rand = new SecureRandom();
 		saltForKDF = new byte[10];
 		try {
@@ -219,11 +219,12 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 		loadSalt();
 	}
 
-	public SecureEntryDatabaseWrapper(EntryDatabase db) {
+	public SecureEntryDatabaseWrapper(EntryDatabase db, Properties config) {
 		this.toWrap = db;
+		this.config = config;
 		initAlgorithms();
 		initKDF();
-		setPassword(Configuration.getProperty().getProperty("user.password"));
+		setPassword(config.getProperty("user.password"));
 	}
 
 	@Override

@@ -11,8 +11,8 @@ import java.io.IOException;
 
 public class TextFileEntryDatabase extends FileEntryDatabase {
 
-	public TextFileEntryDatabase() {
-		// TODO Auto-generated constructor stub
+	public TextFileEntryDatabase(File dataDir) {
+		super(dataDir);
 	}
 
 	@Override
