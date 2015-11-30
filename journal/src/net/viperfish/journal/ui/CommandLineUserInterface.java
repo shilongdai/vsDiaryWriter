@@ -229,9 +229,26 @@ public class CommandLineUserInterface extends UserInterface {
 	@Override
 	public void run() {
 		out.println("welcome to the journal stub userinterface, input ? for help");
-		out.print("password:");
-		out.flush();
-		String password = new String(display.readPassword());
+		String password = new String();
+		while (true) {
+			out.print("password:");
+			out.flush();
+			password = new String(display.readPassword());
+			if (!isPasswordSet()) {
+				setPassword(password);
+				break;
+			}
+			if (authenticate(password)) {
+				break;
+			}
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				return;
+			}
+			out.println("incorrect password, please retry");
+			out.flush();
+		}
 		preference.setProperty("user.password", password);
 		notifyObservers();
 		while (true) {

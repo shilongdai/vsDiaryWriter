@@ -8,11 +8,11 @@ import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SecurityTest {
+public class SecurityWrapperTest {
 	private EntryDatabase db;
 	private SecureEntryDatabaseWrapper wrapper;
 
-	public SecurityTest() {
+	public SecurityWrapperTest() {
 		Configuration.defaultConfig();
 		Configuration.getProperty().setProperty("user.password", "password");
 		db = new DatabaseStub();

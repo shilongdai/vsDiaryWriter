@@ -14,6 +14,8 @@ import java.security.Security;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
+import net.viperfish.journal.auth.AuthenticationManagerFactory;
+import net.viperfish.journal.authentications.HashAuthFactory;
 import net.viperfish.journal.fileDatabase.GZippedDataSourceFactory;
 import net.viperfish.journal.framework.Observer;
 import net.viperfish.journal.framework.OperationExecutor;
@@ -38,7 +40,7 @@ public class Configuration implements Observer {
 	private static File configFile;
 	private static boolean firstRun;
 	private static File dataDir;
-	private static boolean securityEnabled;
+	private static AuthenticationManagerFactory authFactory;
 	private static final boolean unitTest = false;
 	static {
 		Security.addProvider(new BouncyCastleProvider());
@@ -125,7 +127,6 @@ public class Configuration implements Observer {
 					if (getProperty().getProperty("UseSecureWrapper").equals(
 							"true")) {
 						df = new SecureFactoryWrapper(tmp, getProperty());
-						securityEnabled = true;
 					}
 				} catch (ClassNotFoundException | InstantiationException
 						| IllegalAccessException e) {
@@ -149,6 +150,14 @@ public class Configuration implements Observer {
 			}
 		}
 		return indexerFactory;
+	}
+
+	public static AuthenticationManagerFactory getAuthFactory() {
+		if (authFactory == null) {
+			authFactory = new HashAuthFactory();
+			authFactory.setDataDir(dataDir);
+		}
+		return authFactory;
 	}
 
 	public static Properties getProperty() {
@@ -182,6 +191,7 @@ public class Configuration implements Observer {
 			System.exit(1);
 		}
 		ui.setConfig(getProperty());
+		ui.setAuthManager(getAuthFactory().getAuthenticator());
 		if (firstRun) {
 			ui.setup();
 		}

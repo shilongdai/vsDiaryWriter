@@ -16,6 +16,7 @@ public class DatabaseTest {
 	public DatabaseTest() {
 		Configuration.defaultConfig();
 		Configuration.getProperty().setProperty("user.password", "password");
+		Configuration.getProperty().setProperty("UseSecureWrapper", "false");
 		db = Configuration.getDataSourceFactory().createDatabaseObject();
 	}
 
