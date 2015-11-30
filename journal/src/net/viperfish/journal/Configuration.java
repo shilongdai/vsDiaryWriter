@@ -38,6 +38,7 @@ public class Configuration implements Observer {
 	private static File configFile;
 	private static boolean firstRun;
 	private static File dataDir;
+	private static boolean securityEnabled;
 	private static final boolean unitTest = false;
 	static {
 		Security.addProvider(new BouncyCastleProvider());
@@ -124,6 +125,7 @@ public class Configuration implements Observer {
 					if (getProperty().getProperty("UseSecureWrapper").equals(
 							"true")) {
 						df = new SecureFactoryWrapper(tmp, getProperty());
+						securityEnabled = true;
 					}
 				} catch (ClassNotFoundException | InstantiationException
 						| IllegalAccessException e) {
