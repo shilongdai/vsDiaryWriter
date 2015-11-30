@@ -1,8 +1,14 @@
 package net.viperfish.journal.framework;
 
-public interface UserInterface {
-	public void run();
+import java.util.Properties;
 
-	public void setup();
+public abstract class UserInterface extends Subject {
+	public abstract void run();
+
+	public abstract void setup();
+
+	public abstract Properties getConfig();
+
+	public abstract void setConfig(Properties p);
 
 }

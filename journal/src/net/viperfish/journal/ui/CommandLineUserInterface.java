@@ -6,6 +6,7 @@ import java.security.Provider;
 import java.security.Security;
 import java.util.Collection;
 import java.util.Formatter;
+import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
@@ -30,8 +31,9 @@ import net.viperfish.journal.secure.SecureFactoryWrapper;
 
 import org.reflections.Reflections;
 
-public class CommandLineUserInterface implements UserInterface {
+public class CommandLineUserInterface extends UserInterface {
 	private Scanner in;
+	private Properties preference;
 	private OperationExecutor e;
 	private Console display;
 	private PrintWriter out;
@@ -40,6 +42,7 @@ public class CommandLineUserInterface implements UserInterface {
 		display = System.console();
 		in = new Scanner(display.reader());
 		out = display.writer();
+		preference = new Properties();
 		e = Configuration.getWorker();
 	}
 
@@ -229,7 +232,8 @@ public class CommandLineUserInterface implements UserInterface {
 		out.print("password:");
 		out.flush();
 		String password = new String(display.readPassword());
-		Configuration.getProperty().setProperty("user.password", password);
+		preference.setProperty("user.password", password);
+		notifyObservers();
 		while (true) {
 			String input = new String();
 			input = display.readLine("command:");
@@ -320,7 +324,7 @@ public class CommandLineUserInterface implements UserInterface {
 				printDFHelp();
 				continue;
 			}
-			Configuration.getProperty().setProperty("DataSourceFactory", input);
+			preference.setProperty("DataSourceFactory", input);
 			break;
 		}
 		while (true) {
@@ -330,15 +334,14 @@ public class CommandLineUserInterface implements UserInterface {
 				printIFHelp();
 				continue;
 			}
-			Configuration.getProperty().setProperty("IndexerFactory", input);
+			preference.setProperty("IndexerFactory", input);
 			break;
 		}
 		while (true) {
 			input = display.readLine("Use Secure Wrapper?[yes/no]:");
 			if (input.equals("yes")) {
 				String selectedCipher = new String();
-				Configuration.getProperty().setProperty("UseSecureWrapper",
-						"true");
+				preference.setProperty("UseSecureWrapper", "true");
 				while (true) {
 					input = display
 							.readLine("Enter Encryption Algorithm(alg/mode/padding):");
@@ -353,8 +356,7 @@ public class CommandLineUserInterface implements UserInterface {
 						continue;
 					}
 					selectedCipher = input;
-					Configuration.getProperty().setProperty("EncryptionMethod",
-							input);
+					preference.setProperty("EncryptionMethod", input);
 					break;
 				}
 				while (true) {
@@ -366,17 +368,27 @@ public class CommandLineUserInterface implements UserInterface {
 						out.flush();
 						continue;
 					}
-					Configuration.getProperty().setProperty("MacMethod", input);
+					preference.setProperty("MacMethod", input);
 					break;
 				}
 				break;
 			} else if (input.equals("no")) {
-				Configuration.getProperty().setProperty("UseSecureWrapper",
-						"false");
-				Configuration.getProperty().remove("EncryptionMethod");
-				Configuration.getProperty().remove("MacMethod");
+				preference.setProperty("UseSecureWrapper", "false");
+				preference.remove("EncryptionMethod");
+				preference.remove("MacMethod");
 				break;
 			}
 		}
+	}
+
+	@Override
+	public Properties getConfig() {
+		return preference;
+	}
+
+	@Override
+	public void setConfig(Properties p) {
+		preference = p;
+
 	}
 }

@@ -15,6 +15,7 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 import net.viperfish.journal.fileDatabase.GZippedDataSourceFactory;
+import net.viperfish.journal.framework.Observer;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.UserInterface;
 import net.viperfish.journal.index.JournalIndexerFactory;
@@ -28,7 +29,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import test.java.StubDataSourceFactory;
 
-public class Configuration {
+public class Configuration implements Observer {
 	private static DataSourceFactory df;
 	private static IndexerFactory indexerFactory;
 	private static Properties properties;
@@ -44,7 +45,7 @@ public class Configuration {
 
 	}
 
-	private Configuration() {
+	public Configuration() {
 	}
 
 	public static void defaultConfig() {
@@ -164,8 +165,6 @@ public class Configuration {
 	public static void loadProperty() throws InvalidPropertiesFormatException,
 			IOException {
 		if (firstRun) {
-			defaultConfig();
-			ui.setup();
 			return;
 		}
 		getProperty().loadFromXML(getConfigIn());
@@ -173,11 +172,16 @@ public class Configuration {
 
 	public static void main(String[] arg) {
 		ui = new CommandLineUserInterface();
+		ui.addObserver(new Configuration());
 		try {
 			loadProperty();
 		} catch (IOException e1) {
 			System.err.println(e1);
 			System.exit(1);
+		}
+		ui.setConfig(getProperty());
+		if (firstRun) {
+			ui.setup();
 		}
 		ui.run();
 		cleanUp();
@@ -187,6 +191,13 @@ public class Configuration {
 			System.err
 					.println("critical error incountered while saving configuration, quitting");
 		}
+
+	}
+
+	@Override
+	public void notifyObserver() {
+		Configuration.properties = ui.getConfig();
+
 	}
 
 }
