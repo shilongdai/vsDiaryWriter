@@ -16,5 +16,5 @@ To build, enter the directory with the pom.xml file, and run mvn install. The fi
 # using
 To use the application, it's recommended to install the unlimited strength policy files for your jvm to provide greater keylength for encryption purposes.
 To run the application,
-  execute: java -jar <the uber jar file>
+  execute: java -jar full-journal-version.jar
 Or: if your operating system's graphical ui supports it, double click the jar file.(when the gui of the application is done)
