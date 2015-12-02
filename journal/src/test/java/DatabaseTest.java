@@ -3,9 +3,10 @@ package test.java;
 import java.util.Date;
 import java.util.List;
 
-import net.viperfish.journal.Configuration;
+import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.persistent.EntryDatabase;
+import net.viperfish.utils.config.Configuration;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,10 +15,9 @@ public class DatabaseTest {
 	private EntryDatabase db;
 
 	public DatabaseTest() {
-		Configuration.defaultConfig();
-		Configuration.getProperty().setProperty("user.password", "password");
-		Configuration.getProperty().setProperty("UseSecureWrapper", "false");
-		db = Configuration.getDataSourceFactory().createDatabaseObject();
+		Configuration.defaultAll();
+
+		db = JournalApplication.getDataSourceFactory().createDatabaseObject();
 	}
 
 	@Test

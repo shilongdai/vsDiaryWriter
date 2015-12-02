@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import net.viperfish.journal.Configuration;
+import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
@@ -19,6 +19,7 @@ import net.viperfish.journal.operation.GetAllOperation;
 import net.viperfish.journal.operation.GetEntryOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
 import net.viperfish.journal.persistent.EntryDatabase;
+import net.viperfish.utils.config.Configuration;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,10 +31,10 @@ public class OperationTest {
 	private ExecutorService threadpool;
 
 	public OperationTest() {
-		Configuration.defaultConfig();
-		Configuration.getProperty().setProperty("user.password", "password");
-		db = Configuration.getDataSourceFactory().createDatabaseObject();
-		indexer = (JournalIndexer) Configuration.getIndexerFactory()
+		Configuration.defaultAll();
+		JournalApplication.setPassword("password");
+		db = JournalApplication.getDataSourceFactory().createDatabaseObject();
+		indexer = (JournalIndexer) JournalApplication.getIndexerFactory()
 				.createIndexer();
 		threadpool = Executors.newCachedThreadPool();
 	}

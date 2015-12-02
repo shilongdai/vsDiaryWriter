@@ -1,40 +1,28 @@
 package net.viperfish.journal;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.Security;
-import java.util.InvalidPropertiesFormatException;
-import java.util.Properties;
 
 import net.viperfish.journal.auth.AuthenticationManagerFactory;
 import net.viperfish.journal.authentications.HashAuthFactory;
-import net.viperfish.journal.fileDatabase.GZippedDataSourceFactory;
-import net.viperfish.journal.framework.Observer;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.UserInterface;
-import net.viperfish.journal.index.JournalIndexerFactory;
 import net.viperfish.journal.persistent.DataSourceFactory;
 import net.viperfish.journal.persistent.IndexerFactory;
+import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
 import net.viperfish.journal.secure.SecureFactoryWrapper;
 import net.viperfish.journal.ui.CommandLineUserInterface;
 import net.viperfish.journal.ui.SingleThreadedOperationExecutor;
+import net.viperfish.utils.config.Configuration;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import test.java.StubDataSourceFactory;
 
-public class Configuration implements Observer {
+public class JournalApplication {
 	private static DataSourceFactory df;
 	private static IndexerFactory indexerFactory;
-	private static Properties properties;
 	private static UserInterface ui;
 	private static OperationExecutor worker;
 	private static File configFile;
@@ -42,23 +30,19 @@ public class Configuration implements Observer {
 	private static File dataDir;
 	private static AuthenticationManagerFactory authFactory;
 	private static final boolean unitTest = false;
+	private static String password;
+	private static SystemConfig sysConf;
+
 	static {
 		Security.addProvider(new BouncyCastleProvider());
 		initFileStructure();
-
+		sysConf = new SystemConfig();
+		Configuration.put(SecureEntryDatabaseWrapper.config().getUnitName(),
+				SecureEntryDatabaseWrapper.config());
+		Configuration.put(sysConf.getUnitName(), sysConf);
 	}
 
-	public Configuration() {
-	}
-
-	public static void defaultConfig() {
-		getProperty().setProperty("DataSourceFactory",
-				GZippedDataSourceFactory.class.getCanonicalName());
-		getProperty().setProperty("IndexerFactory",
-				JournalIndexerFactory.class.getCanonicalName());
-		getProperty().setProperty("UseSecureWrapper", "true");
-		getProperty().setProperty("EncryptionMethod", "AES/CFB/PKCS5PADDING");
-		getProperty().setProperty("MacMethod", "HMAC-SHA512");
+	public JournalApplication() {
 	}
 
 	private static void cleanUp() {
@@ -67,43 +51,15 @@ public class Configuration implements Observer {
 		getWorker().terminate();
 	}
 
-	private static InputStream getConfigIn() {
-		DataInputStream in;
-		try {
-			if (firstRun) {
-				configFile.createNewFile();
-			}
-			in = new DataInputStream(new BufferedInputStream(
-					new FileInputStream(new File("config.xml"))));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return in;
-	}
-
 	private static void initFileStructure() {
 		configFile = new File("config.xml");
 		if (!configFile.exists()) {
-			firstRun = true;
 		}
 		dataDir = new File("data");
 		if (!dataDir.exists()) {
+			firstRun = true;
 			dataDir.mkdir();
 		}
-	}
-
-	private static OutputStream getConfigOut() {
-		DataOutputStream out;
-		try {
-			if (firstRun) {
-				configFile.createNewFile();
-			}
-			out = new DataOutputStream(new BufferedOutputStream(
-					new FileOutputStream(new File("config.xml"))));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return out;
 	}
 
 	public static OperationExecutor getWorker() {
@@ -119,15 +75,12 @@ public class Configuration implements Observer {
 				df = new StubDataSourceFactory();
 			} else {
 				try {
-					Class<?> selected = Class.forName(getProperty()
+					Class<?> selected = Class.forName(sysConf
 							.getProperty("DataSourceFactory"));
 					DataSourceFactory tmp = (DataSourceFactory) selected
 							.newInstance();
 					tmp.setDataDirectory(dataDir);
-					if (getProperty().getProperty("UseSecureWrapper").equals(
-							"true")) {
-						df = new SecureFactoryWrapper(tmp, getProperty());
-					}
+					df = new SecureFactoryWrapper(tmp, password);
 				} catch (ClassNotFoundException | InstantiationException
 						| IllegalAccessException e) {
 					throw new RuntimeException(e);
@@ -141,8 +94,7 @@ public class Configuration implements Observer {
 		if (indexerFactory == null) {
 			try {
 				indexerFactory = (IndexerFactory) Class.forName(
-						getProperty().getProperty("IndexerFactory"))
-						.newInstance();
+						sysConf.getProperty("IndexerFactory")).newInstance();
 				indexerFactory.setDataDir(dataDir);
 			} catch (InstantiationException | IllegalAccessException
 					| ClassNotFoundException e) {
@@ -160,55 +112,36 @@ public class Configuration implements Observer {
 		return authFactory;
 	}
 
-	public static Properties getProperty() {
-		if (properties == null) {
-			properties = new Properties();
-		}
-		return properties;
+	public static String getPassword() {
+		return password;
 	}
 
-	public static void persistProperty() throws IOException {
-		getProperty().remove("user.password");
-		getProperty().storeToXML(getConfigOut(),
-				"the configuration for vJournal");
-	}
-
-	public static void loadProperty() throws InvalidPropertiesFormatException,
-			IOException {
-		if (firstRun) {
-			return;
-		}
-		getProperty().loadFromXML(getConfigIn());
+	public static void setPassword(String password) {
+		JournalApplication.password = password;
 	}
 
 	public static void main(String[] arg) {
 		ui = new CommandLineUserInterface();
-		ui.addObserver(new Configuration());
 		try {
-			loadProperty();
+			Configuration.loadAll();
 		} catch (IOException e1) {
+			e1.printStackTrace();
 			System.err.println(e1);
 			System.exit(1);
 		}
-		ui.setConfig(getProperty());
 		ui.setAuthManager(getAuthFactory().getAuthenticator());
 		if (firstRun) {
 			ui.setup();
 		}
+		password = ui.promptPassword();
 		ui.run();
 		cleanUp();
 		try {
-			persistProperty();
+			Configuration.persistAll();
 		} catch (IOException e) {
 			System.err
 					.println("critical error incountered while saving configuration, quitting");
 		}
-
-	}
-
-	@Override
-	public void notifyObserver() {
-		Configuration.properties = ui.getConfig();
 
 	}
 

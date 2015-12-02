@@ -92,7 +92,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>net.viperfish.journal.Configuration</mainClass>
+							<mainClass>net.viperfish.journal.JournalApplication</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

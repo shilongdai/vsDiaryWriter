@@ -1,9 +1,9 @@
 package test.java;
 
-import net.viperfish.journal.Configuration;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
+import net.viperfish.utils.config.Configuration;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,11 +13,9 @@ public class SecurityWrapperTest {
 	private SecureEntryDatabaseWrapper wrapper;
 
 	public SecurityWrapperTest() {
-		Configuration.defaultConfig();
-		Configuration.getProperty().setProperty("user.password", "password");
+		Configuration.defaultAll();
 		db = new DatabaseStub();
-		wrapper = new SecureEntryDatabaseWrapper(db,
-				Configuration.getProperty());
+		wrapper = new SecureEntryDatabaseWrapper(db, "password");
 		wrapper.setPassword("password");
 
 	}

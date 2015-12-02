@@ -11,17 +11,18 @@ public class SecureFactoryWrapper implements DataSourceFactory {
 	private DataSourceFactory factory;
 	private EntryDatabase db;
 	private Properties config;
+	private String password;
 
-	public SecureFactoryWrapper(DataSourceFactory toWrap, Properties p) {
+	public SecureFactoryWrapper(DataSourceFactory toWrap, String password) {
 		this.factory = toWrap;
-		config = p;
+		this.password = password;
 	}
 
 	@Override
 	public EntryDatabase createDatabaseObject() {
 		if (db == null) {
 			db = new SecureEntryDatabaseWrapper(factory.createDatabaseObject(),
-					config);
+					password);
 		}
 		return db;
 	}

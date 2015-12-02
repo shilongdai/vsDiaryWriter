@@ -2,17 +2,12 @@ package net.viperfish.journal.ui;
 
 import java.io.Console;
 import java.io.PrintWriter;
-import java.security.Provider;
-import java.security.Security;
 import java.util.Collection;
 import java.util.Formatter;
-import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Pattern;
 
-import net.viperfish.journal.Configuration;
+import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.UserInterface;
@@ -23,17 +18,12 @@ import net.viperfish.journal.operation.EditSubjectOperation;
 import net.viperfish.journal.operation.GetAllOperation;
 import net.viperfish.journal.operation.GetEntryOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
-import net.viperfish.journal.persistent.DataSourceFactory;
-import net.viperfish.journal.persistent.IndexerFactory;
 import net.viperfish.journal.secure.CompromisedDataException;
-import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
-import net.viperfish.journal.secure.SecureFactoryWrapper;
-
-import org.reflections.Reflections;
+import net.viperfish.utils.config.ComponentConfig;
+import net.viperfish.utils.config.Configuration;
 
 public class CommandLineUserInterface extends UserInterface {
 	private Scanner in;
-	private Properties preference;
 	private OperationExecutor e;
 	private Console display;
 	private PrintWriter out;
@@ -42,8 +32,7 @@ public class CommandLineUserInterface extends UserInterface {
 		display = System.console();
 		in = new Scanner(display.reader());
 		out = display.writer();
-		preference = new Properties();
-		e = Configuration.getWorker();
+		e = JournalApplication.getWorker();
 	}
 
 	private String readBlock() {
@@ -229,28 +218,6 @@ public class CommandLineUserInterface extends UserInterface {
 	@Override
 	public void run() {
 		out.println("welcome to the journal stub userinterface, input ? for help");
-		String password = new String();
-		while (true) {
-			out.print("password:");
-			out.flush();
-			password = new String(display.readPassword());
-			if (!isPasswordSet()) {
-				setPassword(password);
-				break;
-			}
-			if (authenticate(password)) {
-				break;
-			}
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				return;
-			}
-			out.println("incorrect password, please retry");
-			out.flush();
-		}
-		preference.setProperty("user.password", password);
-		notifyObservers();
 		while (true) {
 			String input = new String();
 			input = display.readLine("command:");
@@ -271,141 +238,73 @@ public class CommandLineUserInterface extends UserInterface {
 		}
 	}
 
-	private void printDFHelp() {
-		out.println("Available DataSourceFactory");
-		Set<Class<? extends DataSourceFactory>> result = new Reflections(
-				"net.viperfish.journal").getSubTypesOf(DataSourceFactory.class);
-		result.remove(SecureFactoryWrapper.class);
-		for (Class<? extends DataSourceFactory> i : result) {
-			out.println(i.getCanonicalName());
-		}
-		out.flush();
-	}
-
-	private void printIFHelp() {
-		out.println("Available Index Factory");
-		Set<Class<? extends IndexerFactory>> result = new Reflections(
-				"net.viperfish.journal").getSubTypesOf(IndexerFactory.class);
-		for (Class<?> i : result) {
-			out.println(i.getCanonicalName());
-		}
-		out.flush();
-	}
-
-	private boolean isAsymmetric(String alg) {
-		if (alg.equalsIgnoreCase("RSA")) {
-			return true;
-		}
-		if (alg.equalsIgnoreCase("ElGamal")) {
-			return true;
-		}
-		if (alg.contains("IES")) {
-			return true;
-		}
-		return false;
-	}
-
-	private Set<String> getAvailableMac(String cipher) {
-		Set<String> result = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
-		String alg = cipher.split("/")[0];
-		Pattern p = Pattern.compile("(\\w+)?" + "(" + alg + ")(\\w+?)",
-				Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-		Pattern hmac = Pattern.compile("(\\w+)?(hmac)(\\w+?)",
-				Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-		for (Provider provider : Security.getProviders()) {
-			out.println("Provider: " + provider.getName());
-			for (Provider.Service service : provider.getServices()) {
-				String macAlg = service.getAlgorithm();
-				if (service.toString().contains("Mac.")) {
-					if (macAlg.contains("PBE") || macAlg.contains("OLD")) {
-						continue;
-					}
-					if (p.matcher(service.toString()).find()
-							|| hmac.matcher(service.getAlgorithm()).find()) {
-						result.add(service.getAlgorithm());
-					}
-				}
+	private void getRequiredConf() {
+		Iterable<ComponentConfig> all = Configuration.allComponent();
+		for (ComponentConfig i : all) {
+			Set<String> required = i.requiredConfig();
+			out.println("Configuring for:" + i.getUnitName());
+			out.flush();
+			String preference;
+			for (String iter : required) {
+				preference = display.readLine("Input value for %s:", iter);
+				i.setProperty(iter, preference);
 			}
 		}
-		return result;
+	}
+
+	private void getOptionalConf() {
+		Iterable<ComponentConfig> all = Configuration.allComponent();
+		for (ComponentConfig i : all) {
+			Set<String> optionals = i.optionalConfig();
+			out.println("Configuring for:" + i.getUnitName());
+			out.flush();
+			String preference;
+			for (String iter : optionals) {
+				out.println("default value is:" + i.getProperty(iter));
+				preference = display.readLine("Input value for %s:", iter);
+				i.setProperty(iter, preference);
+			}
+		}
 	}
 
 	@Override
 	public void setup() {
-		out.println("Welcome to setup, enter ? for help");
 		String input = new String();
 		while (true) {
-			input = display
-					.readLine("Please Input the Factory for DataSource:(Full Name):");
-			if (input.equals("?")) {
-				printDFHelp();
-				continue;
-			}
-			preference.setProperty("DataSourceFactory", input);
-			break;
-		}
-		while (true) {
-			input = display
-					.readLine("Please Input the Factory for Indexer:(Full Name):");
-			if (input.equals("?")) {
-				printIFHelp();
-				continue;
-			}
-			preference.setProperty("IndexerFactory", input);
-			break;
-		}
-		while (true) {
-			input = display.readLine("Use Secure Wrapper?[yes/no]:");
-			if (input.equals("yes")) {
-				String selectedCipher = new String();
-				preference.setProperty("UseSecureWrapper", "true");
-				while (true) {
-					input = display
-							.readLine("Enter Encryption Algorithm(alg/mode/padding):");
-					if (input.equals("?")) {
-						for (String iter : SecureEntryDatabaseWrapper
-								.getSupportedEncryption()) {
-							out.println(iter);
-						}
-						out.println("Available Mode:CBC, CFB, GCFB, GOFB, OFB, OpenPGPCFB, PGPCFB, CTR");
-						out.println("Available Padding: ISO10126d2PADDING, ISO7816d4PADDING, PKCS7PADDING, PKCS5PADDING, TBCPADDING, X923PADDING, ZEROBYTEPADDING");
-						out.flush();
-						continue;
-					}
-					selectedCipher = input;
-					preference.setProperty("EncryptionMethod", input);
-					break;
-				}
-				while (true) {
-					input = display.readLine("Enter Mac Algorithm:");
-					if (input.equals("?")) {
-						for (String i : getAvailableMac(selectedCipher)) {
-							out.println(i);
-						}
-						out.flush();
-						continue;
-					}
-					preference.setProperty("MacMethod", input);
-					break;
-				}
+			input = display.readLine("Select [expert/simple] setup:");
+			if (input.equals("simple")) {
+				getRequiredConf();
 				break;
-			} else if (input.equals("no")) {
-				preference.setProperty("UseSecureWrapper", "false");
-				preference.remove("EncryptionMethod");
-				preference.remove("MacMethod");
+			} else if (input.equals("expert")) {
+				getRequiredConf();
+				getOptionalConf();
 				break;
 			}
 		}
 	}
 
 	@Override
-	public Properties getConfig() {
-		return preference;
-	}
-
-	@Override
-	public void setConfig(Properties p) {
-		preference = p;
-
+	public String promptPassword() {
+		String password = new String();
+		while (true) {
+			out.print("password:");
+			out.flush();
+			password = new String(display.readPassword());
+			if (!isPasswordSet()) {
+				setPassword(password);
+				break;
+			}
+			if (authenticate(password)) {
+				break;
+			}
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				return new String();
+			}
+			out.println("incorrect password, please retry");
+			out.flush();
+		}
+		return password;
 	}
 }

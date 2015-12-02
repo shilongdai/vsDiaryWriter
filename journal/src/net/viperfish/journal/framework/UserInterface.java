@@ -1,10 +1,8 @@
 package net.viperfish.journal.framework;
 
-import java.util.Properties;
-
 import net.viperfish.journal.auth.AuthenticationManager;
 
-public abstract class UserInterface extends Subject {
+public abstract class UserInterface {
 
 	private AuthenticationManager auth;
 
@@ -12,9 +10,7 @@ public abstract class UserInterface extends Subject {
 
 	public abstract void setup();
 
-	public abstract Properties getConfig();
-
-	public abstract void setConfig(Properties p);
+	public abstract String promptPassword();
 
 	public void setAuthManager(AuthenticationManager auth) {
 		this.auth = auth;

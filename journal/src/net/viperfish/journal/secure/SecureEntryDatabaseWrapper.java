@@ -18,7 +18,6 @@ import java.security.spec.KeySpec;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.crypto.BadPaddingException;
@@ -32,10 +31,16 @@ import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
 import net.viperfish.journal.secureAlgs.JCEDigester;
 import net.viperfish.journal.secureAlgs.JCEMacDigester;
+import net.viperfish.utils.config.ComponentConfig;
+import net.viperfish.utils.config.Configuration;
 
 import org.apache.commons.codec.binary.Base64;
 
 public class SecureEntryDatabaseWrapper implements EntryDatabase {
+
+	public static ComponentConfig config() {
+		return new SecureEntryWrapperConfig();
+	}
 
 	public static Set<String> getSupportedEncryption() {
 		return new BCBlockCipherEncryptor().getSupported();
@@ -51,7 +56,6 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 	private Encryptor enc;
 	private JCEDigester dig;
 	private JCEMacDigester mac;
-	private Properties config;
 
 	private String encryptData(byte[] bytes) throws InvalidKeyException,
 			InvalidAlgorithmParameterException, IllegalBlockSizeException,
@@ -202,8 +206,10 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 		enc = new BCBlockCipherEncryptor();
 		dig = new JCEDigester();
 		mac = new JCEMacDigester();
-		mac.setMode(config.getProperty("MacMethod"));
-		enc.setMode(config.getProperty("EncryptionMethod"));
+		mac.setMode(Configuration.get("secureEntryWrapper").getProperty(
+				"MacMethod"));
+		enc.setMode(Configuration.get("secureEntryWrapper").getProperty(
+				"EncryptionMethod"));
 		dig.setMode("SHA-512");
 	}
 
@@ -219,12 +225,11 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 		loadSalt();
 	}
 
-	public SecureEntryDatabaseWrapper(EntryDatabase db, Properties config) {
+	public SecureEntryDatabaseWrapper(EntryDatabase db, String password) {
 		this.toWrap = db;
-		this.config = config;
 		initAlgorithms();
 		initKDF();
-		setPassword(config.getProperty("user.password"));
+		setPassword(password);
 	}
 
 	@Override

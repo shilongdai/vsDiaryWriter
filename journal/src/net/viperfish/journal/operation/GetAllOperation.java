@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.viperfish.journal.Configuration;
+import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.persistent.EntryDatabase;
@@ -16,7 +16,7 @@ public class GetAllOperation implements OperationWithResult<List<Journal>> {
 	private boolean done;
 
 	public GetAllOperation() {
-		db = Configuration.getDataSourceFactory().createDatabaseObject();
+		db = JournalApplication.getDataSourceFactory().createDatabaseObject();
 		result = new LinkedList<Journal>();
 	}
 

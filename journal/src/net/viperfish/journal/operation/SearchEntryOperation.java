@@ -3,7 +3,7 @@ package net.viperfish.journal.operation;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.viperfish.journal.Configuration;
+import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.persistent.EntryDatabase;
@@ -21,8 +21,8 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 		this.query = query;
 		result = new HashSet<Journal>();
 		done = false;
-		db = Configuration.getDataSourceFactory().createDatabaseObject();
-		indexer = Configuration.getIndexerFactory().createIndexer();
+		db = JournalApplication.getDataSourceFactory().createDatabaseObject();
+		indexer = JournalApplication.getIndexerFactory().createIndexer();
 	}
 
 	@Override

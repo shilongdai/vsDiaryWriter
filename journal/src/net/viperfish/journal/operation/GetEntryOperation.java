@@ -1,6 +1,6 @@
 package net.viperfish.journal.operation;
 
-import net.viperfish.journal.Configuration;
+import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.persistent.EntryDatabase;
@@ -15,7 +15,7 @@ public class GetEntryOperation implements OperationWithResult<Journal> {
 	public GetEntryOperation(Long id) {
 		this.id = id;
 		done = false;
-		db = Configuration.getDataSourceFactory().createDatabaseObject();
+		db = JournalApplication.getDataSourceFactory().createDatabaseObject();
 		result = new Journal();
 	}
 

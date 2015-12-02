@@ -1,6 +1,6 @@
 package net.viperfish.journal.operation;
 
-import net.viperfish.journal.Configuration;
+import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.persistent.EntryDatabase;
@@ -13,8 +13,8 @@ public class DeleteEntryOperation implements Operation {
 
 	public DeleteEntryOperation(Long i) {
 		this.id = i;
-		db = Configuration.getDataSourceFactory().createDatabaseObject();
-		indexer = Configuration.getIndexerFactory().createIndexer();
+		db = JournalApplication.getDataSourceFactory().createDatabaseObject();
+		indexer = JournalApplication.getIndexerFactory().createIndexer();
 	}
 
 	@Override
