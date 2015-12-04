@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.Scanner;
-import java.util.Set;
 
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
@@ -241,13 +240,22 @@ public class CommandLineUserInterface extends UserInterface {
 	private void getRequiredConf() {
 		Iterable<ComponentConfig> all = Configuration.allComponent();
 		for (ComponentConfig i : all) {
-			Set<String> required = i.requiredConfig();
+			Iterable<String> required = i.requiredConfig();
 			out.println("Configuring for:" + i.getUnitName());
 			out.flush();
 			String preference;
 			for (String iter : required) {
-				preference = display.readLine("Input value for %s:", iter);
-				i.setProperty(iter, preference);
+				while (true) {
+					preference = display.readLine("Input value for %s:", iter);
+					if (preference.equals("options")) {
+						for (String option : i.getOptions(iter)) {
+							out.println(option);
+						}
+						out.flush();
+						continue;
+					}
+					i.setProperty(iter, preference);
+				}
 			}
 		}
 	}
@@ -255,13 +263,22 @@ public class CommandLineUserInterface extends UserInterface {
 	private void getOptionalConf() {
 		Iterable<ComponentConfig> all = Configuration.allComponent();
 		for (ComponentConfig i : all) {
-			Set<String> optionals = i.optionalConfig();
+			Iterable<String> optionals = i.optionalConfig();
 			out.println("Configuring for:" + i.getUnitName());
 			out.flush();
 			String preference;
 			for (String iter : optionals) {
-				out.println("default value is:" + i.getProperty(iter));
-				preference = display.readLine("Input value for %s:", iter);
+				while (true) {
+					preference = display.readLine("Input value for %s:", iter);
+					if (preference.equals("options")) {
+						for (String option : i.getOptions(iter)) {
+							out.println(option);
+						}
+						out.flush();
+						continue;
+					}
+					break;
+				}
 				i.setProperty(iter, preference);
 			}
 		}
@@ -271,6 +288,8 @@ public class CommandLineUserInterface extends UserInterface {
 	public void setup() {
 		String input = new String();
 		while (true) {
+			out.println("enter options for option");
+			out.flush();
 			input = display.readLine("Select [expert/simple] setup:");
 			if (input.equals("simple")) {
 				getRequiredConf();

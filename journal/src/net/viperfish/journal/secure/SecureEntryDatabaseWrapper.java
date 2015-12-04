@@ -18,7 +18,6 @@ import java.security.spec.KeySpec;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -29,8 +28,14 @@ import javax.crypto.spec.PBEKeySpec;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
+import net.viperfish.journal.secureAlgs.CBCMac;
+import net.viperfish.journal.secureAlgs.CFBMac;
+import net.viperfish.journal.secureAlgs.CMac;
+import net.viperfish.journal.secureAlgs.Encryptor;
+import net.viperfish.journal.secureAlgs.GMac;
+import net.viperfish.journal.secureAlgs.HMac;
 import net.viperfish.journal.secureAlgs.JCEDigester;
-import net.viperfish.journal.secureAlgs.JCEMacDigester;
+import net.viperfish.journal.secureAlgs.MacDigester;
 import net.viperfish.utils.config.ComponentConfig;
 import net.viperfish.utils.config.Configuration;
 
@@ -42,10 +47,6 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 		return new SecureEntryWrapperConfig();
 	}
 
-	public static Set<String> getSupportedEncryption() {
-		return new BCBlockCipherEncryptor().getSupported();
-	}
-
 	private File saltStore;
 	private EntryDatabase toWrap;
 	private byte[] key;
@@ -55,14 +56,13 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 	private SecureRandom rand;
 	private Encryptor enc;
 	private JCEDigester dig;
-	private JCEMacDigester mac;
+	private MacDigester mac;
 
 	private String encryptData(byte[] bytes) throws InvalidKeyException,
 			InvalidAlgorithmParameterException, IllegalBlockSizeException,
 			BadPaddingException {
 		byte[] cipher = enc.encrypt(bytes);
 		byte[] iv = enc.getIv();
-		mac.setIv(macIV);
 		String ivString = Base64.encodeBase64String(iv);
 		String cipherString = Base64.encodeBase64String(cipher);
 		cipherString = ivString + "$" + cipherString;
@@ -101,7 +101,6 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 
 		byte[] rIv = Base64.decodeBase64(ivData);
 		enc.setIv(rIv);
-		mac.setIv(macIV);
 
 		byte[] data64 = Base64.decodeBase64(cData);
 		byte[] plain = enc.decrypt(data64);
@@ -205,9 +204,21 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 	private void initAlgorithms() {
 		enc = new BCBlockCipherEncryptor();
 		dig = new JCEDigester();
-		mac = new JCEMacDigester();
+		String macMethod = Configuration.get("secureEntryWrapper").getProperty(
+				"MacMethod");
+		if (macMethod.equalsIgnoreCase("CBCMAC")) {
+			mac = new CBCMac();
+		} else if (macMethod.equalsIgnoreCase("CMAC")) {
+			mac = new CMac();
+		} else if (macMethod.equalsIgnoreCase("CFBMAC")) {
+			mac = new CFBMac();
+		} else if (macMethod.equalsIgnoreCase("GMAC")) {
+			mac = new GMac();
+		} else if (macMethod.equalsIgnoreCase("HMAC")) {
+			mac = new HMac();
+		}
 		mac.setMode(Configuration.get("secureEntryWrapper").getProperty(
-				"MacMethod"));
+				"MacAlgorithm"));
 		enc.setMode(Configuration.get("secureEntryWrapper").getProperty(
 				"EncryptionMethod"));
 		dig.setMode("SHA-512");
@@ -293,7 +304,7 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 			this.key = key.getEncoded();
 			KeySpec macKeySpec = new PBEKeySpec(Base64.encodeBase64String(
 					dig.digest(this.key)).toCharArray(), saltForKDF, 1000,
-					enc.getKeySize());
+					mac.getKeyLength());
 			SecretKey macKey = keyGen.generateSecret(macKeySpec);
 			mac.setKey(macKey.getEncoded());
 
@@ -301,8 +312,9 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 			throw new RuntimeException(e);
 		}
 		enc.setKey(key);
-		macIV = new byte[key.length];
+		macIV = new byte[mac.getIvLength()];
 		Arrays.fill(macIV, (byte) 0);
+		mac.setIv(macIV);
 	}
 
 }

@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -70,12 +69,12 @@ public abstract class ComponentConfig extends Properties {
 		this.unitName = unitName;
 	}
 
-	public abstract Set<String> requiredConfig();
+	public abstract Iterable<String> requiredConfig();
 
-	public abstract Set<String> optionalConfig();
+	public abstract Iterable<String> optionalConfig();
 
 	public abstract void fillInDefault();
 
-	public abstract Map<String, String> getHelp();
+	public abstract Set<String> getOptions(String key);
 
 }

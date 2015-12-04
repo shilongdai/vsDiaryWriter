@@ -1,12 +1,17 @@
 package net.viperfish.journal;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import net.viperfish.journal.fileDatabase.GZippedDataSourceFactory;
 import net.viperfish.journal.index.JournalIndexerFactory;
+import net.viperfish.journal.persistent.DataSourceFactory;
+import net.viperfish.journal.persistent.IndexerFactory;
+import net.viperfish.journal.secure.SecureFactoryWrapper;
 import net.viperfish.utils.config.ComponentConfig;
+
+import org.reflections.Reflections;
 
 public class SystemConfig extends ComponentConfig {
 
@@ -17,6 +22,27 @@ public class SystemConfig extends ComponentConfig {
 
 	public SystemConfig() {
 		super("system");
+	}
+
+	private Set<String> availableDF() {
+		Set<String> available = new TreeSet<>();
+		Set<Class<? extends DataSourceFactory>> result = new Reflections(
+				"net.viperfish.journal").getSubTypesOf(DataSourceFactory.class);
+		result.remove(SecureFactoryWrapper.class);
+		for (Class<? extends DataSourceFactory> i : result) {
+			available.add(i.getCanonicalName());
+		}
+		return available;
+	}
+
+	private Set<String> availableIF() {
+		Set<String> available = new TreeSet<>();
+		Set<Class<? extends IndexerFactory>> result = new Reflections(
+				"net.viperfish.journal").getSubTypesOf(IndexerFactory.class);
+		for (Class<? extends IndexerFactory> i : result) {
+			available.add(i.getCanonicalName());
+		}
+		return available;
 	}
 
 	@Override
@@ -42,8 +68,14 @@ public class SystemConfig extends ComponentConfig {
 	}
 
 	@Override
-	public Map<String, String> getHelp() {
-		// TODO Auto-generated method stub
-		return null;
+	public Set<String> getOptions(String key) {
+		if (key.equals("DataSourceFactory")) {
+			return this.availableDF();
+		}
+
+		if (key.equals("IndexerFactory")) {
+			return this.availableIF();
+		}
+		return new TreeSet<>();
 	}
 }
