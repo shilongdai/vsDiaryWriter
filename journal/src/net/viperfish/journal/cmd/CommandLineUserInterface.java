@@ -1,22 +1,19 @@
-package net.viperfish.journal.ui;
+package net.viperfish.journal.cmd;
 
 import java.io.Console;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Formatter;
+import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationExecutor;
+import net.viperfish.journal.framework.OperationFactory;
+import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.framework.UserInterface;
-import net.viperfish.journal.operation.AddEntryOperation;
-import net.viperfish.journal.operation.DeleteEntryOperation;
-import net.viperfish.journal.operation.EditContentOperation;
-import net.viperfish.journal.operation.EditSubjectOperation;
-import net.viperfish.journal.operation.GetAllOperation;
-import net.viperfish.journal.operation.GetEntryOperation;
-import net.viperfish.journal.operation.SearchEntryOperation;
 import net.viperfish.journal.secure.CompromisedDataException;
 import net.viperfish.utils.config.ComponentConfig;
 import net.viperfish.utils.config.Configuration;
@@ -26,12 +23,14 @@ public class CommandLineUserInterface extends UserInterface {
 	private OperationExecutor e;
 	private Console display;
 	private PrintWriter out;
+	private OperationFactory ops;
 
 	public CommandLineUserInterface() {
 		display = System.console();
 		in = new Scanner(display.reader());
 		out = display.writer();
 		e = JournalApplication.getWorker();
+		ops = JournalApplication.getOperationFactory();
 	}
 
 	private String readBlock() {
@@ -59,11 +58,11 @@ public class CommandLineUserInterface extends UserInterface {
 		out.flush();
 		String content = readBlock();
 		j.setContent(content);
-		e.submit(new AddEntryOperation(j));
+		e.submit(ops.getAddOperation(j));
 	}
 
 	private void editEntry(long parseLong) {
-		GetEntryOperation get = new GetEntryOperation(parseLong);
+		OperationWithResult<Journal> get = ops.getGetEntryOperation(parseLong);
 		e.submit(get);
 		Journal j = get.getResult();
 		out.println("current subject:" + j.getSubject());
@@ -75,7 +74,7 @@ public class CommandLineUserInterface extends UserInterface {
 				out.print("new subject:");
 				out.flush();
 				input = in.nextLine();
-				e.submit(new EditSubjectOperation(parseLong, input));
+				e.submit(ops.getEditSubjectOperation(parseLong, input));
 				break;
 			} else if (input.equals("no")) {
 				break;
@@ -92,7 +91,7 @@ public class CommandLineUserInterface extends UserInterface {
 				out.println("new content:");
 				out.flush();
 				String content = readBlock();
-				e.submit(new EditContentOperation(parseLong, content));
+				e.submit(ops.getEditContentOperation(parseLong, content));
 				break;
 			} else if (input.equals("no")) {
 				break;
@@ -131,7 +130,8 @@ public class CommandLineUserInterface extends UserInterface {
 				query += " ";
 				query += command[i];
 			}
-			SearchEntryOperation ops = new SearchEntryOperation(query);
+			OperationWithResult<Set<Journal>> ops = this.ops
+					.getSearchOperation(query);
 			e.submit(ops);
 			displayCollectionJournal(ops.getResult());
 		}
@@ -166,7 +166,7 @@ public class CommandLineUserInterface extends UserInterface {
 				out.flush();
 				return;
 			}
-			e.submit(new DeleteEntryOperation(id));
+			e.submit(ops.getDeleteOperation(id));
 		}
 		if (command[0].equals("getEntry")) {
 			if (command.length != 2) {
@@ -182,12 +182,13 @@ public class CommandLineUserInterface extends UserInterface {
 				out.flush();
 				return;
 			}
-			GetEntryOperation get = new GetEntryOperation(id);
+			OperationWithResult<Journal> get = ops.getGetEntryOperation(id);
 			e.submit(get);
 			displayEntry(get.getResult());
 		}
 		if (command[0].equals("listAll")) {
-			GetAllOperation ops = new GetAllOperation();
+			OperationWithResult<List<Journal>> ops = this.ops
+					.getListAllOperation();
 			e.submit(ops);
 			displayCollectionJournal(ops.getResult());
 		}

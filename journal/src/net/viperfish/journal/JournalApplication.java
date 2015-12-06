@@ -6,14 +6,16 @@ import java.security.Security;
 
 import net.viperfish.journal.auth.AuthenticationManagerFactory;
 import net.viperfish.journal.authentications.HashAuthFactory;
+import net.viperfish.journal.cmd.CommandLineUserInterface;
 import net.viperfish.journal.framework.OperationExecutor;
+import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.UserInterface;
 import net.viperfish.journal.persistent.DataSourceFactory;
 import net.viperfish.journal.persistent.IndexerFactory;
 import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
 import net.viperfish.journal.secure.SecureFactoryWrapper;
-import net.viperfish.journal.ui.CommandLineUserInterface;
 import net.viperfish.journal.ui.SingleThreadedOperationExecutor;
+import net.viperfish.journal.ui.StandardOperationFactory;
 import net.viperfish.utils.config.Configuration;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -25,6 +27,7 @@ public class JournalApplication {
 	private static IndexerFactory indexerFactory;
 	private static UserInterface ui;
 	private static OperationExecutor worker;
+	private static OperationFactory opsFactory;
 	private static File configFile;
 	private static boolean firstRun;
 	private static File dataDir;
@@ -110,6 +113,13 @@ public class JournalApplication {
 			authFactory.setDataDir(dataDir);
 		}
 		return authFactory;
+	}
+
+	public static OperationFactory getOperationFactory() {
+		if (opsFactory == null) {
+			opsFactory = new StandardOperationFactory();
+		}
+		return opsFactory;
 	}
 
 	public static String getPassword() {

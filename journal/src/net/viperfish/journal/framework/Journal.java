@@ -1,5 +1,7 @@
 package net.viperfish.journal.framework;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Journal implements Comparable<Journal> {
@@ -99,6 +101,16 @@ public class Journal implements Comparable<Journal> {
 	@Override
 	public int compareTo(Journal o) {
 		return this.id.compareTo(o.getId());
+	}
+
+	@Override
+	public String toString() {
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		String result = new String();
+		result += subject;
+		result += " On ";
+		result += df.format(date);
+		return result;
 	}
 
 }
