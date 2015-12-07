@@ -11,6 +11,7 @@ import net.viperfish.journal.cmd.CommandLineUserInterface;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.UserInterface;
+import net.viperfish.journal.gui.GraphicalUserInterface;
 import net.viperfish.journal.persistent.DataSourceFactory;
 import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.persistent.IndexerFactory;
@@ -72,6 +73,7 @@ public class JournalApplication {
 			firstRun = true;
 			dataDir.mkdir();
 		}
+		
 	}
 
 	/**
@@ -183,8 +185,20 @@ public class JournalApplication {
 		JournalApplication.password = password;
 	}
 
-	public static void main(String[] arg) {
-		ui = new CommandLineUserInterface();
+	public static void main(String[] args) {
+		boolean consoleMode = System.console() != null;
+		if(args.length > 0){
+			if(args[0].equalsIgnoreCase("noconsole")){
+				consoleMode = false;
+			}
+		}
+		if(consoleMode){
+			ui = new CommandLineUserInterface();
+		}else{
+			ui = new GraphicalUserInterface();
+			// This is testing //
+			// This is end test //
+		}
 		try {
 			Configuration.loadAll();
 		} catch (IOException e1) {
