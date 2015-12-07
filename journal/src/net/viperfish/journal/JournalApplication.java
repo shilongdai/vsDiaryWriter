@@ -181,6 +181,13 @@ public class JournalApplication {
 	 */
 	public static void setPassword(String password) {
 		JournalApplication.password = password;
+		if (getDataSourceFactory().getClass().isInstance(
+				SecureFactoryWrapper.class)) {
+			SecureEntryDatabaseWrapper tmp = (SecureEntryDatabaseWrapper) df
+					.createDatabaseObject();
+			tmp.setPassword(getPassword());
+		}
+
 	}
 
 	public static void main(String[] arg) {
