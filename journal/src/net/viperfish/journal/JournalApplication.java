@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Security;
 
+import net.viperfish.journal.auth.AuthenticationManager;
 import net.viperfish.journal.auth.AuthenticationManagerFactory;
 import net.viperfish.journal.authentications.HashAuthFactory;
 import net.viperfish.journal.cmd.CommandLineUserInterface;
@@ -11,17 +12,25 @@ import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.UserInterface;
 import net.viperfish.journal.persistent.DataSourceFactory;
+import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.persistent.IndexerFactory;
 import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
 import net.viperfish.journal.secure.SecureFactoryWrapper;
 import net.viperfish.journal.ui.SingleThreadedOperationExecutor;
 import net.viperfish.journal.ui.StandardOperationFactory;
 import net.viperfish.utils.config.Configuration;
+import net.viperfish.utils.index.Indexer;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import test.java.StubDataSourceFactory;
 
+/**
+ * the Main class of the application, contains all the components
+ * 
+ * @author sdai
+ *
+ */
 public class JournalApplication {
 	private static DataSourceFactory df;
 	private static IndexerFactory indexerFactory;
@@ -65,6 +74,12 @@ public class JournalApplication {
 		}
 	}
 
+	/**
+	 * get the factory for creating an appropriate OperationExecuter
+	 * 
+	 * @return the operation executer
+	 * @see OperationExecutor
+	 */
 	public static OperationExecutor getWorker() {
 		if (worker == null) {
 			worker = new SingleThreadedOperationExecutor();
@@ -72,6 +87,12 @@ public class JournalApplication {
 		return worker;
 	}
 
+	/**
+	 * get the factory that returns a instance of a EntryDatabase
+	 * 
+	 * @return the factory
+	 * @see EntryDatabase
+	 */
 	public static DataSourceFactory getDataSourceFactory() {
 		if (df == null) {
 			if (unitTest) {
@@ -93,6 +114,12 @@ public class JournalApplication {
 		return df;
 	}
 
+	/**
+	 * get a factory that returns a instance of a Indexer<Journal>
+	 * 
+	 * @see Indexer
+	 * @return the factory
+	 */
 	public static IndexerFactory getIndexerFactory() {
 		if (indexerFactory == null) {
 			try {
@@ -107,6 +134,12 @@ public class JournalApplication {
 		return indexerFactory;
 	}
 
+	/**
+	 * get a factory that returns a instance of a AuthenticationManager
+	 * 
+	 * @return the authentication manager
+	 * @see AuthenticationManager
+	 */
 	public static AuthenticationManagerFactory getAuthFactory() {
 		if (authFactory == null) {
 			authFactory = new HashAuthFactory();
@@ -115,6 +148,12 @@ public class JournalApplication {
 		return authFactory;
 	}
 
+	/**
+	 * gets a factory that returns a Operation
+	 * 
+	 * @return the factory
+	 * @see Operation
+	 */
 	public static OperationFactory getOperationFactory() {
 		if (opsFactory == null) {
 			opsFactory = new StandardOperationFactory();
@@ -122,10 +161,24 @@ public class JournalApplication {
 		return opsFactory;
 	}
 
+	/**
+	 * get the user's password in plaintext, only call it after the use has
+	 * entered the correct password via UserInterface.promptPassword
+	 * 
+	 * @see UserInterface#promptPassword() promptPassword
+	 * @return the password
+	 */
 	public static String getPassword() {
 		return password;
 	}
 
+	/**
+	 * set the current password, should be called by the promptPassword method
+	 * of the UserInterface implementer after verifying the password
+	 * 
+	 * @param password
+	 *            the correct password
+	 */
 	public static void setPassword(String password) {
 		JournalApplication.password = password;
 	}
@@ -145,6 +198,7 @@ public class JournalApplication {
 		}
 		password = ui.promptPassword();
 		ui.run();
+		// clean up after user choose to exit
 		cleanUp();
 		try {
 			Configuration.persistAll();
