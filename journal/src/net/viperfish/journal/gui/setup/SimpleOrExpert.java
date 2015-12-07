@@ -1,32 +1,55 @@
 package net.viperfish.journal.gui.setup;
 
-import javax.swing.JPanel;
-import net.miginfocom.swing.MigLayout;
-import javax.swing.JLabel;
 import java.awt.Font;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+
+import net.miginfocom.swing.MigLayout;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class SimpleOrExpert extends ConfigView {
 
+	public JRadioButton rdbtnSimple;
+	public JRadioButton rdbtnExpert;
+	
 	/**
 	 * Create the panel.
 	 */
-	public SimpleOrExpert() {
+	public SimpleOrExpert(FirstTimeSetup firstTimeSetup) {
+		super(firstTimeSetup);
 		setLayout(new MigLayout("", "[50px:n][grow]", "[][grow]"));
-		
+
 		JLabel lblPickYourSetup = new JLabel("Pick Your Setup Method");
-		lblPickYourSetup.setFont(new Font("Times New Roman", Font.PLAIN, 24));
+		lblPickYourSetup.setFont(new Font("DialogInput", Font.PLAIN, 24));
 		add(lblPickYourSetup, "cell 0 0 2 1");
-		
+
 		JPanel panel = new JPanel();
 		panel.setBorder(null);
 		add(panel, "cell 1 1,grow");
-		panel.setLayout(new MigLayout("", "[55px]", "[23px][]"));
-		
-		JRadioButton rdbtnSimple = new JRadioButton("Simple");
+		panel.setLayout(new MigLayout("", "[55px][][][][][]", "[23px][]"));
+
+		rdbtnSimple = new JRadioButton("Simple");
+		rdbtnSimple.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				rdbtnExpert.setSelected(!rdbtnSimple.isSelected());
+				firstTimeSetup.cont();
+			}
+		});
+		rdbtnSimple.setFont(new Font("DialogInput", Font.PLAIN, 11));
 		panel.add(rdbtnSimple, "cell 0 0,alignx left,aligny top");
-		
-		JRadioButton rdbtnExpert = new JRadioButton("Expert");
+
+		rdbtnExpert = new JRadioButton("Expert");
+		rdbtnExpert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				rdbtnSimple.setSelected(!rdbtnExpert.isSelected());
+				firstTimeSetup.cont();
+			}
+		});
+		rdbtnExpert.setFont(new Font("DialogInput", Font.PLAIN, 11));
 		panel.add(rdbtnExpert, "cell 0 1");
 
 	}

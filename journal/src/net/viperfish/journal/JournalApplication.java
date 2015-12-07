@@ -73,7 +73,6 @@ public class JournalApplication {
 			firstRun = true;
 			dataDir.mkdir();
 		}
-		
 	}
 
 	/**
@@ -193,6 +192,7 @@ public class JournalApplication {
 	}
 
 	public static void main(String[] args) {
+		// TODO Finish Custom Arguments For Options
 		boolean consoleMode = System.console() != null;
 		if(args.length > 0){
 			if(args[0].equalsIgnoreCase("noconsole")){
@@ -203,8 +203,6 @@ public class JournalApplication {
 			ui = new CommandLineUserInterface();
 		}else{
 			ui = new GraphicalUserInterface();
-			// This is testing //
-			// This is end test //
 		}
 		try {
 			Configuration.loadAll();

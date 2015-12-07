@@ -20,15 +20,18 @@ public class GraphicalUserInterface extends UserInterface {
 	}
 
 	public void run() {
-		window = new MainWindow();
-		window.setVisible(true);
 	}
 
+	boolean delay = true;
 	public void setup() {
-		System.out.println("hi");
 		FirstTimeSetup setupMode = new FirstTimeSetup();
-		setupMode.setVisible(true);
-		while (true) {
+		new Thread(new Runnable() {
+			public void run() {
+				setupMode.setVisible(true);
+				delay = false;
+			}
+		}).start();
+		while (true || delay) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
