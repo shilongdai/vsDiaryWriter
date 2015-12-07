@@ -6,13 +6,14 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import net.viperfish.journal.framework.UserInterface;
+import net.viperfish.journal.gui.setup.CreatePassword;
 import net.viperfish.journal.gui.setup.FirstTimeSetup;
 
 public class GraphicalUserInterface extends UserInterface {
 
 	public static Font defaultDialogTitleFont = new Font("DialogInput", Font.PLAIN, 24);
 	public static Font defaultDialogOptionFont = new Font("DialogInput", Font.PLAIN, 13);
-	
+
 	private MainWindow window;
 
 	public GraphicalUserInterface() {
@@ -25,9 +26,12 @@ public class GraphicalUserInterface extends UserInterface {
 	}
 
 	public void run() {
+		window = new MainWindow();
+		window.setVisible(true);
 	}
 
 	boolean delay = true;
+
 	public void setup() {
 		FirstTimeSetup setupMode = new FirstTimeSetup();
 		new Thread(new Runnable() {
@@ -46,30 +50,44 @@ public class GraphicalUserInterface extends UserInterface {
 	}
 
 	public String promptPassword() {
-		/**
-		 * String password = new String();
-		while (true) {
-			out.print("password:");
-			out.flush();
-			password = new String(display.readPassword());
-			if (!isPasswordSet()) {
-				setPassword(password);
-				break;
+		if (!isPasswordSet()) {
+			CreatePassword createPassword = new CreatePassword();
+			delay = true;
+			new Thread(new Runnable() {
+				public void run() {
+					createPassword.setVisible(true);
+					delay = false;
+				}
+			}).start();
+			while (createPassword.isVisible() || delay) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-			if (authenticate(password)) {
-				break;
-			}
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				return new String();
-			}
-			out.println("incorrect password, please retry");
-			out.flush();
+			setPassword(new String(createPassword.passwordField.getPassword()));
 		}
-		return password;
-		 */
-		return "";
+		PasswordPrompt passwordPrompt = new PasswordPrompt(this);
+		delay = true;
+		new Thread(new Runnable() {
+			public void run() {
+				passwordPrompt.setVisible(true);
+				delay = false;
+			}
+		}).start();
+		while (passwordPrompt.isVisible() || delay) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return passwordPrompt.getPassword();
+	}
+
+	public boolean auth(PasswordPrompt passwordPrompt) {
+		return authenticate(passwordPrompt.getPassword());
 	}
 
 }
