@@ -1,3 +1,5 @@
+>> THIS LINE IS FOR TESTING BY RYAN <<
+
 # journal-2
 This is my second attempt at a journal software, previous attempt is the journal-1 project.
 
