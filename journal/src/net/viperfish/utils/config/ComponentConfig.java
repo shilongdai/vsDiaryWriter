@@ -12,6 +12,12 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+/**
+ * a unit of configuration
+ * 
+ * @author sdai
+ *
+ */
 public abstract class ComponentConfig extends Properties {
 
 	/**
@@ -22,6 +28,12 @@ public abstract class ComponentConfig extends Properties {
 	private String unitName;
 	private List<ComponentConfigObserver> observers;
 
+	/**
+	 * init the ComponentConfig
+	 * 
+	 * @param unitName
+	 *            the name of this unit
+	 */
 	public ComponentConfig(String unitName) {
 		super();
 		this.unitName = unitName;
@@ -35,6 +47,11 @@ public abstract class ComponentConfig extends Properties {
 		return configFile;
 	}
 
+	/**
+	 * store the configurations to a xml file
+	 * 
+	 * @throws IOException
+	 */
 	public void persist() throws IOException {
 		if (!configFile.exists()) {
 			try {
@@ -47,6 +64,14 @@ public abstract class ComponentConfig extends Properties {
 				getConfigFile())), "config for " + unitName);
 	}
 
+	/**
+	 * load the configuration file
+	 * 
+	 * @throws InvalidPropertiesFormatException
+	 *             if invalid format
+	 * @throws IOException
+	 *             if failed to read
+	 */
 	public void load() throws InvalidPropertiesFormatException, IOException {
 		if (!getConfigFile().exists()) {
 			return;
@@ -55,10 +80,23 @@ public abstract class ComponentConfig extends Properties {
 				getConfigFile())));
 	}
 
+	/**
+	 * notify all observer on this unit
+	 */
 	public void notifyObserver() {
 		for (ComponentConfigObserver i : observers) {
 			i.sendNotify(this);
 		}
+	}
+
+	/**
+	 * add a observer to this unit
+	 * 
+	 * @param o
+	 *            the observer to add
+	 */
+	public void addObserver(ComponentConfigObserver o) {
+		observers.add(o);
 	}
 
 	public String getUnitName() {
@@ -69,12 +107,32 @@ public abstract class ComponentConfig extends Properties {
 		this.unitName = unitName;
 	}
 
+	/**
+	 * get key for required configuration for the user to fill out
+	 * 
+	 * @return
+	 */
 	public abstract Iterable<String> requiredConfig();
 
+	/**
+	 * get key for optional configuration for the user to fill out
+	 * 
+	 * @return
+	 */
 	public abstract Iterable<String> optionalConfig();
 
+	/**
+	 * init defaults
+	 */
 	public abstract void fillInDefault();
 
+	/**
+	 * get a set of available options for a key
+	 * 
+	 * @param key
+	 *            the key to query for
+	 * @return available options
+	 */
 	public abstract Set<String> getOptions(String key);
 
 }
