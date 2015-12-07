@@ -7,6 +7,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import net.miginfocom.swing.MigLayout;
+import net.viperfish.journal.gui.GraphicalUserInterface;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -24,7 +26,7 @@ public class SimpleOrExpert extends ConfigView {
 		setLayout(new MigLayout("", "[50px:n][grow]", "[][grow]"));
 
 		JLabel lblPickYourSetup = new JLabel("Pick Your Setup Method");
-		lblPickYourSetup.setFont(new Font("DialogInput", Font.PLAIN, 24));
+		lblPickYourSetup.setFont(GraphicalUserInterface.defaultDialogTitleFont);
 		add(lblPickYourSetup, "cell 0 0 2 1");
 
 		JPanel panel = new JPanel();
@@ -39,7 +41,7 @@ public class SimpleOrExpert extends ConfigView {
 				firstTimeSetup.cont();
 			}
 		});
-		rdbtnSimple.setFont(new Font("DialogInput", Font.PLAIN, 11));
+		rdbtnSimple.setFont(GraphicalUserInterface.defaultDialogOptionFont);
 		panel.add(rdbtnSimple, "cell 0 0,alignx left,aligny top");
 
 		rdbtnExpert = new JRadioButton("Expert");
@@ -49,7 +51,7 @@ public class SimpleOrExpert extends ConfigView {
 				firstTimeSetup.cont();
 			}
 		});
-		rdbtnExpert.setFont(new Font("DialogInput", Font.PLAIN, 11));
+		rdbtnExpert.setFont(GraphicalUserInterface.defaultDialogOptionFont);
 		panel.add(rdbtnExpert, "cell 0 1");
 
 	}

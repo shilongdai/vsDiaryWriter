@@ -6,6 +6,9 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import net.miginfocom.swing.MigLayout;
+import net.viperfish.utils.config.ComponentConfig;
+import net.viperfish.utils.config.Configuration;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -56,11 +59,12 @@ public class FirstTimeSetup extends JFrame {
 				SimpleOrExpert simpleOrExpert = new SimpleOrExpert(FirstTimeSetup.this);
 				setView(simpleOrExpert);
 				// SIMPLE/Required
-				
-				if(simpleOrExpert.rdbtnExpert.isSelected()){
-					// EXPERT/Optional
+				Iterable<ComponentConfig> all = Configuration.allComponent();
+				for (ComponentConfig i : all) {
+					ComponentConfigSetup setupWindow = new ComponentConfigSetup(FirstTimeSetup.this, i, simpleOrExpert.rdbtnExpert.isSelected());
+					setView(setupWindow);
 				}
-				
+				dispose();
 			}
 		}).start();
 	}
@@ -69,15 +73,14 @@ public class FirstTimeSetup extends JFrame {
 	private boolean doCont = false;
 
 	public void setView(ConfigView view) {
-		if (view != null) {
-			contentPane.remove(view);
+		if (this.view != null) {
+			contentPane.remove(this.view);
 		}
 		this.view = view;
 		contentPane.add(view, "cell 0 0,grow");
 		contentPane.updateUI();
-		canContinue = false;
+		pack();
 		btnNext.setEnabled(canContinue);
-		doCont = false;
 		while(!canContinue || !doCont){
 			try {
 				Thread.sleep(100);
@@ -85,10 +88,16 @@ public class FirstTimeSetup extends JFrame {
 				e.printStackTrace();
 			}
 		}
+		canContinue = false;
+		doCont = false;
+	}
+
+	public void cont(){
+		cont(true);
 	}
 	
-	public void cont(){
-		canContinue = true;
+	public void cont(boolean cont){
+		canContinue = cont;
 		btnNext.setEnabled(canContinue);
 	}
 
