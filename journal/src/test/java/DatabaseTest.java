@@ -16,7 +16,7 @@ public class DatabaseTest {
 
 	public DatabaseTest() {
 		Configuration.defaultAll();
-
+		JournalApplication.setPassword("password");
 		db = JournalApplication.getDataSourceFactory().createDatabaseObject();
 	}
 
