@@ -101,7 +101,6 @@ public class JournalWindow extends JFrame {
 	 * show full list.
 	 */
 	public void updateEntries() {
-<<<<<<< HEAD:journal/src/net/viperfish/journal/gui/JournalWindow.java
 		new Thread(new Runnable() {
 			public synchronized void run() {
 				int id = nextID;
@@ -131,30 +130,7 @@ public class JournalWindow extends JFrame {
 				model.setJournals(journalList);
 			}
 		}).start();
-=======
-		// Search Parameters
-		String query = searchField.getText();
-		List<Journal> journalList = null;
-		// If Search Parameters exist, use Search Operations otherwise use Normal List All Option.
-		if (query.length() > 0) {
-			OperationWithResult<Set<Journal>> ops = this.ops
-					.getSearchOperation(query);
-			e.submit(ops);
-			// Convert Set to List
-			Set<Journal> journals = ops.getResult();
-			journalList = new ArrayList<Journal>(journals);
-		} else {
-			OperationWithResult<List<Journal>> ops = this.ops
-					.getListAllOperation();
-			e.submit(ops);
-			journalList = ops.getResult();
-		}
-		// Update List Model
-		JournalListModel model = (JournalListModel) entryList.getModel();
-		model.setJournals(journalList);
-		System.err.println("done");
 
->>>>>>> origin/master:journal/src/net/viperfish/journal/gui/MainWindow.java
 	}
 
 	public void editJournal(Journal journal) {
