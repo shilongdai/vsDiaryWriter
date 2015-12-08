@@ -1,5 +1,6 @@
 package net.viperfish.journal.gui;
 
+import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -79,7 +80,14 @@ public class JournalWindow extends JFrame {
 			}
 
 			public void update() {
-				updateEntries();
+				EventQueue.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						updateEntries();
+
+					}
+				});
 			}
 		});
 		contentPane.add(searchField, "cell 2 2 2 1,growx");
@@ -121,18 +129,12 @@ public class JournalWindow extends JFrame {
 			// Convert Set to List
 			Set<Journal> journals = ops.getResult();
 			journalList = new ArrayList<Journal>(journals);
-			for (Journal i : journalList) {
-				System.err.println("got:" + i);
-			}
 		} else {
 			System.out.println("Showing All " + id);
 			OperationWithResult<List<Journal>> ops = of.getListAllOperation();
 			e.submit(ops);
 			System.err.println("submitted");
 			journalList = ops.getResult();
-			for (Journal i : journalList) {
-				System.err.println("got:" + i);
-			}
 		}
 		System.out.println("done " + id);
 		// Update List Model

@@ -17,8 +17,8 @@ import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.persistent.IndexerFactory;
 import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
 import net.viperfish.journal.secure.SecureFactoryWrapper;
+import net.viperfish.journal.ui.SingleThreadedOperationExecutor;
 import net.viperfish.journal.ui.StandardOperationFactory;
-import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
 import net.viperfish.utils.config.Configuration;
 import net.viperfish.utils.index.Indexer;
 
@@ -58,7 +58,7 @@ public class JournalApplication {
 	public JournalApplication() {
 	}
 
-	private static void cleanUp() {
+	public static void cleanUp() {
 		getDataSourceFactory().cleanUp();
 		getIndexerFactory().cleanUp();
 		getWorker().terminate();
@@ -83,7 +83,7 @@ public class JournalApplication {
 	 */
 	public static OperationExecutor getWorker() {
 		if (worker == null) {
-			worker = new ThreadPoolOperationExecutor();
+			worker = new SingleThreadedOperationExecutor();
 		}
 		return worker;
 	}
@@ -217,8 +217,6 @@ public class JournalApplication {
 		}
 		password = ui.promptPassword();
 		ui.run();
-		// clean up after user choose to exit
-		cleanUp();
 		try {
 			Configuration.persistAll();
 		} catch (IOException e) {

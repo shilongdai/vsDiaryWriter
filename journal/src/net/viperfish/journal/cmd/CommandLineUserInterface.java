@@ -222,6 +222,7 @@ public class CommandLineUserInterface extends UserInterface {
 			String input = new String();
 			input = display.readLine("command:");
 			if (input.matches("quit")) {
+				JournalApplication.cleanUp();
 				return;
 			}
 			String[] command = input.split(" ");

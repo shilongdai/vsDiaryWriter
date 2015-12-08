@@ -23,32 +23,25 @@ public class SingleThreadedOperationExecutor implements OperationExecutor {
 
 			@Override
 			public void run() {
-				System.err.println("starting worker");
 				while (true) {
 					if (Thread.interrupted()) {
-						System.err.println("Thread is interrupted");
 						return;
 					}
 					synchronized (mutex) {
 						try {
-							System.err.println("going to sleep");
 							mutex.wait();
 						} catch (InterruptedException e) {
 							return;
 						}
-						System.out.println("Awaken");
 						if (!queue.isEmpty()) {
 							for (Operation i : queue) {
 								try {
-									System.err.println("executing:"
-											+ i.getClass().getCanonicalName());
 									i.execute();
 								} catch (Throwable e) {
 									exceptions.add(e);
 									e.printStackTrace();
 								}
 								queue.remove(i);
-								System.err.println("complete");
 							}
 						}
 					}
@@ -73,7 +66,6 @@ public class SingleThreadedOperationExecutor implements OperationExecutor {
 			queue.add(o);
 			mutex.notifyAll();
 		}
-		System.err.println("notifying");
 	}
 
 	/*

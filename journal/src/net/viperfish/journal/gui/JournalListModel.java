@@ -9,12 +9,17 @@ import net.viperfish.journal.framework.Journal;
 
 public class JournalListModel extends DefaultListModel<Journal> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 798255143681170882L;
 	private List<Journal> journals;
 
 	public JournalListModel(List<Journal> journals) {
 		this.journals = journals;
 	}
 
+	@Override
 	public int getSize() {
 		return journals.size();
 	}
