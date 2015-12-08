@@ -90,7 +90,6 @@ public class MainWindow extends JFrame {
 		List<Journal> journalList = null;
 		String query = searchField.getText();
 		if (query.length() > 0) {
-			System.out.println("looking for "+query);
 			OperationWithResult<Set<Journal>> ops = this.ops.getSearchOperation(query);
 			e.submit(ops);
 			Set<Journal> journals = ops.getResult();
