@@ -23,6 +23,12 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
+import javax.swing.JPopupMenu;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JMenuItem;
+import java.awt.event.MouseMotionAdapter;
 
 public class JournalWindow extends JFrame {
 
@@ -49,9 +55,6 @@ public class JournalWindow extends JFrame {
 		JLabel lblJournalTitle = new JLabel("Journal 2");
 		lblJournalTitle.setFont(GraphicalUserInterface.defaultDialogTitleFont);
 		contentPane.add(lblJournalTitle, "cell 0 0");
-
-		JButton btnNewEntry = new JButton("New Entry");
-		contentPane.add(btnNewEntry, "cell 3 1");
 
 		JLabel lblYourEntries = new JLabel("Your Journals");
 		lblYourEntries.setFont(GraphicalUserInterface.defaultDialogOptionFont);
@@ -99,29 +102,58 @@ public class JournalWindow extends JFrame {
 		contentPane.add(scrollPane, "cell 0 3 4 1,grow");
 
 		entryList = new JList<Journal>();
+		entryList.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				JournalCellRenderer cellRenderer = (JournalCellRenderer) entryList.getCellRenderer();
+				cellRenderer.mouseMoved(e);
+			}
+		});
 		scrollPane.setViewportView(entryList);
 		entryList.setModel(new JournalListModel(new ArrayList<Journal>()));
 		entryList.setCellRenderer(new JournalCellRenderer());
+		
+		JPopupMenu popupMenu = new JPopupMenu();
+		JMenuItem mntmAddJournal = new JMenuItem("Add Journal");
+		popupMenu.add(mntmAddJournal);
+		
+		entryList.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			private void showMenu(MouseEvent e) {
+				Journal journal = entryList.getSelectedValue();
+				if(journal == null){
+					return;
+				}
+				popupMenu.show(entryList, e.getX(), e.getY()
+						);
+			}
+		});
+		
 		updateEntries();
 	}
-
-	private int nextID = 0;
 
 	/**
 	 * Update entryList based off new Search Parameter if they exist, otherwise
 	 * show full list.
 	 */
 	public void updateEntries() {
-		int id = nextID;
-		nextID++;
 		// Search Parameters
-		String query = searchField.getText();
+		String query = searchField.getText().trim();
 		List<Journal> journalList = null;
 		// If Search Parameters exist, use Search Operations otherwise
 		// use
 		// Normal List All Option.
 		if (query.length() > 0) {
-			System.out.println("Searching for '" + query + "' " + id);
+			System.out.println("Searching for '" + query + "'");
 			OperationWithResult<Set<Journal>> ops = of
 					.getSearchOperation(query);
 			e.submit(ops);
@@ -130,17 +162,20 @@ public class JournalWindow extends JFrame {
 			Set<Journal> journals = ops.getResult();
 			journalList = new ArrayList<Journal>(journals);
 		} else {
-			System.out.println("Showing All " + id);
+			System.out.println("Showing All ");
 			OperationWithResult<List<Journal>> ops = of.getListAllOperation();
 			e.submit(ops);
 			System.err.println("submitted");
 			journalList = ops.getResult();
 		}
-		System.out.println("done " + id);
+		System.out.println("done");
 		// Update List Model
 		JournalListModel model = (JournalListModel) entryList.getModel();
 		model.setJournals(journalList);
-
+		entryList.updateUI();
+		if(entryList.getSelectedIndex() == -1){
+			entryList.setSelectedIndex(0);
+		}
 	}
 
 	public void editJournal(Journal journal) {
