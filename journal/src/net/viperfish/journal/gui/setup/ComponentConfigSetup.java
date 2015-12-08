@@ -16,7 +16,9 @@ import net.viperfish.journal.gui.GraphicalUserInterface;
 import net.viperfish.utils.config.ComponentConfig;
 
 public class ComponentConfigSetup extends ConfigView {
-	
+
+	private static final long serialVersionUID = 338305999768033527L;
+
 	private HashMap<String, JComboBox<String>> fields = new HashMap<String, JComboBox<String>>();
 
 	private ComponentConfig componentConfig;
@@ -43,33 +45,40 @@ public class ComponentConfigSetup extends ConfigView {
 		updateState();
 	}
 
-	int cellRow = 2;
-	private void setup(Iterable<String> list) {
-		for (String iter : list) {
-			JLabel lblNewLabel_1 = new JLabel(iter);
-			lblNewLabel_1.setFont(GraphicalUserInterface.defaultDialogOptionFont);
-			add(lblNewLabel_1, "cell 1 "+cellRow+",alignx trailing");
-			Set<String> optionList = componentConfig.getOptions(iter);
-			optionList.add("<choose one>");
-			String[] options = optionList.toArray(new String[0]);
-			JComboBox<String> comboBox = new JComboBox<String>();
-			comboBox.setFont(GraphicalUserInterface.defaultDialogOptionFont);
-			comboBox.addItemListener(new ItemListener() {
+	private int nextConfigurationCellRow = 2;
+	
+	/**
+	 * Add Configuration options to the JPanel
+	 * @param configurationItems Configurations that will be added to the JPanel
+	 */
+	private void setup(Iterable<String> configurationItems) {
+		for (String configurationItem : configurationItems) {
+			JLabel lblConfiguraitonItem = new JLabel(configurationItem);
+			// TODO REMOVE THIS SET FONT
+			lblConfiguraitonItem.setFont(GraphicalUserInterface.defaultDialogOptionFont);
+			add(lblConfiguraitonItem, "cell 1 "+nextConfigurationCellRow+",alignx trailing");
+			
+			JComboBox<String> configuraitonItemOptionBox = new JComboBox<String>();
+			configuraitonItemOptionBox.setFont(GraphicalUserInterface.defaultDialogOptionFont);
+			configuraitonItemOptionBox.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					updateState();
 					String keyFromValue = "";
 					for(String iter : fields.keySet()){
-						if(fields.get(iter).equals(comboBox)){
+						if(fields.get(iter).equals(configuraitonItemOptionBox)){
 							keyFromValue = iter;
 						}
 					}
 					componentConfig.setProperty(keyFromValue, (String)e.getItem());
 				}
 			});
-			fields.put(iter, comboBox);
-			comboBox.setModel(new DefaultComboBoxModel<String>(options));
-			add(comboBox, "cell 2 "+cellRow+",growx");
-			cellRow++;
+			Set<String> optionList = componentConfig.getOptions(configurationItem);
+			optionList.add("<choose one>");
+			String[] options = optionList.toArray(new String[0]);
+			configuraitonItemOptionBox.setModel(new DefaultComboBoxModel<String>(options));
+			add(configuraitonItemOptionBox, "cell 2 "+nextConfigurationCellRow+",growx");
+			fields.put(configurationItem, configuraitonItemOptionBox);
+			nextConfigurationCellRow++;
 		}
 	}
 

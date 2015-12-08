@@ -22,7 +22,7 @@ public class GraphicalUserInterface extends UserInterface {
 	/**
 	 * Main window used to manage Journals
 	 */
-	private MainWindow window;
+	private JournalWindow window;
 
 	public GraphicalUserInterface() {
 		try {
@@ -34,7 +34,7 @@ public class GraphicalUserInterface extends UserInterface {
 	}
 
 	public void run() {
-		window = new MainWindow();
+		window = new JournalWindow();
 		window.setVisible(true);
 	}
 

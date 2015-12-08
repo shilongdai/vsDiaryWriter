@@ -9,7 +9,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -20,22 +22,20 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 
-public class MainWindow extends JFrame {
+public class JournalWindow extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField searchField;
-	private OperationFactory ops;
+	private OperationFactory of;
 	private OperationExecutor e;
 	private JList<Journal> entryList;
 
 	/**
 	 * Create the frame.
 	 */
-	public MainWindow() {
-		ops = JournalApplication.getOperationFactory();
+	public JournalWindow() {
+		of = JournalApplication.getOperationFactory();
 		e = JournalApplication.getWorker();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 820, 541);
@@ -80,7 +80,7 @@ public class MainWindow extends JFrame {
 		});
 		contentPane.add(searchField, "cell 2 2 2 1,growx");
 		searchField.setColumns(10);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		contentPane.add(scrollPane, "cell 0 3 4 1,grow");
@@ -88,34 +88,44 @@ public class MainWindow extends JFrame {
 		entryList = new JList<Journal>();
 		scrollPane.setViewportView(entryList);
 		entryList.setModel(new JournalListModel(new ArrayList<Journal>()));
-		entryList.setCellRenderer(new JournalCellRenderer(this));
+		entryList.setCellRenderer(new JournalCellRenderer());
 		updateEntries();
 	}
-
+	private int nextID = 0;
 	/**
-	 * Update entryList based off new Search Parameter if they exist, otherwise show full list.
+	 * Update entryList based off new Search Parameter if they exist, otherwise
+	 * show full list.
 	 */
 	public void updateEntries() {
-		// Search Parameters
-		String query = searchField.getText();
-		List<Journal> journalList = null;
-		// If Search Parameters exist, use Search Operations otherwise use Normal List All Option.
-		if (query.length() > 0) {
-			OperationWithResult<Set<Journal>> ops = this.ops.getSearchOperation(query);
-			e.submit(ops);
-			// Convert Set to List
-			Set<Journal> journals = ops.getResult();
-			journalList = new ArrayList<Journal>(journals);
-		} else {
-			OperationWithResult<List<Journal>> ops = this.ops.getListAllOperation();
-			e.submit(ops);
-			journalList = ops.getResult();
-		}
-		// Update List Model
-		JournalListModel model = (JournalListModel) entryList.getModel();
-		model.setJournals(journalList);
-		System.out.println("done");
-		
+		new Thread(new Runnable() {
+			public synchronized void run() {
+				int id = nextID;
+				nextID++;
+				// Search Parameters
+				String query = searchField.getText();
+				List<Journal> journalList = null;
+				// If Search Parameters exist, use Search Operations otherwise
+				// use
+				// Normal List All Option.
+				if (query.length() > 0) {
+					System.out.println("Searching for '"+query+"' "+id);
+					OperationWithResult<Set<Journal>> ops = of.getSearchOperation(query);
+					e.submit(ops);
+					// Convert Set to List
+					Set<Journal> journals = ops.getResult();
+					journalList = new ArrayList<Journal>(journals);
+				} else {
+					System.out.println("Showing All " + id);
+					OperationWithResult<List<Journal>> ops = of.getListAllOperation();
+					e.submit(ops);
+					journalList = ops.getResult();
+				}
+				System.out.println("done "+id);
+				// Update List Model
+				JournalListModel model = (JournalListModel) entryList.getModel();
+				model.setJournals(journalList);
+			}
+		}).start();
 	}
 
 	public void editJournal(Journal journal) {

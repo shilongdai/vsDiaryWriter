@@ -20,25 +20,11 @@ public class JournalCellJPanel extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public JournalCellJPanel(MainWindow window, Journal journal, boolean mouseOver, boolean selected) {
+	public JournalCellJPanel(Journal journal, boolean mouseOver, boolean selected) {
 		// setBackground(UIManager.getColor("List.background"));
 		if (selected) {
 			setBackground(UIManager.getColor("List.selectionForeground"));
 		}
-
-		JPopupMenu popupMenu = new JPopupMenu();
-		addPopup(this, popupMenu);
-
-		JMenuItem mntmEdit = new JMenuItem("Edit");
-		mntmEdit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				window.editJournal(journal);
-			}
-		});
-		popupMenu.add(mntmEdit);
-
-		JMenuItem mntmDelete = new JMenuItem("Delete");
-		popupMenu.add(mntmDelete);
 		setLayout(new MigLayout("", "[50px][grow]", "[22px]"));
 
 		JLabel lblTitle = new JLabel(journal.getSubject());
@@ -54,25 +40,5 @@ public class JournalCellJPanel extends JPanel {
 			add(lblMore, "cell 0 1");
 		}
 
-	}
-
-	private static void addPopup(Component component, final JPopupMenu popup) {
-		component.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-
-			public void mouseReleased(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-
-			private void showMenu(MouseEvent e) {
-				popup.show(e.getComponent(), e.getX(), e.getY());
-			}
-		});
 	}
 }
