@@ -31,6 +31,7 @@ import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
 import net.viperfish.journal.secureAlgs.CBCMac;
 import net.viperfish.journal.secureAlgs.CFBMac;
 import net.viperfish.journal.secureAlgs.CMac;
+import net.viperfish.journal.secureAlgs.Digester;
 import net.viperfish.journal.secureAlgs.Encryptor;
 import net.viperfish.journal.secureAlgs.GMac;
 import net.viperfish.journal.secureAlgs.HMac;
@@ -55,7 +56,7 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 	private SecretKeyFactory keyGen;
 	private SecureRandom rand;
 	private Encryptor enc;
-	private JCEDigester dig;
+	private Digester dig;
 	private MacDigester mac;
 
 	private String encryptData(byte[] bytes) throws InvalidKeyException,

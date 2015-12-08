@@ -13,13 +13,14 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 
 import net.viperfish.journal.auth.AuthenticationManager;
+import net.viperfish.journal.secureAlgs.Digester;
 import net.viperfish.journal.secureAlgs.JCEDigester;
 
 import org.apache.commons.codec.binary.Base64;
 
 public class HashAuthManager implements AuthenticationManager {
 
-	private JCEDigester dig;
+	private Digester dig;
 	private File passwdFile;
 	private File dataDir;
 	private boolean passwordSet;

@@ -4,6 +4,7 @@ import java.io.File;
 
 import net.viperfish.journal.auth.AuthenticationManager;
 import net.viperfish.journal.authentications.HashAuthManager;
+import net.viperfish.journal.secureAlgs.Digester;
 import net.viperfish.journal.secureAlgs.JCEDigester;
 
 import org.junit.Assert;
@@ -13,7 +14,7 @@ public class HashAuthTest {
 
 	private AuthenticationManager auth;
 	private File dataDir;
-	private JCEDigester dig;
+	private Digester dig;
 
 	public HashAuthTest() {
 		dataDir = new File("data");
