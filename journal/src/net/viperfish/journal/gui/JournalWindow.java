@@ -86,7 +86,8 @@ public class JournalWindow extends JFrame {
 		searchField.setColumns(10);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane
+				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		contentPane.add(scrollPane, "cell 0 3 4 1,grow");
 
 		entryList = new JList<Journal>();
@@ -95,13 +96,16 @@ public class JournalWindow extends JFrame {
 		entryList.setCellRenderer(new JournalCellRenderer());
 		updateEntries();
 	}
+
 	private int nextID = 0;
+
 	/**
 	 * Update entryList based off new Search Parameter if they exist, otherwise
 	 * show full list.
 	 */
 	public void updateEntries() {
 		new Thread(new Runnable() {
+			@Override
 			public synchronized void run() {
 				int id = nextID;
 				nextID++;
@@ -112,21 +116,32 @@ public class JournalWindow extends JFrame {
 				// use
 				// Normal List All Option.
 				if (query.length() > 0) {
-					System.out.println("Searching for '"+query+"' "+id);
-					OperationWithResult<Set<Journal>> ops = of.getSearchOperation(query);
+					System.out.println("Searching for '" + query + "' " + id);
+					OperationWithResult<Set<Journal>> ops = of
+							.getSearchOperation(query);
 					e.submit(ops);
+					System.err.println("submitted");
 					// Convert Set to List
 					Set<Journal> journals = ops.getResult();
 					journalList = new ArrayList<Journal>(journals);
+					for (Journal i : journalList) {
+						System.err.println("got:" + i);
+					}
 				} else {
 					System.out.println("Showing All " + id);
-					OperationWithResult<List<Journal>> ops = of.getListAllOperation();
+					OperationWithResult<List<Journal>> ops = of
+							.getListAllOperation();
 					e.submit(ops);
+					System.err.println("submitted");
 					journalList = ops.getResult();
+					for (Journal i : journalList) {
+						System.err.println("got:" + i);
+					}
 				}
-				System.out.println("done "+id);
+				System.out.println("done " + id);
 				// Update List Model
-				JournalListModel model = (JournalListModel) entryList.getModel();
+				JournalListModel model = (JournalListModel) entryList
+						.getModel();
 				model.setJournals(journalList);
 			}
 		}).start();

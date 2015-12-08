@@ -12,11 +12,13 @@ public class SingleThreadedOperationExecutor implements OperationExecutor {
 	private Thread workerThread;
 	private List<Operation> queue;
 	private List<Throwable> exceptions;
+	private Object mutex;
 
 	public SingleThreadedOperationExecutor() {
 		queue = new LinkedList<Operation>();
 		exceptions = new LinkedList<Throwable>();
 		exceptions = Collections.synchronizedList(exceptions);
+		mutex = new Object();
 		workerThread = new Thread(new Runnable() {
 
 			@Override
@@ -24,11 +26,13 @@ public class SingleThreadedOperationExecutor implements OperationExecutor {
 				System.err.println("starting worker");
 				while (true) {
 					if (Thread.interrupted()) {
+						System.err.println("Thread is interrupted");
 						return;
 					}
-					synchronized (SingleThreadedOperationExecutor.this) {
+					synchronized (mutex) {
 						try {
-							SingleThreadedOperationExecutor.this.wait();
+							System.err.println("going to sleep");
+							mutex.wait();
 						} catch (InterruptedException e) {
 							return;
 						}
@@ -64,9 +68,12 @@ public class SingleThreadedOperationExecutor implements OperationExecutor {
 	 * .journal.framework.Operation)
 	 */
 	@Override
-	public synchronized void submit(Operation o) {
-		queue.add(o);
-		this.notifyAll();
+	public void submit(Operation o) {
+		synchronized (mutex) {
+			queue.add(o);
+			mutex.notifyAll();
+		}
+		System.err.println("notifying");
 	}
 
 	/*
