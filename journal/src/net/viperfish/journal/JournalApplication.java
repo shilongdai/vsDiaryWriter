@@ -17,8 +17,8 @@ import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.persistent.IndexerFactory;
 import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
 import net.viperfish.journal.secure.SecureFactoryWrapper;
-import net.viperfish.journal.ui.SingleThreadedOperationExecutor;
 import net.viperfish.journal.ui.StandardOperationFactory;
+import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
 import net.viperfish.utils.config.Configuration;
 import net.viperfish.utils.index.Indexer;
 
@@ -83,7 +83,7 @@ public class JournalApplication {
 	 */
 	public static OperationExecutor getWorker() {
 		if (worker == null) {
-			worker = new SingleThreadedOperationExecutor();
+			worker = new ThreadPoolOperationExecutor();
 		}
 		return worker;
 	}
@@ -194,14 +194,14 @@ public class JournalApplication {
 	public static void main(String[] args) {
 		// TODO Finish Custom Arguments For Options
 		boolean consoleMode = System.console() != null;
-		if(args.length > 0){
-			if(args[0].equalsIgnoreCase("noconsole")){
+		if (args.length > 0) {
+			if (args[0].equalsIgnoreCase("noconsole")) {
 				consoleMode = false;
 			}
 		}
-		if(consoleMode){
+		if (consoleMode) {
 			ui = new CommandLineUserInterface();
-		}else{
+		} else {
 			ui = new GraphicalUserInterface();
 		}
 		try {

@@ -104,47 +104,40 @@ public class JournalWindow extends JFrame {
 	 * show full list.
 	 */
 	public void updateEntries() {
-		new Thread(new Runnable() {
-			@Override
-			public synchronized void run() {
-				int id = nextID;
-				nextID++;
-				// Search Parameters
-				String query = searchField.getText();
-				List<Journal> journalList = null;
-				// If Search Parameters exist, use Search Operations otherwise
-				// use
-				// Normal List All Option.
-				if (query.length() > 0) {
-					System.out.println("Searching for '" + query + "' " + id);
-					OperationWithResult<Set<Journal>> ops = of
-							.getSearchOperation(query);
-					e.submit(ops);
-					System.err.println("submitted");
-					// Convert Set to List
-					Set<Journal> journals = ops.getResult();
-					journalList = new ArrayList<Journal>(journals);
-					for (Journal i : journalList) {
-						System.err.println("got:" + i);
-					}
-				} else {
-					System.out.println("Showing All " + id);
-					OperationWithResult<List<Journal>> ops = of
-							.getListAllOperation();
-					e.submit(ops);
-					System.err.println("submitted");
-					journalList = ops.getResult();
-					for (Journal i : journalList) {
-						System.err.println("got:" + i);
-					}
-				}
-				System.out.println("done " + id);
-				// Update List Model
-				JournalListModel model = (JournalListModel) entryList
-						.getModel();
-				model.setJournals(journalList);
+		int id = nextID;
+		nextID++;
+		// Search Parameters
+		String query = searchField.getText();
+		List<Journal> journalList = null;
+		// If Search Parameters exist, use Search Operations otherwise
+		// use
+		// Normal List All Option.
+		if (query.length() > 0) {
+			System.out.println("Searching for '" + query + "' " + id);
+			OperationWithResult<Set<Journal>> ops = of
+					.getSearchOperation(query);
+			e.submit(ops);
+			System.err.println("submitted");
+			// Convert Set to List
+			Set<Journal> journals = ops.getResult();
+			journalList = new ArrayList<Journal>(journals);
+			for (Journal i : journalList) {
+				System.err.println("got:" + i);
 			}
-		}).start();
+		} else {
+			System.out.println("Showing All " + id);
+			OperationWithResult<List<Journal>> ops = of.getListAllOperation();
+			e.submit(ops);
+			System.err.println("submitted");
+			journalList = ops.getResult();
+			for (Journal i : journalList) {
+				System.err.println("got:" + i);
+			}
+		}
+		System.out.println("done " + id);
+		// Update List Model
+		JournalListModel model = (JournalListModel) entryList.getModel();
+		model.setJournals(journalList);
 
 	}
 
