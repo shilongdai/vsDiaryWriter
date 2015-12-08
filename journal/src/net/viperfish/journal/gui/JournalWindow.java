@@ -1,15 +1,19 @@
 package net.viperfish.journal.gui;
 
 import java.awt.EventQueue;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
@@ -23,15 +27,13 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
-import javax.swing.JPopupMenu;
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.JMenuItem;
-import java.awt.event.MouseMotionAdapter;
 
 public class JournalWindow extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1308925768920327211L;
 	private JPanel contentPane;
 	private JTextField searchField;
 	private OperationFactory of;
@@ -105,39 +107,43 @@ public class JournalWindow extends JFrame {
 		entryList.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				JournalCellRenderer cellRenderer = (JournalCellRenderer) entryList.getCellRenderer();
+				JournalCellRenderer cellRenderer = (JournalCellRenderer) entryList
+						.getCellRenderer();
 				cellRenderer.mouseMoved(e);
 			}
 		});
 		scrollPane.setViewportView(entryList);
 		entryList.setModel(new JournalListModel(new ArrayList<Journal>()));
 		entryList.setCellRenderer(new JournalCellRenderer());
-		
+
 		JPopupMenu popupMenu = new JPopupMenu();
 		JMenuItem mntmAddJournal = new JMenuItem("Add Journal");
 		popupMenu.add(mntmAddJournal);
-		
+
 		entryList.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mousePressed(MouseEvent e) {
 				if (e.isPopupTrigger()) {
 					showMenu(e);
 				}
 			}
+
+			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (e.isPopupTrigger()) {
 					showMenu(e);
 				}
 			}
+
 			private void showMenu(MouseEvent e) {
 				Journal journal = entryList.getSelectedValue();
-				if(journal == null){
+				if (journal == null) {
 					return;
 				}
-				popupMenu.show(entryList, e.getX(), e.getY()
-						);
+				popupMenu.show(entryList, e.getX(), e.getY());
 			}
 		});
-		
+
 		updateEntries();
 	}
 
@@ -173,7 +179,7 @@ public class JournalWindow extends JFrame {
 		JournalListModel model = (JournalListModel) entryList.getModel();
 		model.setJournals(journalList);
 		entryList.updateUI();
-		if(entryList.getSelectedIndex() == -1){
+		if (entryList.getSelectedIndex() == -1) {
 			entryList.setSelectedIndex(0);
 		}
 	}

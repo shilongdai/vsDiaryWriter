@@ -1,6 +1,8 @@
 package net.viperfish.journal.gui;
 
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,17 +14,20 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import net.miginfocom.swing.MigLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class PasswordPrompt extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2459610926470946507L;
 	private JPanel contentPane;
 	private JPasswordField passwordField;
 
 	/**
 	 * Create the frame.
-	 * @param graphicalUserInterface 
+	 * 
+	 * @param graphicalUserInterface
 	 */
 	public PasswordPrompt(GraphicalUserInterface graphicalUserInterface) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,27 +46,31 @@ public class PasswordPrompt extends JFrame {
 
 		passwordField = new JPasswordField();
 		contentPane.add(passwordField, "cell 0 2 2 1,growx");
-		
+
 		JButton btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				String password = getPassword();
-				if(graphicalUserInterface.auth(PasswordPrompt.this)){
+				if (graphicalUserInterface.auth(PasswordPrompt.this)) {
 					dispose();
 				}
 			}
 		});
 		btnLogin.setEnabled(false);
-		
+
 		passwordField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
 			public void removeUpdate(DocumentEvent e) {
 				update();
 			}
 
+			@Override
 			public void insertUpdate(DocumentEvent e) {
 				update();
 			}
 
+			@Override
 			public void changedUpdate(DocumentEvent e) {
 				update();
 			}
