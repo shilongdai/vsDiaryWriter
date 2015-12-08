@@ -21,6 +21,7 @@ public class SingleThreadedOperationExecutor implements OperationExecutor {
 
 			@Override
 			public void run() {
+				System.err.println("starting worker");
 				while (true) {
 					if (Thread.interrupted()) {
 						return;
@@ -31,14 +32,19 @@ public class SingleThreadedOperationExecutor implements OperationExecutor {
 						} catch (InterruptedException e) {
 							return;
 						}
+						System.out.println("Awaken");
 						if (!queue.isEmpty()) {
 							for (Operation i : queue) {
 								try {
+									System.err.println("executing:"
+											+ i.getClass().getCanonicalName());
 									i.execute();
 								} catch (Throwable e) {
 									exceptions.add(e);
+									e.printStackTrace();
 								}
 								queue.remove(i);
+								System.err.println("complete");
 							}
 						}
 					}

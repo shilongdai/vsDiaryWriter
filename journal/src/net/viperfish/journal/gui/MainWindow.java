@@ -40,7 +40,8 @@ public class MainWindow extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("inset 0, fill", "[grow][][grow][]", "[][][][grow]"));
+		contentPane.setLayout(new MigLayout("inset 0, fill",
+				"[grow][][grow][]", "[][][][grow]"));
 
 		JLabel lblJournalTitle = new JLabel("Journal 2");
 		lblJournalTitle.setFont(GraphicalUserInterface.defaultDialogTitleFont);
@@ -60,14 +61,17 @@ public class MainWindow extends JFrame {
 		searchField = new JTextField();
 
 		searchField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
 			public void removeUpdate(DocumentEvent e) {
 				update();
 			}
 
+			@Override
 			public void insertUpdate(DocumentEvent e) {
 				update();
 			}
 
+			@Override
 			public void changedUpdate(DocumentEvent e) {
 				update();
 			}
@@ -90,19 +94,21 @@ public class MainWindow extends JFrame {
 		List<Journal> journalList = null;
 		String query = searchField.getText();
 		if (query.length() > 0) {
-			OperationWithResult<Set<Journal>> ops = this.ops.getSearchOperation(query);
+			OperationWithResult<Set<Journal>> ops = this.ops
+					.getSearchOperation(query);
 			e.submit(ops);
 			Set<Journal> journals = ops.getResult();
 			journalList = new ArrayList<Journal>(journals);
 		} else {
-			OperationWithResult<List<Journal>> ops = this.ops.getListAllOperation();
+			OperationWithResult<List<Journal>> ops = this.ops
+					.getListAllOperation();
 			e.submit(ops);
 			journalList = ops.getResult();
 		}
 		JournalListModel model = (JournalListModel) entryList.getModel();
 		model.setJournals(journalList);
-		System.out.println("done");
-		
+		System.err.println("done");
+
 	}
 
 	public void editJournal(Journal journal) {
