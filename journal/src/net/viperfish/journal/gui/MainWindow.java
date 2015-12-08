@@ -20,6 +20,8 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 public class MainWindow extends JFrame {
 
@@ -82,21 +84,31 @@ public class MainWindow extends JFrame {
 		});
 		contentPane.add(searchField, "cell 2 2 2 1,growx");
 		searchField.setColumns(10);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		contentPane.add(scrollPane, "cell 0 3 4 1,grow");
 
 		entryList = new JList<Journal>();
-		contentPane.add(entryList, "cell 0 3 4 1,grow");
+		scrollPane.setViewportView(entryList);
 		entryList.setModel(new JournalListModel(new ArrayList<Journal>()));
 		entryList.setCellRenderer(new JournalCellRenderer(this));
 		updateEntries();
 	}
 
+	/**
+	 * Update entryList based off new Search Parameter if they exist, otherwise show full list.
+	 */
 	public void updateEntries() {
-		List<Journal> journalList = null;
+		// Search Parameters
 		String query = searchField.getText();
+		List<Journal> journalList = null;
+		// If Search Parameters exist, use Search Operations otherwise use Normal List All Option.
 		if (query.length() > 0) {
 			OperationWithResult<Set<Journal>> ops = this.ops
 					.getSearchOperation(query);
 			e.submit(ops);
+			// Convert Set to List
 			Set<Journal> journals = ops.getResult();
 			journalList = new ArrayList<Journal>(journals);
 		} else {
@@ -105,6 +117,7 @@ public class MainWindow extends JFrame {
 			e.submit(ops);
 			journalList = ops.getResult();
 		}
+		// Update List Model
 		JournalListModel model = (JournalListModel) entryList.getModel();
 		model.setJournals(journalList);
 		System.err.println("done");
