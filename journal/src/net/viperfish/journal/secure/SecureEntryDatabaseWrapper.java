@@ -220,8 +220,16 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 		}
 		mac.setMode(Configuration.get("secureEntryWrapper").getProperty(
 				"MacAlgorithm"));
-		enc.setMode(Configuration.get("secureEntryWrapper").getProperty(
-				"EncryptionMethod"));
+		String mode = new String();
+		mode += Configuration.get("secureEntryWrapper").getProperty(
+				"EncryptionMethod");
+		mode += "/";
+		mode += Configuration.get("secureEntryWrapper").getProperty(
+				"EncryptionMode");
+		mode += "/";
+		mode += Configuration.get("secureEntryWrapper").getProperty(
+				"EncryptionPadding");
+		enc.setMode(mode);
 		dig.setMode("SHA-512");
 	}
 
