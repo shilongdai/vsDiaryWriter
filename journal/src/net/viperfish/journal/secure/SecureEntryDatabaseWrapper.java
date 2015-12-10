@@ -38,14 +38,21 @@ import net.viperfish.journal.secureAlgs.HMac;
 import net.viperfish.journal.secureAlgs.JCEDigester;
 import net.viperfish.journal.secureAlgs.MacDigester;
 import net.viperfish.utils.config.ComponentConfig;
+import net.viperfish.utils.config.ComponentConfigObserver;
 import net.viperfish.utils.config.Configuration;
 
 import org.apache.commons.codec.binary.Base64;
 
-public class SecureEntryDatabaseWrapper implements EntryDatabase {
+public class SecureEntryDatabaseWrapper implements EntryDatabase,
+		ComponentConfigObserver {
+
+	private static SecureEntryWrapperConfig config;
 
 	public static ComponentConfig config() {
-		return new SecureEntryWrapperConfig();
+		if (config == null) {
+			config = new SecureEntryWrapperConfig();
+		}
+		return config;
 	}
 
 	private File saltStore;
@@ -250,6 +257,7 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 		initAlgorithms();
 		initKDF();
 		setPassword(password);
+		config.addObserver(this);
 	}
 
 	@Override
@@ -324,6 +332,18 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase {
 		macIV = new byte[mac.getIvLength()];
 		Arrays.fill(macIV, (byte) 0);
 		mac.setIv(macIV);
+	}
+
+	@Override
+	public void sendNotify(ComponentConfig c) {
+		List<Journal> all = this.getAll();
+		this.clear();
+		initAlgorithms();
+		for (Journal i : all) {
+			this.addEntry(i);
+		}
+		return;
+
 	}
 
 }
