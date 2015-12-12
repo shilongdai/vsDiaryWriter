@@ -2,7 +2,7 @@ package test.java.dbTests;
 
 import java.io.File;
 
-import net.viperfish.dbDatabase.H2EntryDatabase;
+import net.viperfish.journal.dbDatabase.H2EntryDatabase;
 import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.utils.config.Configuration;
 

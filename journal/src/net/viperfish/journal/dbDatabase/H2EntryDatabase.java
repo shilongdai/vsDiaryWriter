@@ -1,4 +1,4 @@
-package net.viperfish.dbDatabase;
+package net.viperfish.journal.dbDatabase;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,13 +21,18 @@ public class H2EntryDatabase extends HibernateEntryDatabase {
 		cfg.addAnnotatedClass(Journal.class);
 		cfg.setProperty("hibernate.connection.driver_class", Driver.class.getCanonicalName());
 		try {
-			cfg.setProperty("hibernate.connection.url", "jdbc:h2:" + dataDir.getCanonicalPath() + "/journalEntries");
+			cfg.setProperty("hibernate.connection.url",
+					"jdbc:h2:file:" + dataDir.getCanonicalPath() + "/journalEntries");
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		cfg.setProperty("hibernate.connection.username", "journalManager");
 		cfg.setProperty("hibernate.connection.password", "journalManager");
 		cfg.setProperty("hibernate.dialect", H2Dialect.class.getCanonicalName());
+		cfg.setProperty("hibernate.c3p0.min_size", "1");
+		cfg.setProperty("hibernate.c3p0.max_size", "10");
+		cfg.setProperty("hibernate.c3p0.timeout", "1800");
+		cfg.setProperty("hibernate.c3p0.max_statements", "50");
 		cfg.setProperty("hibernate.hbm2ddl.auto", "update");
 		factory = cfg.buildSessionFactory();
 		s = factory.openSession();

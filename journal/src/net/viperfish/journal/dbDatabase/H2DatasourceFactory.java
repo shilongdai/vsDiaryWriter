@@ -1,4 +1,4 @@
-package net.viperfish.dbDatabase;
+package net.viperfish.journal.dbDatabase;
 
 import java.io.File;
 
