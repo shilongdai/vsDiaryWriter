@@ -42,7 +42,7 @@ public class JournalApplication {
 	private static boolean firstRun;
 	private static File dataDir;
 	private static AuthenticationManagerFactory authFactory;
-	private static final boolean unitTest = false;
+	private static boolean unitTest = false;
 	private static String password;
 	private static SystemConfig sysConf;
 
@@ -68,7 +68,11 @@ public class JournalApplication {
 		configFile = new File("config.xml");
 		if (!configFile.exists()) {
 		}
-		dataDir = new File("data");
+		if (!unitTest) {
+			dataDir = new File("data");
+		} else {
+			dataDir = new File("test");
+		}
 		if (!dataDir.exists()) {
 			firstRun = true;
 			dataDir.mkdir();
@@ -189,6 +193,10 @@ public class JournalApplication {
 			tmp.setPassword(getPassword());
 		}
 
+	}
+
+	public static void setUnitTest(boolean isEnable) {
+		unitTest = isEnable;
 	}
 
 	public static void main(String[] args) {

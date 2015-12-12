@@ -126,8 +126,8 @@ public abstract class FileEntryDatabase implements EntryDatabase {
 
 	protected abstract void writeFile(File path, String data);
 
-	public FileEntryDatabase(File dataDir) {
-		fStorage = dataDir;
+	public FileEntryDatabase(File dataFile) {
+		fStorage = dataFile;
 		json = new JsonGenerator();
 		buffer = new HashMap<Long, Journal>();
 		nextId = new Long(0);
@@ -178,7 +178,7 @@ public abstract class FileEntryDatabase implements EntryDatabase {
 	public synchronized void clear() {
 		buffer.clear();
 		nextId = new Long(0);
-		flush();
+		fStorage.delete();
 	}
 
 }
