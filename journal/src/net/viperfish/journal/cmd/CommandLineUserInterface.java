@@ -196,6 +196,7 @@ public class CommandLineUserInterface extends UserInterface {
 			out.println("getEntry [id]: to view a entry with id of [id]");
 			out.println("search [query-p1 query-p2 ...]: to search with query");
 			out.println("listAll: to list all entries");
+			out.println("quit");
 			out.flush();
 		}
 		if (e.hasException()) {
@@ -204,6 +205,11 @@ public class CommandLineUserInterface extends UserInterface {
 	}
 
 	private void displayEntry(Journal result) {
+		if (result == null) {
+			out.println("Journal Not Found");
+			out.flush();
+			return;
+		}
 		out.println("subject:" + result.getSubject());
 		out.println("Date:" + result.getDate());
 		out.println("content:");
