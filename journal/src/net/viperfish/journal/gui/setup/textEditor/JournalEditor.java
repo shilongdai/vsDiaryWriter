@@ -57,6 +57,7 @@ public class JournalEditor extends JFrame {
 
 		JButton btnNewButton = new JButton("Save");
 		btnNewButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				saveJournal();
 			}
@@ -68,6 +69,7 @@ public class JournalEditor extends JFrame {
 
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
@@ -91,7 +93,7 @@ public class JournalEditor extends JFrame {
 
 	public void saveJournal() {
 		boolean isNew = false;
-		if (currentJournal == null) {
+		if (currentJournal.getId() == null) {
 			currentJournal = new Journal();
 			isNew = true;
 		}
@@ -119,6 +121,7 @@ public class JournalEditor extends JFrame {
 		});
 	}
 
+	@Override
 	public void setVisible(boolean b) {
 		super.setVisible(b);
 		if (b) {
