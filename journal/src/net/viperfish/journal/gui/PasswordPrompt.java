@@ -16,6 +16,10 @@ import net.miginfocom.swing.MigLayout;
 
 public class PasswordPrompt extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2459610926470946507L;
 	private JPanel contentPane;
 	private JPasswordField passwordField;
 	private JButton btnLogin;
@@ -47,14 +51,17 @@ public class PasswordPrompt extends JFrame {
 		contentPane.add(passwordField, "cell 1 3,grow");
 
 		passwordField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
 			public void removeUpdate(DocumentEvent e) {
 				update();
 			}
 
+			@Override
 			public void insertUpdate(DocumentEvent e) {
 				update();
 			}
 
+			@Override
 			public void changedUpdate(DocumentEvent e) {
 				update();
 			}

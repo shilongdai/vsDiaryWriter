@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -13,11 +12,15 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -30,13 +33,15 @@ import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.gui.setup.textEditor.JournalEditor;
-import javax.swing.ListSelectionModel;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JSeparator;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class JournalWindow extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1308925768920327211L;
 	private JPanel contentPane;
 	private JTextField searchField;
 	private OperationFactory of;
@@ -48,18 +53,24 @@ public class JournalWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public JournalWindow(GraphicalUserInterface userInterface) {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				JournalApplication.cleanUp();
+			}
+		});
 		this.userInterface = userInterface;
 		of = JournalApplication.getOperationFactory();
 		e = JournalApplication.getWorker();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 820, 541);
-		
+
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
-		
+
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
-		
+
 		JMenuItem mntmNew = new JMenuItem("New");
 		mntmNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -67,10 +78,10 @@ public class JournalWindow extends JFrame {
 			}
 		});
 		mnFile.add(mntmNew);
-		
+
 		JSeparator separator = new JSeparator();
 		mnFile.add(separator);
-		
+
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mnFile.add(mntmExit);
 		contentPane = new JPanel();
@@ -133,6 +144,7 @@ public class JournalWindow extends JFrame {
 		entryList.setCellRenderer(new JournalCellRenderer());
 
 		entryList.addMouseListener(new MouseAdapter() {
+
 			public void mousePressed(MouseEvent e) {
 				if (e.isPopupTrigger()) {
 					showMenu(e);
@@ -148,7 +160,7 @@ public class JournalWindow extends JFrame {
 			private void showMenu(MouseEvent e) {
 				JournalCellRenderer cellRenderer = (JournalCellRenderer) entryList.getCellRenderer();
 				cellRenderer.updateMouseSelection(e);
-				
+
 				Journal journal = entryList.getSelectedValue();
 
 				JPopupMenu popupMenu = new JPopupMenu();
@@ -166,9 +178,10 @@ public class JournalWindow extends JFrame {
 				}
 				popupMenu.show(entryList, e.getX(), e.getY());
 			}
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount() == 2){
+				if (e.getClickCount() == 2) {
 					Journal journal = entryList.getSelectedValue();
 					editJournal(journal);
 				}
