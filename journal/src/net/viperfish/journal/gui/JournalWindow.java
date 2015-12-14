@@ -1,9 +1,10 @@
 package net.viperfish.journal.gui;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -11,11 +12,15 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -27,6 +32,9 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
+import net.viperfish.journal.gui.setup.textEditor.JournalEditor;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class JournalWindow extends JFrame {
 
@@ -39,20 +47,65 @@ public class JournalWindow extends JFrame {
 	private OperationFactory of;
 	private OperationExecutor e;
 	private JList<Journal> entryList;
+	private GraphicalUserInterface userInterface;
 
 	/**
 	 * Create the frame.
 	 */
-	public JournalWindow() {
+	public JournalWindow(GraphicalUserInterface userInterface) {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				JournalApplication.cleanUp();
+				System.exit(0);
+			}
+		});
+		this.userInterface = userInterface;
 		of = JournalApplication.getOperationFactory();
 		e = JournalApplication.getWorker();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 820, 541);
+
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+
+		JMenu mnFile = new JMenu("File");
+		menuBar.add(mnFile);
+
+		JMenuItem mntmNew = new JMenuItem("New");
+		mntmNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addJournal();
+			}
+		});
+		mnFile.add(mntmNew);
+
+		JSeparator separator = new JSeparator();
+		mnFile.add(separator);
+
+		JMenuItem mntmExit = new JMenuItem("Exit");
+		mntmExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		mnFile.add(mntmExit);
+		
+		JMenu mnHelp = new JMenu("Help");
+		menuBar.add(mnHelp);
+		
+		JMenuItem mntmAbout = new JMenuItem("About");
+		mntmAbout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AboutDialog dialog = new AboutDialog(JournalWindow.this);
+				dialog.setVisible(true);
+			}
+		});
+		mnHelp.add(mntmAbout);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("inset 0, fill",
-				"[grow][][grow][]", "[][][][grow]"));
+		contentPane.setLayout(new MigLayout("inset 0, fill", "[grow][][grow][]", "[][][][grow]"));
 
 		JLabel lblJournalTitle = new JLabel("Journal 2");
 		lblJournalTitle.setFont(GraphicalUserInterface.defaultDialogTitleFont);
@@ -99,36 +152,23 @@ public class JournalWindow extends JFrame {
 		searchField.setColumns(10);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane
-				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		contentPane.add(scrollPane, "cell 0 3 4 1,grow");
 
 		entryList = new JList<Journal>();
-		entryList.addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseMoved(MouseEvent e) {
-				JournalCellRenderer cellRenderer = (JournalCellRenderer) entryList
-						.getCellRenderer();
-				cellRenderer.mouseMoved(e);
-			}
-		});
+		entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scrollPane.setViewportView(entryList);
 		entryList.setModel(new JournalListModel(new ArrayList<Journal>()));
 		entryList.setCellRenderer(new JournalCellRenderer());
 
-		JPopupMenu popupMenu = new JPopupMenu();
-		JMenuItem mntmAddJournal = new JMenuItem("Add Journal");
-		popupMenu.add(mntmAddJournal);
-
 		entryList.addMouseListener(new MouseAdapter() {
-			@Override
+
 			public void mousePressed(MouseEvent e) {
 				if (e.isPopupTrigger()) {
 					showMenu(e);
 				}
 			}
 
-			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (e.isPopupTrigger()) {
 					showMenu(e);
@@ -136,11 +176,33 @@ public class JournalWindow extends JFrame {
 			}
 
 			private void showMenu(MouseEvent e) {
+				JournalCellRenderer cellRenderer = (JournalCellRenderer) entryList.getCellRenderer();
+				cellRenderer.updateMouseSelection(e);
+
 				Journal journal = entryList.getSelectedValue();
+
+				JPopupMenu popupMenu = new JPopupMenu();
 				if (journal == null) {
-					return;
+					JMenuItem mntmAddJournal = new JMenuItem("Add Journal");
+					popupMenu.add(mntmAddJournal);
+
+					mntmAddJournal.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							addJournal();
+						}
+					});
+				} else {
+					// Journal options
 				}
 				popupMenu.show(entryList, e.getX(), e.getY());
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					Journal journal = entryList.getSelectedValue();
+					editJournal(journal);
+				}
 			}
 		});
 
@@ -160,8 +222,7 @@ public class JournalWindow extends JFrame {
 		// Normal List All Option.
 		if (query.length() > 0) {
 			System.out.println("Searching for '" + query + "'");
-			OperationWithResult<Set<Journal>> ops = of
-					.getSearchOperation(query);
+			OperationWithResult<Set<Journal>> ops = of.getSearchOperation(query);
 			e.submit(ops);
 			System.err.println("submitted");
 			// Convert Set to List
@@ -179,13 +240,16 @@ public class JournalWindow extends JFrame {
 		JournalListModel model = (JournalListModel) entryList.getModel();
 		model.setJournals(journalList);
 		entryList.updateUI();
-		if (entryList.getSelectedIndex() == -1) {
-			entryList.setSelectedIndex(0);
-		}
 	}
 
 	public void editJournal(Journal journal) {
-		// TODO Edit
+		JournalEditor editor = new JournalEditor(this, journal);
+		editor.setVisible(true);
+	}
+
+	public void addJournal() {
+		Journal journal = new Journal();
+		editJournal(journal);
 	}
 
 }

@@ -34,7 +34,7 @@ public class GraphicalUserInterface extends UserInterface {
 	}
 
 	public void run() {
-		window = new JournalWindow();
+		window = new JournalWindow(this);
 		window.setVisible(true);
 	}
 
