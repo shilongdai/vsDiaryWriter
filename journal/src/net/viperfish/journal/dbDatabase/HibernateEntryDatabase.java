@@ -1,6 +1,7 @@
 package net.viperfish.journal.dbDatabase;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import org.hibernate.Session;
 
@@ -10,6 +11,10 @@ import net.viperfish.journal.persistent.EntryDatabase;
 public abstract class HibernateEntryDatabase implements EntryDatabase {
 
 	protected abstract Session getSession();
+
+	{
+		java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
+	}
 
 	@Override
 	public Journal addEntry(Journal j) {
