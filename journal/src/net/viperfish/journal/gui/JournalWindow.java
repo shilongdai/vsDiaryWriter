@@ -57,6 +57,7 @@ public class JournalWindow extends JFrame {
 			@Override
 			public void windowClosed(WindowEvent e) {
 				JournalApplication.cleanUp();
+				System.exit(0);
 			}
 		});
 		this.userInterface = userInterface;
@@ -83,7 +84,24 @@ public class JournalWindow extends JFrame {
 		mnFile.add(separator);
 
 		JMenuItem mntmExit = new JMenuItem("Exit");
+		mntmExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
 		mnFile.add(mntmExit);
+		
+		JMenu mnHelp = new JMenu("Help");
+		menuBar.add(mnHelp);
+		
+		JMenuItem mntmAbout = new JMenuItem("About");
+		mntmAbout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AboutDialog dialog = new AboutDialog(JournalWindow.this);
+				dialog.setVisible(true);
+			}
+		});
+		mnHelp.add(mntmAbout);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
