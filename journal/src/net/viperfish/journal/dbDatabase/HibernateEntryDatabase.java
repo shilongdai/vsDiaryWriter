@@ -14,6 +14,7 @@ public abstract class HibernateEntryDatabase implements EntryDatabase {
 
 	{
 		java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
+		java.util.logging.Logger.getLogger("com.mchange").setLevel(Level.OFF);
 	}
 
 	@Override
