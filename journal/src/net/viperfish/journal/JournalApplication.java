@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Security;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import net.viperfish.journal.auth.AuthenticationManager;
 import net.viperfish.journal.auth.AuthenticationManagerFactory;
 import net.viperfish.journal.authentications.HashAuthFactory;
@@ -20,10 +22,8 @@ import net.viperfish.journal.secure.SecureFactoryWrapper;
 import net.viperfish.journal.ui.StandardOperationFactory;
 import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
 import net.viperfish.utils.config.Configuration;
+import net.viperfish.utils.file.RecursiveDelete;
 import net.viperfish.utils.index.Indexer;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 import test.java.StubDataSourceFactory;
 
 /**
@@ -38,7 +38,6 @@ public class JournalApplication {
 	private static UserInterface ui;
 	private static OperationExecutor worker;
 	private static OperationFactory opsFactory;
-	private static File configFile;
 	private static boolean firstRun;
 	private static File dataDir;
 	private static AuthenticationManagerFactory authFactory;
@@ -47,15 +46,18 @@ public class JournalApplication {
 	private static SystemConfig sysConf;
 
 	static {
-		Security.addProvider(new BouncyCastleProvider());
 		initFileStructure();
+		Security.addProvider(new BouncyCastleProvider());
 		sysConf = new SystemConfig();
-		Configuration.put(SecureEntryDatabaseWrapper.config().getUnitName(),
-				SecureEntryDatabaseWrapper.config());
+		Configuration.put(SecureEntryDatabaseWrapper.config().getUnitName(), SecureEntryDatabaseWrapper.config());
 		Configuration.put(sysConf.getUnitName(), sysConf);
 	}
 
 	public JournalApplication() {
+	}
+
+	private static void deleteAll() {
+		new RecursiveDelete().recursiveRm(dataDir);
 	}
 
 	public static void cleanUp() {
@@ -65,13 +67,11 @@ public class JournalApplication {
 	}
 
 	private static void initFileStructure() {
-		configFile = new File("config.xml");
-		if (!configFile.exists()) {
-		}
 		if (!unitTest) {
 			dataDir = new File("data");
 		} else {
 			dataDir = new File("test");
+			dataDir.deleteOnExit();
 		}
 		if (!dataDir.exists()) {
 			firstRun = true;
@@ -104,14 +104,11 @@ public class JournalApplication {
 				df = new StubDataSourceFactory();
 			} else {
 				try {
-					Class<?> selected = Class.forName(sysConf
-							.getProperty("DataSourceFactory"));
-					DataSourceFactory tmp = (DataSourceFactory) selected
-							.newInstance();
+					Class<?> selected = Class.forName(sysConf.getProperty("DataSourceFactory"));
+					DataSourceFactory tmp = (DataSourceFactory) selected.newInstance();
 					tmp.setDataDirectory(dataDir);
 					df = new SecureFactoryWrapper(tmp, password);
-				} catch (ClassNotFoundException | InstantiationException
-						| IllegalAccessException e) {
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 					throw new RuntimeException(e);
 				}
 			}
@@ -128,11 +125,9 @@ public class JournalApplication {
 	public static IndexerFactory getIndexerFactory() {
 		if (indexerFactory == null) {
 			try {
-				indexerFactory = (IndexerFactory) Class.forName(
-						sysConf.getProperty("IndexerFactory")).newInstance();
+				indexerFactory = (IndexerFactory) Class.forName(sysConf.getProperty("IndexerFactory")).newInstance();
 				indexerFactory.setDataDir(dataDir);
-			} catch (InstantiationException | IllegalAccessException
-					| ClassNotFoundException e) {
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -186,10 +181,8 @@ public class JournalApplication {
 	 */
 	public static void setPassword(String password) {
 		JournalApplication.password = password;
-		if (getDataSourceFactory().getClass().isInstance(
-				SecureFactoryWrapper.class)) {
-			SecureEntryDatabaseWrapper tmp = (SecureEntryDatabaseWrapper) df
-					.createDatabaseObject();
+		if (getDataSourceFactory().getClass().isInstance(SecureFactoryWrapper.class)) {
+			SecureEntryDatabaseWrapper tmp = (SecureEntryDatabaseWrapper) df.createDatabaseObject();
 			tmp.setPassword(getPassword());
 		}
 
@@ -200,7 +193,22 @@ public class JournalApplication {
 	}
 
 	public static void main(String[] args) {
-		// TODO Finish Custom Arguments For Options
+		File lockFile = new File(".setUpLock");
+		if (lockFile.exists()) {
+			firstRun = true;
+			System.err.println("dataDir:" + dataDir);
+			deleteAll();
+			initFileStructure();
+		} else {
+			try {
+				if (firstRun) {
+					lockFile.createNewFile();
+				}
+			} catch (IOException e) {
+				System.err.println("failed to create lock file: exiting");
+				return;
+			}
+		}
 		boolean consoleMode = System.console() != null;
 		if (args.length > 0) {
 			if (args[0].equalsIgnoreCase("noconsole")) {
@@ -222,14 +230,14 @@ public class JournalApplication {
 		ui.setAuthManager(getAuthFactory().getAuthenticator());
 		if (firstRun) {
 			ui.setup();
+			lockFile.delete();
 		}
 		password = ui.promptPassword();
 		ui.run();
 		try {
 			Configuration.persistAll();
 		} catch (IOException e) {
-			System.err
-					.println("critical error incountered while saving configuration, quitting");
+			System.err.println("critical error incountered while saving configuration, quitting");
 		}
 
 	}

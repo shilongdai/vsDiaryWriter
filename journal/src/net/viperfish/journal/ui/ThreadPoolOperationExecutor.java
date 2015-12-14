@@ -13,6 +13,7 @@ public class ThreadPoolOperationExecutor implements OperationExecutor {
 
 	private ExecutorService pool;
 	private List<Throwable> errors;
+	private ExceptionHandler e;
 
 	private class ExceptionHandler implements Thread.UncaughtExceptionHandler {
 
@@ -27,12 +28,13 @@ public class ThreadPoolOperationExecutor implements OperationExecutor {
 	public ThreadPoolOperationExecutor() {
 		errors = new LinkedList<Throwable>();
 		errors = java.util.Collections.synchronizedList(errors);
+		e = new ExceptionHandler();
 		pool = Executors.newSingleThreadExecutor(new ThreadFactory() {
 
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread t = new Thread(r);
-				t.setUncaughtExceptionHandler(new ExceptionHandler());
+				t.setUncaughtExceptionHandler(e);
 				return t;
 			}
 		});
