@@ -15,18 +15,16 @@ public class SecureEntryWrapperConfig extends ComponentConfig {
 	 */
 	private static final long serialVersionUID = 5227765591860888711L;
 
-	private Set<String> getEncryptionOptions() {
-		Set<String> result = new TreeSet<String>();
-		for (String i : AlgorithmSpec.getSupportedBlockCipher()) {
-			result.add("algorithm:" + i);
-		}
-		for (String i : AlgorithmSpec.getSupportedBlockCipherMode()) {
-			result.add("mode:" + i);
-		}
-		for (String i : AlgorithmSpec.getSupportedBlockCipherPadding()) {
-			result.add("padding:" + i);
-		}
-		return result;
+	private Set<String> getEncryptionMethods() {
+		return AlgorithmSpec.getSupportedBlockCipher();
+	}
+
+	private Set<String> getEncryptionModes() {
+		return AlgorithmSpec.getSupportedBlockCipherMode();
+	}
+
+	private Set<String> getEncryptionPadding() {
+		return AlgorithmSpec.getSupportedBlockCipherPadding();
 	}
 
 	private Set<String> getMacOptions() {
@@ -63,15 +61,18 @@ public class SecureEntryWrapperConfig extends ComponentConfig {
 
 	@Override
 	public List<String> requiredConfig() {
-		return new LinkedList<>();
+		List<String> result = new LinkedList<>();
+		result.add("EncryptionMethod");
+		return result;
 	}
 
 	@Override
 	public List<String> optionalConfig() {
 		List<String> result = new LinkedList<>();
-		result.add("EncryptionMethod");
 		result.add("MacMethod");
 		result.add("MacAlgorithm");
+		result.add("EncryptionMode");
+		result.add("EncryptionPadding");
 		return result;
 	}
 
@@ -79,17 +80,23 @@ public class SecureEntryWrapperConfig extends ComponentConfig {
 	public void fillInDefault() {
 		this.setProperty("MacMethod", "HMAC");
 		this.setProperty("EncryptionMethod", "AES/CFB/PKCS7PADDING");
+		this.setProperty("EncryptionMode", "CFB");
+		this.setProperty("EncryptionPadding", "PKCS7PADDING");
 		this.setProperty("MacAlgorithm", "SHA512");
 	}
 
 	@Override
 	public Set<String> getOptions(String key) {
 		if (key.equals("EncryptionMethod")) {
-			return getEncryptionOptions();
+			return getEncryptionMethods();
 		} else if (key.equals("MacMethod")) {
 			return getMacOptions();
 		} else if (key.equals("MacAlgorithm")) {
 			return getMacAlgOptions();
+		} else if (key.equals("EncryptionMode")) {
+			return getEncryptionModes();
+		} else if (key.equals("EncryptionPadding")) {
+			return getEncryptionPadding();
 		} else {
 			return new TreeSet<>();
 		}

@@ -27,7 +27,7 @@ public class ThreadPoolOperationExecutor implements OperationExecutor {
 	public ThreadPoolOperationExecutor() {
 		errors = new LinkedList<Throwable>();
 		errors = java.util.Collections.synchronizedList(errors);
-		pool = Executors.newCachedThreadPool(new ThreadFactory() {
+		pool = Executors.newSingleThreadExecutor(new ThreadFactory() {
 
 			@Override
 			public Thread newThread(Runnable r) {

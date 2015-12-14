@@ -1,24 +1,17 @@
-package test.java;
+package test.java.dbTests;
 
 import java.util.Date;
 import java.util.List;
 
-import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.persistent.EntryDatabase;
-import net.viperfish.utils.config.Configuration;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-public class DatabaseTest {
-	private EntryDatabase db;
+public abstract class DatabaseTest {
 
-	public DatabaseTest() {
-		Configuration.defaultAll();
-		JournalApplication.setPassword("password");
-		db = JournalApplication.getDataSourceFactory().createDatabaseObject();
-	}
+	protected abstract EntryDatabase getDB();
 
 	@Test
 	public void testAdd() {
@@ -27,7 +20,7 @@ public class DatabaseTest {
 		j.setSubject("test");
 		j.setDate(new Date());
 		j.setContent("content");
-		Journal result = db.addEntry(j);
+		Journal result = getDB().addEntry(j);
 		j.setId(result.getId());
 		Assert.assertEquals(true, result.equals(j));
 		cleanUp();
@@ -40,10 +33,10 @@ public class DatabaseTest {
 		j.setContent("test");
 		j.setDate(new Date());
 		j.setSubject("test");
-		Journal result = db.addEntry(j);
+		Journal result = getDB().addEntry(j);
 		j.setId(result.getId());
-		result = db.removeEntry(j.getId());
-		Assert.assertEquals(null, db.getEntry(j.getId()));
+		result = getDB().removeEntry(j.getId());
+		Assert.assertEquals(null, getDB().getEntry(j.getId()));
 		cleanUp();
 	}
 
@@ -54,9 +47,9 @@ public class DatabaseTest {
 		j.setContent("test");
 		j.setSubject("test");
 		j.setDate(new Date());
-		Journal result = db.addEntry(j);
+		Journal result = getDB().addEntry(j);
 		j.setId(result.getId());
-		Assert.assertEquals(true, db.getEntry(result.getId()).equals(j));
+		Assert.assertEquals(true, getDB().getEntry(result.getId()).equals(j));
 		cleanUp();
 	}
 
@@ -66,10 +59,10 @@ public class DatabaseTest {
 		j.setContent("test 1");
 		j.setDate(new Date());
 		j.setSubject("test");
-		Journal result = db.addEntry(j);
+		Journal result = getDB().addEntry(j);
 		Long id = result.getId();
 		j.setContent("test 2");
-		result = db.updateEntry(id, j);
+		result = getDB().updateEntry(id, j);
 		Assert.assertEquals("test 2", result.getContent());
 		cleanUp();
 	}
@@ -80,15 +73,15 @@ public class DatabaseTest {
 		j.setContent("1");
 		j.setSubject("1");
 		j.setDate(new Date());
-		Journal result = db.addEntry(j);
+		Journal result = getDB().addEntry(j);
 		j.setId(result.getId());
 		Journal i = new Journal();
 		i.setContent("2");
 		i.setSubject("2");
 		i.setDate(new Date());
-		result = db.addEntry(i);
+		result = getDB().addEntry(i);
 		i.setId(result.getId());
-		List<Journal> all = db.getAll();
+		List<Journal> all = getDB().getAll();
 		Assert.assertEquals(true, all.get(0).equals(j));
 		Assert.assertEquals(true, all.get(1).equals(i));
 		cleanUp();
@@ -96,24 +89,24 @@ public class DatabaseTest {
 
 	@Test
 	public void testClear() {
-		db.clear();
+		getDB().clear();
 		for (int k = 0; k < 100; ++k) {
 			Journal i = new Journal();
 			i.setDate(new Date());
 			i.setContent(Integer.toString(k));
 			i.setSubject(Integer.toString(k));
-			db.addEntry(i);
+			getDB().addEntry(i);
 		}
-		List<Journal> result = db.getAll();
+		List<Journal> result = getDB().getAll();
 		Assert.assertEquals(100, result.size());
-		db.clear();
-		List<Journal> cleared = db.getAll();
+		getDB().clear();
+		List<Journal> cleared = getDB().getAll();
 		Assert.assertEquals(0, cleared.size());
 		cleanUp();
 	}
 
 	public void cleanUp() {
-		db.clear();
+		getDB().clear();
 
 	}
 }

@@ -17,8 +17,8 @@ import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.persistent.IndexerFactory;
 import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
 import net.viperfish.journal.secure.SecureFactoryWrapper;
-import net.viperfish.journal.ui.SingleThreadedOperationExecutor;
 import net.viperfish.journal.ui.StandardOperationFactory;
+import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
 import net.viperfish.utils.config.Configuration;
 import net.viperfish.utils.index.Indexer;
 
@@ -42,7 +42,7 @@ public class JournalApplication {
 	private static boolean firstRun;
 	private static File dataDir;
 	private static AuthenticationManagerFactory authFactory;
-	private static final boolean unitTest = false;
+	private static boolean unitTest = false;
 	private static String password;
 	private static SystemConfig sysConf;
 
@@ -68,7 +68,11 @@ public class JournalApplication {
 		configFile = new File("config.xml");
 		if (!configFile.exists()) {
 		}
-		dataDir = new File("data");
+		if (!unitTest) {
+			dataDir = new File("data");
+		} else {
+			dataDir = new File("test");
+		}
 		if (!dataDir.exists()) {
 			firstRun = true;
 			dataDir.mkdir();
@@ -83,7 +87,7 @@ public class JournalApplication {
 	 */
 	public static OperationExecutor getWorker() {
 		if (worker == null) {
-			worker = new SingleThreadedOperationExecutor();
+			worker = new ThreadPoolOperationExecutor();
 		}
 		return worker;
 	}
@@ -189,6 +193,10 @@ public class JournalApplication {
 			tmp.setPassword(getPassword());
 		}
 
+	}
+
+	public static void setUnitTest(boolean isEnable) {
+		unitTest = isEnable;
 	}
 
 	public static void main(String[] args) {

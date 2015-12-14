@@ -19,7 +19,6 @@ import net.viperfish.journal.operation.GetAllOperation;
 import net.viperfish.journal.operation.GetEntryOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
 import net.viperfish.journal.persistent.EntryDatabase;
-import net.viperfish.utils.config.Configuration;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,8 +30,7 @@ public class OperationTest {
 	private ExecutorService threadpool;
 
 	public OperationTest() {
-		Configuration.defaultAll();
-		JournalApplication.setPassword("password");
+		JournalApplication.setUnitTest(true);
 		db = JournalApplication.getDataSourceFactory().createDatabaseObject();
 		indexer = (JournalIndexer) JournalApplication.getIndexerFactory()
 				.createIndexer();

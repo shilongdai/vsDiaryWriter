@@ -4,6 +4,17 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+@Entity
+@Table
 public class Journal implements Comparable<Journal> {
 	private String subject;
 	private Date date;
@@ -23,6 +34,7 @@ public class Journal implements Comparable<Journal> {
 		this.subject = src.getSubject();
 	}
 
+	@Basic
 	public String getSubject() {
 		return subject;
 	}
@@ -31,6 +43,7 @@ public class Journal implements Comparable<Journal> {
 		this.subject = subject;
 	}
 
+	@Temporal(TemporalType.DATE)
 	public Date getDate() {
 		return date;
 	}
@@ -39,6 +52,7 @@ public class Journal implements Comparable<Journal> {
 		this.date = date;
 	}
 
+	@Basic
 	public String getContent() {
 		return content;
 	}
@@ -47,6 +61,8 @@ public class Journal implements Comparable<Journal> {
 		this.content = content;
 	}
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {
 		return id;
 	}

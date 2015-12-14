@@ -103,8 +103,7 @@ public class CommandLineUserInterface extends UserInterface {
 		out.println("ID/Subject/Date");
 		Formatter f = new Formatter();
 		for (Journal i : j) {
-			f.format("%-4s %-20s %-20s \n", i.getId(), i.getSubject(),
-					i.getDate());
+			f.format("%-4s %-20s %-20s \n", i.getId(), i.getSubject(), i.getDate());
 		}
 		out.println(f.toString());
 		out.flush();
@@ -130,8 +129,7 @@ public class CommandLineUserInterface extends UserInterface {
 				query += " ";
 				query += command[i];
 			}
-			OperationWithResult<Set<Journal>> ops = this.ops
-					.getSearchOperation(query);
+			OperationWithResult<Set<Journal>> ops = this.ops.getSearchOperation(query);
 			e.submit(ops);
 			displayCollectionJournal(ops.getResult());
 		}
@@ -187,8 +185,7 @@ public class CommandLineUserInterface extends UserInterface {
 			displayEntry(get.getResult());
 		}
 		if (command[0].equals("listAll")) {
-			OperationWithResult<List<Journal>> ops = this.ops
-					.getListAllOperation();
+			OperationWithResult<List<Journal>> ops = this.ops.getListAllOperation();
 			e.submit(ops);
 			displayCollectionJournal(ops.getResult());
 		}
@@ -199,6 +196,7 @@ public class CommandLineUserInterface extends UserInterface {
 			out.println("getEntry [id]: to view a entry with id of [id]");
 			out.println("search [query-p1 query-p2 ...]: to search with query");
 			out.println("listAll: to list all entries");
+			out.println("quit");
 			out.flush();
 		}
 		if (e.hasException()) {
@@ -207,6 +205,11 @@ public class CommandLineUserInterface extends UserInterface {
 	}
 
 	private void displayEntry(Journal result) {
+		if (result == null) {
+			out.println("Journal Not Found");
+			out.flush();
+			return;
+		}
 		out.println("subject:" + result.getSubject());
 		out.println("Date:" + result.getDate());
 		out.println("content:");
@@ -229,11 +232,9 @@ public class CommandLineUserInterface extends UserInterface {
 			try {
 				executeCommand(command);
 			} catch (CompromisedDataException e) {
-				System.err
-						.println("Compromised or Corrupted Data Detected, please mannully discard compromised entry");
+				System.err.println("Compromised or Corrupted Data Detected, please mannully discard compromised entry");
 			} catch (Throwable e) {
-				System.err.println("Encountered critical error:" + e + ":"
-						+ e.getMessage());
+				System.err.println("Encountered critical error:" + e + ":" + e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -257,6 +258,7 @@ public class CommandLineUserInterface extends UserInterface {
 						continue;
 					}
 					i.setProperty(iter, preference);
+					break;
 				}
 			}
 		}

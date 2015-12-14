@@ -75,7 +75,9 @@ public class GZippedFileEntryDatabase extends FileEntryDatabase {
 			throw new RuntimeException(e);
 		} finally {
 			try {
-				out.close();
+				if (out != null) {
+					out.close();
+				}
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
