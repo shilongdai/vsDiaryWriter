@@ -4,14 +4,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import net.viperfish.journal.fileDatabase.GZippedDataSourceFactory;
+import org.reflections.Reflections;
+
+import net.viperfish.journal.dbDatabase.H2DatasourceFactory;
 import net.viperfish.journal.index.JournalIndexerFactory;
 import net.viperfish.journal.persistent.DataSourceFactory;
 import net.viperfish.journal.persistent.IndexerFactory;
 import net.viperfish.journal.secure.SecureFactoryWrapper;
 import net.viperfish.utils.config.ComponentConfig;
-
-import org.reflections.Reflections;
 
 public class SystemConfig extends ComponentConfig {
 
@@ -26,8 +26,8 @@ public class SystemConfig extends ComponentConfig {
 
 	private Set<String> availableDF() {
 		Set<String> available = new TreeSet<>();
-		Set<Class<? extends DataSourceFactory>> result = new Reflections(
-				"net.viperfish.journal").getSubTypesOf(DataSourceFactory.class);
+		Set<Class<? extends DataSourceFactory>> result = new Reflections("net.viperfish.journal")
+				.getSubTypesOf(DataSourceFactory.class);
 		result.remove(SecureFactoryWrapper.class);
 		for (Class<? extends DataSourceFactory> i : result) {
 			available.add(i.getCanonicalName());
@@ -37,8 +37,8 @@ public class SystemConfig extends ComponentConfig {
 
 	private Set<String> availableIF() {
 		Set<String> available = new TreeSet<>();
-		Set<Class<? extends IndexerFactory>> result = new Reflections(
-				"net.viperfish.journal").getSubTypesOf(IndexerFactory.class);
+		Set<Class<? extends IndexerFactory>> result = new Reflections("net.viperfish.journal")
+				.getSubTypesOf(IndexerFactory.class);
 		for (Class<? extends IndexerFactory> i : result) {
 			available.add(i.getCanonicalName());
 		}
@@ -60,10 +60,8 @@ public class SystemConfig extends ComponentConfig {
 
 	@Override
 	public void fillInDefault() {
-		this.setProperty("DataSourceFactory",
-				GZippedDataSourceFactory.class.getCanonicalName());
-		this.setProperty("IndexerFactory",
-				JournalIndexerFactory.class.getCanonicalName());
+		this.setProperty("DataSourceFactory", H2DatasourceFactory.class.getCanonicalName());
+		this.setProperty("IndexerFactory", JournalIndexerFactory.class.getCanonicalName());
 
 	}
 
