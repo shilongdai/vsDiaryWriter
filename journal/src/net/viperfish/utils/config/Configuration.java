@@ -8,25 +8,47 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.viperfish.utils.file.RecursiveDelete;
+
 /**
  * the configuration utility
  * 
  * @author sdai
- *
+ * 
  */
 public class Configuration {
 
 	private static Map<String, ComponentConfig> data;
 	private static File configDir;
+	private static String configDirPath;
+
+	private static File getConfigDir() {
+		if (configDir == null) {
+			configDir = new File(configDirPath);
+			if (!configDir.exists()) {
+				configDir.mkdir();
+			}
+		}
+		return configDir;
+	}
 
 	static {
 		data = new HashMap<String, ComponentConfig>();
-		configDir = new File("config");
-		if (!configDir.exists()) {
-			configDir.mkdir();
-		}
 	}
 
+	public static String getConfigDirPath() {
+		return configDirPath;
+	}
+
+	public static void setConfigDirPath(String configDirPath) {
+		Configuration.configDirPath = configDirPath;
+	}
+
+	
+	public static void clear() {
+		new RecursiveDelete().recursiveRm(getConfigDir());
+		data.clear();
+	}
 	/**
 	 * get a configuration unit with a id of key
 	 * 
@@ -60,6 +82,7 @@ public class Configuration {
 	 *             if any thing went wrong when storing
 	 */
 	public static void persistAll() throws IOException {
+		File configDir = getConfigDir();
 		for (Entry<String, ComponentConfig> i : data.entrySet()) {
 			i.getValue().setProperty("ConfigFileLocation",
 					configDir.getCanonicalPath() + "/" + i.getKey());
@@ -80,6 +103,7 @@ public class Configuration {
 	 *             if error on reading, and parsing
 	 */
 	public static void loadAll() throws IOException {
+		File configDir = getConfigDir();
 		for (Entry<String, ComponentConfig> i : data.entrySet()) {
 			i.getValue().setProperty("ConfigFileLocation",
 					configDir.getCanonicalPath() + "/" + i.getKey());

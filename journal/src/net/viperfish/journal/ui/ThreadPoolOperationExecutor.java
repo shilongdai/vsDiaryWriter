@@ -15,6 +15,22 @@ public class ThreadPoolOperationExecutor implements OperationExecutor {
 	private List<Throwable> errors;
 	private ExceptionHandler e;
 
+	private class OperationRunner implements Runnable {
+
+		private Operation o;
+		
+		public OperationRunner(Operation toRun) {
+			this.o = toRun;
+		}
+		
+		@Override
+		public void run() {
+			o.execute();
+			
+		}
+		
+	}
+	
 	private class ExceptionHandler implements Thread.UncaughtExceptionHandler {
 
 		@Override
@@ -41,16 +57,8 @@ public class ThreadPoolOperationExecutor implements OperationExecutor {
 	}
 
 	@Override
-	public void submit(final Operation o) {
-		pool.submit(new Runnable() {
-
-			@Override
-			public void run() {
-				o.execute();
-
-			}
-		});
-
+	public void submit(Operation o) {
+		pool.submit(new OperationRunner(o));
 	}
 
 	@Override

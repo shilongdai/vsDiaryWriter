@@ -239,7 +239,6 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 	}
 
 	private void initKDF() {
-		saltStore = new File("data/salt");
 		rand = new SecureRandom();
 		saltForKDF = new byte[10];
 		try {
@@ -250,8 +249,9 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 		loadSalt();
 	}
 
-	public SecureEntryDatabaseWrapper(EntryDatabase db, String password) {
+	public SecureEntryDatabaseWrapper(EntryDatabase db, String password, File salt) {
 		this.toWrap = db;
+		this.saltStore = salt;
 		initAlgorithms();
 		initKDF();
 		setPassword(password);

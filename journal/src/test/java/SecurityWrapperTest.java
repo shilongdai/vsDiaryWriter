@@ -1,5 +1,7 @@
 package test.java;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.Security;
 
 import net.viperfish.journal.framework.Journal;
@@ -16,10 +18,18 @@ public class SecurityWrapperTest {
 	private SecureEntryDatabaseWrapper wrapper;
 
 	public SecurityWrapperTest() {
+		File testDir = new File("test");
+		if(!testDir.exists()) {
+			testDir.mkdir();
+		}
 		Security.addProvider(new BouncyCastleProvider());
 		db = new DatabaseStub();
 		SecureEntryDatabaseWrapper.config().fillInDefault();
-		wrapper = new SecureEntryDatabaseWrapper(db, "password");
+		try {
+			wrapper = new SecureEntryDatabaseWrapper(db, "password", new File(testDir.getCanonicalPath()+ "/salt"));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		wrapper.setPassword("password");
 
 	}

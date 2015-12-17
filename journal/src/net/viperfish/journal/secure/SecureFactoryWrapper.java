@@ -1,6 +1,7 @@
 package net.viperfish.journal.secure;
 
 import java.io.File;
+import java.io.IOException;
 
 import net.viperfish.journal.persistent.DataSourceFactory;
 import net.viperfish.journal.persistent.EntryDatabase;
@@ -10,6 +11,7 @@ public class SecureFactoryWrapper implements DataSourceFactory {
 	private DataSourceFactory factory;
 	private EntryDatabase db;
 	private String password;
+	private File dataDir;
 
 	public SecureFactoryWrapper(DataSourceFactory toWrap, String password) {
 		this.factory = toWrap;
@@ -19,8 +21,12 @@ public class SecureFactoryWrapper implements DataSourceFactory {
 	@Override
 	public EntryDatabase createDatabaseObject() {
 		if (db == null) {
-			db = new SecureEntryDatabaseWrapper(factory.createDatabaseObject(),
-					password);
+			try {
+				db = new SecureEntryDatabaseWrapper(factory.createDatabaseObject(),
+						password, new File(dataDir.getCanonicalPath() + "/salt"));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		return db;
 	}
@@ -33,6 +39,7 @@ public class SecureFactoryWrapper implements DataSourceFactory {
 
 	@Override
 	public void setDataDirectory(File dir) {
+		this.dataDir = dir;
 		factory.setDataDirectory(dir);
 
 	}

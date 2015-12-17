@@ -49,6 +49,7 @@ public class JournalApplication {
 		initFileStructure();
 		Security.addProvider(new BouncyCastleProvider());
 		sysConf = new SystemConfig();
+		Configuration.setConfigDirPath("config");
 		Configuration.put(SecureEntryDatabaseWrapper.config().getUnitName(), SecureEntryDatabaseWrapper.config());
 		Configuration.put(sysConf.getUnitName(), sysConf);
 	}
@@ -58,6 +59,7 @@ public class JournalApplication {
 
 	private static void deleteAll() {
 		new RecursiveDelete().recursiveRm(dataDir);
+		Configuration.clear();
 	}
 
 	public static void cleanUp() {
@@ -71,7 +73,6 @@ public class JournalApplication {
 			dataDir = new File("data");
 		} else {
 			dataDir = new File("test");
-			dataDir.deleteOnExit();
 		}
 		if (!dataDir.exists()) {
 			firstRun = true;
@@ -106,8 +107,8 @@ public class JournalApplication {
 				try {
 					Class<?> selected = Class.forName(sysConf.getProperty("DataSourceFactory"));
 					DataSourceFactory tmp = (DataSourceFactory) selected.newInstance();
-					tmp.setDataDirectory(dataDir);
 					df = new SecureFactoryWrapper(tmp, password);
+					df.setDataDirectory(dataDir);
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 					throw new RuntimeException(e);
 				}
@@ -190,13 +191,14 @@ public class JournalApplication {
 
 	public static void setUnitTest(boolean isEnable) {
 		unitTest = isEnable;
+		deleteAll();
+		initFileStructure();
 	}
 
 	public static void main(String[] args) {
 		File lockFile = new File(".setUpLock");
 		if (lockFile.exists()) {
 			firstRun = true;
-			System.err.println("dataDir:" + dataDir);
 			deleteAll();
 			initFileStructure();
 		} else {
