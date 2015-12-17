@@ -37,7 +37,7 @@ public class OperationTest {
 		threadpool = Executors.newCachedThreadPool();
 	}
 
-	private void executeAsyncOperation(Operation ops) {
+	private void executeAsyncOperation(final Operation ops) {
 		threadpool.execute(new Runnable() {
 
 			@Override

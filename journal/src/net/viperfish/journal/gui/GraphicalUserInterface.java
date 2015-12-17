@@ -56,7 +56,7 @@ public class GraphicalUserInterface extends UserInterface {
 
 	boolean delay = true;
 
-	public void openAndWaitToDispose(JFrame jframe) {
+	public void openAndWaitToDispose(final JFrame jframe) {
 		delay = true;
 		new Thread(new Runnable() {
 			public void run() {

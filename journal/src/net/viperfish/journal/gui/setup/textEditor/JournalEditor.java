@@ -102,7 +102,7 @@ public class JournalEditor extends JFrame {
 		updateJournal(isNew);
 	}
 
-	public void updateJournal(boolean isNew) {
+	public void updateJournal(final boolean isNew) {
 		EventQueue.invokeLater(new Runnable() {
 
 			@Override

@@ -1,10 +1,13 @@
 package test.java;
 
+import java.security.Security;
+
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
 import net.viperfish.utils.config.Configuration;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,8 +16,9 @@ public class SecurityWrapperTest {
 	private SecureEntryDatabaseWrapper wrapper;
 
 	public SecurityWrapperTest() {
-		Configuration.defaultAll();
+		Security.addProvider(new BouncyCastleProvider());
 		db = new DatabaseStub();
+		SecureEntryDatabaseWrapper.config().fillInDefault();
 		wrapper = new SecureEntryDatabaseWrapper(db, "password");
 		wrapper.setPassword("password");
 

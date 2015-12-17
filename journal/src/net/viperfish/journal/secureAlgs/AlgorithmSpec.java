@@ -283,7 +283,7 @@ public class AlgorithmSpec {
 			Class<? extends BlockCipher> modeClass = blockCipherMode.get(mode);
 			Constructor<?>[] modeCtors = modeClass.getConstructors();
 			Constructor<? extends BlockCipher> modeCtor;
-			if (modeCtors[0].getParameterCount() == 1) {
+			if (modeCtors[0].getParameterTypes().length == 1) {
 				modeCtor = modeClass.getConstructor(BlockCipher.class);
 			} else {
 				modeCtor = modeClass.getConstructor(BlockCipher.class,
@@ -291,7 +291,7 @@ public class AlgorithmSpec {
 			}
 
 			BlockCipher modedEngine;
-			if (modeCtor.getParameterCount() == 1) {
+			if (modeCtor.getParameterTypes().length == 1) {
 				modedEngine = modeCtor.newInstance(engine);
 			} else {
 				modedEngine = modeCtor.newInstance(engine,

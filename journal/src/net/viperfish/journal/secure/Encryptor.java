@@ -1,10 +1,12 @@
-package net.viperfish.journal.secureAlgs;
+package net.viperfish.journal.secure;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
+
+import net.viperfish.journal.secureAlgs.AlgorithmSpec;
 
 public abstract class Encryptor {
 

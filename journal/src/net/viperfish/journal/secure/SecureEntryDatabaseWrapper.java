@@ -28,15 +28,13 @@ import javax.crypto.spec.PBEKeySpec;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
+import net.viperfish.journal.secureAlgs.BCDigester;
 import net.viperfish.journal.secureAlgs.CBCMac;
 import net.viperfish.journal.secureAlgs.CFBMac;
 import net.viperfish.journal.secureAlgs.CMac;
-import net.viperfish.journal.secureAlgs.Digester;
-import net.viperfish.journal.secureAlgs.Encryptor;
 import net.viperfish.journal.secureAlgs.GMac;
 import net.viperfish.journal.secureAlgs.HMac;
 import net.viperfish.journal.secureAlgs.JCEDigester;
-import net.viperfish.journal.secureAlgs.MacDigester;
 import net.viperfish.utils.config.ComponentConfig;
 import net.viperfish.utils.config.ComponentConfigObserver;
 import net.viperfish.utils.config.Configuration;
@@ -211,8 +209,8 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 
 	private void initAlgorithms() {
 		enc = new BCBlockCipherEncryptor();
-		dig = new JCEDigester();
-		String macMethod = Configuration.get("secureEntryWrapper").getProperty(
+		dig = new BCDigester();
+		String macMethod = config().getProperty(
 				"MacMethod");
 		if (macMethod.equalsIgnoreCase("CBCMAC")) {
 			mac = new CBCMac();
@@ -225,19 +223,19 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 		} else if (macMethod.equalsIgnoreCase("HMAC")) {
 			mac = new HMac();
 		}
-		mac.setMode(Configuration.get("secureEntryWrapper").getProperty(
+		mac.setMode(config().getProperty(
 				"MacAlgorithm"));
 		String mode = new String();
-		mode += Configuration.get("secureEntryWrapper").getProperty(
+		mode += config().getProperty(
 				"EncryptionMethod");
 		mode += "/";
-		mode += Configuration.get("secureEntryWrapper").getProperty(
+		mode += config().getProperty(
 				"EncryptionMode");
 		mode += "/";
-		mode += Configuration.get("secureEntryWrapper").getProperty(
+		mode += config().getProperty(
 				"EncryptionPadding");
 		enc.setMode(mode);
-		dig.setMode("SHA-512");
+		dig.setMode("SHA512");
 	}
 
 	private void initKDF() {
@@ -245,7 +243,7 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 		rand = new SecureRandom();
 		saltForKDF = new byte[10];
 		try {
-			keyGen = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+			keyGen = SecretKeyFactory.getInstance("PBEWITHHMACSHA256");
 		} catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException(e);
 		}

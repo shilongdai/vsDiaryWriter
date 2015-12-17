@@ -21,7 +21,7 @@ public class SimpleOrExpert extends ConfigView {
 	/**
 	 * Create the panel.
 	 */
-	public SimpleOrExpert(FirstTimeSetup firstTimeSetup) {
+	public SimpleOrExpert(final FirstTimeSetup firstTimeSetup) {
 		super(firstTimeSetup);
 		setLayout(new MigLayout("", "[50px:n][grow]", "[][grow]"));
 

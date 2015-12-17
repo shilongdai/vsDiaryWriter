@@ -41,7 +41,7 @@ public class ThreadPoolOperationExecutor implements OperationExecutor {
 	}
 
 	@Override
-	public void submit(Operation o) {
+	public void submit(final Operation o) {
 		pool.submit(new Runnable() {
 
 			@Override

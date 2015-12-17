@@ -58,7 +58,7 @@ public class ComponentConfigSetup extends ConfigView {
 			lblConfiguraitonItem.setFont(GraphicalUserInterface.defaultDialogOptionFont);
 			add(lblConfiguraitonItem, "cell 1 "+nextConfigurationCellRow+",alignx trailing");
 			
-			JComboBox<String> configuraitonItemOptionBox = new JComboBox<String>();
+			final JComboBox<String> configuraitonItemOptionBox = new JComboBox<String>();
 			configuraitonItemOptionBox.setFont(GraphicalUserInterface.defaultDialogOptionFont);
 			configuraitonItemOptionBox.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {

@@ -29,7 +29,7 @@ public class PasswordPrompt extends JFrame {
 	 * 
 	 * @param graphicalUserInterface
 	 */
-	public PasswordPrompt(GraphicalUserInterface graphicalUserInterface) {
+	public PasswordPrompt(final GraphicalUserInterface graphicalUserInterface) {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 418, 208);
