@@ -3,7 +3,6 @@ package net.viperfish.journal.secureAlgs;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import net.viperfish.journal.secure.Digester;
 
 public class JCEDigester implements Digester {
 

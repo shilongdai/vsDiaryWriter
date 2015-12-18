@@ -2,31 +2,28 @@ package test.java;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Security;
 
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
-import net.viperfish.utils.config.Configuration;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class SecurityWrapperTest {
-	private EntryDatabase db;
+	private final EntryDatabase db;
 	private SecureEntryDatabaseWrapper wrapper;
 
 	public SecurityWrapperTest() {
 		File testDir = new File("test");
-		if(!testDir.exists()) {
+		if (!testDir.exists()) {
 			testDir.mkdir();
 		}
-		Security.addProvider(new BouncyCastleProvider());
 		db = new DatabaseStub();
 		SecureEntryDatabaseWrapper.config().fillInDefault();
 		try {
-			wrapper = new SecureEntryDatabaseWrapper(db, "password", new File(testDir.getCanonicalPath()+ "/salt"));
+			wrapper = new SecureEntryDatabaseWrapper(db, "password", new File(
+					testDir.getCanonicalPath() + "/salt"));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

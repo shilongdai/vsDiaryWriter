@@ -11,33 +11,30 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
 import net.viperfish.journal.secureAlgs.BCDigester;
+import net.viperfish.journal.secureAlgs.BCPCKDF2Generator;
 import net.viperfish.journal.secureAlgs.CBCMac;
 import net.viperfish.journal.secureAlgs.CFBMac;
 import net.viperfish.journal.secureAlgs.CMac;
+import net.viperfish.journal.secureAlgs.Digester;
+import net.viperfish.journal.secureAlgs.Encryptor;
 import net.viperfish.journal.secureAlgs.GMac;
 import net.viperfish.journal.secureAlgs.HMac;
-import net.viperfish.journal.secureAlgs.JCEDigester;
+import net.viperfish.journal.secureAlgs.MacDigester;
+import net.viperfish.journal.secureAlgs.PBKDF2KeyGenerator;
 import net.viperfish.utils.config.ComponentConfig;
 import net.viperfish.utils.config.ComponentConfigObserver;
-import net.viperfish.utils.config.Configuration;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -53,16 +50,16 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 		return config;
 	}
 
-	private File saltStore;
-	private EntryDatabase toWrap;
+	private final File saltStore;
+	private final EntryDatabase toWrap;
 	private byte[] key;
 	private byte[] macIV;
 	private byte[] saltForKDF;
-	private SecretKeyFactory keyGen;
 	private SecureRandom rand;
 	private Encryptor enc;
 	private Digester dig;
 	private MacDigester mac;
+	private PBKDF2KeyGenerator keyGenerator;
 
 	private String encryptData(byte[] bytes) throws InvalidKeyException,
 			InvalidAlgorithmParameterException, IllegalBlockSizeException,
@@ -210,8 +207,7 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 	private void initAlgorithms() {
 		enc = new BCBlockCipherEncryptor();
 		dig = new BCDigester();
-		String macMethod = config().getProperty(
-				"MacMethod");
+		String macMethod = config().getProperty("MacMethod");
 		if (macMethod.equalsIgnoreCase("CBCMAC")) {
 			mac = new CBCMac();
 		} else if (macMethod.equalsIgnoreCase("CMAC")) {
@@ -223,17 +219,13 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 		} else if (macMethod.equalsIgnoreCase("HMAC")) {
 			mac = new HMac();
 		}
-		mac.setMode(config().getProperty(
-				"MacAlgorithm"));
+		mac.setMode(config().getProperty("MacAlgorithm"));
 		String mode = new String();
-		mode += config().getProperty(
-				"EncryptionMethod");
+		mode += config().getProperty("EncryptionMethod");
 		mode += "/";
-		mode += config().getProperty(
-				"EncryptionMode");
+		mode += config().getProperty("EncryptionMode");
 		mode += "/";
-		mode += config().getProperty(
-				"EncryptionPadding");
+		mode += config().getProperty("EncryptionPadding");
 		enc.setMode(mode);
 		dig.setMode("SHA512");
 	}
@@ -241,15 +233,15 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 	private void initKDF() {
 		rand = new SecureRandom();
 		saltForKDF = new byte[10];
-		try {
-			keyGen = SecretKeyFactory.getInstance("PBEWITHHMACSHA256");
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
 		loadSalt();
+		keyGenerator = new BCPCKDF2Generator();
+		keyGenerator.setDigest("SHA256");
+		keyGenerator.setIteration(3000);
+		keyGenerator.setSalt(saltForKDF);
 	}
 
-	public SecureEntryDatabaseWrapper(EntryDatabase db, String password, File salt) {
+	public SecureEntryDatabaseWrapper(EntryDatabase db, String password,
+			File salt) {
 		this.toWrap = db;
 		this.saltStore = salt;
 		initAlgorithms();
@@ -312,20 +304,10 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 	}
 
 	public void setPassword(String string) {
-		KeySpec spec = new PBEKeySpec(string.toCharArray(), saltForKDF, 1000,
-				enc.getKeySize());
-		try {
-			SecretKey key = keyGen.generateSecret(spec);
-			this.key = key.getEncoded();
-			KeySpec macKeySpec = new PBEKeySpec(Base64.encodeBase64String(
-					dig.digest(this.key)).toCharArray(), saltForKDF, 1000,
-					mac.getKeyLength());
-			SecretKey macKey = keyGen.generateSecret(macKeySpec);
-			mac.setKey(macKey.getEncoded());
-
-		} catch (InvalidKeySpecException e) {
-			throw new RuntimeException(e);
-		}
+		this.key = keyGenerator.generate(string, enc.getKeySize());
+		mac.setKey(this.keyGenerator.generate(
+				Base64.encodeBase64String(dig.digest(this.key)),
+				mac.getIvLength()));
 		enc.setKey(key);
 		macIV = new byte[mac.getIvLength()];
 		Arrays.fill(macIV, (byte) 0);

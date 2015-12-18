@@ -13,7 +13,7 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 
 import net.viperfish.journal.auth.AuthenticationManager;
-import net.viperfish.journal.secure.Digester;
+import net.viperfish.journal.secureAlgs.Digester;
 import net.viperfish.journal.secureAlgs.JCEDigester;
 
 import org.apache.commons.codec.binary.Base64;

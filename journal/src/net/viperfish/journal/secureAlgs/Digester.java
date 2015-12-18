@@ -1,4 +1,4 @@
-package net.viperfish.journal.secure;
+package net.viperfish.journal.secureAlgs;
 
 public interface Digester {
 

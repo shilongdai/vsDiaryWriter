@@ -2,9 +2,6 @@ package net.viperfish.journal;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Security;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import net.viperfish.journal.auth.AuthenticationManager;
 import net.viperfish.journal.auth.AuthenticationManagerFactory;
@@ -30,7 +27,7 @@ import test.java.StubDataSourceFactory;
  * the Main class of the application, contains all the components
  * 
  * @author sdai
- *
+ * 
  */
 public class JournalApplication {
 	private static DataSourceFactory df;
@@ -47,10 +44,10 @@ public class JournalApplication {
 
 	static {
 		initFileStructure();
-		Security.addProvider(new BouncyCastleProvider());
 		sysConf = new SystemConfig();
 		Configuration.setConfigDirPath("config");
-		Configuration.put(SecureEntryDatabaseWrapper.config().getUnitName(), SecureEntryDatabaseWrapper.config());
+		Configuration.put(SecureEntryDatabaseWrapper.config().getUnitName(),
+				SecureEntryDatabaseWrapper.config());
 		Configuration.put(sysConf.getUnitName(), sysConf);
 	}
 
@@ -105,11 +102,14 @@ public class JournalApplication {
 				df = new StubDataSourceFactory();
 			} else {
 				try {
-					Class<?> selected = Class.forName(sysConf.getProperty("DataSourceFactory"));
-					DataSourceFactory tmp = (DataSourceFactory) selected.newInstance();
+					Class<?> selected = Class.forName(sysConf
+							.getProperty("DataSourceFactory"));
+					DataSourceFactory tmp = (DataSourceFactory) selected
+							.newInstance();
 					df = new SecureFactoryWrapper(tmp, password);
 					df.setDataDirectory(dataDir);
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				} catch (ClassNotFoundException | InstantiationException
+						| IllegalAccessException e) {
 					throw new RuntimeException(e);
 				}
 			}
@@ -126,9 +126,11 @@ public class JournalApplication {
 	public static IndexerFactory getIndexerFactory() {
 		if (indexerFactory == null) {
 			try {
-				indexerFactory = (IndexerFactory) Class.forName(sysConf.getProperty("IndexerFactory")).newInstance();
+				indexerFactory = (IndexerFactory) Class.forName(
+						sysConf.getProperty("IndexerFactory")).newInstance();
 				indexerFactory.setDataDir(dataDir);
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			} catch (InstantiationException | IllegalAccessException
+					| ClassNotFoundException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -182,8 +184,10 @@ public class JournalApplication {
 	 */
 	public static void setPassword(String password) {
 		JournalApplication.password = password;
-		if (getDataSourceFactory().getClass().isInstance(SecureFactoryWrapper.class)) {
-			SecureEntryDatabaseWrapper tmp = (SecureEntryDatabaseWrapper) df.createDatabaseObject();
+		if (getDataSourceFactory().getClass().isInstance(
+				SecureFactoryWrapper.class)) {
+			SecureEntryDatabaseWrapper tmp = (SecureEntryDatabaseWrapper) df
+					.createDatabaseObject();
 			tmp.setPassword(getPassword());
 		}
 
@@ -239,7 +243,8 @@ public class JournalApplication {
 		try {
 			Configuration.persistAll();
 		} catch (IOException e) {
-			System.err.println("critical error incountered while saving configuration, quitting");
+			System.err
+					.println("critical error incountered while saving configuration, quitting");
 		}
 
 	}
