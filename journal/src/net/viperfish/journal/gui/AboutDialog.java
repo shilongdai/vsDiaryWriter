@@ -2,6 +2,8 @@ package net.viperfish.journal.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -11,11 +13,13 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import net.miginfocom.swing.MigLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class AboutDialog extends JDialog {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8312727757928274069L;
 	private final JPanel contentPanel = new JPanel();
 
 	/**
@@ -36,13 +40,17 @@ public class AboutDialog extends JDialog {
 			contentPanel.add(lblJournal, "cell 0 0,alignx center");
 		}
 		{
-			JLabel lblCreatorShilongDai = new JLabel("Creator and Founder: Shilong Dai");
-			lblCreatorShilongDai.setFont(GraphicalUserInterface.defaultDialogOptionFont);
+			JLabel lblCreatorShilongDai = new JLabel(
+					"Creator and Founder: Shilong Dai");
+			lblCreatorShilongDai
+					.setFont(GraphicalUserInterface.defaultDialogOptionFont);
 			contentPanel.add(lblCreatorShilongDai, "cell 0 1,alignx center");
 		}
 		{
-			JLabel lblContributorAndGui = new JLabel("Contributor and Gui: Ryan Segerstrom");
-			lblContributorAndGui.setFont(GraphicalUserInterface.defaultDialogOptionFont);
+			JLabel lblContributorAndGui = new JLabel(
+					"Contributor and Gui: Ryan Segerstrom");
+			lblContributorAndGui
+					.setFont(GraphicalUserInterface.defaultDialogOptionFont);
 			contentPanel.add(lblContributorAndGui, "cell 0 2,alignx center");
 		}
 		{
@@ -52,6 +60,7 @@ public class AboutDialog extends JDialog {
 			{
 				JButton closeButton = new JButton("Close");
 				closeButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(ActionEvent e) {
 						dispose();
 					}

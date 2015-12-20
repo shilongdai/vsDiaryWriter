@@ -1,7 +1,6 @@
 package net.viperfish.journal.gui;
 
 import java.awt.Component;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
@@ -16,9 +15,12 @@ public class JournalCellRenderer implements ListCellRenderer<Journal> {
 
 	public JList<? extends Journal> list;
 
-	public Component getListCellRendererComponent(JList<? extends Journal> list, Journal value, int index,
+	@Override
+	public Component getListCellRendererComponent(
+			JList<? extends Journal> list, Journal value, int index,
 			boolean isSelected, boolean cellHasFocus) {
-		JournalCellJPanel journalCell = new JournalCellJPanel(value, false, isSelected);
+		JournalCellJPanel journalCell = new JournalCellJPanel(value, false,
+				isSelected);
 		journalCells.put(value, journalCell);
 		this.list = list;
 		return journalCell;
@@ -26,6 +28,7 @@ public class JournalCellRenderer implements ListCellRenderer<Journal> {
 
 	/**
 	 * not used
+	 * 
 	 * @param e
 	 */
 	public void updateMouseSelection(MouseEvent e) {
@@ -40,7 +43,7 @@ public class JournalCellRenderer implements ListCellRenderer<Journal> {
 			i = -1;
 		}
 		System.out.println(list.getSelectedIndex());
-		if(i < 0){
+		if (i < 0) {
 			list.clearSelection();
 		}
 		list.setSelectedIndex(i);
