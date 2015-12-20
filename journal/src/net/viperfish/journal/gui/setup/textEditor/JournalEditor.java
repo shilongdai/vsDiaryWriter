@@ -22,15 +22,19 @@ import net.viperfish.journal.gui.JournalWindow;
 
 public class JournalEditor extends JFrame {
 
-	private JPanel contentPane;
-	private JTextField subjectField;
-	private DateLabel lblDate;
-	private OperationFactory of;
-	private OperationExecutor e;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3617532609648839403L;
+	private final JPanel contentPane;
+	private final JTextField subjectField;
+	private final DateLabel lblDate;
+	private final OperationFactory of;
+	private final OperationExecutor e;
 	private Journal currentJournal;
-	private JEditorPane editorPane;
-	private JournalWindow window;
-	private JLabel lblStatus;
+	private final JEditorPane editorPane;
+	private final JournalWindow window;
+	private final JLabel lblStatus;
 
 	/**
 	 * Create the frame.
@@ -45,7 +49,8 @@ public class JournalEditor extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("inset 0, fill", "[][grow][grow 50][][][]", "[][][][grow]"));
+		contentPane.setLayout(new MigLayout("inset 0, fill",
+				"[][grow][grow 50][][][]", "[][][][grow]"));
 
 		JLabel lblJournalEditor = new JLabel("Journal Editor");
 		lblJournalEditor.setFont(GraphicalUserInterface.defaultDialogTitleFont);
@@ -110,8 +115,10 @@ public class JournalEditor extends JFrame {
 				lblStatus.setText("Saving");
 				if (!isNew) {
 					long id = currentJournal.getId();
-					e.submit(of.getEditSubjectOperation(id, currentJournal.getSubject()));
-					e.submit(of.getEditContentOperation(id, currentJournal.getContent()));
+					e.submit(of.getEditSubjectOperation(id,
+							currentJournal.getSubject()));
+					e.submit(of.getEditContentOperation(id,
+							currentJournal.getContent()));
 				} else {
 					e.submit(of.getAddOperation(currentJournal));
 				}

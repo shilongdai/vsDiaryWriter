@@ -6,6 +6,10 @@ import javax.swing.JLabel;
 
 public class DateLabel extends JLabel implements Runnable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4487545071051416166L;
 	private boolean running = false;
 	private Thread thread;
 
@@ -30,7 +34,7 @@ public class DateLabel extends JLabel implements Runnable {
 		String dateString = date.toString();
 		setText(dateString);
 	}
-	
+
 	@Override
 	public String getText() {
 		updateDate();
