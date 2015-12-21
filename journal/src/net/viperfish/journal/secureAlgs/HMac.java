@@ -1,5 +1,7 @@
 package net.viperfish.journal.secureAlgs;
 
+import net.viperfish.journal.secure.AlgorithmSpec;
+
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.params.KeyParameter;

@@ -28,8 +28,8 @@ import org.apache.lucene.store.FSDirectory;
 public class JournalIndexer extends Indexer<Journal> {
 
 	private Directory dir;
-	private DateFormat df;
-	private File dataDir;
+	private final DateFormat df;
+	private final File dataDir;
 
 	public JournalIndexer(File dataDir) {
 		this.dataDir = dataDir;
@@ -88,22 +88,6 @@ public class JournalIndexer extends Indexer<Journal> {
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
-			}
-		}
-	}
-
-	public void clear() {
-		IndexWriter writer = getWriter();
-		try {
-			writer.deleteAll();
-			writer.commit();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
 			}
 		}
 	}

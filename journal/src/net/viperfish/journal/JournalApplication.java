@@ -2,11 +2,14 @@ package net.viperfish.journal;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import net.viperfish.journal.auth.AuthenticationManager;
 import net.viperfish.journal.auth.AuthenticationManagerFactory;
 import net.viperfish.journal.authentications.HashAuthFactory;
 import net.viperfish.journal.cmd.CommandLineUserInterface;
+import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.UserInterface;
@@ -18,6 +21,8 @@ import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
 import net.viperfish.journal.secure.SecureFactoryWrapper;
 import net.viperfish.journal.ui.StandardOperationFactory;
 import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
+import net.viperfish.utils.config.ComponentConfig;
+import net.viperfish.utils.config.ComponentConfigObserver;
 import net.viperfish.utils.config.Configuration;
 import net.viperfish.utils.file.RecursiveDelete;
 import net.viperfish.utils.index.Indexer;
@@ -42,6 +47,26 @@ public class JournalApplication {
 	private static String password;
 	private static SystemConfig sysConf;
 
+	private static class ConfigurationObserver implements
+			ComponentConfigObserver {
+
+		@Override
+		public void sendNotify(ComponentConfig c) {
+			List<Journal> l = new LinkedList<>();
+			l = df.createDatabaseObject().getAll();
+			reset();
+			indexerFactory = getIndexerFactory();
+			df = getDataSourceFactory();
+			indexerFactory.createIndexer().clear();
+			df.createDatabaseObject().clear();
+			for (Journal j : l) {
+				df.createDatabaseObject().addEntry(j);
+				indexerFactory.createIndexer().add(j);
+			}
+		}
+
+	}
+
 	static {
 		initFileStructure();
 		sysConf = new SystemConfig();
@@ -49,9 +74,18 @@ public class JournalApplication {
 		Configuration.put(SecureEntryDatabaseWrapper.config().getUnitName(),
 				SecureEntryDatabaseWrapper.config());
 		Configuration.put(sysConf.getUnitName(), sysConf);
+		sysConf.addObserver(new ConfigurationObserver());
 	}
 
 	public JournalApplication() {
+	}
+
+	public static void reset() {
+		df = null;
+		indexerFactory = null;
+		worker = null;
+		opsFactory = null;
+		authFactory = null;
 	}
 
 	private static void deleteAll() {
@@ -193,10 +227,31 @@ public class JournalApplication {
 
 	}
 
+	/**
+	 * get the system configuration unit
+	 * 
+	 * @return the system config unit
+	 */
+	public static SystemConfig getSysConf() {
+		if (sysConf == null) {
+			sysConf = new SystemConfig();
+		}
+		return sysConf;
+	}
+
+	/**
+	 * set the status of unit testing, if unit test, the datasourcefactory would
+	 * be one that creates stubEntryDatabase in memory. The current dataDir is
+	 * cleared, components reset, and file structure re initialized
+	 * 
+	 * @param isEnable
+	 *            the state of unit test
+	 */
 	public static void setUnitTest(boolean isEnable) {
 		unitTest = isEnable;
 		deleteAll();
 		initFileStructure();
+		reset();
 	}
 
 	public static void main(String[] args) {

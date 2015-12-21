@@ -74,6 +74,22 @@ public abstract class Indexer<T> {
 
 	public abstract void add(T toAdd);
 
+	public void clear() {
+		IndexWriter writer = getWriter();
+		try {
+			writer.deleteAll();
+			writer.commit();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			try {
+				writer.close();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
 	protected abstract Directory getDir();
 
 	protected IndexWriter getWriter() {

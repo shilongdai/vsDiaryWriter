@@ -1,5 +1,8 @@
 package net.viperfish.journal.secureAlgs;
 
+import net.viperfish.journal.secure.AlgorithmSpec;
+import net.viperfish.journal.secure.Digester;
+
 import org.bouncycastle.crypto.Digest;
 
 

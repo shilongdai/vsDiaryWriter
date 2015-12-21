@@ -1,6 +1,8 @@
 package net.viperfish.journal.secureAlgs;
 
 
+import net.viperfish.journal.secure.MacDigester;
+
 import org.bouncycastle.crypto.Mac;
 
 public abstract class BCMacDigester implements MacDigester {

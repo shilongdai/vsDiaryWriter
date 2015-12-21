@@ -1,4 +1,4 @@
-package net.viperfish.journal.secureAlgs;
+package net.viperfish.journal.secure;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
