@@ -7,13 +7,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import net.viperfish.journal.JournalApplication;
-import net.viperfish.journal.dbDatabase.H2EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.index.JournalIndexer;
 import net.viperfish.journal.operation.AddEntryOperation;
-import net.viperfish.journal.operation.ApplyConfigOperation;
 import net.viperfish.journal.operation.DeleteEntryOperation;
 import net.viperfish.journal.operation.EditContentOperation;
 import net.viperfish.journal.operation.EditSubjectOperation;
@@ -194,7 +192,6 @@ public class OperationTest {
 		Assert.assertEquals(100, result.size());
 		cleanUp();
 	}
-
 
 	public void cleanUp() {
 		db.clear();
