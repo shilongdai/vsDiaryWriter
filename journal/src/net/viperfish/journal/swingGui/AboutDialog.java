@@ -1,4 +1,4 @@
-package net.viperfish.journal.gui;
+package net.viperfish.journal.swingGui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;

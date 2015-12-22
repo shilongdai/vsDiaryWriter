@@ -1,4 +1,4 @@
-package net.viperfish.journal.gui.setup;
+package net.viperfish.journal.swingGui.setup;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -14,7 +14,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import net.miginfocom.swing.MigLayout;
-import net.viperfish.journal.gui.GraphicalUserInterface;
+import net.viperfish.journal.swingGui.GraphicalUserInterface;
 
 public class CreatePassword extends JFrame {
 

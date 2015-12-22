@@ -1,4 +1,4 @@
-package net.viperfish.journal.gui;
+package net.viperfish.journal.swingGui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -1,4 +1,4 @@
-package net.viperfish.journal.gui.setup;
+package net.viperfish.journal.swingGui.setup;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -10,7 +10,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 import net.miginfocom.swing.MigLayout;
-import net.viperfish.journal.gui.GraphicalUserInterface;
+import net.viperfish.journal.swingGui.GraphicalUserInterface;
 import net.viperfish.utils.config.ComponentConfig;
 
 public class ComponentConfigSetup extends ConfigView {

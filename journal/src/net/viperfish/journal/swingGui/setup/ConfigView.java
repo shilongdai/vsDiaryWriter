@@ -1,4 +1,4 @@
-package net.viperfish.journal.gui.setup;
+package net.viperfish.journal.swingGui.setup;
 
 import javax.swing.JPanel;
 

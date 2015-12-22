@@ -1,4 +1,4 @@
-package net.viperfish.journal.gui;
+package net.viperfish.journal.swingGui;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -34,7 +34,7 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
-import net.viperfish.journal.gui.setup.textEditor.JournalEditor;
+import net.viperfish.journal.swingGui.setup.textEditor.JournalEditor;
 
 public class JournalWindow extends JFrame {
 

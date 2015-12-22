@@ -1,4 +1,4 @@
-package net.viperfish.journal.gui.setup;
+package net.viperfish.journal.swingGui.setup;
 
 import java.awt.Font;
 
@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import net.miginfocom.swing.MigLayout;
-import net.viperfish.journal.gui.GraphicalUserInterface;
+import net.viperfish.journal.swingGui.GraphicalUserInterface;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;

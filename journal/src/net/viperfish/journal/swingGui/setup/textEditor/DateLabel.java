@@ -1,4 +1,4 @@
-package net.viperfish.journal.gui.setup.textEditor;
+package net.viperfish.journal.swingGui.setup.textEditor;
 
 import java.util.Date;
 

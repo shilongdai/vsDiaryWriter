@@ -1,4 +1,4 @@
-package net.viperfish.journal.gui;
+package net.viperfish.journal.swingGui;
 
 import java.awt.Font;
 
@@ -7,8 +7,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import net.viperfish.journal.framework.UserInterface;
-import net.viperfish.journal.gui.setup.CreatePassword;
-import net.viperfish.journal.gui.setup.FirstTimeSetup;
+import net.viperfish.journal.swingGui.setup.CreatePassword;
+import net.viperfish.journal.swingGui.setup.FirstTimeSetup;
 
 public class GraphicalUserInterface extends UserInterface {
 
