@@ -8,9 +8,9 @@ import net.viperfish.journal.persistent.EntryDatabase;
 
 public class SecureFactoryWrapper implements DataSourceFactory {
 
-	private DataSourceFactory factory;
+	private final DataSourceFactory factory;
 	private EntryDatabase db;
-	private String password;
+	private final String password;
 	private File dataDir;
 
 	public SecureFactoryWrapper(DataSourceFactory toWrap, String password) {
@@ -22,8 +22,9 @@ public class SecureFactoryWrapper implements DataSourceFactory {
 	public EntryDatabase createDatabaseObject() {
 		if (db == null) {
 			try {
-				db = new SecureEntryDatabaseWrapper(factory.createDatabaseObject(),
-						password, new File(dataDir.getCanonicalPath() + "/salt"));
+				db = new SecureEntryDatabaseWrapper(
+						factory.createDatabaseObject(), password, new File(
+								dataDir.getCanonicalPath() + "/salt"));
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -33,7 +34,7 @@ public class SecureFactoryWrapper implements DataSourceFactory {
 
 	@Override
 	public void cleanUp() {
-		// TODO Auto-generated method stub
+		this.factory.cleanUp();
 
 	}
 

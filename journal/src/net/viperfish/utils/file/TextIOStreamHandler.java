@@ -6,17 +6,18 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class TextIOStreamHandler implements IOStreamHandler {
 
 	@Override
 	public DataOutputStream getOutputStream(File src) {
 		try {
+			CommonFunctions.initFile(src);
 			return new DataOutputStream(new BufferedOutputStream(
 					new FileOutputStream(src)));
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -24,9 +25,10 @@ public class TextIOStreamHandler implements IOStreamHandler {
 	@Override
 	public DataInputStream getInputStream(File src) {
 		try {
+			CommonFunctions.initFile(src);
 			return new DataInputStream(new BufferedInputStream(
 					new FileInputStream(src)));
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

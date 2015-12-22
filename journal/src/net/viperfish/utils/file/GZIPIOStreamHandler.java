@@ -14,6 +14,7 @@ public class GZIPIOStreamHandler implements IOStreamHandler {
 	@Override
 	public DataOutputStream getOutputStream(File src) {
 		try {
+			CommonFunctions.initFile(src);
 			return new DataOutputStream(new GZIPOutputStream(
 					new FileOutputStream(src)));
 		} catch (IOException e) {
@@ -24,6 +25,7 @@ public class GZIPIOStreamHandler implements IOStreamHandler {
 	@Override
 	public DataInputStream getInputStream(File src) {
 		try {
+			CommonFunctions.initFile(src);
 			return new DataInputStream(new GZIPInputStream(new FileInputStream(
 					src)));
 		} catch (IOException e) {

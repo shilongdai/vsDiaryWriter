@@ -8,4 +8,5 @@ public interface IOStreamHandler {
 	public DataOutputStream getOutputStream(File src);
 
 	public DataInputStream getInputStream(File src);
+
 }

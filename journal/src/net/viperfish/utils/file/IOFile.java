@@ -9,22 +9,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class IOFile {
+
 	private final File src;
 	private IOStreamHandler handler;
 
-	private void initFile() {
-		if (src.exists()) {
-			try {
-				src.createNewFile();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
 	public IOFile(File theFile) {
 		this.src = theFile;
-		initFile();
 	}
 
 	public IOFile(File theFile, IOStreamHandler handler) {

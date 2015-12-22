@@ -24,7 +24,7 @@ import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
 import net.viperfish.utils.config.ComponentConfig;
 import net.viperfish.utils.config.ComponentConfigObserver;
 import net.viperfish.utils.config.Configuration;
-import net.viperfish.utils.file.RecursiveDelete;
+import net.viperfish.utils.file.CommonFunctions;
 import net.viperfish.utils.index.Indexer;
 import test.java.StubDataSourceFactory;
 
@@ -89,7 +89,7 @@ public class JournalApplication {
 	}
 
 	private static void deleteAll() {
-		new RecursiveDelete().recursiveRm(dataDir);
+		CommonFunctions.delete(dataDir);
 		Configuration.clear();
 	}
 
