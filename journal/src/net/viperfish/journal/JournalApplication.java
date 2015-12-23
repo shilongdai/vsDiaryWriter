@@ -18,6 +18,7 @@ import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.persistent.IndexerFactory;
 import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
 import net.viperfish.journal.secure.SecureFactoryWrapper;
+import net.viperfish.journal.swingGui.GraphicalUserInterface;
 import net.viperfish.journal.ui.StandardOperationFactory;
 import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
 import net.viperfish.utils.config.ComponentConfig;
@@ -274,7 +275,7 @@ public class JournalApplication {
 		if (consoleMode) {
 			ui = new CommandLineUserInterface();
 		} else {
-			ui = new net.viperfish.swtGui.GraphicalUserInterface();
+			ui = new GraphicalUserInterface();
 		}
 		try {
 			Configuration.loadAll();

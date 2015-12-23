@@ -1,4 +1,4 @@
-package net.viperfish.swtGui;
+package net.viperfish.journal.swtGui;
 
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.UserInterface;

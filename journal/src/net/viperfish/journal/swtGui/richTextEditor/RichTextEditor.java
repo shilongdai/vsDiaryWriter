@@ -1,4 +1,4 @@
-package net.viperfish.swtGui.richTextEditor;
+package net.viperfish.journal.swtGui.richTextEditor;
 
 import java.io.File;
 

@@ -1,4 +1,4 @@
-package net.viperfish.swtGui;
+package net.viperfish.journal.swtGui;
 
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;

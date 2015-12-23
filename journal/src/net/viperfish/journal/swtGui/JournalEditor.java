@@ -1,4 +1,4 @@
-package net.viperfish.swtGui;
+package net.viperfish.journal.swtGui;
 
 import java.util.Date;
 
@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.swtGui.richTextEditor.RichTextEditor;
+import net.viperfish.journal.swtGui.richTextEditor.RichTextEditor;
 
 public class JournalEditor extends Dialog {
 

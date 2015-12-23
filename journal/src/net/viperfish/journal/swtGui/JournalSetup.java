@@ -1,4 +1,4 @@
-package net.viperfish.swtGui;
+package net.viperfish.journal.swtGui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
