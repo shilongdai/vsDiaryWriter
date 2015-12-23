@@ -32,8 +32,7 @@ public class SecureEntryWrapperConfig extends ComponentConfig {
 
 	private Set<String> getMacAlgOptions() {
 		String macMethod = getProperty("MacMethod");
-		if (macMethod.equalsIgnoreCase("CMAC")
-				|| macMethod.equalsIgnoreCase("CBCMAC")
+		if (macMethod.equalsIgnoreCase("CMAC") || macMethod.equalsIgnoreCase("CBCMAC")
 				|| macMethod.equalsIgnoreCase("CFBMAC")) {
 			return AlgorithmSpec.getSupportedBlockCipher();
 		} else if (macMethod.equalsIgnoreCase("GMAC")) {
@@ -99,6 +98,11 @@ public class SecureEntryWrapperConfig extends ComponentConfig {
 		} else {
 			return new TreeSet<>();
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		return getUnitName().hashCode();
 	}
 
 }

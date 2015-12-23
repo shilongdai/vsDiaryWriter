@@ -18,7 +18,6 @@ import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.journal.persistent.IndexerFactory;
 import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
 import net.viperfish.journal.secure.SecureFactoryWrapper;
-import net.viperfish.journal.swingGui.GraphicalUserInterface;
 import net.viperfish.journal.ui.StandardOperationFactory;
 import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
 import net.viperfish.utils.config.ComponentConfig;
@@ -47,8 +46,7 @@ public class JournalApplication {
 	private static String password;
 	private static SystemConfig sysConf;
 
-	private static class ConfigurationObserver implements
-			ComponentConfigObserver {
+	private static class ConfigurationObserver implements ComponentConfigObserver {
 
 		@Override
 		public void sendNotify(ComponentConfig c) {
@@ -69,12 +67,7 @@ public class JournalApplication {
 
 	static {
 		initFileStructure();
-		sysConf = new SystemConfig();
-		Configuration.setConfigDirPath("config");
-		Configuration.put(SecureEntryDatabaseWrapper.config().getUnitName(),
-				SecureEntryDatabaseWrapper.config());
-		Configuration.put(sysConf.getUnitName(), sysConf);
-		sysConf.addObserver(new ConfigurationObserver());
+		initConfigUnits();
 	}
 
 	public JournalApplication() {
@@ -86,6 +79,14 @@ public class JournalApplication {
 		worker = null;
 		opsFactory = null;
 		authFactory = null;
+	}
+
+	private static void initConfigUnits() {
+		sysConf = new SystemConfig();
+		Configuration.setConfigDirPath("config");
+		Configuration.put(SecureEntryDatabaseWrapper.config().getUnitName(), SecureEntryDatabaseWrapper.config());
+		Configuration.put(sysConf.getUnitName(), sysConf);
+		sysConf.addObserver(new ConfigurationObserver());
 	}
 
 	private static void deleteAll() {
@@ -136,14 +137,11 @@ public class JournalApplication {
 				df = new StubDataSourceFactory();
 			} else {
 				try {
-					Class<?> selected = Class.forName(sysConf
-							.getProperty("DataSourceFactory"));
-					DataSourceFactory tmp = (DataSourceFactory) selected
-							.newInstance();
+					Class<?> selected = Class.forName(sysConf.getProperty("DataSourceFactory"));
+					DataSourceFactory tmp = (DataSourceFactory) selected.newInstance();
 					df = new SecureFactoryWrapper(tmp, password);
 					df.setDataDirectory(dataDir);
-				} catch (ClassNotFoundException | InstantiationException
-						| IllegalAccessException e) {
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 					throw new RuntimeException(e);
 				}
 			}
@@ -160,11 +158,9 @@ public class JournalApplication {
 	public static IndexerFactory getIndexerFactory() {
 		if (indexerFactory == null) {
 			try {
-				indexerFactory = (IndexerFactory) Class.forName(
-						sysConf.getProperty("IndexerFactory")).newInstance();
+				indexerFactory = (IndexerFactory) Class.forName(sysConf.getProperty("IndexerFactory")).newInstance();
 				indexerFactory.setDataDir(dataDir);
-			} catch (InstantiationException | IllegalAccessException
-					| ClassNotFoundException e) {
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -218,10 +214,8 @@ public class JournalApplication {
 	 */
 	public static void setPassword(String password) {
 		JournalApplication.password = password;
-		if (getDataSourceFactory().getClass().isInstance(
-				SecureFactoryWrapper.class)) {
-			SecureEntryDatabaseWrapper tmp = (SecureEntryDatabaseWrapper) df
-					.createDatabaseObject();
+		if (getDataSourceFactory().getClass().isInstance(SecureFactoryWrapper.class)) {
+			SecureEntryDatabaseWrapper tmp = (SecureEntryDatabaseWrapper) df.createDatabaseObject();
 			tmp.setPassword(getPassword());
 		}
 
@@ -260,6 +254,7 @@ public class JournalApplication {
 			firstRun = true;
 			deleteAll();
 			initFileStructure();
+			initConfigUnits();
 		} else {
 			try {
 				if (firstRun) {
@@ -279,7 +274,7 @@ public class JournalApplication {
 		if (consoleMode) {
 			ui = new CommandLineUserInterface();
 		} else {
-			ui = new GraphicalUserInterface();
+			ui = new net.viperfish.swtGui.GraphicalUserInterface();
 		}
 		try {
 			Configuration.loadAll();
@@ -298,8 +293,7 @@ public class JournalApplication {
 		try {
 			Configuration.persistAll();
 		} catch (IOException e) {
-			System.err
-					.println("critical error incountered while saving configuration, quitting");
+			System.err.println("critical error incountered while saving configuration, quitting");
 		}
 
 	}

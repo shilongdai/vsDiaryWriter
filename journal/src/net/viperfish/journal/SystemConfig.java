@@ -76,4 +76,9 @@ public class SystemConfig extends ComponentConfig {
 		}
 		return new TreeSet<>();
 	}
+
+	@Override
+	public int hashCode() {
+		return getUnitName().hashCode();
+	}
 }
