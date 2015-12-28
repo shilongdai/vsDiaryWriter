@@ -69,7 +69,7 @@ public class JournalWindow {
 		display = Display.getDefault();
 		shell = new Shell();
 		shell.setSize(450, 400);
-		shell.setText("vJournal");
+		shell.setText("vJournal - for Abby, alpha version");
 		shell.setLayout(new GridLayout(13, false));
 		shell.addDisposeListener(new DisposeListener() {
 
@@ -109,11 +109,12 @@ public class JournalWindow {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				Journal result = new JournalEditor(shell, SWT.None).open(new Journal());
+				Journal result = new JournalEditor().open(new Journal());
 				if (result == null) {
 					return;
 				}
 				e.submit(f.getAddOperation(result));
+				search.searchJournals();
 			}
 
 		});
@@ -126,7 +127,7 @@ public class JournalWindow {
 				if (selected.isEmpty()) {
 					return;
 				}
-				Journal result = new JournalEditor(shell, SWT.None).open((Journal) selected.getFirstElement());
+				Journal result = new JournalEditor().open((Journal) selected.getFirstElement());
 				if (result == null) {
 					return;
 				}

@@ -8,7 +8,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -17,7 +16,7 @@ import org.eclipse.swt.widgets.Text;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.swtGui.richTextEditor.RichTextEditor;
 
-public class JournalEditor extends Dialog {
+public class JournalEditor {
 
 	protected Object result;
 	protected Shell shell;
@@ -33,22 +32,21 @@ public class JournalEditor extends Dialog {
 	 * @param parent
 	 * @param style
 	 */
-	public JournalEditor(Shell parent, int style) {
-		super(parent, style);
-		setText("Journal Editor");
+	public JournalEditor() {
 	}
 
 	/**
 	 * Open the dialog.
 	 * 
 	 * @return the result
+	 * @wbp.parser.entryPoint
 	 */
 	public Journal open(Journal j) {
 		this.target = j;
 		createContents();
 		shell.open();
 		shell.layout();
-		Display display = getParent().getDisplay();
+		Display display = Display.getDefault();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -61,9 +59,9 @@ public class JournalEditor extends Dialog {
 	 * Create contents of the dialog.
 	 */
 	private void createContents() {
-		shell = new Shell(getParent(), getStyle());
+		shell = new Shell();
 		shell.setSize(690, 454);
-		shell.setText(getText());
+		shell.setText("Journal Editor");
 		shell.setLayout(new GridLayout(3, false));
 
 		Label lblNewLabel = new Label(shell, SWT.NONE);
