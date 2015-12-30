@@ -3,6 +3,8 @@ package net.viperfish.journal.swtGui;
 import java.util.Date;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -25,14 +27,10 @@ public class JournalEditor {
 	private Button saveButton;
 	private Journal target;
 	private Button btnNewButton;
+	private boolean savePressed;
 
-	/**
-	 * Create the dialog.
-	 * 
-	 * @param parent
-	 * @param style
-	 */
 	public JournalEditor() {
+		savePressed = false;
 	}
 
 	/**
@@ -63,6 +61,18 @@ public class JournalEditor {
 		shell.setSize(690, 454);
 		shell.setText("Journal Editor");
 		shell.setLayout(new GridLayout(3, false));
+		shell.addDisposeListener(new DisposeListener() {
+
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				if (savePressed) {
+					return;
+				} else {
+					target = null;
+				}
+
+			}
+		});
 
 		Label lblNewLabel = new Label(shell, SWT.NONE);
 		GridData gd_lblNewLabel = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
@@ -94,6 +104,7 @@ public class JournalEditor {
 		saveButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
+				savePressed = true;
 				target.setSubject(text.getText());
 				target.setContent(editor.getText());
 				target.setDate(new Date());

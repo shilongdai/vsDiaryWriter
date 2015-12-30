@@ -20,7 +20,9 @@ public class H2DatasourceFactory implements DataSourceFactory {
 
 	@Override
 	public void cleanUp() {
-		db.closeSession();
+		if (db != null) {
+			db.closeSession();
+		}
 
 	}
 

@@ -1,5 +1,6 @@
 package net.viperfish.journal.swtGui;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.ListViewer;
@@ -29,7 +30,20 @@ public class SearchJournal {
 		e = JournalApplication.getWorker();
 	}
 
+	public void displayAll() {
+		renderer.setInput(null);
+		OperationWithResult<List<Journal>> result = f.getListAllOperation();
+		e.submit(result);
+		for (Journal i : result.getResult()) {
+			renderer.add(i);
+		}
+	}
+
 	public void searchJournals() {
+		if (search.getText().length() == 0) {
+			displayAll();
+			return;
+		}
 		renderer.setInput(null);
 		OperationWithResult<Set<Journal>> search = f.getSearchOperation(this.search.getText());
 		e.submit(search);
