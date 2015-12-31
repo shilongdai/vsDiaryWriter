@@ -17,6 +17,13 @@ public interface AuthenticationManagerFactory {
 	public AuthenticationManager getAuthenticator();
 
 	/**
+	 * create a new instance of a AuthenticationManager
+	 * 
+	 * @return the created authenticator
+	 */
+	public AuthenticationManager newAuthenticator();
+
+	/**
 	 * set the data directory of the application for persistence purpose
 	 * 
 	 * @param dataDir

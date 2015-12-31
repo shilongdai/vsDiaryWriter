@@ -16,9 +16,7 @@ public class JournalIndexerFactory implements IndexerFactory {
 
 	@Override
 	public Indexer<Journal> createIndexer() {
-		if (indexer == null) {
-			indexer = new JournalIndexer(dataDir);
-		}
+		indexer = new JournalIndexer(dataDir);
 		return indexer;
 	}
 
@@ -32,6 +30,14 @@ public class JournalIndexerFactory implements IndexerFactory {
 	public void setDataDir(File dir) {
 		dataDir = dir;
 
+	}
+
+	@Override
+	public Indexer<Journal> getIndexer() {
+		if (indexer == null) {
+			indexer = new JournalIndexer(dataDir);
+		}
+		return indexer;
 	}
 
 }

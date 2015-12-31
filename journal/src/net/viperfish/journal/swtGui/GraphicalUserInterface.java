@@ -1,6 +1,6 @@
 package net.viperfish.journal.swtGui;
 
-import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.framework.ComponentProvider;
 import net.viperfish.journal.framework.UserInterface;
 
 public class GraphicalUserInterface extends UserInterface {
@@ -29,7 +29,7 @@ public class GraphicalUserInterface extends UserInterface {
 
 	@Override
 	public String promptPassword() {
-		prompt = new LoginPrompt(JournalApplication.getAuthFactory().getAuthenticator());
+		prompt = new LoginPrompt(ComponentProvider.getAuthManager());
 		return prompt.open();
 	}
 

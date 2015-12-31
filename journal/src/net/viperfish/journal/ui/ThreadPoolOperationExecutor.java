@@ -18,24 +18,25 @@ public class ThreadPoolOperationExecutor implements OperationExecutor {
 	private class OperationRunner implements Runnable {
 
 		private Operation o;
-		
+
 		public OperationRunner(Operation toRun) {
 			this.o = toRun;
 		}
-		
+
 		@Override
 		public void run() {
 			o.execute();
-			
+
 		}
-		
+
 	}
-	
+
 	private class ExceptionHandler implements Thread.UncaughtExceptionHandler {
 
 		@Override
 		public void uncaughtException(Thread t, Throwable e) {
 			errors.add(e);
+			e.printStackTrace();
 
 		}
 

@@ -23,6 +23,39 @@ public abstract class FileEntryDatabaseFactory implements DataSourceFactory {
 
 	@Override
 	public EntryDatabase createDatabaseObject() {
+		db = new FileEntryDatabase(createIOFile(dataFile));
+		db.load();
+		executor.schedule(new TimerTask() {
+
+			@Override
+			public void run() {
+				db.flush();
+			}
+		}, 0, 60000);
+		return db;
+	}
+
+	@Override
+	public void cleanUp() {
+		if (db != null) {
+			db.flush();
+		}
+		executor.cancel();
+
+	}
+
+	@Override
+	public void setDataDirectory(File dir) {
+		try {
+			dataFile = new File(dir.getCanonicalPath() + "/journalEntries");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	@Override
+	public EntryDatabase getDatabaseObject() {
 		if (db == null) {
 			db = new FileEntryDatabase(createIOFile(dataFile));
 			db.load();
@@ -35,22 +68,6 @@ public abstract class FileEntryDatabaseFactory implements DataSourceFactory {
 			}, 0, 60000);
 		}
 		return db;
-	}
-
-	@Override
-	public void cleanUp() {
-		db.flush();
-
-	}
-
-	@Override
-	public void setDataDirectory(File dir) {
-		try {
-			dataFile = new File(dir.getCanonicalPath() + "/journalEntries");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
 	}
 
 }

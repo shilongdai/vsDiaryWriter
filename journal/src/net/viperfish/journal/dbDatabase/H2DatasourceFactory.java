@@ -12,9 +12,7 @@ public class H2DatasourceFactory implements DataSourceFactory {
 
 	@Override
 	public EntryDatabase createDatabaseObject() {
-		if (db == null) {
-			db = new H2EntryDatabase(dataDir);
-		}
+		db = new H2EntryDatabase(dataDir);
 		return db;
 	}
 
@@ -30,6 +28,14 @@ public class H2DatasourceFactory implements DataSourceFactory {
 	public void setDataDirectory(File dir) {
 		this.dataDir = dir;
 
+	}
+
+	@Override
+	public EntryDatabase getDatabaseObject() {
+		if (db == null) {
+			db = new H2EntryDatabase(dataDir);
+		}
+		return db;
 	}
 
 }

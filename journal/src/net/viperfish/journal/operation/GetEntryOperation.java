@@ -1,7 +1,9 @@
 package net.viperfish.journal.operation;
 
 import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.framework.ComponentProvider;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.persistent.EntryDatabase;
 
@@ -11,18 +13,21 @@ public class GetEntryOperation implements OperationWithResult<Journal> {
 	private boolean done;
 	private Journal result;
 	private EntryDatabase db;
+	private JournalTransformer t;
 
 	public GetEntryOperation(Long id) {
 		this.id = id;
 		done = false;
-		db = JournalApplication.getDataSourceFactory().createDatabaseObject();
+		db = ComponentProvider.getEntryDatabase();
 		result = new Journal();
+		t = ComponentProvider.getTransformer();
+		t.setPassword(JournalApplication.getPassword());
 	}
 
 	@Override
 	public void execute() {
 		try {
-			result = db.getEntry(id);
+			result = t.decryptJournal(db.getEntry(id));
 		} finally {
 			synchronized (this) {
 				done = true;

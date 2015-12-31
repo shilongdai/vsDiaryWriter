@@ -9,6 +9,19 @@ import java.io.File;
  * @see EntryDatabase
  */
 public interface DataSourceFactory {
+
+	/**
+	 * get a dao object
+	 * 
+	 * @return a new or cached dao;
+	 */
+	public EntryDatabase getDatabaseObject();
+
+	/**
+	 * create a new dao object
+	 * 
+	 * @return the new dao
+	 */
 	public EntryDatabase createDatabaseObject();
 
 	/**

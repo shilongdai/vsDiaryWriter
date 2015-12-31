@@ -2,30 +2,21 @@ package net.viperfish.journal;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
-import net.viperfish.journal.auth.AuthenticationManager;
-import net.viperfish.journal.auth.AuthenticationManagerFactory;
-import net.viperfish.journal.authentications.HashAuthFactory;
+import net.viperfish.journal.auth.ViperfishAuthProvider;
 import net.viperfish.journal.cmd.CommandLineUserInterface;
-import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.dbProvider.ViperfishEntryDatabaseProvider;
+import net.viperfish.journal.framework.ComponentProvider;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.UserInterface;
-import net.viperfish.journal.persistent.DataSourceFactory;
-import net.viperfish.journal.persistent.EntryDatabase;
-import net.viperfish.journal.persistent.IndexerFactory;
+import net.viperfish.journal.index.ViperfishIndexerProvider;
 import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
-import net.viperfish.journal.secure.SecureFactoryWrapper;
+import net.viperfish.journal.secure.ViperfishEncryptionProvider;
 import net.viperfish.journal.ui.StandardOperationFactory;
 import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
-import net.viperfish.utils.config.ComponentConfig;
-import net.viperfish.utils.config.ComponentConfigObserver;
 import net.viperfish.utils.config.Configuration;
 import net.viperfish.utils.file.CommonFunctions;
-import net.viperfish.utils.index.Indexer;
-import test.java.StubDataSourceFactory;
 
 /**
  * the Main class of the application, contains all the components
@@ -34,51 +25,33 @@ import test.java.StubDataSourceFactory;
  * 
  */
 public class JournalApplication {
-	private static DataSourceFactory df;
-	private static IndexerFactory indexerFactory;
 	private static UserInterface ui;
 	private static OperationExecutor worker;
 	private static OperationFactory opsFactory;
 	private static boolean firstRun;
 	private static File dataDir;
-	private static AuthenticationManagerFactory authFactory;
 	private static boolean unitTest = false;
 	private static String password;
 	private static SystemConfig sysConf;
 
-	private static class ConfigurationObserver implements ComponentConfigObserver {
-
-		@Override
-		public void sendNotify(ComponentConfig c) {
-			List<Journal> l = new LinkedList<>();
-			l = df.createDatabaseObject().getAll();
-			reset();
-			indexerFactory = getIndexerFactory();
-			df = getDataSourceFactory();
-			indexerFactory.createIndexer().clear();
-			df.createDatabaseObject().clear();
-			for (Journal j : l) {
-				df.createDatabaseObject().addEntry(j);
-				indexerFactory.createIndexer().add(j);
-			}
-		}
-
-	}
-
 	static {
 		initFileStructure();
 		initConfigUnits();
+		initProviders();
 	}
 
 	public JournalApplication() {
 	}
 
-	public static void reset() {
-		df = null;
-		indexerFactory = null;
-		worker = null;
-		opsFactory = null;
-		authFactory = null;
+	private static void initProviders() {
+		ComponentProvider.registerAuthProvider(new ViperfishAuthProvider());
+		ComponentProvider.registerEntryDatabaseProvider(new ViperfishEntryDatabaseProvider());
+		ComponentProvider.registerIndexerProvider(new ViperfishIndexerProvider());
+		ComponentProvider.registerTransformerProvider(new ViperfishEncryptionProvider());
+		ComponentProvider.setDefaultAuthProvider("viperfish");
+		ComponentProvider.setDefaultDatabaseProvider("viperfish");
+		ComponentProvider.setDefaultIndexerProvider("viperfish");
+		ComponentProvider.setDefaultTransformerProvider("viperfish");
 	}
 
 	private static void initConfigUnits() {
@@ -86,7 +59,6 @@ public class JournalApplication {
 		Configuration.setConfigDirPath("config");
 		Configuration.put(SecureEntryDatabaseWrapper.config().getUnitName(), SecureEntryDatabaseWrapper.config());
 		Configuration.put(sysConf.getUnitName(), sysConf);
-		sysConf.addObserver(new ConfigurationObserver());
 	}
 
 	private static void deleteAll() {
@@ -95,17 +67,14 @@ public class JournalApplication {
 	}
 
 	public static void cleanUp() {
-		getDataSourceFactory().cleanUp();
-		getIndexerFactory().cleanUp();
+		ComponentProvider.dispose();
+		System.err.println("Providers disposed");
 		getWorker().terminate();
+		System.err.println("worker terminated");
 	}
 
 	private static void initFileStructure() {
-		if (!unitTest) {
-			dataDir = new File("data");
-		} else {
-			dataDir = new File("test");
-		}
+		dataDir = new File("data");
 		if (!dataDir.exists()) {
 			firstRun = true;
 			dataDir.mkdir();
@@ -123,62 +92,6 @@ public class JournalApplication {
 			worker = new ThreadPoolOperationExecutor();
 		}
 		return worker;
-	}
-
-	/**
-	 * get the factory that returns a instance of a EntryDatabase
-	 * 
-	 * @return the factory
-	 * @see EntryDatabase
-	 */
-	public static DataSourceFactory getDataSourceFactory() {
-		if (df == null) {
-			if (unitTest) {
-				df = new StubDataSourceFactory();
-			} else {
-				try {
-					Class<?> selected = Class.forName(sysConf.getProperty("DataSourceFactory"));
-					DataSourceFactory tmp = (DataSourceFactory) selected.newInstance();
-					df = new SecureFactoryWrapper(tmp, password);
-					df.setDataDirectory(dataDir);
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
-		return df;
-	}
-
-	/**
-	 * get a factory that returns a instance of a Indexer<Journal>
-	 * 
-	 * @see Indexer
-	 * @return the factory
-	 */
-	public static IndexerFactory getIndexerFactory() {
-		if (indexerFactory == null) {
-			try {
-				indexerFactory = (IndexerFactory) Class.forName(sysConf.getProperty("IndexerFactory")).newInstance();
-				indexerFactory.setDataDir(dataDir);
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		return indexerFactory;
-	}
-
-	/**
-	 * get a factory that returns a instance of a AuthenticationManager
-	 * 
-	 * @return the authentication manager
-	 * @see AuthenticationManager
-	 */
-	public static AuthenticationManagerFactory getAuthFactory() {
-		if (authFactory == null) {
-			authFactory = new HashAuthFactory();
-			authFactory.setDataDir(dataDir);
-		}
-		return authFactory;
 	}
 
 	/**
@@ -214,10 +127,6 @@ public class JournalApplication {
 	 */
 	public static void setPassword(String password) {
 		JournalApplication.password = password;
-		if (getDataSourceFactory().getClass().isInstance(SecureFactoryWrapper.class)) {
-			SecureEntryDatabaseWrapper tmp = (SecureEntryDatabaseWrapper) df.createDatabaseObject();
-			tmp.setPassword(getPassword());
-		}
 
 	}
 
@@ -245,7 +154,6 @@ public class JournalApplication {
 		unitTest = isEnable;
 		deleteAll();
 		initFileStructure();
-		reset();
 	}
 
 	public static void main(String[] args) {
@@ -283,7 +191,7 @@ public class JournalApplication {
 			System.err.println(e1);
 			System.exit(1);
 		}
-		ui.setAuthManager(getAuthFactory().getAuthenticator());
+		ui.setAuthManager(ComponentProvider.getAuthManager());
 		if (firstRun) {
 			ui.setup();
 			lockFile.delete();

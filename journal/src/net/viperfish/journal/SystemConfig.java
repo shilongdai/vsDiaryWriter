@@ -1,17 +1,16 @@
 package net.viperfish.journal;
 
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.reflections.Reflections;
-
-import net.viperfish.journal.dbDatabase.H2DatasourceFactory;
-import net.viperfish.journal.index.JournalIndexerFactory;
-import net.viperfish.journal.persistent.DataSourceFactory;
-import net.viperfish.journal.persistent.IndexerFactory;
-import net.viperfish.journal.secure.SecureFactoryWrapper;
+import net.viperfish.journal.framework.ComponentProvider;
+import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.Provider;
+import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.utils.config.ComponentConfig;
+import net.viperfish.utils.index.Indexer;;
 
 public class SystemConfig extends ComponentConfig {
 
@@ -26,21 +25,20 @@ public class SystemConfig extends ComponentConfig {
 
 	private Set<String> availableDF() {
 		Set<String> available = new TreeSet<>();
-		Set<Class<? extends DataSourceFactory>> result = new Reflections("net.viperfish.journal")
-				.getSubTypesOf(DataSourceFactory.class);
-		result.remove(SecureFactoryWrapper.class);
-		for (Class<? extends DataSourceFactory> i : result) {
-			available.add(i.getCanonicalName());
+		for (Entry<String, Provider<EntryDatabase>> i : ComponentProvider.getDatabaseProviders().entrySet()) {
+			for (String iter : i.getValue().getSupported()) {
+				available.add(iter);
+			}
 		}
 		return available;
 	}
 
 	private Set<String> availableIF() {
 		Set<String> available = new TreeSet<>();
-		Set<Class<? extends IndexerFactory>> result = new Reflections("net.viperfish.journal")
-				.getSubTypesOf(IndexerFactory.class);
-		for (Class<? extends IndexerFactory> i : result) {
-			available.add(i.getCanonicalName());
+		for (Entry<String, Provider<Indexer<Journal>>> i : ComponentProvider.getIndexerProviders().entrySet()) {
+			for (String iter : i.getValue().getSupported()) {
+				available.add(iter);
+			}
 		}
 		return available;
 	}
@@ -53,25 +51,25 @@ public class SystemConfig extends ComponentConfig {
 	@Override
 	public Set<String> optionalConfig() {
 		HashSet<String> result = new HashSet<String>();
-		result.add("DataSourceFactory");
-		result.add("IndexerFactory");
+		result.add("DataStorage");
+		result.add("Indexer");
 		return result;
 	}
 
 	@Override
 	public void fillInDefault() {
-		this.setProperty("DataSourceFactory", H2DatasourceFactory.class.getCanonicalName());
-		this.setProperty("IndexerFactory", JournalIndexerFactory.class.getCanonicalName());
+		this.setProperty("DataStorage", "H2Database");
+		this.setProperty("IndexerFactory", "LuceneIndexer");
 
 	}
 
 	@Override
 	public Set<String> getOptions(String key) {
-		if (key.equals("DataSourceFactory")) {
+		if (key.equals("DataStorage")) {
 			return this.availableDF();
 		}
 
-		if (key.equals("IndexerFactory")) {
+		if (key.equals("Indexer")) {
 			return this.availableIF();
 		}
 		return new TreeSet<>();

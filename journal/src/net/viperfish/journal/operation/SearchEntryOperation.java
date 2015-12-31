@@ -4,7 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.framework.ComponentProvider;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.persistent.EntryDatabase;
 import net.viperfish.utils.index.Indexer;
@@ -16,13 +18,16 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 	private boolean done;
 	private EntryDatabase db;
 	private Indexer<Journal> indexer;
+	private JournalTransformer t;
 
 	public SearchEntryOperation(String query) {
 		this.query = query;
 		result = new HashSet<Journal>();
 		done = false;
-		db = JournalApplication.getDataSourceFactory().createDatabaseObject();
-		indexer = JournalApplication.getIndexerFactory().createIndexer();
+		db = ComponentProvider.getEntryDatabase();
+		indexer = ComponentProvider.getIndexer();
+		t = ComponentProvider.getTransformer();
+		t.setPassword(JournalApplication.getPassword());
 	}
 
 	@Override
@@ -35,7 +40,7 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 					indexer.delete(id);
 					continue;
 				}
-				result.add(j);
+				result.add(t.decryptJournal(j));
 			}
 		} finally {
 			done = true;

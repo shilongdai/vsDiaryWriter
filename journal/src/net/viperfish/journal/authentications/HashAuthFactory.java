@@ -27,4 +27,9 @@ public class HashAuthFactory implements AuthenticationManagerFactory {
 
 	}
 
+	@Override
+	public AuthenticationManager newAuthenticator() {
+		return new HashAuthManager(dataDir);
+	}
+
 }

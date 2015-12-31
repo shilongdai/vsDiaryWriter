@@ -15,7 +15,7 @@ public class StubDataSourceFactory implements DataSourceFactory {
 
 	@Override
 	public EntryDatabase createDatabaseObject() {
-		return db;
+		return new DatabaseStub();
 	}
 
 	@Override
@@ -28,6 +28,11 @@ public class StubDataSourceFactory implements DataSourceFactory {
 	public void setDataDirectory(File dir) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public EntryDatabase getDatabaseObject() {
+		return db;
 	}
 
 }

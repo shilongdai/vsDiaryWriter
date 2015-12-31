@@ -13,14 +13,14 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 
+import org.apache.commons.codec.binary.Base64;
+
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.persistent.EntryDatabase;
+import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
 import net.viperfish.journal.secureAlgs.BCDigester;
 import net.viperfish.journal.secureAlgs.BCPCKDF2Generator;
@@ -31,12 +31,8 @@ import net.viperfish.journal.secureAlgs.GMac;
 import net.viperfish.journal.secureAlgs.HMac;
 import net.viperfish.journal.secureAlgs.PBKDF2KeyGenerator;
 import net.viperfish.utils.config.ComponentConfig;
-import net.viperfish.utils.config.ComponentConfigObserver;
 
-import org.apache.commons.codec.binary.Base64;
-
-public class SecureEntryDatabaseWrapper implements EntryDatabase,
-		ComponentConfigObserver {
+public class SecureEntryDatabaseWrapper implements JournalTransformer {
 
 	private static SecureEntryWrapperConfig config;
 
@@ -48,7 +44,6 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 	}
 
 	private final File saltStore;
-	private final EntryDatabase toWrap;
 	private byte[] key;
 	private byte[] macIV;
 	private byte[] saltForKDF;
@@ -58,9 +53,8 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 	private MacDigester mac;
 	private PBKDF2KeyGenerator keyGenerator;
 
-	private String encryptData(byte[] bytes) throws InvalidKeyException,
-			InvalidAlgorithmParameterException, IllegalBlockSizeException,
-			BadPaddingException {
+	private String encryptData(byte[] bytes) throws InvalidKeyException, InvalidAlgorithmParameterException,
+			IllegalBlockSizeException, BadPaddingException {
 		byte[] cipher = enc.encrypt(bytes);
 		byte[] iv = enc.getIv();
 		String ivString = Base64.encodeBase64String(iv);
@@ -75,9 +69,8 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 		return macString;
 	}
 
-	private String encrypt_format(String data) throws InvalidKeyException,
-			InvalidAlgorithmParameterException, IllegalBlockSizeException,
-			BadPaddingException {
+	private String encrypt_format(String data) throws InvalidKeyException, InvalidAlgorithmParameterException,
+			IllegalBlockSizeException, BadPaddingException {
 		byte[] bytes = data.getBytes(StandardCharsets.UTF_16);
 		// encrypt
 		String cipherString;
@@ -91,9 +84,8 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 		return cipherString;
 	}
 
-	private String decrypt_format(String data) throws InvalidKeyException,
-			InvalidAlgorithmParameterException, IllegalBlockSizeException,
-			BadPaddingException, CompromisedDataException {
+	private String decrypt_format(String data) throws InvalidKeyException, InvalidAlgorithmParameterException,
+			IllegalBlockSizeException, BadPaddingException, CompromisedDataException {
 		String[] parts = data.split("\\$");
 		String ivData = parts[0];
 		String cData = parts[1];
@@ -126,8 +118,7 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 		}
 		DataOutputStream out = null;
 		try {
-			out = new DataOutputStream(new BufferedOutputStream(
-					new FileOutputStream(saltStore)));
+			out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(saltStore)));
 			out.write(saltForKDF);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -155,8 +146,7 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 			return;
 		} else {
 			try {
-				in = new DataInputStream(new BufferedInputStream(
-						new FileInputStream(saltStore)));
+				in = new DataInputStream(new BufferedInputStream(new FileInputStream(saltStore)));
 				for (int i = 0; i < 10; ++i) {
 					saltForKDF[i] = in.readByte();
 				}
@@ -174,28 +164,37 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 		}
 	}
 
-	private void encryptJournal(Journal j) {
+	@Override
+	public Journal encryptJournal(Journal j) {
 		try {
 			String encrytSubject = encrypt_format(j.getSubject());
 			String encryptContent = encrypt_format(j.getContent());
-			j.setSubject(encrytSubject);
-			j.setContent(encryptContent);
-		} catch (InvalidKeyException | InvalidAlgorithmParameterException
-				| IllegalBlockSizeException | BadPaddingException e) {
+			Journal result = new Journal();
+			result.setSubject(encrytSubject);
+			result.setContent(encryptContent);
+			result.setDate(j.getDate());
+			result.setId(j.getId());
+			return result;
+		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
+				| BadPaddingException e) {
 			e.fillInStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
 
-	private void decryptJournal(Journal j) {
+	@Override
+	public Journal decryptJournal(Journal j) {
 		try {
 			String decSubject = decrypt_format(j.getSubject());
 			String decContent = decrypt_format(j.getContent());
-			j.setContent(decContent);
-			j.setSubject(decSubject);
-		} catch (InvalidKeyException | InvalidAlgorithmParameterException
-				| IllegalBlockSizeException | BadPaddingException
-				| CompromisedDataException e) {
+			Journal result = new Journal();
+			result.setSubject(decSubject);
+			result.setContent(decContent);
+			result.setDate(j.getDate());
+			result.setId(j.getId());
+			return result;
+		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
+				| BadPaddingException | CompromisedDataException e) {
 			e.fillInStackTrace();
 			throw new RuntimeException(e);
 		}
@@ -237,90 +236,20 @@ public class SecureEntryDatabaseWrapper implements EntryDatabase,
 		keyGenerator.setSalt(saltForKDF);
 	}
 
-	public SecureEntryDatabaseWrapper(EntryDatabase db, String password,
-			File salt) {
-		this.toWrap = db;
+	public SecureEntryDatabaseWrapper(File salt) {
 		this.saltStore = salt;
 		initAlgorithms();
 		initKDF();
-		setPassword(password);
-		config.addObserver(this);
 	}
 
 	@Override
-	public Journal addEntry(Journal j) {
-		Journal tmp = new Journal(j);
-		encryptJournal(tmp);
-		Journal result = toWrap.addEntry(tmp);
-		j.setId(result.getId());
-		return getEntry(result.getId());
-	}
-
-	@Override
-	public Journal removeEntry(Long id) {
-		Journal result = toWrap.removeEntry(id);
-		decryptJournal(result);
-		return result;
-	}
-
-	@Override
-	public Journal getEntry(Long id) {
-		Journal tmp = toWrap.getEntry(id);
-		if (tmp == null) {
-			return null;
-		}
-		Journal result = new Journal(tmp);
-		decryptJournal(result);
-		return result;
-	}
-
-	@Override
-	public Journal updateEntry(Long id, Journal j) {
-		encryptJournal(j);
-		Journal updated = new Journal(toWrap.updateEntry(id, j));
-		decryptJournal(updated);
-		return updated;
-	}
-
-	@Override
-	public List<Journal> getAll() {
-		List<Journal> result = toWrap.getAll();
-		List<Journal> copy = new LinkedList<Journal>();
-		for (Journal i : result) {
-			copy.add(new Journal(i));
-		}
-		for (Journal i : copy) {
-			decryptJournal(i);
-		}
-		return copy;
-	}
-
-	@Override
-	public void clear() {
-		toWrap.clear();
-	}
-
 	public void setPassword(String string) {
 		this.key = keyGenerator.generate(string, enc.getKeySize());
-		mac.setKey(this.keyGenerator.generate(
-				Base64.encodeBase64String(dig.digest(this.key)),
-				mac.getIvLength()));
+		mac.setKey(this.keyGenerator.generate(Base64.encodeBase64String(dig.digest(this.key)), mac.getIvLength()));
 		enc.setKey(key);
 		macIV = new byte[mac.getIvLength()];
 		Arrays.fill(macIV, (byte) 0);
 		mac.setIv(macIV);
-	}
-
-	@Override
-	public void sendNotify(ComponentConfig c) {
-		List<Journal> all = this.getAll();
-		this.clear();
-		initAlgorithms();
-		for (Journal i : all) {
-			this.addEntry(i);
-		}
-		return;
-
 	}
 
 }

@@ -59,7 +59,8 @@ public class JournalSetup {
 
 		final Combo combo = new Combo(composite, SWT.NONE);
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		for (String i : system.getOptions("DataSourceFactory")) {
+		combo.select(0);
+		for (String i : system.getOptions("DataStorage")) {
 			combo.add(i);
 		}
 
@@ -68,7 +69,8 @@ public class JournalSetup {
 
 		final Combo combo_1 = new Combo(composite, SWT.NONE);
 		combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		for (String i : system.getOptions("IndexerFactory")) {
+		combo_1.select(0);
+		for (String i : system.getOptions("Indexer")) {
 			combo_1.add(i);
 		}
 
@@ -85,6 +87,7 @@ public class JournalSetup {
 
 		final Combo combo_2 = new Combo(security, SWT.NONE);
 		combo_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		combo_2.select(0);
 
 		for (String i : this.security.getOptions("EncryptionMethod")) {
 			combo_2.add(i);
@@ -96,6 +99,7 @@ public class JournalSetup {
 
 		final Combo combo_3 = new Combo(security, SWT.NONE);
 		combo_3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		combo_3.select(0);
 		for (String i : this.security.getOptions("EncryptionMode")) {
 			combo_3.add(i);
 		}
@@ -106,6 +110,7 @@ public class JournalSetup {
 
 		final Combo combo_4 = new Combo(security, SWT.NONE);
 		combo_4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		combo_4.select(0);
 		for (String i : this.security.getOptions("EncryptionPadding")) {
 			combo_4.add(i);
 		}
@@ -116,6 +121,7 @@ public class JournalSetup {
 
 		final Combo combo_5 = new Combo(security, SWT.NONE);
 		combo_5.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		combo_5.select(0);
 		for (String i : this.security.getOptions("MacMethod")) {
 			combo_5.add(i);
 		}
@@ -127,6 +133,7 @@ public class JournalSetup {
 		final Combo combo_6 = new Combo(security, SWT.NONE);
 		combo_6.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		initMacAlgorithms(combo_6);
+		combo_6.select(0);
 
 		combo_5.addModifyListener(new ModifyListener() {
 
@@ -143,8 +150,8 @@ public class JournalSetup {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				system.setProperty("DataSourceFactory", combo.getText());
-				system.setProperty("IndexerFactory", combo_1.getText());
+				system.setProperty("DataStorage", combo.getText());
+				system.setProperty("Indexer", combo_1.getText());
 				JournalSetup.this.security.setProperty("EncryptionMethod", combo_2.getText());
 				JournalSetup.this.security.setProperty("EncryptionMode", combo_3.getText());
 				JournalSetup.this.security.setProperty("EncryptionPadding", combo_4.getText());
