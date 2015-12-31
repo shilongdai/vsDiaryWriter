@@ -24,8 +24,8 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 		this.query = query;
 		result = new HashSet<Journal>();
 		done = false;
-		db = ComponentProvider.getEntryDatabase();
-		indexer = ComponentProvider.getIndexer();
+		db = ComponentProvider.getEntryDatabase(JournalApplication.getSysConf().getProperty("DataStorage"));
+		indexer = ComponentProvider.getIndexer(JournalApplication.getSysConf().getProperty("Indexer"));
 		t = ComponentProvider.getTransformer();
 		t.setPassword(JournalApplication.getPassword());
 	}

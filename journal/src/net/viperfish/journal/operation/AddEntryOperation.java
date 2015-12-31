@@ -17,8 +17,8 @@ public class AddEntryOperation implements Operation {
 
 	public AddEntryOperation(Journal add) {
 		this.toAdd = add;
-		db = ComponentProvider.getEntryDatabase();
-		indexer = ComponentProvider.getIndexer();
+		db = ComponentProvider.getEntryDatabase(JournalApplication.getSysConf().getProperty("DataStorage"));
+		indexer = ComponentProvider.getIndexer(JournalApplication.getSysConf().getProperty("Indexer"));
 		t = ComponentProvider.getTransformer();
 		t.setPassword(JournalApplication.getPassword());
 	}

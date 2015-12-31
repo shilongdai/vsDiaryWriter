@@ -19,7 +19,7 @@ public class GetAllOperation implements OperationWithResult<List<Journal>> {
 	private JournalTransformer t;
 
 	public GetAllOperation() {
-		db = ComponentProvider.getEntryDatabase();
+		db = ComponentProvider.getEntryDatabase(JournalApplication.getSysConf().getProperty("DataStorage"));
 		result = new LinkedList<Journal>();
 		t = ComponentProvider.getTransformer();
 		t.setPassword(JournalApplication.getPassword());

@@ -18,7 +18,7 @@ public class GetEntryOperation implements OperationWithResult<Journal> {
 	public GetEntryOperation(Long id) {
 		this.id = id;
 		done = false;
-		db = ComponentProvider.getEntryDatabase();
+		db = ComponentProvider.getEntryDatabase(JournalApplication.getSysConf().getProperty("DataStorage"));
 		result = new Journal();
 		t = ComponentProvider.getTransformer();
 		t.setPassword(JournalApplication.getPassword());

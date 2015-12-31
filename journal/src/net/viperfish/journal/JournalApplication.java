@@ -191,11 +191,11 @@ public class JournalApplication {
 			System.err.println(e1);
 			System.exit(1);
 		}
-		ui.setAuthManager(ComponentProvider.getAuthManager());
 		if (firstRun) {
 			ui.setup();
 			lockFile.delete();
 		}
+		ui.setAuthManager(ComponentProvider.getAuthManager());
 		password = ui.promptPassword();
 		ui.run();
 		try {

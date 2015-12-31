@@ -59,7 +59,7 @@ public class SystemConfig extends ComponentConfig {
 	@Override
 	public void fillInDefault() {
 		this.setProperty("DataStorage", "H2Database");
-		this.setProperty("IndexerFactory", "LuceneIndexer");
+		this.setProperty("Indexer", "LuceneIndexer");
 
 	}
 

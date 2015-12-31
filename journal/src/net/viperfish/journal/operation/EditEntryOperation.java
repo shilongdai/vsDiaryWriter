@@ -19,8 +19,8 @@ public abstract class EditEntryOperation implements Operation {
 
 	public EditEntryOperation(Long id) {
 		this.id = id;
-		db = ComponentProvider.getEntryDatabase();
-		indexer = ComponentProvider.getIndexer();
+		db = ComponentProvider.getEntryDatabase(JournalApplication.getSysConf().getProperty("DataStorage"));
+		indexer = ComponentProvider.getIndexer(JournalApplication.getSysConf().getProperty("Indexer"));
 		t = ComponentProvider.getTransformer();
 		t.setPassword(JournalApplication.getPassword());
 	}
