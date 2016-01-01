@@ -19,6 +19,7 @@ import javax.crypto.IllegalBlockSizeException;
 
 import org.apache.commons.codec.binary.Base64;
 
+import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
@@ -32,7 +33,13 @@ import net.viperfish.journal.secureAlgs.HMac;
 import net.viperfish.journal.secureAlgs.PBKDF2KeyGenerator;
 import net.viperfish.utils.config.ComponentConfig;
 
-public class SecureEntryDatabaseWrapper implements JournalTransformer {
+public class BlockCipherMacTransformer implements JournalTransformer {
+
+	public static final String ENCRYPTION_ALG_NAME = "viperfish.secure.encrytion.algorithm";
+	public static final String ENCRYPTION_MODE = "viperfish.secure.encryption.mode";
+	public static final String ENCRYPTION_PADDING = "viperfish.secure.encryption.padding";
+	public static final String MAC_TYPE = "viperfish.secure.mac.type";
+	public static final String MAC_ALGORITHM = "viperfish.secure.mac.algorithm";
 
 	private static SecureEntryWrapperConfig config;
 
@@ -203,7 +210,7 @@ public class SecureEntryDatabaseWrapper implements JournalTransformer {
 	private void initAlgorithms() {
 		enc = new BCBlockCipherEncryptor();
 		dig = new BCDigester();
-		String macMethod = config().getProperty("MacMethod");
+		String macMethod = JournalApplication.getConfiguration().getString(MAC_TYPE);
 		if (macMethod.equalsIgnoreCase("CBCMAC")) {
 			mac = new CBCMac();
 		} else if (macMethod.equalsIgnoreCase("CMAC")) {
@@ -215,13 +222,13 @@ public class SecureEntryDatabaseWrapper implements JournalTransformer {
 		} else if (macMethod.equalsIgnoreCase("HMAC")) {
 			mac = new HMac();
 		}
-		mac.setMode(config().getProperty("MacAlgorithm"));
+		mac.setMode(JournalApplication.getConfiguration().getString(MAC_ALGORITHM));
 		String mode = new String();
-		mode += config().getProperty("EncryptionMethod");
+		mode += JournalApplication.getConfiguration().getString(ENCRYPTION_ALG_NAME);
 		mode += "/";
-		mode += config().getProperty("EncryptionMode");
+		mode += JournalApplication.getConfiguration().getString(ENCRYPTION_MODE);
 		mode += "/";
-		mode += config().getProperty("EncryptionPadding");
+		mode += JournalApplication.getConfiguration().getString(ENCRYPTION_PADDING);
 		enc.setMode(mode);
 		dig.setMode("SHA512");
 	}
@@ -236,7 +243,7 @@ public class SecureEntryDatabaseWrapper implements JournalTransformer {
 		keyGenerator.setSalt(saltForKDF);
 	}
 
-	public SecureEntryDatabaseWrapper(File salt) {
+	public BlockCipherMacTransformer(File salt) {
 		this.saltStore = salt;
 		initAlgorithms();
 		initKDF();
@@ -245,7 +252,7 @@ public class SecureEntryDatabaseWrapper implements JournalTransformer {
 	@Override
 	public void setPassword(String string) {
 		this.key = keyGenerator.generate(string, enc.getKeySize());
-		mac.setKey(this.keyGenerator.generate(Base64.encodeBase64String(dig.digest(this.key)), mac.getIvLength()));
+		mac.setKey(this.keyGenerator.generate(Base64.encodeBase64String(dig.digest(this.key)), mac.getKeyLength()));
 		enc.setKey(key);
 		macIV = new byte[mac.getIvLength()];
 		Arrays.fill(macIV, (byte) 0);

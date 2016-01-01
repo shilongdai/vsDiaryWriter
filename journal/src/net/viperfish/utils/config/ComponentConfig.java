@@ -15,9 +15,11 @@ import java.util.Set;
 /**
  * a unit of configuration
  * 
+ * @deprecated
  * @author sdai
  *
  */
+@Deprecated
 public abstract class ComponentConfig extends Properties {
 
 	/**
@@ -60,8 +62,7 @@ public abstract class ComponentConfig extends Properties {
 				throw new RuntimeException(e);
 			}
 		}
-		this.storeToXML(new BufferedOutputStream(new FileOutputStream(
-				getConfigFile())), "config for " + unitName);
+		this.storeToXML(new BufferedOutputStream(new FileOutputStream(getConfigFile())), "config for " + unitName);
 	}
 
 	/**
@@ -76,8 +77,7 @@ public abstract class ComponentConfig extends Properties {
 		if (!getConfigFile().exists()) {
 			return;
 		}
-		this.loadFromXML(new BufferedInputStream(new FileInputStream(
-				getConfigFile())));
+		this.loadFromXML(new BufferedInputStream(new FileInputStream(getConfigFile())));
 	}
 
 	/**

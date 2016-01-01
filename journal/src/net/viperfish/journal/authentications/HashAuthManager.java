@@ -12,17 +12,18 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
+import org.apache.commons.codec.binary.Base64;
+
 import net.viperfish.journal.auth.AuthenticationManager;
 import net.viperfish.journal.secure.Digester;
 import net.viperfish.journal.secureAlgs.JCEDigester;
-
-import org.apache.commons.codec.binary.Base64;
 
 public class HashAuthManager implements AuthenticationManager {
 
 	private Digester dig;
 	private File passwdFile;
 	private File dataDir;
+	private String password;
 	private boolean passwordSet;
 	private byte[] hash;
 	private byte[] salt;
@@ -60,8 +61,7 @@ public class HashAuthManager implements AuthenticationManager {
 		byte[] data = formatted.getBytes(StandardCharsets.UTF_8);
 		DataOutputStream out = null;
 		try {
-			out = new DataOutputStream(new BufferedOutputStream(
-					new FileOutputStream(passwdFile)));
+			out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(passwdFile)));
 			out.write(data);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -80,8 +80,7 @@ public class HashAuthManager implements AuthenticationManager {
 	private String readPasswdFile() {
 		DataInputStream in = null;
 		try {
-			in = new DataInputStream(new BufferedInputStream(
-					new FileInputStream(passwdFile)));
+			in = new DataInputStream(new BufferedInputStream(new FileInputStream(passwdFile)));
 			int estLength = in.available();
 			byte[] buffer = new byte[estLength + 256];
 			int actualLength = 0;
@@ -145,6 +144,7 @@ public class HashAuthManager implements AuthenticationManager {
 
 	@Override
 	public void setPassword(String pass) {
+		this.password = pass;
 		byte[] bytes = pass.getBytes(StandardCharsets.UTF_16);
 
 		generateSalt(12);
@@ -171,11 +171,21 @@ public class HashAuthManager implements AuthenticationManager {
 
 		byte[] providedHash = hashWithSalt(bytes, salt, 3000);
 
-		return Arrays.equals(providedHash, hash);
+		if (Arrays.equals(providedHash, hash)) {
+			this.password = pass;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public boolean isPasswordSet() {
 		return passwordSet;
+	}
+
+	@Override
+	public String getPassword() {
+		return password;
 	}
 }

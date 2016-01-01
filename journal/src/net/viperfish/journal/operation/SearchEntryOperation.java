@@ -3,6 +3,7 @@ package net.viperfish.journal.operation;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.viperfish.journal.ConfigMapping;
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.ComponentProvider;
 import net.viperfish.journal.framework.Journal;
@@ -24,15 +25,21 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 		this.query = query;
 		result = new HashSet<Journal>();
 		done = false;
-		db = ComponentProvider.getEntryDatabase(JournalApplication.getSysConf().getProperty("DataStorage"));
-		indexer = ComponentProvider.getIndexer(JournalApplication.getSysConf().getProperty("Indexer"));
-		t = ComponentProvider.getTransformer();
-		t.setPassword(JournalApplication.getPassword());
+		db = ComponentProvider
+				.getEntryDatabase(JournalApplication.getConfiguration().getString(ConfigMapping.DB_COMPONENT));
+		indexer = ComponentProvider
+				.getIndexer(JournalApplication.getConfiguration().getString(ConfigMapping.INDEXER_COMPONENT));
+		t = ComponentProvider
+				.getTransformer(JournalApplication.getConfiguration().getString(ConfigMapping.TRANSFORMER_COMPONENT));
+
 	}
 
 	@Override
 	public void execute() {
 		try {
+			t.setPassword(ComponentProvider
+					.getAuthManager(JournalApplication.getConfiguration().getString(ConfigMapping.AUTH_COMPONENT))
+					.getPassword());
 			Iterable<Long> indexResult = indexer.search(query);
 			for (Long id : indexResult) {
 				Journal j = db.getEntry(id);

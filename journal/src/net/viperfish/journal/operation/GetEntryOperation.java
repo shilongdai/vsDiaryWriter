@@ -1,5 +1,6 @@
 package net.viperfish.journal.operation;
 
+import net.viperfish.journal.ConfigMapping;
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.ComponentProvider;
 import net.viperfish.journal.framework.Journal;
@@ -18,15 +19,20 @@ public class GetEntryOperation implements OperationWithResult<Journal> {
 	public GetEntryOperation(Long id) {
 		this.id = id;
 		done = false;
-		db = ComponentProvider.getEntryDatabase(JournalApplication.getSysConf().getProperty("DataStorage"));
 		result = new Journal();
-		t = ComponentProvider.getTransformer();
-		t.setPassword(JournalApplication.getPassword());
+		db = ComponentProvider
+				.getEntryDatabase(JournalApplication.getConfiguration().getString(ConfigMapping.DB_COMPONENT));
+		t = ComponentProvider
+				.getTransformer(JournalApplication.getConfiguration().getString(ConfigMapping.TRANSFORMER_COMPONENT));
+
 	}
 
 	@Override
 	public void execute() {
 		try {
+			t.setPassword(ComponentProvider
+					.getAuthManager(JournalApplication.getConfiguration().getString(ConfigMapping.AUTH_COMPONENT))
+					.getPassword());
 			result = t.decryptJournal(db.getEntry(id));
 		} finally {
 			synchronized (this) {

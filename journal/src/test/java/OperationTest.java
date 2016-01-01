@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import org.junit.Assert;
 import org.junit.Test;
 
+import net.viperfish.journal.ConfigMapping;
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.ComponentProvider;
 import net.viperfish.journal.framework.Journal;
@@ -24,7 +25,7 @@ import net.viperfish.journal.operation.GetAllOperation;
 import net.viperfish.journal.operation.GetEntryOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
 import net.viperfish.journal.persistent.EntryDatabase;
-import net.viperfish.utils.config.Configuration;
+import net.viperfish.journal.secure.BlockCipherMacTransformer;
 
 public class OperationTest {
 
@@ -33,10 +34,25 @@ public class OperationTest {
 	private JournalTransformer encryptor;
 	private final ExecutorService threadpool;
 
+	private void setupConfig() {
+		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "AES");
+		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_MODE, "CFB");
+		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, "PKCS7PADDING");
+		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, "MD5");
+		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.MAC_TYPE, "HMAC");
+		JournalApplication.getConfiguration().setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
+		JournalApplication.getConfiguration().setProperty(ConfigMapping.AUTH_COMPONENT, "HashAuthentication");
+		JournalApplication.getConfiguration().setProperty(ConfigMapping.DB_PROVIDER, "viperfish");
+		JournalApplication.getConfiguration().setProperty(ConfigMapping.DB_COMPONENT, "TextFile");
+		JournalApplication.getConfiguration().setProperty(ConfigMapping.INDEX_PROVIDER, "viperfish");
+		JournalApplication.getConfiguration().setProperty(ConfigMapping.INDEXER_COMPONENT, "LuceneIndexer");
+		JournalApplication.getConfiguration().setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");
+		JournalApplication.getConfiguration().setProperty(ConfigMapping.TRANSFORMER_COMPONENT, "BlockCipherMAC");
+	}
+
 	public OperationTest() {
+		setupConfig();
 		JournalApplication.setUnitTest(true);
-		JournalApplication.setPassword("test");
-		Configuration.defaultAll();
 		initComponents();
 		threadpool = Executors.newCachedThreadPool();
 	}
@@ -70,14 +86,14 @@ public class OperationTest {
 		toAdd.setDate(new Date());
 		toAdd.setSubject("test");
 		new AddEntryOperation(toAdd).execute();
-		toAdd.setId(1L);
-		Journal get = db.getEntry(1L);
+		toAdd.setId(0L);
+		Journal get = db.getEntry(0L);
 		get = encryptor.decryptJournal(get);
 		Assert.assertEquals("test", get.getSubject());
 		Assert.assertEquals("test", get.getContent());
 		Assert.assertEquals(toAdd.getDate().getTime(), get.getDate().getTime());
 		Assert.assertEquals(toAdd.getId(), get.getId());
-		Assert.assertEquals(true, indexer.contains(1L));
+		Assert.assertEquals(true, indexer.contains(0L));
 		cleanUp();
 	}
 
@@ -216,8 +232,14 @@ public class OperationTest {
 	}
 
 	private void initComponents() {
-		db = ComponentProvider.getEntryDatabase();
-		indexer = (JournalIndexer) ComponentProvider.getIndexer();
-		encryptor = ComponentProvider.getTransformer();
+		db = ComponentProvider
+				.getEntryDatabase(JournalApplication.getConfiguration().getString(ConfigMapping.DB_COMPONENT));
+		indexer = (JournalIndexer) ComponentProvider
+				.getIndexer(JournalApplication.getConfiguration().getString(ConfigMapping.INDEXER_COMPONENT));
+		encryptor = ComponentProvider
+				.getTransformer(JournalApplication.getConfiguration().getString(ConfigMapping.TRANSFORMER_COMPONENT));
+		encryptor.setPassword("test");
+		ComponentProvider.getAuthManager(JournalApplication.getConfiguration().getString(ConfigMapping.AUTH_COMPONENT))
+				.setPassword("test");
 	}
 }

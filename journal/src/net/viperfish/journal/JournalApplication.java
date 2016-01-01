@@ -3,19 +3,23 @@ package net.viperfish.journal;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.FileConfiguration;
+import org.apache.commons.configuration.PropertiesConfiguration;
+
 import net.viperfish.journal.auth.ViperfishAuthProvider;
-import net.viperfish.journal.cmd.CommandLineUserInterface;
 import net.viperfish.journal.dbProvider.ViperfishEntryDatabaseProvider;
 import net.viperfish.journal.framework.ComponentProvider;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.UserInterface;
 import net.viperfish.journal.index.ViperfishIndexerProvider;
-import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
 import net.viperfish.journal.secure.ViperfishEncryptionProvider;
+import net.viperfish.journal.swtGui.GraphicalUserInterface;
+import net.viperfish.journal.swtGui.conf.BlockCipherMacConfigPage;
+import net.viperfish.journal.swtGui.conf.SystemConfigPage;
 import net.viperfish.journal.ui.StandardOperationFactory;
 import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
-import net.viperfish.utils.config.Configuration;
 import net.viperfish.utils.file.CommonFunctions;
 
 /**
@@ -30,9 +34,8 @@ public class JournalApplication {
 	private static OperationFactory opsFactory;
 	private static boolean firstRun;
 	private static File dataDir;
-	private static boolean unitTest = false;
-	private static String password;
 	private static SystemConfig sysConf;
+	private static FileConfiguration configuration;
 
 	static {
 		initFileStructure();
@@ -48,22 +51,25 @@ public class JournalApplication {
 		ComponentProvider.registerEntryDatabaseProvider(new ViperfishEntryDatabaseProvider());
 		ComponentProvider.registerIndexerProvider(new ViperfishIndexerProvider());
 		ComponentProvider.registerTransformerProvider(new ViperfishEncryptionProvider());
-		ComponentProvider.setDefaultAuthProvider("viperfish");
-		ComponentProvider.setDefaultDatabaseProvider("viperfish");
-		ComponentProvider.setDefaultIndexerProvider("viperfish");
-		ComponentProvider.setDefaultTransformerProvider("viperfish");
+
 	}
 
 	private static void initConfigUnits() {
-		sysConf = new SystemConfig();
-		Configuration.setConfigDirPath("config");
-		Configuration.put(SecureEntryDatabaseWrapper.config().getUnitName(), SecureEntryDatabaseWrapper.config());
-		Configuration.put(sysConf.getUnitName(), sysConf);
+		File config = new File("config.properties");
+		configuration = new PropertiesConfiguration();
+		configuration.setFile(config);
+	}
+
+	private static void initBuiltInDefaults() {
+		ComponentProvider.setDefaultAuthProvider(configuration.getString(ConfigMapping.AUTH_PROVIDER));
+		ComponentProvider.setDefaultDatabaseProvider(configuration.getString(ConfigMapping.DB_PROVIDER));
+		ComponentProvider.setDefaultIndexerProvider(configuration.getString(ConfigMapping.INDEX_PROVIDER));
+		ComponentProvider.setDefaultTransformerProvider(configuration.getString(ConfigMapping.TRANSFORMER_PROVIDER));
+
 	}
 
 	private static void deleteAll() {
 		CommonFunctions.delete(dataDir);
-		Configuration.clear();
 	}
 
 	public static void cleanUp() {
@@ -108,29 +114,6 @@ public class JournalApplication {
 	}
 
 	/**
-	 * get the user's password in plaintext, only call it after the use has
-	 * entered the correct password via UserInterface.promptPassword
-	 * 
-	 * @see UserInterface#promptPassword() promptPassword
-	 * @return the password
-	 */
-	public static String getPassword() {
-		return password;
-	}
-
-	/**
-	 * set the current password, should be called by the promptPassword method
-	 * of the UserInterface implementer after verifying the password
-	 * 
-	 * @param password
-	 *            the correct password
-	 */
-	public static void setPassword(String password) {
-		JournalApplication.password = password;
-
-	}
-
-	/**
 	 * get the system configuration unit
 	 * 
 	 * @return the system config unit
@@ -142,18 +125,30 @@ public class JournalApplication {
 		return sysConf;
 	}
 
+	public static FileConfiguration getConfiguration() {
+		return configuration;
+	}
+
 	/**
-	 * set the status of unit testing, if unit test, the datasourcefactory would
-	 * be one that creates stubEntryDatabase in memory. The current dataDir is
+	 * set the status of unit testing, if unit test, The current dataDir is
 	 * cleared, components reset, and file structure re initialized
 	 * 
 	 * @param isEnable
 	 *            the state of unit test
 	 */
 	public static void setUnitTest(boolean isEnable) {
-		unitTest = isEnable;
 		deleteAll();
 		initFileStructure();
+		initBuiltInDefaults();
+	}
+
+	private static void defaultProviders() {
+		JournalApplication.getConfiguration().setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
+		JournalApplication.getConfiguration().setProperty(ConfigMapping.DB_PROVIDER, "viperfish");
+		JournalApplication.getConfiguration().setProperty(ConfigMapping.INDEX_PROVIDER, "viperfish");
+		JournalApplication.getConfiguration().setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");
+		configuration.addProperty(ConfigMapping.CONFIG_PAGES, new String[] { SystemConfigPage.class.getCanonicalName(),
+				BlockCipherMacConfigPage.class.getCanonicalName() });
 	}
 
 	public static void main(String[] args) {
@@ -173,37 +168,31 @@ public class JournalApplication {
 				return;
 			}
 		}
-		boolean consoleMode = System.console() != null;
-		if (args.length > 0) {
-			if (args[0].equalsIgnoreCase("noconsole")) {
-				consoleMode = false;
-			}
-		}
-		if (consoleMode) {
-			ui = new CommandLineUserInterface();
-		} else {
-			ui = new net.viperfish.journal.swtGui.GraphicalUserInterface();
-		}
-		try {
-			Configuration.loadAll();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			System.err.println(e1);
-			System.exit(1);
-		}
+		ui = new GraphicalUserInterface();
 		if (firstRun) {
+			defaultProviders();
+			initBuiltInDefaults();
 			ui.setup();
 			lockFile.delete();
+			try {
+				configuration.save();
+			} catch (ConfigurationException e) {
+				System.err.println("could not save configuration, terminating");
+				System.exit(1);
+			}
 		}
-		ui.setAuthManager(ComponentProvider.getAuthManager());
-		password = ui.promptPassword();
-		ui.run();
 		try {
-			Configuration.persistAll();
-		} catch (IOException e) {
-			System.err.println("critical error incountered while saving configuration, quitting");
+			configuration.load();
+		} catch (ConfigurationException e) {
+			System.err.println("failed to load configuration, exiting");
+			System.exit(1);
 		}
-
+		initBuiltInDefaults();
+		ui.setAuthManager(ComponentProvider
+				.getAuthManager(JournalApplication.getConfiguration().getString(ConfigMapping.AUTH_COMPONENT)));
+		ui.promptPassword();
+		ui.run();
+		System.exit(0);
 	}
 
 }

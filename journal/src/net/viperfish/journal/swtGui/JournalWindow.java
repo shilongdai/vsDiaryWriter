@@ -1,11 +1,11 @@
 package net.viperfish.journal.swtGui;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -27,20 +27,6 @@ import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 
 public class JournalWindow {
-	private static class ContentProvider implements IStructuredContentProvider {
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return new Object[0];
-		}
-
-		@Override
-		public void dispose() {
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-	}
 
 	private Text text;
 	private Display display;
@@ -76,6 +62,7 @@ public class JournalWindow {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				JournalApplication.cleanUp();
+				// System.exit(0);
 			}
 		});
 		text = new Text(shell, SWT.BORDER);
@@ -101,7 +88,17 @@ public class JournalWindow {
 		listBinder = new ListViewer(journalList);
 
 		search = new SearchJournal(text, listBinder);
-		listBinder.setContentProvider(new ContentProvider());
+
+		listBinder.setContentProvider(new ArrayContentProvider());
+
+		listBinder.setLabelProvider(new LabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+				return ((Journal) element).getSubject() + " on: " + ((Journal) element).getDate();
+			}
+
+		});
 		searchButton.addSelectionListener(search.createSelectAdapter());
 		text.addModifyListener(search.createModifyAdapter());
 

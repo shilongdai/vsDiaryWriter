@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>journal</groupId>
 	<artifactId>journal</artifactId>
-	<version>0.01</version>
+	<version>0.03</version>
 	<name>The Viperfish Journal</name>
 	<description>A application for writing journals</description>
 	<repositories>
@@ -121,6 +121,11 @@
 			<version>3.3.0-I20070606-0010</version>
 		</dependency>
 
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.10</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>

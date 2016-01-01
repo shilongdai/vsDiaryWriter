@@ -1,5 +1,6 @@
 package net.viperfish.journal.operation;
 
+import net.viperfish.journal.ConfigMapping;
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.ComponentProvider;
 import net.viperfish.journal.framework.Journal;
@@ -17,14 +18,21 @@ public class AddEntryOperation implements Operation {
 
 	public AddEntryOperation(Journal add) {
 		this.toAdd = add;
-		db = ComponentProvider.getEntryDatabase(JournalApplication.getSysConf().getProperty("DataStorage"));
-		indexer = ComponentProvider.getIndexer(JournalApplication.getSysConf().getProperty("Indexer"));
-		t = ComponentProvider.getTransformer();
-		t.setPassword(JournalApplication.getPassword());
+		db = ComponentProvider
+				.getEntryDatabase(JournalApplication.getConfiguration().getString(ConfigMapping.DB_COMPONENT));
+		indexer = ComponentProvider
+				.getIndexer(JournalApplication.getConfiguration().getString(ConfigMapping.INDEXER_COMPONENT));
+		t = ComponentProvider
+				.getTransformer(JournalApplication.getConfiguration().getString(ConfigMapping.TRANSFORMER_COMPONENT));
+
 	}
 
 	@Override
 	public void execute() {
+		String password = ComponentProvider
+				.getAuthManager(JournalApplication.getConfiguration().getString(ConfigMapping.AUTH_COMPONENT))
+				.getPassword();
+		t.setPassword(password);
 		Journal encrypted = t.encryptJournal(toAdd);
 		encrypted = db.addEntry(encrypted);
 		toAdd.setId(encrypted.getId());

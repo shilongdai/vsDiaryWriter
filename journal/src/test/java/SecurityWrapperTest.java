@@ -6,20 +6,29 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.secure.SecureEntryDatabaseWrapper;
+import net.viperfish.journal.secure.BlockCipherMacTransformer;
 
 public class SecurityWrapperTest {
-	private SecureEntryDatabaseWrapper wrapper;
+	private BlockCipherMacTransformer wrapper;
+
+	private void setupConfig() {
+		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "AES");
+		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_MODE, "CFB");
+		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, "PKCS7PADDING");
+		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, "MD5");
+		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.MAC_TYPE, "HMAC");
+	}
 
 	public SecurityWrapperTest() {
+		setupConfig();
 		File testDir = new File("test");
 		if (!testDir.exists()) {
 			testDir.mkdir();
 		}
-		SecureEntryDatabaseWrapper.config().fillInDefault();
 		try {
-			wrapper = new SecureEntryDatabaseWrapper(new File(testDir.getCanonicalPath() + "/salt"));
+			wrapper = new BlockCipherMacTransformer(new File(testDir.getCanonicalPath() + "/salt"));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

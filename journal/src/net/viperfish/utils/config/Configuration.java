@@ -13,9 +13,11 @@ import net.viperfish.utils.file.RecursiveDelete;
 /**
  * the configuration utility
  * 
+ * @deprecated
  * @author sdai
  * 
  */
+@Deprecated
 public class Configuration {
 
 	private static Map<String, ComponentConfig> data;
@@ -44,11 +46,11 @@ public class Configuration {
 		Configuration.configDirPath = configDirPath;
 	}
 
-	
 	public static void clear() {
 		new RecursiveDelete().recursiveRm(getConfigDir());
 		data.clear();
 	}
+
 	/**
 	 * get a configuration unit with a id of key
 	 * 
@@ -84,8 +86,7 @@ public class Configuration {
 	public static void persistAll() throws IOException {
 		File configDir = getConfigDir();
 		for (Entry<String, ComponentConfig> i : data.entrySet()) {
-			i.getValue().setProperty("ConfigFileLocation",
-					configDir.getCanonicalPath() + "/" + i.getKey());
+			i.getValue().setProperty("ConfigFileLocation", configDir.getCanonicalPath() + "/" + i.getKey());
 			try {
 				i.getValue().persist();
 			} catch (IOException e) {
@@ -105,8 +106,7 @@ public class Configuration {
 	public static void loadAll() throws IOException {
 		File configDir = getConfigDir();
 		for (Entry<String, ComponentConfig> i : data.entrySet()) {
-			i.getValue().setProperty("ConfigFileLocation",
-					configDir.getCanonicalPath() + "/" + i.getKey());
+			i.getValue().setProperty("ConfigFileLocation", configDir.getCanonicalPath() + "/" + i.getKey());
 			try {
 				i.getValue().load();
 			} catch (IOException e) {

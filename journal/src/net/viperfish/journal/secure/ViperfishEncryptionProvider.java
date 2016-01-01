@@ -9,7 +9,7 @@ import net.viperfish.journal.framework.Provider;
 public class ViperfishEncryptionProvider implements Provider<JournalTransformer> {
 
 	private File secureDir;
-	private SecureEntryDatabaseWrapper buffer;
+	private BlockCipherMacTransformer buffer;
 
 	public ViperfishEncryptionProvider() {
 		secureDir = new File("secure");
@@ -21,7 +21,7 @@ public class ViperfishEncryptionProvider implements Provider<JournalTransformer>
 	@Override
 	public JournalTransformer newInstance() {
 		try {
-			buffer = new SecureEntryDatabaseWrapper(new File(secureDir.getCanonicalPath() + "/salt"));
+			buffer = new BlockCipherMacTransformer(new File(secureDir.getCanonicalPath() + "/salt"));
 			return buffer;
 		} catch (IOException e) {
 			throw new RuntimeException(e);

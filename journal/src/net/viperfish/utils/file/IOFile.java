@@ -2,6 +2,7 @@ package net.viperfish.utils.file;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -47,7 +48,11 @@ public class IOFile {
 		try (DataInputStream in = handler.getInputStream(src)) {
 			List<Byte> buffer = new LinkedList<Byte>();
 			while (in.available() != 0) {
-				buffer.add(in.readByte());
+				try {
+					buffer.add(in.readByte());
+				} catch (EOFException e) {
+					break;
+				}
 			}
 			byte[] result = new byte[buffer.size()];
 			int current = 0;

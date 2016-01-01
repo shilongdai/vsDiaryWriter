@@ -27,6 +27,13 @@ public interface AuthenticationManager {
 	void reload();
 
 	/**
+	 * get the unhashed password
+	 * 
+	 * @return the plain password
+	 */
+	public String getPassword();
+
+	/**
 	 * Authenticate a password
 	 * 
 	 * @param string

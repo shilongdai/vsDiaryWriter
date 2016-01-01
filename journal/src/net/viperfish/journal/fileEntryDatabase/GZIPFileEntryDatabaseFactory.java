@@ -2,6 +2,7 @@ package net.viperfish.journal.fileEntryDatabase;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import net.viperfish.utils.file.GZIPIOStreamHandler;
 import net.viperfish.utils.file.IOFile;
@@ -12,7 +13,11 @@ public class GZIPFileEntryDatabaseFactory extends FileEntryDatabaseFactory {
 	protected IOFile createIOFile(File dataFile) {
 		try {
 			File resultFile = new File(dataFile.getCanonicalPath() + ".gz");
-			return new IOFile(resultFile, new GZIPIOStreamHandler());
+			IOFile f = new IOFile(resultFile, new GZIPIOStreamHandler());
+			if (!resultFile.exists()) {
+				f.write("", StandardCharsets.UTF_16);
+			}
+			return f;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
