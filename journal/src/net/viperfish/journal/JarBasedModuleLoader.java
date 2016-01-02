@@ -38,10 +38,13 @@ public class JarBasedModuleLoader implements ModuleLoader {
 				className = className.replace('/', '.');
 				Class<?> c = cl.loadClass(className);
 				if (isUsable(c)) {
-					if (c.isInstance(Provider.class)) {
+
+					if (Provider.class.isAssignableFrom(c)) {
 						try {
 							result.add((Provider<?>) c.newInstance());
+							System.err.println("loading:" + c);
 						} catch (InstantiationException | IllegalAccessException e1) {
+							e1.printStackTrace();
 							continue;
 						}
 					}
@@ -112,6 +115,7 @@ public class JarBasedModuleLoader implements ModuleLoader {
 					result.addAll(
 							(Collection<? extends Provider<JournalTransformer>>) loadIndividual(i.getCanonicalPath()));
 				} catch (IOException e) {
+					e.printStackTrace();
 					continue;
 				}
 			}
