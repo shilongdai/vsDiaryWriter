@@ -2,10 +2,10 @@ package net.viperfish.journal.operation;
 
 import net.viperfish.journal.ConfigMapping;
 import net.viperfish.journal.JournalApplication;
-import net.viperfish.journal.framework.ComponentProvider;
+import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
-import net.viperfish.journal.persistent.EntryDatabase;
+import net.viperfish.journal.provider.ComponentProvider;
 import net.viperfish.utils.index.Indexer;
 
 public class DeleteEntryOperation implements Operation {

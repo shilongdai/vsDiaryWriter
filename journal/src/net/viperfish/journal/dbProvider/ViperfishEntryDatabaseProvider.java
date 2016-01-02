@@ -7,12 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.viperfish.journal.dbDatabase.H2DatasourceFactory;
-import net.viperfish.journal.fileEntryDatabase.GZIPFileEntryDatabaseFactory;
-import net.viperfish.journal.fileEntryDatabase.TextFileEntryDatabaseFactory;
-import net.viperfish.journal.framework.Provider;
-import net.viperfish.journal.persistent.DataSourceFactory;
-import net.viperfish.journal.persistent.EntryDatabase;
+import net.viperfish.journal.framework.EntryDatabase;
+import net.viperfish.journal.provider.Provider;
 
 public class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
 

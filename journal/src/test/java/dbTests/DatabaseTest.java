@@ -3,8 +3,8 @@ package test.java.dbTests;
 import java.util.Date;
 import java.util.List;
 
+import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.persistent.EntryDatabase;
 
 import org.junit.Assert;
 import org.junit.Test;

@@ -1,9 +1,9 @@
 package net.viperfish.journal.swtGui;
 
 import net.viperfish.journal.ConfigMapping;
-import net.viperfish.journal.framework.ComponentProvider;
-import net.viperfish.journal.framework.UserInterface;
+import net.viperfish.journal.provider.ComponentProvider;
 import net.viperfish.journal.swtGui.conf.JournalSetup;
+import net.viperfish.journal.ui.UserInterface;
 
 public class GraphicalUserInterface extends UserInterface {
 

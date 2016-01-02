@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.persistent.EntryDatabase;
 
 public class DatabaseStub implements EntryDatabase {
 

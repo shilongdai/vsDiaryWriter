@@ -2,8 +2,8 @@ package test.java;
 
 import java.io.File;
 
-import net.viperfish.journal.auth.AuthenticationManager;
-import net.viperfish.journal.authentications.HashAuthManager;
+import net.viperfish.journal.authProvider.HashAuthManager;
+import net.viperfish.journal.framework.AuthenticationManager;
 
 import org.junit.Assert;
 import org.junit.Test;

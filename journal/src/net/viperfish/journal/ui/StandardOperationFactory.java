@@ -5,7 +5,6 @@ import java.util.Set;
 
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
-import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.operation.AddEntryOperation;
 import net.viperfish.journal.operation.DeleteEntryOperation;

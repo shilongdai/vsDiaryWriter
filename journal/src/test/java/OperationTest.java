@@ -11,12 +11,12 @@ import org.junit.Test;
 
 import net.viperfish.journal.ConfigMapping;
 import net.viperfish.journal.JournalApplication;
-import net.viperfish.journal.framework.ComponentProvider;
+import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
-import net.viperfish.journal.index.JournalIndexer;
+import net.viperfish.journal.indexProvider.JournalIndexer;
 import net.viperfish.journal.operation.AddEntryOperation;
 import net.viperfish.journal.operation.DeleteEntryOperation;
 import net.viperfish.journal.operation.EditContentOperation;
@@ -24,8 +24,8 @@ import net.viperfish.journal.operation.EditSubjectOperation;
 import net.viperfish.journal.operation.GetAllOperation;
 import net.viperfish.journal.operation.GetEntryOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
-import net.viperfish.journal.persistent.EntryDatabase;
-import net.viperfish.journal.secure.BlockCipherMacTransformer;
+import net.viperfish.journal.provider.ComponentProvider;
+import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
 
 public class OperationTest {
 

@@ -7,10 +7,6 @@ import java.security.SecureRandom;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 
-
-import net.viperfish.journal.secure.AlgorithmSpec;
-import net.viperfish.journal.secure.Encryptor;
-
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -18,6 +14,9 @@ import org.bouncycastle.crypto.paddings.BlockCipherPadding;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
+
+import net.viperfish.journal.secureProvider.AlgorithmSpec;
+import net.viperfish.journal.secureProvider.Encryptor;
 
 public class BCBlockCipherEncryptor extends Encryptor {
 

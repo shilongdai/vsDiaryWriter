@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.viperfish.journal.framework.Operation;
-import net.viperfish.journal.framework.OperationExecutor;
 
 public class SingleThreadedOperationExecutor implements OperationExecutor {
 

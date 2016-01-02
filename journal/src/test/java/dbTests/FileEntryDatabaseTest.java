@@ -3,8 +3,8 @@ package test.java.dbTests;
 import java.io.File;
 import java.io.IOException;
 
-import net.viperfish.journal.fileEntryDatabase.FileEntryDatabase;
-import net.viperfish.journal.persistent.EntryDatabase;
+import net.viperfish.journal.dbProvider.FileEntryDatabase;
+import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.utils.file.GZIPIOStreamHandler;
 import net.viperfish.utils.file.IOFile;
 

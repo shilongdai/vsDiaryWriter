@@ -6,11 +6,11 @@ import java.util.List;
 
 import net.viperfish.journal.ConfigMapping;
 import net.viperfish.journal.JournalApplication;
-import net.viperfish.journal.framework.ComponentProvider;
+import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.OperationWithResult;
-import net.viperfish.journal.persistent.EntryDatabase;
+import net.viperfish.journal.provider.ComponentProvider;
 
 public class GetAllOperation implements OperationWithResult<List<Journal>> {
 

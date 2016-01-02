@@ -7,19 +7,20 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
-import net.viperfish.journal.auth.ViperfishAuthProvider;
+import net.viperfish.journal.authProvider.ViperfishAuthProvider;
 import net.viperfish.journal.dbProvider.ViperfishEntryDatabaseProvider;
-import net.viperfish.journal.framework.ComponentProvider;
-import net.viperfish.journal.framework.OperationExecutor;
-import net.viperfish.journal.framework.OperationFactory;
-import net.viperfish.journal.framework.UserInterface;
-import net.viperfish.journal.index.ViperfishIndexerProvider;
-import net.viperfish.journal.secure.ViperfishEncryptionProvider;
+import net.viperfish.journal.indexProvider.ViperfishIndexerProvider;
+import net.viperfish.journal.provider.ComponentProvider;
+import net.viperfish.journal.provider.ModuleLoader;
+import net.viperfish.journal.secureProvider.ViperfishEncryptionProvider;
 import net.viperfish.journal.swtGui.GraphicalUserInterface;
 import net.viperfish.journal.swtGui.conf.BlockCipherMacConfigPage;
 import net.viperfish.journal.swtGui.conf.SystemConfigPage;
+import net.viperfish.journal.ui.OperationExecutor;
+import net.viperfish.journal.ui.OperationFactory;
 import net.viperfish.journal.ui.StandardOperationFactory;
 import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
+import net.viperfish.journal.ui.UserInterface;
 import net.viperfish.utils.file.CommonFunctions;
 
 /**
@@ -33,14 +34,18 @@ public class JournalApplication {
 	private static OperationExecutor worker;
 	private static OperationFactory opsFactory;
 	private static boolean firstRun;
-	private static File dataDir;
 	private static SystemConfig sysConf;
 	private static FileConfiguration configuration;
+	private static File moduleDir;
+	private static ModuleLoader loader;
 
 	static {
-		initFileStructure();
+		moduleDir = new File("modules");
 		initConfigUnits();
 		initProviders();
+		CommonFunctions.initDir(moduleDir);
+		loader = new JarBasedModuleLoader();
+		loader.load(moduleDir);
 	}
 
 	public JournalApplication() {
@@ -56,6 +61,12 @@ public class JournalApplication {
 
 	private static void initConfigUnits() {
 		File config = new File("config.properties");
+		try {
+			CommonFunctions.initFile(config);
+		} catch (IOException e) {
+			System.err.println("failed to create config files, exiting");
+			System.exit(1);
+		}
 		configuration = new PropertiesConfiguration();
 		configuration.setFile(config);
 	}
@@ -68,23 +79,11 @@ public class JournalApplication {
 
 	}
 
-	private static void deleteAll() {
-		CommonFunctions.delete(dataDir);
-	}
-
 	public static void cleanUp() {
 		ComponentProvider.dispose();
 		System.err.println("Providers disposed");
 		getWorker().terminate();
 		System.err.println("worker terminated");
-	}
-
-	private static void initFileStructure() {
-		dataDir = new File("data");
-		if (!dataDir.exists()) {
-			firstRun = true;
-			dataDir.mkdir();
-		}
 	}
 
 	/**
@@ -137,16 +136,22 @@ public class JournalApplication {
 	 *            the state of unit test
 	 */
 	public static void setUnitTest(boolean isEnable) {
-		deleteAll();
-		initFileStructure();
 		initBuiltInDefaults();
 	}
 
 	private static void defaultProviders() {
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.DB_PROVIDER, "viperfish");
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.INDEX_PROVIDER, "viperfish");
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");
+		if (!configuration.containsKey(ConfigMapping.AUTH_PROVIDER)) {
+			JournalApplication.getConfiguration().setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
+		}
+		if (!configuration.containsKey(ConfigMapping.DB_PROVIDER)) {
+			JournalApplication.getConfiguration().setProperty(ConfigMapping.DB_PROVIDER, "viperfish");
+		}
+		if (!configuration.containsKey(ConfigMapping.INDEX_PROVIDER)) {
+			JournalApplication.getConfiguration().setProperty(ConfigMapping.INDEX_PROVIDER, "viperfish");
+		}
+		if (!configuration.containsKey(ConfigMapping.TRANSFORMER_PROVIDER)) {
+			JournalApplication.getConfiguration().setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");
+		}
 		configuration.addProperty(ConfigMapping.CONFIG_PAGES, new String[] { SystemConfigPage.class.getCanonicalName(),
 				BlockCipherMacConfigPage.class.getCanonicalName() });
 	}
@@ -155,9 +160,6 @@ public class JournalApplication {
 		File lockFile = new File(".setUpLock");
 		if (lockFile.exists()) {
 			firstRun = true;
-			deleteAll();
-			initFileStructure();
-			initConfigUnits();
 		} else {
 			try {
 				if (firstRun) {
@@ -169,6 +171,12 @@ public class JournalApplication {
 			}
 		}
 		ui = new GraphicalUserInterface();
+		try {
+			configuration.load();
+		} catch (ConfigurationException e) {
+			System.err.println("failed to load configuration, exiting");
+			System.exit(1);
+		}
 		if (firstRun) {
 			defaultProviders();
 			initBuiltInDefaults();
@@ -181,18 +189,11 @@ public class JournalApplication {
 				System.exit(1);
 			}
 		}
-		try {
-			configuration.load();
-		} catch (ConfigurationException e) {
-			System.err.println("failed to load configuration, exiting");
-			System.exit(1);
-		}
 		initBuiltInDefaults();
 		ui.setAuthManager(ComponentProvider
 				.getAuthManager(JournalApplication.getConfiguration().getString(ConfigMapping.AUTH_COMPONENT)));
 		ui.promptPassword();
 		ui.run();
-		System.exit(0);
 	}
 
 }

@@ -6,9 +6,9 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import net.viperfish.journal.framework.UserInterface;
 import net.viperfish.journal.swingGui.setup.CreatePassword;
 import net.viperfish.journal.swingGui.setup.FirstTimeSetup;
+import net.viperfish.journal.ui.UserInterface;
 
 public class GraphicalUserInterface extends UserInterface {
 

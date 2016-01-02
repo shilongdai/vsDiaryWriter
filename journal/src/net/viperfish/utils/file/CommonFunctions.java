@@ -13,4 +13,10 @@ public class CommonFunctions {
 	public static void delete(File root) {
 		new RecursiveDelete().recursiveRm(root);
 	}
+
+	public static void initDir(File src) {
+		if (!src.exists()) {
+			src.mkdir();
+		}
+	}
 }

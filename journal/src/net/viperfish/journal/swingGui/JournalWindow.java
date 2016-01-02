@@ -31,10 +31,10 @@ import javax.swing.event.DocumentListener;
 import net.miginfocom.swing.MigLayout;
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.framework.OperationExecutor;
-import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.swingGui.setup.textEditor.JournalEditor;
+import net.viperfish.journal.ui.OperationExecutor;
+import net.viperfish.journal.ui.OperationFactory;
 
 public class JournalWindow extends JFrame {
 

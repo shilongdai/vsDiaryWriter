@@ -1,12 +1,12 @@
 package net.viperfish.journal.secureAlgs;
 
-import net.viperfish.journal.secure.AlgorithmSpec;
-
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
+
+import net.viperfish.journal.secureProvider.AlgorithmSpec;
 
 public class GMac extends BCMacDigester {
 

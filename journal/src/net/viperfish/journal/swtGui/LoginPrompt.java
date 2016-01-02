@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import net.viperfish.journal.auth.AuthenticationManager;
+import net.viperfish.journal.framework.AuthenticationManager;
 
 public class LoginPrompt {
 

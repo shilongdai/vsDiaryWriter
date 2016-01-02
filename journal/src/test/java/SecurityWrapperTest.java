@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.secure.BlockCipherMacTransformer;
+import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
 
 public class SecurityWrapperTest {
 	private BlockCipherMacTransformer wrapper;

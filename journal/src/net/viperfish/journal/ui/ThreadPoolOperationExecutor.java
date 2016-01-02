@@ -7,7 +7,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import net.viperfish.journal.framework.Operation;
-import net.viperfish.journal.framework.OperationExecutor;
 
 public class ThreadPoolOperationExecutor implements OperationExecutor {
 

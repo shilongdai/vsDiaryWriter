@@ -2,8 +2,8 @@ package test.java;
 
 import java.io.File;
 
-import net.viperfish.journal.persistent.DataSourceFactory;
-import net.viperfish.journal.persistent.EntryDatabase;
+import net.viperfish.journal.dbProvider.DataSourceFactory;
+import net.viperfish.journal.framework.EntryDatabase;
 
 public class StubDataSourceFactory implements DataSourceFactory {
 
