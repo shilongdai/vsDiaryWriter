@@ -1,5 +1,6 @@
 package net.viperfish.journal.provider;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,12 +24,45 @@ public class ComponentProvider {
 	private static String defaultIndexerProvider;
 	private static String defaultTransformerProvider;
 	private static String defaultAuthProvider;
+	private static ModuleLoader loader;
 
 	static {
 		databaseProviders = new HashMap<>();
 		indexerProviders = new HashMap<>();
 		secureProviders = new HashMap<>();
 		authProviders = new HashMap<>();
+	}
+
+	public static ModuleLoader getLoader() {
+		return loader;
+	}
+
+	public static void setLoader(ModuleLoader loader) {
+		ComponentProvider.loader = loader;
+	}
+
+	public static void loadDatabaseProvider(File baseDir) {
+		for (Provider<EntryDatabase> i : loader.loadDatabaseProvider(baseDir)) {
+			registerEntryDatabaseProvider(i);
+		}
+	}
+
+	public static void loadAuthProvider(File baseDir) {
+		for (Provider<AuthenticationManager> i : loader.loadAuthProvider(baseDir)) {
+			registerAuthProvider(i);
+		}
+	}
+
+	public static void loadTransformerProvider(File baseDir) {
+		for (Provider<JournalTransformer> i : loader.loadTransformerProvider(baseDir)) {
+			registerTransformerProvider(i);
+		}
+	}
+
+	public static void loadIndexer(File baseDir) {
+		for (Provider<Indexer<Journal>> i : loader.loadIndexer(baseDir)) {
+			registerIndexerProvider(i);
+		}
 	}
 
 	public static void registerEntryDatabaseProvider(Provider<EntryDatabase> p) {

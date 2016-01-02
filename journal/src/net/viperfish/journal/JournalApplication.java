@@ -11,7 +11,6 @@ import net.viperfish.journal.authProvider.ViperfishAuthProvider;
 import net.viperfish.journal.dbProvider.ViperfishEntryDatabaseProvider;
 import net.viperfish.journal.indexProvider.ViperfishIndexerProvider;
 import net.viperfish.journal.provider.ComponentProvider;
-import net.viperfish.journal.provider.ModuleLoader;
 import net.viperfish.journal.secureProvider.ViperfishEncryptionProvider;
 import net.viperfish.journal.swtGui.GraphicalUserInterface;
 import net.viperfish.journal.swtGui.conf.BlockCipherMacConfigPage;
@@ -37,18 +36,37 @@ public class JournalApplication {
 	private static SystemConfig sysConf;
 	private static FileConfiguration configuration;
 	private static File moduleDir;
-	private static ModuleLoader loader;
+	private static File authModules;
+	private static File dbModules;
+	private static File indexModules;
+	private static File transModule;
 
 	static {
-		moduleDir = new File("modules");
+		initModules();
 		initConfigUnits();
 		initProviders();
-		CommonFunctions.initDir(moduleDir);
-		loader = new JarBasedModuleLoader();
-		loader.load(moduleDir);
+
 	}
 
 	public JournalApplication() {
+	}
+
+	private static void initModules() {
+		moduleDir = new File("modules");
+		authModules = new File("modules/auth");
+		dbModules = new File("modules/db");
+		indexModules = new File("modules/index");
+		transModule = new File("modules/trans");
+		CommonFunctions.initDir(moduleDir);
+		CommonFunctions.initDir(authModules);
+		CommonFunctions.initDir(dbModules);
+		CommonFunctions.initDir(indexModules);
+		CommonFunctions.initDir(transModule);
+		ComponentProvider.setLoader(new JarBasedModuleLoader());
+		ComponentProvider.loadAuthProvider(authModules);
+		ComponentProvider.loadDatabaseProvider(dbModules);
+		ComponentProvider.loadIndexer(indexModules);
+		ComponentProvider.loadTransformerProvider(transModule);
 	}
 
 	private static void initProviders() {
@@ -61,6 +79,9 @@ public class JournalApplication {
 
 	private static void initConfigUnits() {
 		File config = new File("config.properties");
+		if (!config.exists()) {
+			firstRun = true;
+		}
 		try {
 			CommonFunctions.initFile(config);
 		} catch (IOException e) {

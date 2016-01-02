@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import net.viperfish.journal.framework.Journal;
-import net.viperfish.utils.index.Indexer;
-
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -25,7 +22,10 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
-public class JournalIndexer extends Indexer<Journal> {
+import net.viperfish.journal.framework.Journal;
+import net.viperfish.utils.index.LuceneIndexer;
+
+public class JournalIndexer extends LuceneIndexer<Journal> {
 
 	private Directory dir;
 	private final DateFormat df;
@@ -37,8 +37,7 @@ public class JournalIndexer extends Indexer<Journal> {
 	}
 
 	protected String parseJournal(Journal j) {
-		String content = df.format(j.getDate()) + " " + j.getSubject() + " "
-				+ j.getContent();
+		String content = df.format(j.getDate()) + " " + j.getSubject() + " " + j.getContent();
 		return content;
 	}
 
@@ -67,8 +66,7 @@ public class JournalIndexer extends Indexer<Journal> {
 		try {
 			reader = getReader();
 			IndexSearcher searcher = new IndexSearcher(reader);
-			Query q = new QueryParser("id", new StandardAnalyzer()).parse(id
-					.toString());
+			Query q = new QueryParser("id", new StandardAnalyzer()).parse(id.toString());
 			TopDocs result = searcher.search(q, 1);
 			ScoreDoc[] hits = result.scoreDocs;
 			if (hits.length != 0) {
@@ -96,8 +94,7 @@ public class JournalIndexer extends Indexer<Journal> {
 	protected Directory getDir() {
 		if (dir == null) {
 			try {
-				dir = FSDirectory.open(new File(dataDir.getCanonicalPath()
-						+ "/index").toPath());
+				dir = FSDirectory.open(new File(dataDir.getCanonicalPath() + "/index").toPath());
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
