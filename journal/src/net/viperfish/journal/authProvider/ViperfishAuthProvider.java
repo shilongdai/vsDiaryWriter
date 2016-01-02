@@ -3,7 +3,7 @@ package net.viperfish.journal.authProvider;
 import java.io.File;
 
 import net.viperfish.journal.framework.AuthenticationManager;
-import net.viperfish.journal.provider.Provider;
+import net.viperfish.journal.framework.Provider;
 
 public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 

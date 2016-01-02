@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.secureProvider.AlgorithmSpec;
 import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
 
@@ -77,16 +77,11 @@ public class SecurityConfigComposite extends Composite {
 	}
 
 	public void save() {
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME,
-				encAlgSelector.getText());
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_MODE,
-				encModeSelector.getText());
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING,
-				encPadSelector.getText());
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.MAC_TYPE,
-				macTypeSelector.getText());
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.MAC_ALGORITHM,
-				macAlgSelector.getText());
+		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, encAlgSelector.getText());
+		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_MODE, encModeSelector.getText());
+		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, encPadSelector.getText());
+		Configuration.setProperty(BlockCipherMacTransformer.MAC_TYPE, macTypeSelector.getText());
+		Configuration.setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, macAlgSelector.getText());
 
 	}
 

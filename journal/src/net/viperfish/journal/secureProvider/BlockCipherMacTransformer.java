@@ -19,7 +19,7 @@ import javax.crypto.IllegalBlockSizeException;
 
 import org.apache.commons.codec.binary.Base64;
 
-import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
@@ -210,7 +210,7 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 	private void initAlgorithms() {
 		enc = new BCBlockCipherEncryptor();
 		dig = new BCDigester();
-		String macMethod = JournalApplication.getConfiguration().getString(MAC_TYPE);
+		String macMethod = Configuration.getString(MAC_TYPE);
 		if (macMethod.equalsIgnoreCase("CBCMAC")) {
 			mac = new CBCMac();
 		} else if (macMethod.equalsIgnoreCase("CMAC")) {
@@ -222,13 +222,13 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		} else if (macMethod.equalsIgnoreCase("HMAC")) {
 			mac = new HMac();
 		}
-		mac.setMode(JournalApplication.getConfiguration().getString(MAC_ALGORITHM));
+		mac.setMode(Configuration.getString(MAC_ALGORITHM));
 		String mode = new String();
-		mode += JournalApplication.getConfiguration().getString(ENCRYPTION_ALG_NAME);
+		mode += Configuration.getString(ENCRYPTION_ALG_NAME);
 		mode += "/";
-		mode += JournalApplication.getConfiguration().getString(ENCRYPTION_MODE);
+		mode += Configuration.getString(ENCRYPTION_MODE);
 		mode += "/";
-		mode += JournalApplication.getConfiguration().getString(ENCRYPTION_PADDING);
+		mode += Configuration.getString(ENCRYPTION_PADDING);
 		enc.setMode(mode);
 		dig.setMode("SHA512");
 	}

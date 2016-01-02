@@ -16,8 +16,8 @@ import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
-import net.viperfish.journal.provider.ModuleLoader;
-import net.viperfish.journal.provider.Provider;
+import net.viperfish.journal.framework.ModuleLoader;
+import net.viperfish.journal.framework.Provider;
 import net.viperfish.utils.index.Indexer;
 
 public class JarBasedModuleLoader implements ModuleLoader {

@@ -4,13 +4,13 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.viperfish.journal.ConfigMapping;
-import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.ComponentProvider;
+import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.OperationWithResult;
-import net.viperfish.journal.provider.ComponentProvider;
 
 public class GetAllOperation implements OperationWithResult<List<Journal>> {
 
@@ -20,18 +20,15 @@ public class GetAllOperation implements OperationWithResult<List<Journal>> {
 	private JournalTransformer t;
 
 	public GetAllOperation() {
-		db = ComponentProvider
-				.getEntryDatabase(JournalApplication.getConfiguration().getString(ConfigMapping.DB_COMPONENT));
-		t = ComponentProvider
-				.getTransformer(JournalApplication.getConfiguration().getString(ConfigMapping.TRANSFORMER_COMPONENT));
+		db = ComponentProvider.getEntryDatabase(Configuration.getString(ConfigMapping.DB_COMPONENT));
+		t = ComponentProvider.getTransformer(Configuration.getString(ConfigMapping.TRANSFORMER_COMPONENT));
 		result = new LinkedList<>();
 	}
 
 	@Override
 	public void execute() {
 		try {
-			t.setPassword(ComponentProvider
-					.getAuthManager(JournalApplication.getConfiguration().getString(ConfigMapping.AUTH_COMPONENT))
+			t.setPassword(ComponentProvider.getAuthManager(Configuration.getString(ConfigMapping.AUTH_COMPONENT))
 					.getPassword());
 			List<Journal> tmp = db.getAll();
 			for (Journal j : tmp) {

@@ -12,14 +12,14 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import net.viperfish.journal.ConfigMapping;
-import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.ComponentProvider;
 import net.viperfish.journal.framework.AuthenticationManager;
+import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
-import net.viperfish.journal.provider.ComponentProvider;
-import net.viperfish.journal.provider.Provider;
+import net.viperfish.journal.framework.Provider;
 import net.viperfish.utils.index.Indexer;
 
 public class SystemSetupComposite extends Composite {
@@ -129,11 +129,10 @@ public class SystemSetupComposite extends Composite {
 	}
 
 	public void save() {
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.DB_COMPONENT, dataStorageSelector.getText());
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.INDEXER_COMPONENT, indexerSelector.getText());
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.AUTH_COMPONENT, authSelector.getText());
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.TRANSFORMER_COMPONENT,
-				transformerSelector.getText());
+		Configuration.setProperty(ConfigMapping.DB_COMPONENT, dataStorageSelector.getText());
+		Configuration.setProperty(ConfigMapping.INDEXER_COMPONENT, indexerSelector.getText());
+		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, authSelector.getText());
+		Configuration.setProperty(ConfigMapping.TRANSFORMER_COMPONENT, transformerSelector.getText());
 	}
 
 	@Override

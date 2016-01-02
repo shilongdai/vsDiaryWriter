@@ -3,7 +3,7 @@ package net.viperfish.journal.indexProvider;
 import java.io.File;
 
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.provider.Provider;
+import net.viperfish.journal.framework.Provider;
 import net.viperfish.utils.index.Indexer;
 
 public class ViperfishIndexerProvider implements Provider<Indexer<Journal>> {

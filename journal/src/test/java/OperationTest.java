@@ -9,8 +9,10 @@ import java.util.concurrent.Executors;
 import org.junit.Assert;
 import org.junit.Test;
 
-import net.viperfish.journal.ConfigMapping;
+import net.viperfish.journal.ComponentProvider;
 import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
@@ -24,7 +26,6 @@ import net.viperfish.journal.operation.EditSubjectOperation;
 import net.viperfish.journal.operation.GetAllOperation;
 import net.viperfish.journal.operation.GetEntryOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
-import net.viperfish.journal.provider.ComponentProvider;
 import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
 
 public class OperationTest {
@@ -35,19 +36,19 @@ public class OperationTest {
 	private final ExecutorService threadpool;
 
 	private void setupConfig() {
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "AES");
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_MODE, "CFB");
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, "PKCS7PADDING");
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, "MD5");
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.MAC_TYPE, "HMAC");
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.AUTH_COMPONENT, "HashAuthentication");
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.DB_PROVIDER, "viperfish");
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.DB_COMPONENT, "TextFile");
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.INDEX_PROVIDER, "viperfish");
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.INDEXER_COMPONENT, "LuceneIndexer");
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");
-		JournalApplication.getConfiguration().setProperty(ConfigMapping.TRANSFORMER_COMPONENT, "BlockCipherMAC");
+		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "AES");
+		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_MODE, "CFB");
+		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, "PKCS7PADDING");
+		Configuration.setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, "MD5");
+		Configuration.setProperty(BlockCipherMacTransformer.MAC_TYPE, "HMAC");
+		Configuration.setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
+		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "HashAuthentication");
+		Configuration.setProperty(ConfigMapping.DB_PROVIDER, "viperfish");
+		Configuration.setProperty(ConfigMapping.DB_COMPONENT, "TextFile");
+		Configuration.setProperty(ConfigMapping.INDEX_PROVIDER, "viperfish");
+		Configuration.setProperty(ConfigMapping.INDEXER_COMPONENT, "LuceneIndexer");
+		Configuration.setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");
+		Configuration.setProperty(ConfigMapping.TRANSFORMER_COMPONENT, "BlockCipherMAC");
 	}
 
 	public OperationTest() {
@@ -232,14 +233,11 @@ public class OperationTest {
 	}
 
 	private void initComponents() {
-		db = ComponentProvider
-				.getEntryDatabase(JournalApplication.getConfiguration().getString(ConfigMapping.DB_COMPONENT));
+		db = ComponentProvider.getEntryDatabase(Configuration.getString(ConfigMapping.DB_COMPONENT));
 		indexer = (JournalIndexer) ComponentProvider
-				.getIndexer(JournalApplication.getConfiguration().getString(ConfigMapping.INDEXER_COMPONENT));
-		encryptor = ComponentProvider
-				.getTransformer(JournalApplication.getConfiguration().getString(ConfigMapping.TRANSFORMER_COMPONENT));
+				.getIndexer(Configuration.getString(ConfigMapping.INDEXER_COMPONENT));
+		encryptor = ComponentProvider.getTransformer(Configuration.getString(ConfigMapping.TRANSFORMER_COMPONENT));
 		encryptor.setPassword("test");
-		ComponentProvider.getAuthManager(JournalApplication.getConfiguration().getString(ConfigMapping.AUTH_COMPONENT))
-				.setPassword("test");
+		ComponentProvider.getAuthManager(Configuration.getString(ConfigMapping.AUTH_COMPONENT)).setPassword("test");
 	}
 }

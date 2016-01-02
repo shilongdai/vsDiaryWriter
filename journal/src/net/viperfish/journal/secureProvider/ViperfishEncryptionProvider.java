@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import net.viperfish.journal.framework.JournalTransformer;
-import net.viperfish.journal.provider.Provider;
+import net.viperfish.journal.framework.Provider;
 
 public class ViperfishEncryptionProvider implements Provider<JournalTransformer> {
 

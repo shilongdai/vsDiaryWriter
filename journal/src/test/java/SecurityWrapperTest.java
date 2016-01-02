@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
 
@@ -14,11 +14,11 @@ public class SecurityWrapperTest {
 	private BlockCipherMacTransformer wrapper;
 
 	private void setupConfig() {
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "AES");
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_MODE, "CFB");
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, "PKCS7PADDING");
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, "MD5");
-		JournalApplication.getConfiguration().setProperty(BlockCipherMacTransformer.MAC_TYPE, "HMAC");
+		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "AES");
+		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_MODE, "CFB");
+		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, "PKCS7PADDING");
+		Configuration.setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, "MD5");
+		Configuration.setProperty(BlockCipherMacTransformer.MAC_TYPE, "HMAC");
 	}
 
 	public SecurityWrapperTest() {

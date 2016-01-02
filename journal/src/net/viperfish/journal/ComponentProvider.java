@@ -1,4 +1,4 @@
-package net.viperfish.journal.provider;
+package net.viperfish.journal;
 
 import java.io.File;
 import java.util.HashMap;
@@ -9,6 +9,8 @@ import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
+import net.viperfish.journal.framework.ModuleLoader;
+import net.viperfish.journal.framework.Provider;
 import net.viperfish.utils.index.Indexer;
 
 public class ComponentProvider {

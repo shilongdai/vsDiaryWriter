@@ -1,4 +1,4 @@
-package net.viperfish.journal.provider;
+package net.viperfish.journal.framework;
 
 public interface Provider<T> {
 	public void setDefaultInstance(String instance);

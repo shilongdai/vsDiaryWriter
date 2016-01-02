@@ -1,4 +1,4 @@
-package net.viperfish.journal;
+package net.viperfish.journal.framework;
 
 public class ConfigMapping {
 	public static final String DB_PROVIDER = "providers.db";

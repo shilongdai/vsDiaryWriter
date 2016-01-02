@@ -3,13 +3,13 @@ package net.viperfish.journal.operation;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.viperfish.journal.ConfigMapping;
-import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.ComponentProvider;
+import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.OperationWithResult;
-import net.viperfish.journal.provider.ComponentProvider;
 import net.viperfish.utils.index.Indexer;
 
 public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
@@ -25,20 +25,16 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 		this.query = query;
 		result = new HashSet<Journal>();
 		done = false;
-		db = ComponentProvider
-				.getEntryDatabase(JournalApplication.getConfiguration().getString(ConfigMapping.DB_COMPONENT));
-		indexer = ComponentProvider
-				.getIndexer(JournalApplication.getConfiguration().getString(ConfigMapping.INDEXER_COMPONENT));
-		t = ComponentProvider
-				.getTransformer(JournalApplication.getConfiguration().getString(ConfigMapping.TRANSFORMER_COMPONENT));
+		db = ComponentProvider.getEntryDatabase(Configuration.getString(ConfigMapping.DB_COMPONENT));
+		indexer = ComponentProvider.getIndexer(Configuration.getString(ConfigMapping.INDEXER_COMPONENT));
+		t = ComponentProvider.getTransformer(Configuration.getString(ConfigMapping.TRANSFORMER_COMPONENT));
 
 	}
 
 	@Override
 	public void execute() {
 		try {
-			t.setPassword(ComponentProvider
-					.getAuthManager(JournalApplication.getConfiguration().getString(ConfigMapping.AUTH_COMPONENT))
+			t.setPassword(ComponentProvider.getAuthManager(Configuration.getString(ConfigMapping.AUTH_COMPONENT))
 					.getPassword());
 			Iterable<Long> indexResult = indexer.search(query);
 			for (Long id : indexResult) {

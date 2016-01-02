@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
-import net.viperfish.journal.ConfigMapping;
-import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.Configuration;
 
 public class JournalSetup {
 
@@ -80,7 +80,7 @@ public class JournalSetup {
 			}
 		});
 
-		for (String i : JournalApplication.getConfiguration().getStringArray(ConfigMapping.CONFIG_PAGES)) {
+		for (String i : Configuration.getStringArray(ConfigMapping.CONFIG_PAGES)) {
 			try {
 				ConfigPage p = (ConfigPage) Class.forName(i).newInstance();
 				p.setParent(setupWindow);

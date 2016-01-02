@@ -4,13 +4,13 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.FileConfiguration;
-import org.apache.commons.configuration.PropertiesConfiguration;
 
 import net.viperfish.journal.authProvider.ViperfishAuthProvider;
 import net.viperfish.journal.dbProvider.ViperfishEntryDatabaseProvider;
+import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.Configuration;
+import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.indexProvider.ViperfishIndexerProvider;
-import net.viperfish.journal.provider.ComponentProvider;
 import net.viperfish.journal.secureProvider.ViperfishEncryptionProvider;
 import net.viperfish.journal.swtGui.GraphicalUserInterface;
 import net.viperfish.journal.swtGui.conf.BlockCipherMacConfigPage;
@@ -34,7 +34,6 @@ public class JournalApplication {
 	private static OperationFactory opsFactory;
 	private static boolean firstRun;
 	private static SystemConfig sysConf;
-	private static FileConfiguration configuration;
 	private static File moduleDir;
 	private static File authModules;
 	private static File dbModules;
@@ -78,25 +77,17 @@ public class JournalApplication {
 	}
 
 	private static void initConfigUnits() {
-		File config = new File("config.properties");
+		File config = new File(Configuration.confFile);
 		if (!config.exists()) {
 			firstRun = true;
 		}
-		try {
-			CommonFunctions.initFile(config);
-		} catch (IOException e) {
-			System.err.println("failed to create config files, exiting");
-			System.exit(1);
-		}
-		configuration = new PropertiesConfiguration();
-		configuration.setFile(config);
 	}
 
 	private static void initBuiltInDefaults() {
-		ComponentProvider.setDefaultAuthProvider(configuration.getString(ConfigMapping.AUTH_PROVIDER));
-		ComponentProvider.setDefaultDatabaseProvider(configuration.getString(ConfigMapping.DB_PROVIDER));
-		ComponentProvider.setDefaultIndexerProvider(configuration.getString(ConfigMapping.INDEX_PROVIDER));
-		ComponentProvider.setDefaultTransformerProvider(configuration.getString(ConfigMapping.TRANSFORMER_PROVIDER));
+		ComponentProvider.setDefaultAuthProvider(Configuration.getString(ConfigMapping.AUTH_PROVIDER));
+		ComponentProvider.setDefaultDatabaseProvider(Configuration.getString(ConfigMapping.DB_PROVIDER));
+		ComponentProvider.setDefaultIndexerProvider(Configuration.getString(ConfigMapping.INDEX_PROVIDER));
+		ComponentProvider.setDefaultTransformerProvider(Configuration.getString(ConfigMapping.TRANSFORMER_PROVIDER));
 
 	}
 
@@ -145,10 +136,6 @@ public class JournalApplication {
 		return sysConf;
 	}
 
-	public static FileConfiguration getConfiguration() {
-		return configuration;
-	}
-
 	/**
 	 * set the status of unit testing, if unit test, The current dataDir is
 	 * cleared, components reset, and file structure re initialized
@@ -161,19 +148,19 @@ public class JournalApplication {
 	}
 
 	private static void defaultProviders() {
-		if (!configuration.containsKey(ConfigMapping.AUTH_PROVIDER)) {
-			JournalApplication.getConfiguration().setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
+		if (!Configuration.containsKey(ConfigMapping.AUTH_PROVIDER)) {
+			Configuration.setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
 		}
-		if (!configuration.containsKey(ConfigMapping.DB_PROVIDER)) {
-			JournalApplication.getConfiguration().setProperty(ConfigMapping.DB_PROVIDER, "viperfish");
+		if (!Configuration.containsKey(ConfigMapping.DB_PROVIDER)) {
+			Configuration.setProperty(ConfigMapping.DB_PROVIDER, "viperfish");
 		}
-		if (!configuration.containsKey(ConfigMapping.INDEX_PROVIDER)) {
-			JournalApplication.getConfiguration().setProperty(ConfigMapping.INDEX_PROVIDER, "viperfish");
+		if (!Configuration.containsKey(ConfigMapping.INDEX_PROVIDER)) {
+			Configuration.setProperty(ConfigMapping.INDEX_PROVIDER, "viperfish");
 		}
-		if (!configuration.containsKey(ConfigMapping.TRANSFORMER_PROVIDER)) {
-			JournalApplication.getConfiguration().setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");
+		if (!Configuration.containsKey(ConfigMapping.TRANSFORMER_PROVIDER)) {
+			Configuration.setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");
 		}
-		configuration.addProperty(ConfigMapping.CONFIG_PAGES, new String[] { SystemConfigPage.class.getCanonicalName(),
+		Configuration.addProperty(ConfigMapping.CONFIG_PAGES, new String[] { SystemConfigPage.class.getCanonicalName(),
 				BlockCipherMacConfigPage.class.getCanonicalName() });
 	}
 
@@ -193,7 +180,7 @@ public class JournalApplication {
 		}
 		ui = new GraphicalUserInterface();
 		try {
-			configuration.load();
+			Configuration.load();
 		} catch (ConfigurationException e) {
 			System.err.println("failed to load configuration, exiting");
 			System.exit(1);
@@ -204,15 +191,14 @@ public class JournalApplication {
 			ui.setup();
 			lockFile.delete();
 			try {
-				configuration.save();
+				Configuration.save();
 			} catch (ConfigurationException e) {
 				System.err.println("could not save configuration, terminating");
 				System.exit(1);
 			}
 		}
 		initBuiltInDefaults();
-		ui.setAuthManager(ComponentProvider
-				.getAuthManager(JournalApplication.getConfiguration().getString(ConfigMapping.AUTH_COMPONENT)));
+		ui.setAuthManager(ComponentProvider.getAuthManager(Configuration.getString(ConfigMapping.AUTH_COMPONENT)));
 		ui.promptPassword();
 		ui.run();
 	}

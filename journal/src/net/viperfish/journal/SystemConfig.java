@@ -7,8 +7,7 @@ import java.util.TreeSet;
 
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.provider.ComponentProvider;
-import net.viperfish.journal.provider.Provider;
+import net.viperfish.journal.framework.Provider;
 import net.viperfish.utils.config.ComponentConfig;
 import net.viperfish.utils.index.Indexer;;
 

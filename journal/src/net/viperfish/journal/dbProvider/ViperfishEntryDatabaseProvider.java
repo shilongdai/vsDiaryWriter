@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.journal.provider.Provider;
+import net.viperfish.journal.framework.Provider;
 
 public class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
 
