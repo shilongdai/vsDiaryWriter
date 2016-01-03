@@ -1,7 +1,5 @@
 package net.viperfish.journal.indexProvider;
 
-import java.io.File;
-
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Provider;
 import net.viperfish.utils.index.Indexer;
@@ -9,15 +7,9 @@ import net.viperfish.utils.index.Indexer;
 public class ViperfishIndexerProvider implements Provider<Indexer<Journal>> {
 
 	private JournalIndexerFactory indexer;
-	private File dataDir;
 
 	public ViperfishIndexerProvider() {
-		dataDir = new File("data");
-		if (!dataDir.exists()) {
-			dataDir.mkdir();
-		}
 		indexer = new JournalIndexerFactory();
-		indexer.setDataDir(dataDir);
 	}
 
 	@Override

@@ -2,12 +2,14 @@ package net.viperfish.utils.index;
 
 public interface Indexer<T> {
 
-	Iterable<Long> search(String query);
+	public Iterable<Long> search(String query);
 
-	void delete(Long id);
+	public void delete(Long id);
 
-	void add(T toAdd);
+	public void add(T toAdd);
 
-	void clear();
+	public void clear();
+
+	public boolean isMemoryBased();
 
 }

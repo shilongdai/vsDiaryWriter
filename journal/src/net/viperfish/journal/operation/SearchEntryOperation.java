@@ -36,6 +36,12 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 		try {
 			t.setPassword(ComponentProvider.getAuthManager(Configuration.getString(ConfigMapping.AUTH_COMPONENT))
 					.getPassword());
+			if (indexer.isMemoryBased()) {
+				for (Journal j : db.getAll()) {
+					Journal tmp = t.decryptJournal(j);
+					indexer.add(tmp);
+				}
+			}
 			Iterable<Long> indexResult = indexer.search(query);
 			for (Long id : indexResult) {
 				Journal j = db.getEntry(id);

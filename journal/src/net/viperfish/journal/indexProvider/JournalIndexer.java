@@ -1,6 +1,5 @@
 package net.viperfish.journal.indexProvider;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,7 +19,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.RAMDirectory;
 
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.utils.index.LuceneIndexer;
@@ -29,10 +28,8 @@ public class JournalIndexer extends LuceneIndexer<Journal> {
 
 	private Directory dir;
 	private final DateFormat df;
-	private final File dataDir;
 
-	public JournalIndexer(File dataDir) {
-		this.dataDir = dataDir;
+	public JournalIndexer() {
 		df = new SimpleDateFormat("dd MM yyyy");
 	}
 
@@ -93,13 +90,14 @@ public class JournalIndexer extends LuceneIndexer<Journal> {
 	@Override
 	protected Directory getDir() {
 		if (dir == null) {
-			try {
-				dir = FSDirectory.open(new File(dataDir.getCanonicalPath() + "/index").toPath());
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+			dir = new RAMDirectory();
 		}
 		return dir;
+	}
+
+	@Override
+	public boolean isMemoryBased() {
+		return true;
 	}
 
 }

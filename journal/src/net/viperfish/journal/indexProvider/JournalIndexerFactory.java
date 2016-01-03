@@ -7,7 +7,6 @@ import net.viperfish.utils.index.Indexer;
 
 public class JournalIndexerFactory implements IndexerFactory {
 
-	private File dataDir;
 	private JournalIndexer indexer;
 
 	public JournalIndexerFactory() {
@@ -15,7 +14,7 @@ public class JournalIndexerFactory implements IndexerFactory {
 
 	@Override
 	public Indexer<Journal> createIndexer() {
-		indexer = new JournalIndexer(dataDir);
+		indexer = new JournalIndexer();
 		return indexer;
 	}
 
@@ -27,14 +26,13 @@ public class JournalIndexerFactory implements IndexerFactory {
 
 	@Override
 	public void setDataDir(File dir) {
-		dataDir = dir;
 
 	}
 
 	@Override
 	public Indexer<Journal> getIndexer() {
 		if (indexer == null) {
-			indexer = new JournalIndexer(dataDir);
+			indexer = new JournalIndexer();
 		}
 		return indexer;
 	}
