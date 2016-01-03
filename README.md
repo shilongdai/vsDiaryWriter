@@ -1,5 +1,3 @@
->> THIS LINE IS FOR TESTING BY RYAN <<
-
 # journal-2
 This is my second attempt at a journal software, previous attempt is the journal-1 project.
 
@@ -20,3 +18,5 @@ To use the application, it's recommended to install the unlimited strength polic
 To run the application,
   execute: java -jar full-journal-version.jar
 Or: if your operating system's graphical ui supports it, double click the jar file.(when the gui of the application is done)
+
+This application uses SWT for it's GUI, so please use the appropriate version/release, or modify the pom file according to your operating system.
