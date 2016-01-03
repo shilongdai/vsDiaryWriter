@@ -20,6 +20,11 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 	private EntryDatabase db;
 	private Indexer<Journal> indexer;
 	private JournalTransformer t;
+	private static boolean firstTime;
+
+	static {
+		firstTime = true;
+	}
 
 	public SearchEntryOperation(String query) {
 		this.query = query;
@@ -36,11 +41,14 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 		try {
 			t.setPassword(ComponentProvider.getAuthManager(Configuration.getString(ConfigMapping.AUTH_COMPONENT))
 					.getPassword());
-			if (indexer.isMemoryBased()) {
-				for (Journal j : db.getAll()) {
-					Journal tmp = t.decryptJournal(j);
-					indexer.add(tmp);
+			if (firstTime) {
+				if (indexer.isMemoryBased()) {
+					for (Journal j : db.getAll()) {
+						Journal tmp = t.decryptJournal(j);
+						indexer.add(tmp);
+					}
 				}
+				firstTime = false;
 			}
 			Iterable<Long> indexResult = indexer.search(query);
 			for (Long id : indexResult) {
