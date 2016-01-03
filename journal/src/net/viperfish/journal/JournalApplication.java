@@ -13,7 +13,6 @@ import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.indexProvider.ViperfishIndexerProvider;
 import net.viperfish.journal.secureProvider.ViperfishEncryptionProvider;
 import net.viperfish.journal.swtGui.GraphicalUserInterface;
-import net.viperfish.journal.swtGui.conf.BlockCipherMacConfigPage;
 import net.viperfish.journal.swtGui.conf.SystemConfigPage;
 import net.viperfish.journal.ui.OperationExecutor;
 import net.viperfish.journal.ui.OperationFactory;
@@ -41,16 +40,14 @@ public class JournalApplication {
 	private static File transModule;
 
 	static {
-		initModules();
 		initConfigUnits();
-		initProviders();
 
 	}
 
 	public JournalApplication() {
 	}
 
-	private static void initModules() {
+	public static void initModules() {
 		moduleDir = new File("modules");
 		authModules = new File("modules/auth");
 		dbModules = new File("modules/db");
@@ -66,29 +63,15 @@ public class JournalApplication {
 		ComponentProvider.loadDatabaseProvider(dbModules);
 		ComponentProvider.loadIndexer(indexModules);
 		ComponentProvider.loadTransformerProvider(transModule);
-	}
-
-	private static void initProviders() {
 		ComponentProvider.registerAuthProvider(new ViperfishAuthProvider());
 		ComponentProvider.registerEntryDatabaseProvider(new ViperfishEntryDatabaseProvider());
 		ComponentProvider.registerIndexerProvider(new ViperfishIndexerProvider());
 		ComponentProvider.registerTransformerProvider(new ViperfishEncryptionProvider());
-
 	}
 
 	private static void initConfigUnits() {
-		File config = new File(Configuration.confFile);
-		if (!config.exists()) {
-			firstRun = true;
-		}
-	}
-
-	private static void initBuiltInDefaults() {
-		ComponentProvider.setDefaultAuthProvider(Configuration.getString(ConfigMapping.AUTH_PROVIDER));
-		ComponentProvider.setDefaultDatabaseProvider(Configuration.getString(ConfigMapping.DB_PROVIDER));
-		ComponentProvider.setDefaultIndexerProvider(Configuration.getString(ConfigMapping.INDEX_PROVIDER));
-		ComponentProvider.setDefaultTransformerProvider(Configuration.getString(ConfigMapping.TRANSFORMER_PROVIDER));
-
+		Configuration.addProperty(ConfigMapping.CONFIG_PAGES,
+				new String[] { SystemConfigPage.class.getCanonicalName() });
 	}
 
 	public static void cleanUp() {
@@ -144,10 +127,10 @@ public class JournalApplication {
 	 *            the state of unit test
 	 */
 	public static void setUnitTest(boolean isEnable) {
-		initBuiltInDefaults();
+		defaultProviders();
 	}
 
-	private static void defaultProviders() {
+	public static void defaultProviders() {
 		if (!Configuration.containsKey(ConfigMapping.AUTH_PROVIDER)) {
 			Configuration.setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
 		}
@@ -160,19 +143,31 @@ public class JournalApplication {
 		if (!Configuration.containsKey(ConfigMapping.TRANSFORMER_PROVIDER)) {
 			Configuration.setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");
 		}
-		Configuration.addProperty(ConfigMapping.CONFIG_PAGES, new String[] { SystemConfigPage.class.getCanonicalName(),
-				BlockCipherMacConfigPage.class.getCanonicalName() });
+		initDefaultProviders();
+	}
+
+	private static void initDefaultProviders() {
+		ComponentProvider.setDefaultAuthProvider(Configuration.getString(ConfigMapping.AUTH_PROVIDER));
+		ComponentProvider.setDefaultDatabaseProvider(Configuration.getString(ConfigMapping.DB_PROVIDER));
+		ComponentProvider.setDefaultIndexerProvider(Configuration.getString(ConfigMapping.INDEX_PROVIDER));
+		ComponentProvider.setDefaultTransformerProvider(Configuration.getString(ConfigMapping.TRANSFORMER_PROVIDER));
 	}
 
 	public static void main(String[] args) {
+		firstRun = true;
+		try {
+			initModules();
+		} catch (Throwable e) {
+			System.err.println("error:" + e);
+			e.printStackTrace();
+			System.exit(1);
+		}
 		File lockFile = new File(".setUpLock");
 		if (lockFile.exists()) {
-			firstRun = true;
+			firstRun = false;
 		} else {
 			try {
-				if (firstRun) {
-					lockFile.createNewFile();
-				}
+				lockFile.createNewFile();
 			} catch (IOException e) {
 				System.err.println("failed to create lock file: exiting");
 				return;
@@ -185,11 +180,9 @@ public class JournalApplication {
 			System.err.println("failed to load configuration, exiting");
 			System.exit(1);
 		}
+		defaultProviders();
 		if (firstRun) {
-			defaultProviders();
-			initBuiltInDefaults();
 			ui.setup();
-			lockFile.delete();
 			try {
 				Configuration.save();
 			} catch (ConfigurationException e) {
@@ -197,7 +190,6 @@ public class JournalApplication {
 				System.exit(1);
 			}
 		}
-		initBuiltInDefaults();
 		ui.setAuthManager(ComponentProvider.getAuthManager(Configuration.getString(ConfigMapping.AUTH_COMPONENT)));
 		ui.promptPassword();
 		ui.run();

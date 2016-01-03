@@ -36,6 +36,8 @@ public class OperationTest {
 	private final ExecutorService threadpool;
 
 	private void setupConfig() {
+		JournalApplication.initModules();
+		JournalApplication.defaultProviders();
 		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "AES");
 		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_MODE, "CFB");
 		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, "PKCS7PADDING");
@@ -53,7 +55,6 @@ public class OperationTest {
 
 	public OperationTest() {
 		setupConfig();
-		JournalApplication.setUnitTest(true);
 		initComponents();
 		threadpool = Executors.newCachedThreadPool();
 	}
