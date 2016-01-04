@@ -89,6 +89,7 @@ public class JournalEditor {
 		GridData gd_browser = new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 11);
 		gd_browser.heightHint = 324;
 		gd_browser.widthHint = 678;
+
 		editor.setLayoutData(gd_browser);
 
 		text.setText(target.getSubject());

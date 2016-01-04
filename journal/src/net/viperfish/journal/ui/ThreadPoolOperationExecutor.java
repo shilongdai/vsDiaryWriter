@@ -68,7 +68,7 @@ public class ThreadPoolOperationExecutor implements OperationExecutor {
 
 	@Override
 	public Throwable getNextError() {
-		return errors.get(0);
+		return errors.remove(0);
 	}
 
 	@Override

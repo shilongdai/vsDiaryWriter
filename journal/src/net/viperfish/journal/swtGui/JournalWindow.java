@@ -112,6 +112,7 @@ public class JournalWindow {
 				}
 				e.submit(f.getAddOperation(result));
 				search.searchJournals();
+				handleException();
 			}
 
 		});
@@ -130,6 +131,7 @@ public class JournalWindow {
 				}
 				e.submit(f.getEditContentOperation(result.getId(), result.getContent()));
 				e.submit(f.getEditSubjectOperation(result.getId(), result.getSubject()));
+				handleException();
 			}
 		});
 
@@ -144,6 +146,7 @@ public class JournalWindow {
 				Journal s = (Journal) selected.getFirstElement();
 				e.submit(f.getDeleteOperation(s.getId()));
 				search.searchJournals();
+				handleException();
 			}
 
 		});
@@ -157,5 +160,16 @@ public class JournalWindow {
 				display.sleep();
 			}
 		}
+	}
+
+	private void handleException() {
+		while (e.hasException()) {
+			displayException(e.getNextError());
+		}
+	}
+
+	private void displayException(Throwable e) {
+		ErrorDialog dlg = new ErrorDialog(shell, SWT.None);
+		dlg.open(e);
 	}
 }
