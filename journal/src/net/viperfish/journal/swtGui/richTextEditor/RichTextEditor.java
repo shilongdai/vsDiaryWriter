@@ -27,6 +27,7 @@ public class RichTextEditor extends Composite {
 		browser = new Browser(this, SWT.NONE);
 		browser.setJavascriptEnabled(true);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		browser.setDragDetect(true);
 
 		// Listen to control resized
 		browser.addControlListener(new ControlAdapter() {

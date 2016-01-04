@@ -40,8 +40,12 @@
 		resize();
 	});
 
+	config.plugins = "advlist autolink bbcode charmap textcolor colorpicker contextmenu emoticons image imagetools link lists media print searchreplace spellchecker table wordcount";
+	
+	config.contextmenu = "undo redo | alignleft aligncenter alignright | link image inserttable"
+	
 	// Setup plugins 
-	config.toolbar = [ "undo redo | styleselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent " ];
+	config.toolbar = [ "undo redo searchreplace | styleselect | bold italic forecolor backcolor | alignleft aligncenter alignright | bullist numlist outdent indent | emoticons image imagetools link media table" ];
 
 	// Choose selector
 	config.selector = "#content";
@@ -77,6 +81,6 @@
 </head>
 
 <body>
-	<textarea id="content"></textarea>
+	<div id="content"></div>
 </body>
 </html>

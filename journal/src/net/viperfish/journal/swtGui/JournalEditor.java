@@ -26,7 +26,6 @@ public class JournalEditor {
 	private RichTextEditor editor;
 	private Button saveButton;
 	private Journal target;
-	private Button btnNewButton;
 	private boolean savePressed;
 
 	public JournalEditor() {
@@ -58,9 +57,9 @@ public class JournalEditor {
 	 */
 	private void createContents() {
 		shell = new Shell();
-		shell.setSize(690, 454);
+		shell.setSize(700, 500);
 		shell.setText("Journal Editor");
-		shell.setLayout(new GridLayout(3, false));
+		shell.setLayout(new GridLayout(1, false));
 		shell.addDisposeListener(new DisposeListener() {
 
 			@Override
@@ -75,28 +74,30 @@ public class JournalEditor {
 		});
 
 		Label lblNewLabel = new Label(shell, SWT.NONE);
-		GridData gd_lblNewLabel = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
-		gd_lblNewLabel.widthHint = 31;
-		lblNewLabel.setLayoutData(gd_lblNewLabel);
+		lblNewLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 		lblNewLabel.setText("Title:");
 
 		text = new Text(shell, SWT.BORDER);
-		GridData gd_text = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
-		gd_text.widthHint = 437;
+		GridData gd_text = new GridData(SWT.LEFT, SWT.TOP, true, false);
+		gd_text.widthHint = 670;
+		gd_text.horizontalAlignment = GridData.FILL;
+		gd_text.grabExcessHorizontalSpace = true;
 		text.setLayoutData(gd_text);
+		text.pack();
 
 		editor = new RichTextEditor(shell, SWT.NONE);
-		GridData gd_browser = new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 11);
-		gd_browser.heightHint = 324;
-		gd_browser.widthHint = 678;
-
+		GridData gd_browser = new GridData(SWT.CENTER, SWT.CENTER, true, true);
+		gd_browser.widthHint = 690;
+		gd_browser.heightHint = 450;
+		gd_browser.grabExcessHorizontalSpace = true;
+		gd_browser.grabExcessVerticalSpace = true;
+		gd_browser.horizontalAlignment = GridData.FILL;
+		gd_browser.verticalAlignment = GridData.FILL;
 		editor.setLayoutData(gd_browser);
+		editor.pack();
 
 		text.setText(target.getSubject());
 		editor.setText(target.getContent());
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
 
 		saveButton = new Button(shell, SWT.NONE);
 		GridData gd_btnNewButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -113,19 +114,6 @@ public class JournalEditor {
 			}
 		});
 		saveButton.setText("Save");
-
-		btnNewButton = new Button(shell, SWT.NONE);
-		btnNewButton.setText("Cancel");
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				target = null;
-				shell.dispose();
-			}
-
-		});
-		new Label(shell, SWT.NONE);
 	}
 
 }
