@@ -81,9 +81,14 @@ public class JournalWindow {
 		deleteJournal.setText("Delete");
 
 		journalList = new List(shell, SWT.BORDER);
-		GridData gd_journalList = new GridData(SWT.LEFT, SWT.CENTER, false, false, 13, 1);
-		gd_journalList.heightHint = 289;
-		gd_journalList.widthHint = 433;
+		GridData gd_journalList = new GridData(SWT.CENTER, SWT.CENTER, true, true);
+		gd_journalList.horizontalSpan = 13;
+		gd_journalList.heightHint = 290;
+		gd_journalList.widthHint = 430;
+		gd_journalList.grabExcessHorizontalSpace = true;
+		gd_journalList.grabExcessVerticalSpace = true;
+		gd_journalList.horizontalAlignment = GridData.FILL;
+		gd_journalList.verticalAlignment = GridData.FILL;
 		journalList.setLayoutData(gd_journalList);
 		listBinder = new ListViewer(journalList);
 

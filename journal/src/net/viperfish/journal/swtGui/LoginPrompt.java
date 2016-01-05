@@ -50,7 +50,7 @@ public class LoginPrompt {
 	protected void createContents() {
 		shell = new Shell(SWT.SYSTEM_MODAL | SWT.TITLE | SWT.BORDER);
 		shell.setSize(450, 156);
-		shell.setText("SWT Application");
+		shell.setText("Welcome, User");
 		shell.setLayout(new GridLayout(2, false));
 
 		Label lblNewLabel = new Label(shell, SWT.NONE);
