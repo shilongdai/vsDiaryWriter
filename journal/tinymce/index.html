@@ -55,6 +55,10 @@
 		resize();
 	};
 
+	config.setup = function(ed) {
+		ed.on("postrender", function() {loaded = true});
+	};
+	
 	tinyMCE.init(config);
 
 	/*
