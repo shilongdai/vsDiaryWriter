@@ -1,5 +1,5 @@
 # journal-2
-This is my second attempt at a journal software, previous attempt is the journal-1 project.
+This is my second attempt at a journal software, previous attempt is the journal-1 project. Also, this time I have actual support from friends and colleagues, so it will be maintained.
 
 # description:
 This project is a opensource journal writer for writing journal entries on "soft" medias. The current plan is finish the pc version, and then develop a mobile app.
