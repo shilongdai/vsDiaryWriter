@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.EntryDatabase;
@@ -24,11 +25,16 @@ public class JarBasedModuleLoader implements ModuleLoader {
 
 	private Collection<?> loadIndividual(String path) {
 		try (JarFile jarFile = new JarFile(path)) {
+			Manifest manifest = jarFile.getManifest();
+			String provider = manifest.getMainAttributes().getValue("provider-class");
+			System.err.println("provider:" + provider);
+			if (provider == null) {
+				return new LinkedList<>();
+			}
 			List<Provider<?>> result = new LinkedList<>();
 			Enumeration<JarEntry> e = jarFile.entries();
 			URL[] urls = { new URL("jar:file:" + path + "!/") };
 			URLClassLoader cl = URLClassLoader.newInstance(urls);
-
 			while (e.hasMoreElements()) {
 				JarEntry je = e.nextElement();
 				if (je.isDirectory() || !je.getName().endsWith(".class")) {
@@ -36,16 +42,18 @@ public class JarBasedModuleLoader implements ModuleLoader {
 				}
 				String className = je.getName().substring(0, je.getName().length() - 6);
 				className = className.replace('/', '.');
-				Class<?> c = cl.loadClass(className);
-				if (isUsable(c)) {
+				if (className.equals(provider)) {
+					Class<?> c = cl.loadClass(className);
+					if (isUsable(c)) {
 
-					if (Provider.class.isAssignableFrom(c)) {
-						try {
-							result.add((Provider<?>) c.newInstance());
-							System.err.println("loading:" + c);
-						} catch (InstantiationException | IllegalAccessException e1) {
-							e1.printStackTrace();
-							continue;
+						if (Provider.class.isAssignableFrom(c)) {
+							try {
+								result.add((Provider<?>) c.newInstance());
+								System.err.println("loading:" + c);
+							} catch (InstantiationException | IllegalAccessException e1) {
+								e1.printStackTrace();
+								continue;
+							}
 						}
 					}
 				}
