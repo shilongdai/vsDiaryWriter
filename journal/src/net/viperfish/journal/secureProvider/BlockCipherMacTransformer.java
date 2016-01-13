@@ -31,6 +31,10 @@ import net.viperfish.journal.secureAlgs.CMac;
 import net.viperfish.journal.secureAlgs.GMac;
 import net.viperfish.journal.secureAlgs.HMac;
 import net.viperfish.journal.secureAlgs.PBKDF2KeyGenerator;
+import net.viperfish.utils.compression.Compressor;
+import net.viperfish.utils.compression.Compressors;
+import net.viperfish.utils.compression.FailToInitCompressionException;
+import net.viperfish.utils.compression.NullCompressor;
 import net.viperfish.utils.config.ComponentConfig;
 
 public class BlockCipherMacTransformer implements JournalTransformer {
@@ -59,6 +63,7 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 	private Digester dig;
 	private MacDigester mac;
 	private PBKDF2KeyGenerator keyGenerator;
+	private Compressor compress;
 
 	private String encryptData(byte[] bytes) throws InvalidKeyException, InvalidAlgorithmParameterException,
 			IllegalBlockSizeException, BadPaddingException {
@@ -231,6 +236,13 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		mode += Configuration.getString(ENCRYPTION_PADDING);
 		enc.setMode(mode);
 		dig.setMode("SHA512");
+
+		try {
+			compress = Compressors.getCompressor("gz");
+		} catch (FailToInitCompressionException e) {
+			System.err.println("failed to find gz compression, using null compression");
+			compress = new NullCompressor();
+		}
 	}
 
 	private void initKDF() {

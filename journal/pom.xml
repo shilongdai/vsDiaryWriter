@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>journal</groupId>
 	<artifactId>journal</artifactId>
-	<version>0.1.0.5</version>
+	<version>0.2.1.6</version>
 	<name>The Viperfish Journal</name>
 	<description>A application for writing journals</description>
 	<repositories>
@@ -111,11 +111,25 @@
 			<artifactId>hibernate-annotations</artifactId>
 			<version>3.5.6-Final</version>
 		</dependency>
+		<!-- Windows 32 bit <dependency> <groupId>org.eclipse.swt</groupId> <artifactId>org.eclipse.swt.win32.win32.x86</artifactId> 
+			<version>4.5.1</version> </dependency> -->
+
+		<!-- Windows 64 bit <dependency> <groupId>org.eclipse.swt</groupId> <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId> 
+			<version>4.5.1</version> </dependency> -->
+
+		<!-- Linux 32 bit <dependency> <groupId>org.eclipse.swt</groupId> <artifactId>org.eclipse.swt.gtk.linux.x86</artifactId> 
+			<version>4.5.1</version> </dependency> -->
+
+		<!-- Linux 64 bit -->
 		<dependency>
 			<groupId>org.eclipse.swt</groupId>
 			<artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
 			<version>4.5.1</version>
 		</dependency>
+
+		<!-- Mac 64 bit <dependency> <groupId>org.eclipse.swt</groupId> <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId> 
+			<version>4.5.1</version> </dependency> -->
+
 		<dependency>
 			<groupId>org.eclipse</groupId>
 			<artifactId>jface</artifactId>
