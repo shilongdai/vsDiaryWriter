@@ -15,7 +15,7 @@ public class ViperfishEncryptionProvider implements Provider<JournalTransformer>
 
 	public ViperfishEncryptionProvider() {
 		Configuration.addProperty(ConfigMapping.CONFIG_PAGES,
-				"net.viperfish.journal.swtGui.conf.BlockCipherMacConfigPage");
+				BlockCipherMacConfigPage.class.getCanonicalName());
 		secureDir = new File("secure");
 		if (!secureDir.exists()) {
 			secureDir.mkdir();

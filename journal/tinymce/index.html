@@ -40,15 +40,18 @@
 		resize();
 	});
 
+	config.fontsize_formats = "4pt 6pt 8pt 9pt 10pt 11pt 12pt 26pt 36pt";
+
 	config.plugins = "advlist autolink bbcode charmap textcolor colorpicker contextmenu emoticons image imagetools link lists media print searchreplace spellchecker table wordcount";
-	
+
 	config.contextmenu = "undo redo | alignleft aligncenter alignright | link image inserttable"
-	
+
 	// Setup plugins 
-	config.toolbar = [ "undo redo searchreplace | styleselect | bold italic forecolor backcolor | alignleft aligncenter alignright | bullist numlist outdent indent | emoticons image imagetools link media table" ];
+	config.toolbar = [ "undo redo searchreplace | styleselect | bold italic forecolor backcolor fontselect fontsizeselect | alignleft aligncenter alignright | bullist numlist outdent indent | emoticons image imagetools link media table" ];
 
 	// Choose selector
 	config.selector = "#content";
+	
 
 	// Set content once initialized
 	config.init_instance_callback = function(editor) {
@@ -56,9 +59,14 @@
 	};
 
 	config.setup = function(ed) {
-		ed.on("postrender", function() {loaded = true});
+		ed.on("postrender", function() {
+			loaded = true
+		});
+		ed.on('init', function() {
+			this.getDoc().body.style.fontSize = '15px';
+		});
 	};
-	
+
 	tinyMCE.init(config);
 
 	/*
@@ -78,7 +86,7 @@
 
 			// not loaded yet
 		} else {
-			document.getElementById('content').innerHTML = text;
+			$("#content").html(text);
 		}
 	};
 </script>

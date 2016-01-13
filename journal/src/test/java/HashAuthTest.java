@@ -2,6 +2,7 @@ package test.java;
 
 import java.io.File;
 
+
 import net.viperfish.journal.authProvider.HashAuthManager;
 import net.viperfish.journal.framework.AuthenticationManager;
 
