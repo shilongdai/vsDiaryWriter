@@ -1,4 +1,4 @@
-package net.viperfish.journal.swtGui.conf;
+package net.viperfish.journal.secureProvider;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -10,8 +10,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import net.viperfish.journal.framework.Configuration;
-import net.viperfish.journal.secureProvider.AlgorithmSpec;
-import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
 
 public class SecurityConfigComposite extends Composite {
 
@@ -20,6 +18,8 @@ public class SecurityConfigComposite extends Composite {
 	private Combo encPadSelector;
 	private Combo macTypeSelector;
 	private Combo macAlgSelector;
+	private Label kdfLabel;
+	private Combo kdfCombo;
 
 	/**
 	 * Create the composite.
@@ -72,6 +72,13 @@ public class SecurityConfigComposite extends Composite {
 
 		macAlgSelector = new Combo(this, SWT.READ_ONLY);
 		macAlgSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		kdfLabel = new Label(this, SWT.NONE);
+		kdfLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		kdfLabel.setText("KDF Hash");
+
+		kdfCombo = new Combo(this, SWT.READ_ONLY);
+		kdfCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		fillIn();
 
 	}
@@ -82,6 +89,7 @@ public class SecurityConfigComposite extends Composite {
 		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, encPadSelector.getText());
 		Configuration.setProperty(BlockCipherMacTransformer.MAC_TYPE, macTypeSelector.getText());
 		Configuration.setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, macAlgSelector.getText());
+		Configuration.setProperty(BlockCipherMacTransformer.KDF_HASH, kdfCombo.getText());
 
 	}
 
@@ -95,15 +103,19 @@ public class SecurityConfigComposite extends Composite {
 		for (String i : AlgorithmSpec.getSupportedBlockCipherPadding()) {
 			encPadSelector.add(i);
 		}
+		for (String i : AlgorithmSpec.getSupportedDigest()) {
+			kdfCombo.add(i);
+		}
 		macTypeSelector.add("CMAC");
 		macTypeSelector.add("GMAC");
 		macTypeSelector.add("CBCMAC");
 		macTypeSelector.add("CFBMAC");
 		macTypeSelector.add("HMAC");
 		macTypeSelector.select(0);
-		encPadSelector.select(0);
-		encModeSelector.select(0);
+		encPadSelector.select(3);
+		encModeSelector.select(1);
 		encAlgSelector.select(0);
+		kdfCombo.select(13);
 		fillInMacAlg();
 	}
 
@@ -123,7 +135,7 @@ public class SecurityConfigComposite extends Composite {
 				macAlgSelector.add(i);
 			}
 		}
-		macAlgSelector.select(0);
+		macAlgSelector.select(19);
 	}
 
 	@Override

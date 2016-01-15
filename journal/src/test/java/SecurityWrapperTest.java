@@ -19,6 +19,7 @@ public class SecurityWrapperTest {
 		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, "PKCS7PADDING");
 		Configuration.setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, "MD5");
 		Configuration.setProperty(BlockCipherMacTransformer.MAC_TYPE, "HMAC");
+		Configuration.setProperty(BlockCipherMacTransformer.KDF_HASH, "SHA256");
 	}
 
 	public SecurityWrapperTest() {

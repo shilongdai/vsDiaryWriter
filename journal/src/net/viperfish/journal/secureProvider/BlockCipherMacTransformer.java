@@ -44,6 +44,7 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 	public static final String ENCRYPTION_PADDING = "viperfish.secure.encryption.padding";
 	public static final String MAC_TYPE = "viperfish.secure.mac.type";
 	public static final String MAC_ALGORITHM = "viperfish.secure.mac.algorithm";
+	public static final String KDF_HASH = "viperfish.secure.kdf.algorithm";
 
 	private static SecureEntryWrapperConfig config;
 
@@ -67,7 +68,8 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 
 	private String encryptData(byte[] bytes) throws InvalidKeyException, InvalidAlgorithmParameterException,
 			IllegalBlockSizeException, BadPaddingException {
-		byte[] cipher = enc.encrypt(bytes);
+		byte[] compressed = compress.compress(bytes);
+		byte[] cipher = enc.encrypt(compressed);
 		byte[] iv = enc.getIv();
 		String ivString = Base64.encodeBase64String(iv);
 		String cipherString = Base64.encodeBase64String(cipher);
@@ -107,7 +109,8 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		enc.setIv(rIv);
 
 		byte[] data64 = Base64.decodeBase64(cData);
-		byte[] plain = enc.decrypt(data64);
+		byte[] compressed = enc.decrypt(data64);
+		byte[] plain = compress.deflate(compressed);
 		String plainText = new String(plain, StandardCharsets.UTF_16);
 
 		// verify checksum
@@ -250,7 +253,7 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		saltForKDF = new byte[10];
 		loadSalt();
 		keyGenerator = new BCPCKDF2Generator();
-		keyGenerator.setDigest("SHA256");
+		keyGenerator.setDigest(Configuration.getString(KDF_HASH));
 		keyGenerator.setIteration(3000);
 		keyGenerator.setSalt(saltForKDF);
 	}

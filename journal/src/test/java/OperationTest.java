@@ -43,6 +43,7 @@ public class OperationTest {
 		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, "PKCS7PADDING");
 		Configuration.setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, "MD5");
 		Configuration.setProperty(BlockCipherMacTransformer.MAC_TYPE, "HMAC");
+		Configuration.setProperty(BlockCipherMacTransformer.KDF_HASH, "SHA256");
 		Configuration.setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
 		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "HashAuthentication");
 		Configuration.setProperty(ConfigMapping.DB_PROVIDER, "viperfish");

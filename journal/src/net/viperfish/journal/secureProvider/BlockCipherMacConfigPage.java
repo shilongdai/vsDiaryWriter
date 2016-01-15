@@ -4,7 +4,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import net.viperfish.journal.swtGui.conf.ConfigPage;
-import net.viperfish.journal.swtGui.conf.SecurityConfigComposite;
 
 public class BlockCipherMacConfigPage implements ConfigPage {
 
