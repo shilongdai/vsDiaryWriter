@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import net.viperfish.journal.ComponentProvider;
 import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.dbProvider.H2EntryDatabase;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
@@ -20,6 +21,7 @@ import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.indexProvider.JournalIndexer;
 import net.viperfish.journal.operation.AddEntryOperation;
+import net.viperfish.journal.operation.ChangeDataSourceOperation;
 import net.viperfish.journal.operation.DeleteEntryOperation;
 import net.viperfish.journal.operation.EditContentOperation;
 import net.viperfish.journal.operation.EditSubjectOperation;
@@ -227,6 +229,32 @@ public class OperationTest {
 		Assert.assertEquals(true, isSorted(result));
 		Assert.assertEquals(100, result.size());
 		cleanUp();
+	}
+
+	@Test
+	public void testChangeOperation() {
+		cleanUp();
+		for (int i = 0; i < 100; ++i) {
+			Journal j = new Journal();
+			j.setSubject("j " + i);
+			j.setContent("j " + i);
+			j = encryptor.encryptJournal(j);
+			db.addEntry(j);
+		}
+		ChangeDataSourceOperation cdb = new ChangeDataSourceOperation("H2Database");
+		cdb.execute();
+		initComponents();
+		List<Journal> all = db.getAll();
+		Assert.assertEquals(100, all.size());
+		Assert.assertEquals(H2EntryDatabase.class, db.getClass());
+		cleanUp();
+		resetComponents();
+		cleanUp();
+	}
+
+	private void resetComponents() {
+		setupConfig();
+		initComponents();
 	}
 
 	public void cleanUp() {

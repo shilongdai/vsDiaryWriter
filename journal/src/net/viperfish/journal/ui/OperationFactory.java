@@ -83,4 +83,40 @@ public interface OperationFactory {
 	 * @return the operation with result
 	 */
 	public OperationWithResult<Journal> getGetEntryOperation(Long id);
+
+	/**
+	 * get an operation that will change the database type
+	 * 
+	 * @param newDB
+	 *            the type of the newDB
+	 * @return the operation
+	 */
+	public Operation getChangeDBOperation(String newDB);
+
+	/**
+	 * get an operation that will change the index type
+	 * 
+	 * @param newIndexer
+	 *            the type of the new Indexer
+	 * @return the operation
+	 */
+	public Operation getChangeIndexerOperation(String newIndexer);
+
+	/**
+	 * get an operation that will change the transformer type
+	 * 
+	 * @param newTrans
+	 *            the type of the new Transformer
+	 * @return the changed transformer
+	 */
+	public Operation getChangeTransformerOperation(String newTrans);
+
+	/**
+	 * get an operation that will change the authManager type
+	 * 
+	 * @param newAuth
+	 *            the type of the auth manager
+	 * @return the changed auth
+	 */
+	public Operation getChangeAuthManagerOperation(String newAuth);
 }
