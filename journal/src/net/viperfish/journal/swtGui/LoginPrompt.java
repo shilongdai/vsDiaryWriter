@@ -49,7 +49,7 @@ public class LoginPrompt {
 	 */
 	protected void createContents() {
 		shell = new Shell(SWT.SYSTEM_MODAL | SWT.TITLE | SWT.BORDER);
-		shell.setSize(450, 156);
+		shell.setSize(522, 183);
 		shell.setText("Welcome, User");
 		shell.setLayout(new GridLayout(2, false));
 
