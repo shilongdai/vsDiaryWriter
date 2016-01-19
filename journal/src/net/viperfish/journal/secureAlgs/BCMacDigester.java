@@ -3,8 +3,6 @@ package net.viperfish.journal.secureAlgs;
 
 import org.bouncycastle.crypto.Mac;
 
-import net.viperfish.journal.secureProvider.MacDigester;
-
 public abstract class BCMacDigester implements MacDigester {
 
 	private String mode;

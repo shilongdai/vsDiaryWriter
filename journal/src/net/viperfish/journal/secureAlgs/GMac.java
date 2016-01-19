@@ -6,8 +6,6 @@ import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
-import net.viperfish.journal.secureProvider.AlgorithmSpec;
-
 public class GMac extends BCMacDigester {
 
 	private Mac mac;

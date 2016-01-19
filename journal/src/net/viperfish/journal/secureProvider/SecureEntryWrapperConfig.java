@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import net.viperfish.journal.secureAlgs.AlgorithmSpec;
 import net.viperfish.utils.config.ComponentConfig;
 
 public class SecureEntryWrapperConfig extends ComponentConfig {

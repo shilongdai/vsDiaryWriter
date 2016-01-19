@@ -4,8 +4,6 @@ import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.params.KeyParameter;
 
-import net.viperfish.journal.secureProvider.AlgorithmSpec;
-
 public class HMac extends BCMacDigester {
 
 	private Mac mac;

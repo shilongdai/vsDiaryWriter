@@ -5,8 +5,6 @@ import org.bouncycastle.crypto.PBEParametersGenerator;
 import org.bouncycastle.crypto.generators.PKCS12ParametersGenerator;
 import org.bouncycastle.crypto.params.KeyParameter;
 
-import net.viperfish.journal.secureProvider.AlgorithmSpec;
-
 public class BCPCKDF2Generator implements PBKDF2KeyGenerator {
 
 	private String digest;

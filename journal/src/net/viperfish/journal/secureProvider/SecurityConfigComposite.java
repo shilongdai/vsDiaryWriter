@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import net.viperfish.journal.framework.Configuration;
+import net.viperfish.journal.secureAlgs.AlgorithmSpec;
 
 public class SecurityConfigComposite extends Composite {
 

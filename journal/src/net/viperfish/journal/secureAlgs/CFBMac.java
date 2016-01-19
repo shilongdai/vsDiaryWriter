@@ -6,8 +6,6 @@ import org.bouncycastle.crypto.macs.CFBBlockCipherMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
-import net.viperfish.journal.secureProvider.AlgorithmSpec;
-
 public class CFBMac extends BCMacDigester {
 
 	private Mac mac;

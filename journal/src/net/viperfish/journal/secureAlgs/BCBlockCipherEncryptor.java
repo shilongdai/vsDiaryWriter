@@ -15,9 +15,6 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
-import net.viperfish.journal.secureProvider.AlgorithmSpec;
-import net.viperfish.journal.secureProvider.Encryptor;
-
 public class BCBlockCipherEncryptor extends Encryptor {
 
 	private byte[] key;

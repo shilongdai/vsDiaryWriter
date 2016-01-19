@@ -15,8 +15,8 @@ import java.util.Arrays;
 import org.apache.commons.codec.binary.Base64;
 
 import net.viperfish.journal.framework.AuthenticationManager;
+import net.viperfish.journal.secureAlgs.Digester;
 import net.viperfish.journal.secureAlgs.JCEDigester;
-import net.viperfish.journal.secureProvider.Digester;
 
 public class HashAuthManager implements AuthenticationManager {
 

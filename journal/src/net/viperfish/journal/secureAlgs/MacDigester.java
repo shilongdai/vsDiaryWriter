@@ -1,4 +1,4 @@
-package net.viperfish.journal.secureProvider;
+package net.viperfish.journal.secureAlgs;
 
 public interface MacDigester {
 

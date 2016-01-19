@@ -2,9 +2,6 @@ package net.viperfish.journal.secureAlgs;
 
 import org.bouncycastle.crypto.Digest;
 
-import net.viperfish.journal.secureProvider.AlgorithmSpec;
-import net.viperfish.journal.secureProvider.Digester;
-
 
 public class BCDigester implements Digester {
 
