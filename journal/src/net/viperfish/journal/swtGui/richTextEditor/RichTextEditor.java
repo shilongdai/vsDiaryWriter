@@ -8,8 +8,6 @@ import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.browser.StatusTextEvent;
 import org.eclipse.swt.browser.StatusTextListener;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -29,20 +27,7 @@ public class RichTextEditor extends Composite {
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		browser.setDragDetect(true);
 
-		// Listen to control resized
-		browser.addControlListener(new ControlAdapter() {
-			@Override
-			public void controlResized(ControlEvent e) {
-				if (loadCompleted) {
-					browser.execute("tinyMCE.activeEditor.getContentAreaContainer().height="
-							+ (browser.getClientArea().height - 70));
-
-					super.controlResized(e);
-				}
-			}
-		});
-
-		browser.setUrl(new File("tinymce/index.html").toURI().toString());
+		browser.setUrl(new File("editor/index.html").toURI().toString());
 
 		// Set content of editor after load completed
 		browser.addProgressListener(new ProgressListener() {
@@ -62,7 +47,7 @@ public class RichTextEditor extends Composite {
 		browser.addStatusTextListener(new StatusTextListener() {
 			@Override
 			public void changed(StatusTextEvent event) {
-				browser.setData("leet-content", event.text);
+				browser.setData("content", event.text);
 			}
 		});
 	}
@@ -96,7 +81,7 @@ public class RichTextEditor extends Composite {
 		boolean executed = browser.execute("window.status=getContent();");
 
 		if (executed) {
-			content = (String) browser.getData("leet-content");
+			content = (String) browser.getData("content");
 		}
 
 		return content;

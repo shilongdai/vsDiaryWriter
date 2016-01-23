@@ -20,7 +20,8 @@ for i in $(ls); do
 	cd $i;
 	mvn install;
 	cd target;
-	zip -r $i.zip full-*.jar ../tinymce;
+	mv ../editor .;
+	zip -r $i.zip full-*.jar editor;
 	echo "copying product to $1";
 	mv $i.zip $1;
 	cd ../..;
