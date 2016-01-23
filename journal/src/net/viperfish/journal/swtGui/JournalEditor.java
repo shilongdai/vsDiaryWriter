@@ -57,7 +57,7 @@ public class JournalEditor {
 	 */
 	private void createContents() {
 		shell = new Shell();
-		shell.setSize(700, 500);
+		shell.setSize(800, 1200);
 		shell.setText("Journal Editor");
 		shell.setLayout(new GridLayout(1, false));
 		shell.addDisposeListener(new DisposeListener() {
