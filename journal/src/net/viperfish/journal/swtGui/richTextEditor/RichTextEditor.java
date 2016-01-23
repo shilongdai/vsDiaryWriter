@@ -59,6 +59,7 @@ public class RichTextEditor extends Composite {
 	 *            text
 	 */
 	public void setText(String text) {
+		editor_content = text == null ? "" : text.replace("\n", "");
 
 		if (loadCompleted) {
 			/**
