@@ -1,8 +1,7 @@
 package net.viperfish.journal.swtGui;
 
-import net.viperfish.journal.ComponentProvider;
-import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.swtGui.conf.JournalSetup;
+import net.viperfish.journal.ui.TerminationControlFlowException;
 import net.viperfish.journal.ui.UserInterface;
 
 public class GraphicalUserInterface extends UserInterface {
@@ -13,26 +12,45 @@ public class GraphicalUserInterface extends UserInterface {
 
 	private LoginPrompt prompt;
 
+	private SetPasswordPrompt setPassword;
+
 	public GraphicalUserInterface() {
+		setPassword = new SetPasswordPrompt();
+		w = new JournalWindow();
+		setup = new JournalSetup();
+		prompt = new LoginPrompt();
+		setPassword = new SetPasswordPrompt();
 	}
 
 	@Override
 	public void run() {
-		w = new JournalWindow();
 		w.open();
 		System.err.println("windows closed");
 	}
 
 	@Override
-	public void setup() {
-		setup = new JournalSetup();
-		setup.open();
+	public void setup() throws TerminationControlFlowException {
+		if (!setup.open()) {
+			throw new TerminationControlFlowException();
+		}
 	}
 
 	@Override
-	public String promptPassword() {
-		prompt = new LoginPrompt(ComponentProvider.getAuthManager(ConfigMapping.AUTH_COMPONENT));
-		return prompt.open();
+	public String promptPassword() throws TerminationControlFlowException {
+		String result = prompt.open();
+		if (result == null) {
+			throw new TerminationControlFlowException();
+		} else {
+			return result;
+		}
+	}
+
+	@Override
+	public void setFirstPassword() throws TerminationControlFlowException {
+		boolean passwordSet = setPassword.open();
+		if (!passwordSet) {
+			throw new TerminationControlFlowException();
+		}
 	}
 
 }

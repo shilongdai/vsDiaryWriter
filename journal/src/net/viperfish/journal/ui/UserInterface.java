@@ -25,7 +25,7 @@ public abstract class UserInterface {
 	 * @see Configuration
 	 * @see ComponentConfig
 	 */
-	public abstract void setup();
+	public abstract void setup() throws TerminationControlFlowException;
 
 	/**
 	 * prompt password
@@ -33,14 +33,18 @@ public abstract class UserInterface {
 	 * @see UserInterface#authenticate(String)
 	 * @return the valid password
 	 */
-	public abstract String promptPassword();
+	public abstract String promptPassword() throws TerminationControlFlowException;
+
+	public abstract void setFirstPassword() throws TerminationControlFlowException;
 
 	/**
 	 * set the authenticator for this interface
 	 * 
 	 * @param auth
 	 *            the authenticator
+	 * @deprecated
 	 */
+	@Deprecated
 	public void setAuthManager(AuthenticationManager auth) {
 		this.auth = auth;
 	}
@@ -50,8 +54,10 @@ public abstract class UserInterface {
 	 * 
 	 * @param password
 	 *            password
+	 * @deprecated
 	 * @return if it's valid
 	 */
+	@Deprecated
 	protected boolean authenticate(String password) {
 		return this.auth.verify(password);
 	}
@@ -61,7 +67,9 @@ public abstract class UserInterface {
 	 * 
 	 * @see AuthenticationManager
 	 * @return if the password is set
+	 * @deprecated
 	 */
+	@Deprecated
 	protected boolean isPasswordSet() {
 		return auth.isPasswordSet();
 	}
@@ -71,7 +79,9 @@ public abstract class UserInterface {
 	 * 
 	 * @param password
 	 *            the password to set
+	 * @deprecated
 	 */
+	@Deprecated
 	protected void setPassword(String password) {
 		auth.setPassword(password);
 	}

@@ -29,8 +29,10 @@ public class JournalSetup {
 	private Shell setupWindow;
 	private LinkedList<ConfigPage> pages;
 	private Button doneButton;
+	private boolean isComplete;
 
 	public JournalSetup() {
+		isComplete = false;
 		current = null;
 		pages = new LinkedList<>();
 	}
@@ -40,7 +42,7 @@ public class JournalSetup {
 	 * 
 	 * @wbp.parser.entryPoint
 	 */
-	public void open() {
+	public boolean open() {
 		Display display = Display.getDefault();
 		setupWindow = new Shell();
 		setupWindow.setSize(700, 345);
@@ -107,6 +109,7 @@ public class JournalSetup {
 				for (ConfigPage p : pages) {
 					p.done();
 				}
+				isComplete = true;
 				setupWindow.dispose();
 			}
 
@@ -118,6 +121,7 @@ public class JournalSetup {
 				display.sleep();
 			}
 		}
+		return isComplete;
 	}
 
 	private void hideCurrent() {

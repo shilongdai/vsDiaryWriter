@@ -13,7 +13,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import net.viperfish.journal.ComponentProvider;
 import net.viperfish.journal.framework.AuthenticationManager;
+import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.Configuration;
 
 public class LoginPrompt {
 
@@ -22,8 +25,7 @@ public class LoginPrompt {
 	private AuthenticationManager auth;
 	private String password;
 
-	public LoginPrompt(AuthenticationManager auth) {
-		this.auth = auth;
+	public LoginPrompt() {
 	}
 
 	/**
@@ -32,6 +34,7 @@ public class LoginPrompt {
 	 * @wbp.parser.entryPoint
 	 */
 	public String open() {
+		this.auth = ComponentProvider.getAuthManager(Configuration.getString(ConfigMapping.AUTH_COMPONENT));
 		Display display = Display.getDefault();
 		createContents();
 		shell.open();
@@ -49,7 +52,7 @@ public class LoginPrompt {
 	 */
 	protected void createContents() {
 		shell = new Shell(SWT.SYSTEM_MODAL | SWT.TITLE | SWT.BORDER);
-		shell.setSize(522, 183);
+		shell.setSize(522, 154);
 		shell.setText("Welcome, User");
 		shell.setLayout(new GridLayout(2, false));
 
@@ -80,18 +83,12 @@ public class LoginPrompt {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				String toTest = text.getText();
-				if (!auth.isPasswordSet()) {
-					auth.setPassword(toTest);
-					password = toTest;
+				boolean correct = auth.verify(toTest);
+				if (correct) {
+					password = text.getText();
 					shell.dispose();
 				} else {
-					boolean correct = auth.verify(toTest);
-					if (correct) {
-						password = text.getText();
-						shell.dispose();
-					} else {
-						lblNewLabel_1.setVisible(true);
-					}
+					lblNewLabel_1.setVisible(true);
 				}
 			}
 
@@ -103,14 +100,11 @@ public class LoginPrompt {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				System.exit(1);
+				password = null;
+				shell.dispose();
 			}
 
 		});
-
-		Label lblNewLabel_2 = new Label(shell, SWT.NONE);
-		lblNewLabel_2.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		lblNewLabel_2.setText("If this is the first run, then the password you typed is your password");
 
 	}
 

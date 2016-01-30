@@ -1,7 +1,6 @@
 package net.viperfish.journal;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.commons.configuration.ConfigurationException;
 
@@ -17,6 +16,7 @@ import net.viperfish.journal.swtGui.conf.SystemConfigPage;
 import net.viperfish.journal.ui.OperationExecutor;
 import net.viperfish.journal.ui.OperationFactory;
 import net.viperfish.journal.ui.StandardOperationFactory;
+import net.viperfish.journal.ui.TerminationControlFlowException;
 import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
 import net.viperfish.journal.ui.UserInterface;
 import net.viperfish.utils.file.CommonFunctions;
@@ -31,7 +31,6 @@ public class JournalApplication {
 	private static UserInterface ui;
 	private static OperationExecutor worker;
 	private static OperationFactory opsFactory;
-	private static boolean firstRun;
 	private static SystemConfig sysConf;
 	private static File moduleDir;
 	private static File authModules;
@@ -154,24 +153,12 @@ public class JournalApplication {
 	}
 
 	public static void main(String[] args) {
-		firstRun = true;
 		try {
 			initModules();
 		} catch (Throwable e) {
 			System.err.println("error:" + e);
 			e.printStackTrace();
 			System.exit(1);
-		}
-		File lockFile = new File(".setUpLock");
-		if (lockFile.exists()) {
-			firstRun = false;
-		} else {
-			try {
-				lockFile.createNewFile();
-			} catch (IOException e) {
-				System.err.println("failed to create lock file: exiting");
-				return;
-			}
 		}
 		ui = new GraphicalUserInterface();
 		try {
@@ -181,17 +168,29 @@ public class JournalApplication {
 			System.exit(1);
 		}
 		defaultProviders();
-		if (firstRun) {
-			ui.setup();
+		if (Configuration.getString(ConfigMapping.SET_UP) == null) {
 			try {
+				ui.setup();
+				ui.setFirstPassword();
+				Configuration.setProperty(ConfigMapping.SET_UP, true);
 				Configuration.save();
 			} catch (ConfigurationException e) {
+				cleanUp();
 				System.err.println("could not save configuration, terminating");
 				System.exit(1);
+			} catch (TerminationControlFlowException e) {
+				cleanUp();
+				System.err.println("exitiing");
+				System.exit(0);
 			}
 		}
-		ui.setAuthManager(ComponentProvider.getAuthManager(Configuration.getString(ConfigMapping.AUTH_COMPONENT)));
-		ui.promptPassword();
+		try {
+			ui.promptPassword();
+		} catch (TerminationControlFlowException e) {
+			cleanUp();
+			System.err.println("exiting");
+			System.exit(0);
+		}
 		ui.run();
 	}
 
