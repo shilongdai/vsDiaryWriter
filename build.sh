@@ -21,7 +21,9 @@ for i in $(ls); do
 	mvn install;
 	cd target;
 	mv ../editor .;
-	zip -r $i.zip full-*.jar editor;
+	jarFileName=$(ls | grep full);
+        jarsigner -tsa http://timestamp.digicert.com -keystore $2 -storepass Mj2000629@DvpNt $jarFileName viperfish
+	zip -r $i.zip $jarFileName editor;
 	echo "copying product to $1";
 	mv $i.zip $1;
 	cd ../..;

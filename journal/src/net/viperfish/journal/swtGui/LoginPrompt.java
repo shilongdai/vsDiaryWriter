@@ -13,10 +13,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import net.viperfish.journal.ComponentProvider;
+import net.viperfish.journal.framework.AuthManagers;
 import net.viperfish.journal.framework.AuthenticationManager;
-import net.viperfish.journal.framework.ConfigMapping;
-import net.viperfish.journal.framework.Configuration;
 
 public class LoginPrompt {
 
@@ -34,7 +32,7 @@ public class LoginPrompt {
 	 * @wbp.parser.entryPoint
 	 */
 	public String open() {
-		this.auth = ComponentProvider.getAuthManager(Configuration.getString(ConfigMapping.AUTH_COMPONENT));
+		this.auth = AuthManagers.INSTANCE.getAuthManager();
 		Display display = Display.getDefault();
 		createContents();
 		shell.open();

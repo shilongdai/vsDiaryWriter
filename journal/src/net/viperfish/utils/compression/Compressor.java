@@ -26,6 +26,7 @@ public abstract class Compressor {
 	}
 
 	public byte[] deflate(byte[] data) {
+		System.err.println("data length:" + data.length);
 		ByteArrayInputStream in = new ByteArrayInputStream(data);
 		try (InputStream depressor = createInputStream(in)) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();

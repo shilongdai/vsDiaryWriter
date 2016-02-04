@@ -3,12 +3,10 @@ package net.viperfish.journal.operation;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.viperfish.journal.ComponentProvider;
-import net.viperfish.journal.framework.ConfigMapping;
-import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
+import net.viperfish.journal.framework.EntryDatabases;
+import net.viperfish.journal.framework.Indexers;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.utils.index.Indexer;
 
@@ -19,7 +17,6 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 	private boolean done;
 	private EntryDatabase db;
 	private Indexer<Journal> indexer;
-	private JournalTransformer t;
 	private static boolean firstTime;
 
 	static {
@@ -30,22 +27,18 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 		this.query = query;
 		result = new HashSet<Journal>();
 		done = false;
-		db = ComponentProvider.getEntryDatabase(Configuration.getString(ConfigMapping.DB_COMPONENT));
-		indexer = ComponentProvider.getIndexer(Configuration.getString(ConfigMapping.INDEXER_COMPONENT));
-		t = ComponentProvider.getTransformer(Configuration.getString(ConfigMapping.TRANSFORMER_COMPONENT));
+		db = EntryDatabases.INSTANCE.getEntryDatabase();
+		indexer = Indexers.INSTANCE.getIndexer();
 
 	}
 
 	@Override
 	public void execute() {
 		try {
-			t.setPassword(ComponentProvider.getAuthManager(Configuration.getString(ConfigMapping.AUTH_COMPONENT))
-					.getPassword());
 			if (firstTime) {
 				if (indexer.isMemoryBased()) {
 					for (Journal j : db.getAll()) {
-						Journal tmp = t.decryptJournal(j);
-						indexer.add(tmp);
+						indexer.add(j);
 					}
 				}
 				firstTime = false;
@@ -57,7 +50,7 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 					indexer.delete(id);
 					continue;
 				}
-				result.add(t.decryptJournal(j));
+				result.add(j);
 			}
 		} finally {
 			done = true;

@@ -13,10 +13,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import net.viperfish.journal.ComponentProvider;
+import net.viperfish.journal.framework.AuthManagers;
 import net.viperfish.journal.framework.AuthenticationManager;
-import net.viperfish.journal.framework.ConfigMapping;
-import net.viperfish.journal.framework.Configuration;
 
 public class SetPasswordPrompt {
 
@@ -38,7 +36,7 @@ public class SetPasswordPrompt {
 	 * @wbp.parser.entryPoint
 	 */
 	public boolean open() {
-		mgmt = ComponentProvider.getAuthManager(Configuration.getString(ConfigMapping.AUTH_COMPONENT));
+		mgmt = AuthManagers.INSTANCE.getAuthManager();
 		Display display = Display.getDefault();
 		final Shell shell = new Shell();
 		shell.setSize(450, 224);

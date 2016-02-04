@@ -9,19 +9,18 @@ import java.util.concurrent.Executors;
 import org.junit.Assert;
 import org.junit.Test;
 
-import net.viperfish.journal.ComponentProvider;
 import net.viperfish.journal.JournalApplication;
-import net.viperfish.journal.dbProvider.H2EntryDatabase;
+import net.viperfish.journal.framework.AuthManagers;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
+import net.viperfish.journal.framework.EntryDatabases;
+import net.viperfish.journal.framework.Indexers;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.indexProvider.JournalIndexer;
 import net.viperfish.journal.operation.AddEntryOperation;
-import net.viperfish.journal.operation.ChangeDataSourceOperation;
 import net.viperfish.journal.operation.DeleteEntryOperation;
 import net.viperfish.journal.operation.EditContentOperation;
 import net.viperfish.journal.operation.EditSubjectOperation;
@@ -34,7 +33,6 @@ public class OperationTest {
 
 	private EntryDatabase db;
 	private JournalIndexer indexer;
-	private JournalTransformer encryptor;
 	private final ExecutorService threadpool;
 
 	private void setupConfig() {
@@ -93,7 +91,6 @@ public class OperationTest {
 		new AddEntryOperation(toAdd).execute();
 		toAdd.setId(0L);
 		Journal get = db.getEntry(0L);
-		get = encryptor.decryptJournal(get);
 		Assert.assertEquals("test", get.getSubject());
 		Assert.assertEquals("test", get.getContent());
 		Assert.assertEquals(toAdd.getDate().getTime(), get.getDate().getTime());
@@ -128,12 +125,10 @@ public class OperationTest {
 		test.setSubject("unedited");
 		test.setDate(new Date());
 		test.setContent("mary has a little lamb");
-		test = encryptor.encryptJournal(test);
 		Journal result = db.addEntry(test);
 		Long id = result.getId();
 		new EditSubjectOperation(id, "edited").execute();
 		result = db.getEntry(id);
-		result = encryptor.decryptJournal(result);
 		Assert.assertEquals("edited", result.getSubject());
 		cleanUp();
 	}
@@ -145,12 +140,10 @@ public class OperationTest {
 		test.setSubject("test");
 		test.setDate(new Date());
 		test.setContent("unedited");
-		test = encryptor.encryptJournal(test);
 		Journal result = db.addEntry(test);
 		Long id = result.getId();
 		new EditContentOperation(id, "edited").execute();
 		result = db.getEntry(id);
-		result = encryptor.decryptJournal(result);
 		Assert.assertEquals("edited", result.getContent());
 		cleanUp();
 	}
@@ -162,13 +155,11 @@ public class OperationTest {
 		test.setContent("test");
 		test.setDate(new Date());
 		test.setSubject("test");
-		test = encryptor.encryptJournal(test);
 		Journal result = db.addEntry(test);
 		test.setId(result.getId());
 		OperationWithResult<Journal> o = new GetEntryOperation(test.getId());
 		executeAsyncOperation(o);
 		result = o.getResult();
-		test = encryptor.decryptJournal(test);
 		Assert.assertEquals(true, o.isDone());
 		Assert.assertEquals(test.getId(), result.getId());
 		Assert.assertEquals(test.getContent(), result.getContent());
@@ -192,15 +183,9 @@ public class OperationTest {
 		t3.setContent("random stuff");
 		t3.setSubject("something");
 		t3.setDate(new Date());
-		t1 = encryptor.encryptJournal(t1);
-		t2 = encryptor.encryptJournal(t2);
-		t3 = encryptor.encryptJournal(t3);
 		db.addEntry(t1);
 		db.addEntry(t2);
 		db.addEntry(t3);
-		t1 = encryptor.decryptJournal(t1);
-		t2 = encryptor.decryptJournal(t2);
-		t3 = encryptor.decryptJournal(t3);
 		indexer.add(t1);
 		indexer.add(t2);
 		indexer.add(t3);
@@ -220,7 +205,6 @@ public class OperationTest {
 			Journal j = new Journal();
 			j.setSubject("test " + i);
 			j.setContent("test " + i);
-			j = encryptor.encryptJournal(j);
 			db.addEntry(j);
 		}
 		GetAllOperation getAll = new GetAllOperation();
@@ -231,43 +215,14 @@ public class OperationTest {
 		cleanUp();
 	}
 
-	@Test
-	public void testChangeOperation() {
-		cleanUp();
-		for (int i = 0; i < 100; ++i) {
-			Journal j = new Journal();
-			j.setSubject("j " + i);
-			j.setContent("j " + i);
-			j = encryptor.encryptJournal(j);
-			db.addEntry(j);
-		}
-		ChangeDataSourceOperation cdb = new ChangeDataSourceOperation("H2Database");
-		cdb.execute();
-		initComponents();
-		List<Journal> all = db.getAll();
-		Assert.assertEquals(100, all.size());
-		Assert.assertEquals(H2EntryDatabase.class, db.getClass());
-		cleanUp();
-		resetComponents();
-		cleanUp();
-	}
-
-	private void resetComponents() {
-		setupConfig();
-		initComponents();
-	}
-
 	public void cleanUp() {
 		db.clear();
 		indexer.clear();
 	}
 
 	private void initComponents() {
-		db = ComponentProvider.getEntryDatabase(Configuration.getString(ConfigMapping.DB_COMPONENT));
-		indexer = (JournalIndexer) ComponentProvider
-				.getIndexer(Configuration.getString(ConfigMapping.INDEXER_COMPONENT));
-		encryptor = ComponentProvider.getTransformer(Configuration.getString(ConfigMapping.TRANSFORMER_COMPONENT));
-		encryptor.setPassword("test");
-		ComponentProvider.getAuthManager(Configuration.getString(ConfigMapping.AUTH_COMPONENT)).setPassword("test");
+		AuthManagers.INSTANCE.getAuthManager().setPassword("test");
+		db = EntryDatabases.INSTANCE.getEntryDatabase();
+		indexer = (JournalIndexer) Indexers.INSTANCE.getIndexer();
 	}
 }

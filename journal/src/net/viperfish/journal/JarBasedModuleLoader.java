@@ -27,7 +27,6 @@ public class JarBasedModuleLoader implements ModuleLoader {
 		try (JarFile jarFile = new JarFile(path)) {
 			Manifest manifest = jarFile.getManifest();
 			String provider = manifest.getMainAttributes().getValue("provider-class");
-			System.err.println("provider:" + provider);
 			if (provider == null) {
 				return new LinkedList<>();
 			}

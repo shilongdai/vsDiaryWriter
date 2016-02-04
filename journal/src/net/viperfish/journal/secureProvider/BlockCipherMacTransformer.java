@@ -38,7 +38,6 @@ import net.viperfish.utils.compression.Compressor;
 import net.viperfish.utils.compression.Compressors;
 import net.viperfish.utils.compression.FailToInitCompressionException;
 import net.viperfish.utils.compression.NullCompressor;
-import net.viperfish.utils.config.ComponentConfig;
 
 public class BlockCipherMacTransformer implements JournalTransformer {
 
@@ -48,15 +47,6 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 	public static final String MAC_TYPE = "viperfish.secure.mac.type";
 	public static final String MAC_ALGORITHM = "viperfish.secure.mac.algorithm";
 	public static final String KDF_HASH = "viperfish.secure.kdf.algorithm";
-
-	private static SecureEntryWrapperConfig config;
-
-	public static ComponentConfig config() {
-		if (config == null) {
-			config = new SecureEntryWrapperConfig();
-		}
-		return config;
-	}
 
 	private final File saltStore;
 	private byte[] key;

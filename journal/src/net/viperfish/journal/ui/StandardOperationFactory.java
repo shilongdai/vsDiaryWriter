@@ -7,10 +7,6 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.operation.AddEntryOperation;
-import net.viperfish.journal.operation.ChangeAuthManagerOperation;
-import net.viperfish.journal.operation.ChangeDataSourceOperation;
-import net.viperfish.journal.operation.ChangeIndexerOperation;
-import net.viperfish.journal.operation.ChangeJournalTransformerOperation;
 import net.viperfish.journal.operation.DeleteEntryOperation;
 import net.viperfish.journal.operation.EditContentOperation;
 import net.viperfish.journal.operation.EditSubjectOperation;
@@ -53,26 +49,6 @@ public class StandardOperationFactory implements OperationFactory {
 	@Override
 	public OperationWithResult<Journal> getGetEntryOperation(Long id) {
 		return new GetEntryOperation(id);
-	}
-
-	@Override
-	public Operation getChangeDBOperation(String newDB) {
-		return new ChangeDataSourceOperation(newDB);
-	}
-
-	@Override
-	public Operation getChangeIndexerOperation(String newIndexer) {
-		return new ChangeIndexerOperation(newIndexer);
-	}
-
-	@Override
-	public Operation getChangeTransformerOperation(String newTrans) {
-		return new ChangeJournalTransformerOperation(newTrans);
-	}
-
-	@Override
-	public Operation getChangeAuthManagerOperation(String newAuth) {
-		return new ChangeAuthManagerOperation(newAuth);
 	}
 
 }

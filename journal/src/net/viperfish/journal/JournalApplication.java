@@ -1,13 +1,15 @@
 package net.viperfish.journal;
 
-import java.io.File;
-
 import org.apache.commons.configuration.ConfigurationException;
 
 import net.viperfish.journal.authProvider.ViperfishAuthProvider;
 import net.viperfish.journal.dbProvider.ViperfishEntryDatabaseProvider;
+import net.viperfish.journal.framework.AuthManagers;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
+import net.viperfish.journal.framework.EntryDatabases;
+import net.viperfish.journal.framework.Indexers;
+import net.viperfish.journal.framework.JournalTransformers;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.indexProvider.ViperfishIndexerProvider;
 import net.viperfish.journal.secureProvider.ViperfishEncryptionProvider;
@@ -19,7 +21,6 @@ import net.viperfish.journal.ui.StandardOperationFactory;
 import net.viperfish.journal.ui.TerminationControlFlowException;
 import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
 import net.viperfish.journal.ui.UserInterface;
-import net.viperfish.utils.file.CommonFunctions;
 
 /**
  * the Main class of the application, contains all the components
@@ -31,12 +32,11 @@ public class JournalApplication {
 	private static UserInterface ui;
 	private static OperationExecutor worker;
 	private static OperationFactory opsFactory;
-	private static SystemConfig sysConf;
-	private static File moduleDir;
-	private static File authModules;
-	private static File dbModules;
-	private static File indexModules;
-	private static File transModule;
+	// private static File moduleDir;
+	// private static File authModules;
+	// private static File dbModules;
+	// private static File indexModules;
+	// private static File transModule;
 
 	static {
 		initConfigUnits();
@@ -47,25 +47,26 @@ public class JournalApplication {
 	}
 
 	public static void initModules() {
-		moduleDir = new File("modules");
-		authModules = new File("modules/auth");
-		dbModules = new File("modules/db");
-		indexModules = new File("modules/index");
-		transModule = new File("modules/trans");
-		CommonFunctions.initDir(moduleDir);
-		CommonFunctions.initDir(authModules);
-		CommonFunctions.initDir(dbModules);
-		CommonFunctions.initDir(indexModules);
-		CommonFunctions.initDir(transModule);
-		ComponentProvider.setLoader(new JarBasedModuleLoader());
-		ComponentProvider.loadAuthProvider(authModules);
-		ComponentProvider.loadDatabaseProvider(dbModules);
-		ComponentProvider.loadIndexer(indexModules);
-		ComponentProvider.loadTransformerProvider(transModule);
-		ComponentProvider.registerAuthProvider(new ViperfishAuthProvider());
-		ComponentProvider.registerEntryDatabaseProvider(new ViperfishEntryDatabaseProvider());
-		ComponentProvider.registerIndexerProvider(new ViperfishIndexerProvider());
-		ComponentProvider.registerTransformerProvider(new ViperfishEncryptionProvider());
+		// Saved for later reference
+		// moduleDir = new File("modules");
+		// authModules = new File("modules/auth");
+		// dbModules = new File("modules/db");
+		// indexModules = new File("modules/index");
+		// transModule = new File("modules/trans");
+		// CommonFunctions.initDir(moduleDir);
+		// CommonFunctions.initDir(authModules);
+		// CommonFunctions.initDir(dbModules);
+		// CommonFunctions.initDir(indexModules);
+		// CommonFunctions.initDir(transModule);
+		// ComponentProvider.setLoader(new JarBasedModuleLoader());
+		// ComponentProvider.loadAuthProvider(authModules);
+		// ComponentProvider.loadDatabaseProvider(dbModules);
+		// ComponentProvider.loadIndexer(indexModules);
+		// ComponentProvider.loadTransformerProvider(transModule);
+		AuthManagers.INSTANCE.registerAuthProvider(new ViperfishAuthProvider());
+		EntryDatabases.INSTANCE.registerEntryDatabaseProvider(new ViperfishEntryDatabaseProvider());
+		Indexers.INSTANCE.registerIndexerProvider(new ViperfishIndexerProvider());
+		JournalTransformers.INSTANCE.registerTransformerProvider(new ViperfishEncryptionProvider());
 	}
 
 	private static void initConfigUnits() {
@@ -74,7 +75,10 @@ public class JournalApplication {
 	}
 
 	public static void cleanUp() {
-		ComponentProvider.dispose();
+		EntryDatabases.INSTANCE.dispose();
+		AuthManagers.INSTANCE.dispose();
+		Indexers.INSTANCE.dispose();
+		JournalTransformers.INSTANCE.dispose();
 		System.err.println("Providers disposed");
 		getWorker().terminate();
 		System.err.println("worker terminated");
@@ -107,18 +111,6 @@ public class JournalApplication {
 	}
 
 	/**
-	 * get the system configuration unit
-	 * 
-	 * @return the system config unit
-	 */
-	public static SystemConfig getSysConf() {
-		if (sysConf == null) {
-			sysConf = new SystemConfig();
-		}
-		return sysConf;
-	}
-
-	/**
 	 * set the status of unit testing, if unit test, The current dataDir is
 	 * cleared, components reset, and file structure re initialized
 	 * 
@@ -146,10 +138,11 @@ public class JournalApplication {
 	}
 
 	private static void initDefaultProviders() {
-		ComponentProvider.setDefaultAuthProvider(Configuration.getString(ConfigMapping.AUTH_PROVIDER));
-		ComponentProvider.setDefaultDatabaseProvider(Configuration.getString(ConfigMapping.DB_PROVIDER));
-		ComponentProvider.setDefaultIndexerProvider(Configuration.getString(ConfigMapping.INDEX_PROVIDER));
-		ComponentProvider.setDefaultTransformerProvider(Configuration.getString(ConfigMapping.TRANSFORMER_PROVIDER));
+		AuthManagers.INSTANCE.setDefaultAuthProvider(Configuration.getString(ConfigMapping.AUTH_PROVIDER));
+		EntryDatabases.INSTANCE.setDefaultDatabaseProvider(Configuration.getString(ConfigMapping.DB_PROVIDER));
+		Indexers.INSTANCE.setDefaultIndexerProvider(Configuration.getString(ConfigMapping.INDEX_PROVIDER));
+		JournalTransformers.INSTANCE
+				.setDefaultTransformerProvider(Configuration.getString(ConfigMapping.TRANSFORMER_PROVIDER));
 	}
 
 	public static void main(String[] args) {

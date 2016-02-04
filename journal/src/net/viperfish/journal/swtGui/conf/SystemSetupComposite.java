@@ -12,13 +12,16 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import net.viperfish.journal.ComponentProvider;
+import net.viperfish.journal.framework.AuthManagers;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
+import net.viperfish.journal.framework.EntryDatabases;
+import net.viperfish.journal.framework.Indexers;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
+import net.viperfish.journal.framework.JournalTransformers;
 import net.viperfish.journal.framework.Provider;
 import net.viperfish.utils.index.Indexer;
 
@@ -89,7 +92,7 @@ public class SystemSetupComposite extends Composite {
 
 	private void fillDataStorageSelector() {
 		Set<String> buf = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-		for (Entry<String, Provider<EntryDatabase>> i : ComponentProvider.getDatabaseProviders().entrySet()) {
+		for (Entry<String, Provider<EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders().entrySet()) {
 			buf.addAll(Arrays.asList(i.getValue().getSupported()));
 		}
 		for (String i : buf) {
@@ -100,7 +103,7 @@ public class SystemSetupComposite extends Composite {
 
 	private void fillIndexerSelector() {
 		Set<String> buf = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-		for (Entry<String, Provider<Indexer<Journal>>> i : ComponentProvider.getIndexerProviders().entrySet()) {
+		for (Entry<String, Provider<Indexer<Journal>>> i : Indexers.INSTANCE.getIndexerProviders().entrySet()) {
 			buf.addAll(Arrays.asList(i.getValue().getSupported()));
 		}
 		for (String i : buf) {
@@ -110,7 +113,7 @@ public class SystemSetupComposite extends Composite {
 
 	private void fillInAuth() {
 		Set<String> buf = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-		for (Entry<String, Provider<AuthenticationManager>> i : ComponentProvider.getAuthProviders().entrySet()) {
+		for (Entry<String, Provider<AuthenticationManager>> i : AuthManagers.INSTANCE.getAuthProviders().entrySet()) {
 			buf.addAll(Arrays.asList(i.getValue().getSupported()));
 		}
 		for (String i : buf) {
@@ -120,7 +123,8 @@ public class SystemSetupComposite extends Composite {
 
 	private void fillInTransformer() {
 		Set<String> buf = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-		for (Entry<String, Provider<JournalTransformer>> i : ComponentProvider.getSecureProviders().entrySet()) {
+		for (Entry<String, Provider<JournalTransformer>> i : JournalTransformers.INSTANCE.getSecureProviders()
+				.entrySet()) {
 			buf.addAll(Arrays.asList(i.getValue().getSupported()));
 		}
 		for (String i : buf) {
