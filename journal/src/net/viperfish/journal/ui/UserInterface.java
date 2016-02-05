@@ -1,7 +1,6 @@
 package net.viperfish.journal.ui;
 
 import net.viperfish.journal.framework.AuthenticationManager;
-import net.viperfish.utils.config.ComponentConfig;
 
 /**
  * the current meta interface for UI

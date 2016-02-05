@@ -4,7 +4,6 @@ import java.io.File;
 
 import net.viperfish.journal.dbProvider.H2EntryDatabase;
 import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.utils.config.Configuration;
 
 public class H2DBTest extends DatabaseTest {
 
@@ -12,7 +11,6 @@ public class H2DBTest extends DatabaseTest {
 
 	@Override
 	protected EntryDatabase getDB() {
-		Configuration.defaultAll();
 		File test = new File("test");
 		if (!test.exists()) {
 			test.mkdir();
