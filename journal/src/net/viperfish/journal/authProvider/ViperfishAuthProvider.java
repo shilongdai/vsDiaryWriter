@@ -7,7 +7,7 @@ import net.viperfish.journal.framework.Provider;
 
 public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 
-	private AuthenticationManagerFactory fact;
+	private HashAuthManager auth;
 	private File dataDir;
 
 	public ViperfishAuthProvider() {
@@ -15,24 +15,30 @@ public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 		if (!dataDir.exists()) {
 			dataDir.mkdir();
 		}
-		fact = new HashAuthFactory();
-		fact.setDataDir(dataDir);
+		auth = null;
+	}
+
+	private AuthenticationManager lazyLoadAuth() {
+		if (auth == null) {
+			auth = new HashAuthManager(dataDir);
+		}
+		return auth;
 	}
 
 	@Override
 	public AuthenticationManager newInstance() {
-		return fact.newAuthenticator();
+		return new HashAuthManager(dataDir);
 	}
 
 	@Override
 	public AuthenticationManager getInstance() {
-		return fact.getAuthenticator();
+		return lazyLoadAuth();
 	}
 
 	@Override
 	public AuthenticationManager newInstance(String instance) {
 		if (instance.equals("HashAuthentication")) {
-			return fact.newAuthenticator();
+			return new HashAuthManager(dataDir);
 		}
 		return null;
 	}
@@ -40,7 +46,7 @@ public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 	@Override
 	public AuthenticationManager getInstance(String instance) {
 		if (instance.equals("HashAuthentication")) {
-			return fact.getAuthenticator();
+			return lazyLoadAuth();
 		}
 		return null;
 	}

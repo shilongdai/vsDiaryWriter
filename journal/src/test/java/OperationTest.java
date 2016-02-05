@@ -47,7 +47,7 @@ public class OperationTest {
 		Configuration.setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
 		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "HashAuthentication");
 		Configuration.setProperty(ConfigMapping.DB_PROVIDER, "viperfish");
-		Configuration.setProperty(ConfigMapping.DB_COMPONENT, "TextFile");
+		Configuration.setProperty(ConfigMapping.DB_COMPONENT, "MemoryHashMap");
 		Configuration.setProperty(ConfigMapping.INDEX_PROVIDER, "viperfish");
 		Configuration.setProperty(ConfigMapping.INDEXER_COMPONENT, "LuceneIndexer");
 		Configuration.setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");

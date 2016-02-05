@@ -6,26 +6,33 @@ import net.viperfish.utils.index.Indexer;
 
 public class ViperfishIndexerProvider implements Provider<Indexer<Journal>> {
 
-	private JournalIndexerFactory indexer;
+	private JournalIndexer indexer;
+
+	private Indexer<Journal> lazyLoadIndexer() {
+		if (indexer == null) {
+			indexer = new JournalIndexer();
+		}
+		return indexer;
+	}
 
 	public ViperfishIndexerProvider() {
-		indexer = new JournalIndexerFactory();
+		indexer = null;
 	}
 
 	@Override
 	public Indexer<Journal> newInstance() {
-		return indexer.createIndexer();
+		return new JournalIndexer();
 	}
 
 	@Override
 	public Indexer<Journal> getInstance() {
-		return indexer.getIndexer();
+		return lazyLoadIndexer();
 	}
 
 	@Override
 	public Indexer<Journal> newInstance(String instance) {
 		if (instance.equals("LuceneIndexer")) {
-			return indexer.createIndexer();
+			return new JournalIndexer();
 		}
 		return null;
 	}
@@ -33,7 +40,7 @@ public class ViperfishIndexerProvider implements Provider<Indexer<Journal>> {
 	@Override
 	public Indexer<Journal> getInstance(String instance) {
 		if (instance.equals("LuceneIndexer")) {
-			return indexer.getIndexer();
+			return lazyLoadIndexer();
 		}
 		return null;
 	}
