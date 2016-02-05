@@ -32,6 +32,8 @@
 	<textarea id="content" name="content"></textarea>
 	<script>
 		CKEDITOR.config.scayt_autoStartup = true;
+		CKEDITOR.config.extraPlugins = "base64image";
+		CKEDITOR.config.removePlugins = 'image';
 		CKEDITOR.replace('content', {
 			on : {
 				'instanceReady' : function(evt) {
