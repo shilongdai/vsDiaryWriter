@@ -183,9 +183,9 @@ public class OperationTest {
 		t3.setContent("random stuff");
 		t3.setSubject("something");
 		t3.setDate(new Date());
-		db.addEntry(t1);
-		db.addEntry(t2);
-		db.addEntry(t3);
+		t1 = db.addEntry(t1);
+		t2 = db.addEntry(t2);
+		t3 = db.addEntry(t3);
 		indexer.add(t1);
 		indexer.add(t2);
 		indexer.add(t3);

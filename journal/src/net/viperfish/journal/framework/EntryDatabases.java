@@ -8,9 +8,8 @@ public enum EntryDatabases {
 	INSTANCE;
 	private Map<String, Provider<EntryDatabase>> databaseProviders;
 	private String defaultDatabaseProvider;
-
 	private JournalEncryptionWrapper wrapper;
-	private String lastPass;
+	private JournalTransformer tr;
 
 	private EntryDatabases() {
 		databaseProviders = new HashMap<>();
@@ -19,14 +18,16 @@ public enum EntryDatabases {
 	}
 
 	private void initWrapper(EntryDatabase db) {
-		JournalTransformer tr = JournalTransformers.INSTANCE.getTransformer();
+		if (db == null) {
+			return;
+		}
 		String pass = AuthManagers.INSTANCE.getAuthManager().getPassword();
-		if (!pass.equals(lastPass)) {
+		if (tr == null) {
+			tr = JournalTransformers.INSTANCE.getTransformer();
 			tr.setPassword(pass);
-			lastPass = pass;
+			wrapper.setEncryptor(tr);
 		}
 		wrapper.setDb(db);
-		wrapper.setEncryptor(tr);
 	}
 
 	public void registerEntryDatabaseProvider(Provider<EntryDatabase> p) {
@@ -50,18 +51,21 @@ public enum EntryDatabases {
 	}
 
 	public EntryDatabase newEntryDatabase(String instanceType) {
+		EntryDatabase result = null;
 		EntryDatabase def = databaseProviders.get(defaultDatabaseProvider).newInstance(instanceType);
 		if (def != null) {
-			return def;
+			result = def;
 		}
 		for (Entry<String, Provider<EntryDatabase>> p : databaseProviders.entrySet()) {
 			EntryDatabase db = p.getValue().newInstance(instanceType);
 			if (db != null) {
-				initWrapper(db);
-				return wrapper;
+				result = db;
+				break;
 			}
 		}
-		return null;
+		initWrapper(result);
+		wrapper.setDb(result);
+		return wrapper;
 	}
 
 	public EntryDatabase newEntryDatabase(String provider, String instanceType) {
@@ -73,18 +77,21 @@ public enum EntryDatabases {
 	}
 
 	public EntryDatabase getEntryDatabase(String instanceType) {
+		EntryDatabase result = null;
 		EntryDatabase def = databaseProviders.get(defaultDatabaseProvider).getInstance(instanceType);
 		if (def != null) {
-			return def;
+			result = def;
 		}
 		for (Entry<String, Provider<EntryDatabase>> p : databaseProviders.entrySet()) {
 			EntryDatabase db = p.getValue().getInstance(instanceType);
 			if (db != null) {
-				initWrapper(db);
-				return wrapper;
+				result = db;
+				break;
 			}
 		}
-		return null;
+		initWrapper(result);
+		wrapper.setDb(result);
+		return wrapper;
 	}
 
 	public EntryDatabase getEntryDatabase(String provider, String instanceType) {

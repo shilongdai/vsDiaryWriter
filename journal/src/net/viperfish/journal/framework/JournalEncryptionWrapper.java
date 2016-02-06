@@ -30,24 +30,35 @@ public class JournalEncryptionWrapper implements EntryDatabase {
 	@Override
 	public Journal addEntry(Journal j) {
 		Journal toAdd = encryptor.encryptJournal(j);
-		return db.addEntry(toAdd);
+		Journal result = db.addEntry(toAdd);
+		j.setId(result.getId());
+		return j;
 	}
 
 	@Override
 	public Journal removeEntry(Long id) {
-		return db.removeEntry(id);
+		Journal result = db.removeEntry(id);
+		if (result != null) {
+			result = encryptor.decryptJournal(result);
+		}
+		return result;
 	}
 
 	@Override
 	public Journal getEntry(Long id) {
 		Journal cipher = db.getEntry(id);
-		return encryptor.encryptJournal(cipher);
+		if (cipher != null) {
+			cipher = encryptor.decryptJournal(cipher);
+		}
+		return cipher;
 	}
 
 	@Override
 	public Journal updateEntry(Long id, Journal j) {
 		Journal trueUpdate = encryptor.encryptJournal(j);
-		return db.updateEntry(id, trueUpdate);
+		Journal result = db.updateEntry(id, trueUpdate);
+		j.setId(result.getId());
+		return j;
 	}
 
 	@Override
