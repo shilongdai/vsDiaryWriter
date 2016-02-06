@@ -46,8 +46,7 @@ public enum EntryDatabases {
 	}
 
 	public EntryDatabase newEntryDatabase() {
-		return databaseProviders.get(defaultDatabaseProvider)
-				.getInstance(Configuration.getString(ConfigMapping.DB_COMPONENT));
+		return newEntryDatabase(Configuration.getString(ConfigMapping.DB_COMPONENT));
 	}
 
 	public EntryDatabase newEntryDatabase(String instanceType) {
@@ -70,8 +69,7 @@ public enum EntryDatabases {
 	}
 
 	public EntryDatabase getEntryDatabase() {
-		return databaseProviders.get(defaultDatabaseProvider)
-				.getInstance(Configuration.getString(ConfigMapping.DB_COMPONENT));
+		return getEntryDatabase(Configuration.getString(ConfigMapping.DB_COMPONENT));
 	}
 
 	public EntryDatabase getEntryDatabase(String instanceType) {

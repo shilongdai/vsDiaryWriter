@@ -22,7 +22,7 @@ for i in $(ls); do
 	cd target;
 	mv ../editor .;
 	jarFileName=$(ls | grep full);
-        jarsigner -tsa http://timestamp.digicert.com -keystore $2 -storepass Mj2000629@DvpNt $jarFileName viperfish
+        /usr/java/default/bin/jarsigner -tsa http://timestamp.digicert.com -keystore $2 -storepass Mj2000629@DvpNt $jarFileName viperfish
 	zip -r $i.zip $jarFileName editor;
 	echo "copying product to $1";
 	mv $i.zip $1;
