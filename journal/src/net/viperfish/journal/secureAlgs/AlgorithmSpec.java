@@ -2,6 +2,7 @@ package net.viperfish.journal.secureAlgs;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -34,12 +35,40 @@ import org.bouncycastle.crypto.digests.SHAKEDigest;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.digests.TigerDigest;
 import org.bouncycastle.crypto.digests.WhirlpoolDigest;
+import org.bouncycastle.crypto.engines.AESEngine;
+import org.bouncycastle.crypto.engines.BlowfishEngine;
+import org.bouncycastle.crypto.engines.CAST5Engine;
+import org.bouncycastle.crypto.engines.CAST6Engine;
+import org.bouncycastle.crypto.engines.CamelliaEngine;
+import org.bouncycastle.crypto.engines.DESEngine;
+import org.bouncycastle.crypto.engines.DESedeEngine;
+import org.bouncycastle.crypto.engines.GOST28147Engine;
+import org.bouncycastle.crypto.engines.IDEAEngine;
+import org.bouncycastle.crypto.engines.NoekeonEngine;
+import org.bouncycastle.crypto.engines.RC2Engine;
+import org.bouncycastle.crypto.engines.RC564Engine;
+import org.bouncycastle.crypto.engines.RC6Engine;
+import org.bouncycastle.crypto.engines.SEEDEngine;
+import org.bouncycastle.crypto.engines.SM4Engine;
+import org.bouncycastle.crypto.engines.SerpentEngine;
+import org.bouncycastle.crypto.engines.Shacal2Engine;
+import org.bouncycastle.crypto.engines.SkipjackEngine;
+import org.bouncycastle.crypto.engines.TEAEngine;
+import org.bouncycastle.crypto.engines.TwofishEngine;
+import org.bouncycastle.crypto.engines.XTEAEngine;
+import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.modes.CFBBlockCipher;
+import org.bouncycastle.crypto.modes.GCFBBlockCipher;
+import org.bouncycastle.crypto.modes.GOFBBlockCipher;
 import org.bouncycastle.crypto.modes.OFBBlockCipher;
 import org.bouncycastle.crypto.modes.SICBlockCipher;
 import org.bouncycastle.crypto.paddings.BlockCipherPadding;
+import org.bouncycastle.crypto.paddings.ISO10126d2Padding;
+import org.bouncycastle.crypto.paddings.ISO7816d4Padding;
 import org.bouncycastle.crypto.paddings.PKCS7Padding;
-import org.reflections.Reflections;
+import org.bouncycastle.crypto.paddings.TBCPadding;
+import org.bouncycastle.crypto.paddings.X923Padding;
+import org.bouncycastle.crypto.paddings.ZeroBytePadding;
 
 public class AlgorithmSpec {
 	private static int DES_KEY_SIZE = 64;
@@ -78,13 +107,18 @@ public class AlgorithmSpec {
 	private static Map<String, Class<? extends BlockCipher>> blockCipherMode;
 	private static Map<String, Class<? extends BlockCipherPadding>> blockCipherPadding;
 	private static Map<String, Class<? extends Digest>> digesters;
+	private static Map<String, BlockCipher> blockCipherCache;
+	private static Map<String, BlockCipherPadding> paddingCache;
+	private static Map<String, Digest> digestCache;
 
 	static {
-		blockCipherEngines = new TreeMap<String, Class<? extends BlockCipher>>(
-				String.CASE_INSENSITIVE_ORDER);
+		blockCipherEngines = new TreeMap<String, Class<? extends BlockCipher>>(String.CASE_INSENSITIVE_ORDER);
 		blockCipherMode = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 		blockCipherPadding = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 		digesters = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+		blockCipherCache = new HashMap<>();
+		paddingCache = new HashMap<>();
+		digestCache = new HashMap<>();
 		initBlockCipherEngines();
 		initBlockCipherModes();
 		initBlockCipherPaddings();
@@ -117,57 +151,52 @@ public class AlgorithmSpec {
 	}
 
 	private static void initBlockCipherEngines() {
-		Reflections scanner = new Reflections("org.bouncycastle.crypto.engines");
-		Set<Class<? extends BlockCipher>> implementers = scanner
-				.getSubTypesOf(BlockCipher.class);
-		for (Class<? extends BlockCipher> i : implementers) {
-			if (i.getSimpleName().contains("Engine")) {
-				if (i.getSimpleName().contains("Fast")
-						|| i.getSimpleName().contains("Light")
-						|| i.getSimpleName().contains("Wrap")) {
-					continue;
-				}
-				try {
-					blockCipherEngines.put(i.newInstance().getAlgorithmName(),
-							i);
-				} catch (InstantiationException | IllegalAccessException e) {
-					continue;
-				}
-			}
-		}
+		blockCipherEngines.put("AES", AESEngine.class);
+		blockCipherEngines.put("Blowfish", BlowfishEngine.class);
+		blockCipherEngines.put("Camellia", CamelliaEngine.class);
+		blockCipherEngines.put("CAST5", CAST5Engine.class);
+		blockCipherEngines.put("CAST6", CAST6Engine.class);
+		blockCipherEngines.put("DESede", DESedeEngine.class);
+		blockCipherEngines.put("DES", DESEngine.class);
+		blockCipherEngines.put("GOST28147", GOST28147Engine.class);
+		blockCipherEngines.put("IDEA", IDEAEngine.class);
+		blockCipherEngines.put("Noekeon", NoekeonEngine.class);
+		blockCipherEngines.put("RC2", RC2Engine.class);
+		blockCipherEngines.put("RC5", RC564Engine.class);
+		blockCipherEngines.put("RC6", RC6Engine.class);
+		blockCipherEngines.put("SEED", SEEDEngine.class);
+		blockCipherEngines.put("Serpent", SerpentEngine.class);
+		blockCipherEngines.put("Shacal2", Shacal2Engine.class);
+		blockCipherEngines.put("Skipjack", SkipjackEngine.class);
+		blockCipherEngines.put("SM4", SM4Engine.class);
+		blockCipherEngines.put("TEA", TEAEngine.class);
+		blockCipherEngines.put("Twofish", TwofishEngine.class);
+		blockCipherEngines.put("XTEA", XTEAEngine.class);
 	}
 
 	private static void initBlockCipherModes() {
-		Reflections scanner = new Reflections("org.bouncycastle.crypto.modes");
-		Set<Class<? extends BlockCipher>> blockCipherModes = scanner
-				.getSubTypesOf(BlockCipher.class);
-		for (Class<? extends BlockCipher> i : blockCipherModes) {
-			String name = i.getSimpleName();
-			name = name.substring(0, name.lastIndexOf("BlockCipher"));
-			blockCipherMode.put(name, i);
-		}
+		blockCipherMode.put("CBC", CBCBlockCipher.class);
 		blockCipherMode.put("CFB", CFBBlockCipher.class);
+		blockCipherMode.put("GCFB", GCFBBlockCipher.class);
+		blockCipherMode.put("GOFB", GOFBBlockCipher.class);
 		blockCipherMode.put("OFB", OFBBlockCipher.class);
 		blockCipherMode.put("CTR", SICBlockCipher.class);
 	}
 
 	private static void initBlockCipherPaddings() {
-		Reflections scanner = new Reflections(
-				"org.bouncycastle.crypto.paddings");
-		Set<Class<? extends BlockCipherPadding>> paddings = scanner
-				.getSubTypesOf(BlockCipherPadding.class);
-		for (Class<? extends BlockCipherPadding> i : paddings) {
-			blockCipherPadding.put(i.getSimpleName(), i);
-		}
-		blockCipherPadding.put("PKCS5PADDING", PKCS7Padding.class);
+		blockCipherPadding.put("ISO10126d2Padding", ISO10126d2Padding.class);
+		blockCipherPadding.put("ISO7816d4Padding", ISO7816d4Padding.class);
+		blockCipherPadding.put("PKCS7Padding", PKCS7Padding.class);
+		blockCipherPadding.put("TBCPadding", TBCPadding.class);
+		blockCipherPadding.put("X923Padding", X923Padding.class);
+		blockCipherPadding.put("ZeroBytePadding", ZeroBytePadding.class);
 	}
 
 	public static int getKeySize(String algorithm) {
 		if (algorithm.compareToIgnoreCase("des") == 0) {
 			return DES_KEY_SIZE;
 		}
-		if (algorithm.compareToIgnoreCase("desede") == 0
-				|| algorithm.compareToIgnoreCase("tripledes") == 0) {
+		if (algorithm.compareToIgnoreCase("desede") == 0 || algorithm.compareToIgnoreCase("tripledes") == 0) {
 			return DESEDE_KEY_SIZE;
 		}
 		if (algorithm.compareToIgnoreCase("aes") == 0) {
@@ -228,8 +257,7 @@ public class AlgorithmSpec {
 		if (algorithm.equalsIgnoreCase("XTEA")) {
 			return XTEA_KEY_SIZE;
 		}
-		if (algorithm.equalsIgnoreCase("RC4")
-				|| algorithm.equalsIgnoreCase("ARC4")
+		if (algorithm.equalsIgnoreCase("RC4") || algorithm.equalsIgnoreCase("ARC4")
 				|| algorithm.equalsIgnoreCase("ARCFOUR")) {
 			return RC4_KEY_SIZE;
 		}
@@ -271,45 +299,55 @@ public class AlgorithmSpec {
 
 	public static BlockCipher getBlockCipherEngine(String alg) {
 		try {
-			return blockCipherEngines.get(alg).newInstance();
+			BlockCipher result = blockCipherCache.get(alg);
+			if (result == null) {
+				result = blockCipherEngines.get(alg).newInstance();
+				blockCipherCache.put(alg, result);
+			}
+			return result;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static BlockCipher wrapBlockCipherMode(BlockCipher engine,
-			String mode) {
-		try {
-			Class<? extends BlockCipher> modeClass = blockCipherMode.get(mode);
-			Constructor<?>[] modeCtors = modeClass.getConstructors();
-			Constructor<? extends BlockCipher> modeCtor;
-			if (modeCtors[0].getParameterTypes().length == 1) {
-				modeCtor = modeClass.getConstructor(BlockCipher.class);
-			} else {
-				modeCtor = modeClass.getConstructor(BlockCipher.class,
-						int.class);
-			}
+	public static BlockCipher wrapBlockCipherMode(BlockCipher engine, String mode) {
+		String comboName = engine.getAlgorithmName() + "/" + mode;
+		BlockCipher result = blockCipherCache.get(comboName);
+		if (result == null) {
+			try {
+				Class<? extends BlockCipher> modeClass = blockCipherMode.get(mode);
+				Constructor<?>[] modeCtors = modeClass.getConstructors();
+				Constructor<? extends BlockCipher> modeCtor;
+				if (modeCtors[0].getParameterTypes().length == 1) {
+					modeCtor = modeClass.getConstructor(BlockCipher.class);
+				} else {
+					modeCtor = modeClass.getConstructor(BlockCipher.class, int.class);
+				}
 
-			BlockCipher modedEngine;
-			if (modeCtor.getParameterTypes().length == 1) {
-				modedEngine = modeCtor.newInstance(engine);
-			} else {
-				modedEngine = modeCtor.newInstance(engine,
-						engine.getBlockSize() * 8);
+				BlockCipher modedEngine;
+				if (modeCtor.getParameterTypes().length == 1) {
+					modedEngine = modeCtor.newInstance(engine);
+				} else {
+					modedEngine = modeCtor.newInstance(engine, engine.getBlockSize() * 8);
+				}
+				result = modedEngine;
+				blockCipherCache.put(comboName, result);
+			} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
+					| IllegalArgumentException | InvocationTargetException e) {
+				e.fillInStackTrace();
+				throw new RuntimeException(e);
 			}
-			return modedEngine;
-		} catch (InstantiationException | IllegalAccessException
-				| NoSuchMethodException | SecurityException
-				| IllegalArgumentException | InvocationTargetException e) {
-			e.fillInStackTrace();
-			throw new RuntimeException(e);
 		}
+		return result;
 	}
 
 	public static BlockCipherPadding getBlockCipherPadding(String paddingName) {
-		BlockCipherPadding padding;
+		BlockCipherPadding padding = paddingCache.get(paddingName);
 		try {
-			padding = blockCipherPadding.get(paddingName).newInstance();
+			if (padding == null) {
+				padding = blockCipherPadding.get(paddingName).newInstance();
+				paddingCache.put(paddingName, padding);
+			}
 			return padding;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
@@ -318,7 +356,12 @@ public class AlgorithmSpec {
 
 	public static Digest getDigester(String digestName) {
 		try {
-			return digesters.get(digestName).newInstance();
+			Digest result = digestCache.get(digestName);
+			if (result == null) {
+				result = digesters.get(digestName).newInstance();
+				digestCache.put(digestName, result);
+			}
+			return result;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
@@ -326,8 +369,7 @@ public class AlgorithmSpec {
 
 	public static Set<String> getSupportedBlockCipher() {
 		Set<String> result = new TreeSet<String>();
-		for (Entry<String, Class<? extends BlockCipher>> iter : blockCipherEngines
-				.entrySet()) {
+		for (Entry<String, Class<? extends BlockCipher>> iter : blockCipherEngines.entrySet()) {
 			result.add(iter.getKey());
 		}
 		return result;
@@ -335,8 +377,7 @@ public class AlgorithmSpec {
 
 	public static Set<String> getSupportedBlockCipherMode() {
 		Set<String> result = new TreeSet<>();
-		for (Entry<String, Class<? extends BlockCipher>> iter : blockCipherMode
-				.entrySet()) {
+		for (Entry<String, Class<? extends BlockCipher>> iter : blockCipherMode.entrySet()) {
 			result.add(iter.getKey());
 		}
 		return result;
@@ -344,8 +385,7 @@ public class AlgorithmSpec {
 
 	public static Set<String> getSupportedBlockCipherPadding() {
 		Set<String> result = new TreeSet<>();
-		for (Entry<String, Class<? extends BlockCipherPadding>> iter : blockCipherPadding
-				.entrySet()) {
+		for (Entry<String, Class<? extends BlockCipherPadding>> iter : blockCipherPadding.entrySet()) {
 			result.add(iter.getKey());
 		}
 		return result;
@@ -361,8 +401,7 @@ public class AlgorithmSpec {
 
 	public static Set<String> getGmacAlgorithms() {
 		Set<String> result = new TreeSet<>();
-		for (Entry<String, Class<? extends BlockCipher>> iter : blockCipherEngines
-				.entrySet()) {
+		for (Entry<String, Class<? extends BlockCipher>> iter : blockCipherEngines.entrySet()) {
 			try {
 				if (iter.getValue().newInstance().getBlockSize() == 16) {
 					result.add(iter.getKey());

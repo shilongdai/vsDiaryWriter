@@ -112,11 +112,11 @@ public class SecurityConfigComposite extends Composite {
 		macTypeSelector.add("CBCMAC");
 		macTypeSelector.add("CFBMAC");
 		macTypeSelector.add("HMAC");
-		macTypeSelector.select(0);
-		encPadSelector.select(3);
-		encModeSelector.select(1);
-		encAlgSelector.select(0);
-		kdfCombo.select(13);
+		macTypeSelector.setText("HMAC");
+		encPadSelector.setText("PKCS7Padding");
+		encModeSelector.setText("CFB");
+		encAlgSelector.setText("AES");
+		kdfCombo.setText("SHA256");
 		fillInMacAlg();
 	}
 
@@ -136,7 +136,7 @@ public class SecurityConfigComposite extends Composite {
 				macAlgSelector.add(i);
 			}
 		}
-		macAlgSelector.select(19);
+		macAlgSelector.setText("SHA256");
 	}
 
 	@Override
