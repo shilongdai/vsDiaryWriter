@@ -147,44 +147,46 @@ public class JournalApplication {
 
 	public static void main(String[] args) {
 		try {
-			initModules();
-		} catch (Throwable e) {
-			System.err.println("error:" + e);
-			e.printStackTrace();
-			System.exit(1);
-		}
-		ui = new GraphicalUserInterface();
-		try {
-			Configuration.load();
-		} catch (ConfigurationException e) {
-			System.err.println("failed to load configuration, exiting");
-			System.exit(1);
-		}
-		defaultProviders();
-		if (Configuration.getString(ConfigMapping.SET_UP) == null) {
 			try {
-				ui.setup();
-				ui.setFirstPassword();
-				Configuration.setProperty(ConfigMapping.SET_UP, true);
-				Configuration.save();
-			} catch (ConfigurationException e) {
-				cleanUp();
-				System.err.println("could not save configuration, terminating");
+				initModules();
+			} catch (Throwable e) {
+				System.err.println("error:" + e);
+				e.printStackTrace();
 				System.exit(1);
+			}
+			ui = new GraphicalUserInterface();
+			try {
+				Configuration.load();
+			} catch (ConfigurationException e) {
+				System.err.println("failed to load configuration, exiting");
+				System.exit(1);
+			}
+			defaultProviders();
+			if (Configuration.getString(ConfigMapping.SET_UP) == null) {
+				try {
+					ui.setup();
+					ui.setFirstPassword();
+					Configuration.setProperty(ConfigMapping.SET_UP, true);
+					Configuration.save();
+				} catch (ConfigurationException e) {
+					System.err.println("could not save configuration, terminating");
+					System.exit(1);
+				} catch (TerminationControlFlowException e) {
+					cleanUp();
+					System.err.println("exitiing");
+					System.exit(0);
+				}
+			}
+			try {
+				ui.promptPassword();
 			} catch (TerminationControlFlowException e) {
-				cleanUp();
-				System.err.println("exitiing");
+				System.err.println("exiting");
 				System.exit(0);
 			}
-		}
-		try {
-			ui.promptPassword();
-		} catch (TerminationControlFlowException e) {
+			ui.run();
+		} finally {
 			cleanUp();
-			System.err.println("exiting");
-			System.exit(0);
 		}
-		ui.run();
 	}
 
 }
