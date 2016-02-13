@@ -15,8 +15,8 @@ import java.util.Arrays;
 import org.apache.commons.codec.binary.Base64;
 
 import net.viperfish.journal.framework.AuthenticationManager;
+import net.viperfish.journal.secureAlgs.BCDigester;
 import net.viperfish.journal.secureAlgs.Digester;
-import net.viperfish.journal.secureAlgs.JCEDigester;
 
 public class HashAuthManager implements AuthenticationManager {
 
@@ -126,7 +126,7 @@ public class HashAuthManager implements AuthenticationManager {
 
 	public HashAuthManager(File dataDir) {
 		this.dataDir = dataDir;
-		dig = new JCEDigester();
+		dig = new BCDigester();
 		rand = new SecureRandom();
 		passwordSet = true;
 		loadPasswd();

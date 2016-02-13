@@ -25,14 +25,10 @@ import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
 import net.viperfish.journal.secureAlgs.BCDigester;
 import net.viperfish.journal.secureAlgs.BCPCKDF2Generator;
-import net.viperfish.journal.secureAlgs.CBCMac;
-import net.viperfish.journal.secureAlgs.CFBMac;
-import net.viperfish.journal.secureAlgs.CMac;
 import net.viperfish.journal.secureAlgs.Digester;
 import net.viperfish.journal.secureAlgs.Encryptor;
-import net.viperfish.journal.secureAlgs.GMac;
-import net.viperfish.journal.secureAlgs.HMac;
 import net.viperfish.journal.secureAlgs.MacDigester;
+import net.viperfish.journal.secureAlgs.Macs;
 import net.viperfish.journal.secureAlgs.PBKDF2KeyGenerator;
 import net.viperfish.utils.compression.Compressor;
 import net.viperfish.utils.compression.Compressors;
@@ -212,17 +208,7 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		enc = new BCBlockCipherEncryptor();
 		dig = new BCDigester();
 		String macMethod = Configuration.getString(MAC_TYPE);
-		if (macMethod.equalsIgnoreCase("CBCMAC")) {
-			mac = new CBCMac();
-		} else if (macMethod.equalsIgnoreCase("CMAC")) {
-			mac = new CMac();
-		} else if (macMethod.equalsIgnoreCase("CFBMAC")) {
-			mac = new CFBMac();
-		} else if (macMethod.equalsIgnoreCase("GMAC")) {
-			mac = new GMac();
-		} else if (macMethod.equalsIgnoreCase("HMAC")) {
-			mac = new HMac();
-		}
+		mac = Macs.getMac(macMethod);
 		mac.setMode(Configuration.getString(MAC_ALGORITHM));
 		String mode = new String();
 		mode += Configuration.getString(ENCRYPTION_ALG_NAME);

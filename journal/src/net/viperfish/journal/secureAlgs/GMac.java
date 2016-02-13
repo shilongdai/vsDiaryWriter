@@ -6,7 +6,7 @@ import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
-public class GMac extends BCMacDigester {
+class GMac extends BCMacDigester {
 
 	private Mac mac;
 	private String currentMode;
@@ -18,9 +18,8 @@ public class GMac extends BCMacDigester {
 	@Override
 	protected Mac getMac(String mode) {
 		if (!currentMode.equals(mode) || mac == null) {
-			BlockCipher engine = AlgorithmSpec.getBlockCipherEngine(mode);
-			mac = new org.bouncycastle.crypto.macs.GMac(new GCMBlockCipher(
-					engine));
+			BlockCipher engine = BlockCiphers.getBlockCipherEngine(mode);
+			mac = new org.bouncycastle.crypto.macs.GMac(new GCMBlockCipher(engine));
 			currentMode = mode;
 		}
 		return mac;
@@ -28,13 +27,12 @@ public class GMac extends BCMacDigester {
 
 	@Override
 	protected int getKeySize() {
-		return AlgorithmSpec.getKeySize(currentMode);
+		return BlockCiphers.getKeySize(currentMode);
 	}
 
 	@Override
 	protected void initMac(byte[] key, byte[] iv) {
-		getMac(currentMode).init(
-				new ParametersWithIV(new KeyParameter(key), iv));
+		getMac(currentMode).init(new ParametersWithIV(new KeyParameter(key), iv));
 
 	}
 

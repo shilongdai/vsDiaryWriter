@@ -10,7 +10,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import net.viperfish.journal.framework.Configuration;
-import net.viperfish.journal.secureAlgs.AlgorithmSpec;
+import net.viperfish.journal.secureAlgs.BlockCiphers;
+import net.viperfish.journal.secureAlgs.Digesters;
 
 public class SecurityConfigComposite extends Composite {
 
@@ -95,16 +96,16 @@ public class SecurityConfigComposite extends Composite {
 	}
 
 	private void fillIn() {
-		for (String i : AlgorithmSpec.getSupportedBlockCipher()) {
+		for (String i : BlockCiphers.getSupportedBlockCipher()) {
 			encAlgSelector.add(i);
 		}
-		for (String i : AlgorithmSpec.getSupportedBlockCipherMode()) {
+		for (String i : BlockCiphers.getSupportedBlockCipherMode()) {
 			encModeSelector.add(i);
 		}
-		for (String i : AlgorithmSpec.getSupportedBlockCipherPadding()) {
+		for (String i : BlockCiphers.getSupportedBlockCipherPadding()) {
 			encPadSelector.add(i);
 		}
-		for (String i : AlgorithmSpec.getSupportedDigest()) {
+		for (String i : Digesters.getSupportedDigest()) {
 			kdfCombo.add(i);
 		}
 		macTypeSelector.add("CMAC");
@@ -124,15 +125,15 @@ public class SecurityConfigComposite extends Composite {
 		macAlgSelector.setItems(new String[0]);
 		if (macTypeSelector.getText().equals("CMAC") || macTypeSelector.getText().equals("CBCMAC")
 				|| macTypeSelector.getText().equals("CFBMAC")) {
-			for (String i : AlgorithmSpec.getSupportedBlockCipher()) {
+			for (String i : BlockCiphers.getSupportedBlockCipher()) {
 				macAlgSelector.add(i);
 			}
 		} else if (macTypeSelector.getText().equals("GMAC")) {
-			for (String i : AlgorithmSpec.getGmacAlgorithms()) {
+			for (String i : BlockCiphers.getGmacAlgorithms()) {
 				macAlgSelector.add(i);
 			}
 		} else {
-			for (String i : AlgorithmSpec.getSupportedDigest()) {
+			for (String i : Digesters.getSupportedDigest()) {
 				macAlgSelector.add(i);
 			}
 		}

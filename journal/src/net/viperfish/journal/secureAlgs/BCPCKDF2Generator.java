@@ -44,7 +44,7 @@ public class BCPCKDF2Generator implements PBKDF2KeyGenerator {
 
 	@Override
 	public byte[] generate(String password, int length) {
-		Digest d = AlgorithmSpec.getDigester(digest);
+		Digest d = Digesters.getDigester(digest);
 		PBEParametersGenerator gen = new PKCS12ParametersGenerator(d);
 		gen.init(PBEParametersGenerator.PKCS12PasswordToBytes(password
 				.toCharArray()), salt, iteration);

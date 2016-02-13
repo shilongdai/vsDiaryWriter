@@ -4,7 +4,7 @@ import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.params.KeyParameter;
 
-public class HMac extends BCMacDigester {
+class HMac extends BCMacDigester {
 
 	private Mac mac;
 	private String currentMode;
@@ -16,7 +16,7 @@ public class HMac extends BCMacDigester {
 	@Override
 	protected Mac getMac(String mode) {
 		if (!currentMode.equals(mode) || mac == null) {
-			Digest dig = AlgorithmSpec.getDigester(mode);
+			Digest dig = Digesters.getDigester(mode);
 			mac = new org.bouncycastle.crypto.macs.HMac(dig);
 			currentMode = mode;
 		}

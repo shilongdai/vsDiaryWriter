@@ -25,7 +25,7 @@ public class BCDigester implements Digester {
 	
 	@Override
 	public byte[] digest(byte[] text) {
-		Digest dig = AlgorithmSpec.getDigester(mode);
+		Digest dig = Digesters.getDigester(mode);
 		byte[] data = new byte[dig.getDigestSize()];
 		for(byte i : text) {
 			dig.update(i);

@@ -12,29 +12,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bouncycastle.crypto.BlockCipher;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.Blake2bDigest;
-import org.bouncycastle.crypto.digests.GOST3411Digest;
-import org.bouncycastle.crypto.digests.KeccakDigest;
-import org.bouncycastle.crypto.digests.MD2Digest;
-import org.bouncycastle.crypto.digests.MD4Digest;
-import org.bouncycastle.crypto.digests.MD5Digest;
-import org.bouncycastle.crypto.digests.NullDigest;
-import org.bouncycastle.crypto.digests.RIPEMD128Digest;
-import org.bouncycastle.crypto.digests.RIPEMD160Digest;
-import org.bouncycastle.crypto.digests.RIPEMD256Digest;
-import org.bouncycastle.crypto.digests.RIPEMD320Digest;
-import org.bouncycastle.crypto.digests.SHA1Digest;
-import org.bouncycastle.crypto.digests.SHA224Digest;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.digests.SHA384Digest;
-import org.bouncycastle.crypto.digests.SHA3Digest;
-import org.bouncycastle.crypto.digests.SHA512Digest;
-import org.bouncycastle.crypto.digests.SHA512tDigest;
-import org.bouncycastle.crypto.digests.SHAKEDigest;
-import org.bouncycastle.crypto.digests.SM3Digest;
-import org.bouncycastle.crypto.digests.TigerDigest;
-import org.bouncycastle.crypto.digests.WhirlpoolDigest;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.engines.BlowfishEngine;
 import org.bouncycastle.crypto.engines.CAST5Engine;
@@ -70,7 +47,12 @@ import org.bouncycastle.crypto.paddings.TBCPadding;
 import org.bouncycastle.crypto.paddings.X923Padding;
 import org.bouncycastle.crypto.paddings.ZeroBytePadding;
 
-public class AlgorithmSpec {
+public class BlockCiphers {
+
+	private BlockCiphers() {
+		// TODO Auto-generated constructor stub
+	}
+
 	private static int DES_KEY_SIZE = 64;
 	private static int AES_KEY_SIZE = 256;
 	private static int DESEDE_KEY_SIZE = 192;
@@ -82,7 +64,6 @@ public class AlgorithmSpec {
 	private static int GOST28147_KEY_SIZE = 256;
 	private static int IDEA_KEY_SIZE = 128;
 	private static int NOEKEON_KEY_SIZE = 128;
-	private static int RC2_KEY_SIZE = 1024;
 	private static int RC5_KEYSIZE = 128;
 	private static int RC6_KEY_SIZE = 256;
 	private static int SEED_KEY_SIZE = 128;
@@ -92,62 +73,22 @@ public class AlgorithmSpec {
 	private static int TEA_KEY_SIZE = 128;
 	private static int TWOFISH_KEY_SIZE = 256;
 	private static int XTEA_KEY_SIZE = 128;
-	private static int RC4_KEY_SIZE = 2048;
-	private static int HC128_KEY_SIZE = 128;
-	private static int HC256_KEY_SIZE = 128;
-	private static int CHACHA_KEY_SIZE = 256;
-	private static int SALSA20_KEY_SIZE = 256;
-	private static int XSAlSA20_KEY_SIZE = 256;
-	private static int ISAAC_KEY_SIZE = 8192;
-	private static int VMPC_KEY_SIZE = 6144;
-	private static int GRAINV1_KEY_SIZE = 80;
-	private static int GRAIN128_KEY_SIZE = 128;
 
 	private static Map<String, Class<? extends BlockCipher>> blockCipherEngines;
 	private static Map<String, Class<? extends BlockCipher>> blockCipherMode;
 	private static Map<String, Class<? extends BlockCipherPadding>> blockCipherPadding;
-	private static Map<String, Class<? extends Digest>> digesters;
 	private static Map<String, BlockCipher> blockCipherCache;
 	private static Map<String, BlockCipherPadding> paddingCache;
-	private static Map<String, Digest> digestCache;
 
 	static {
 		blockCipherEngines = new TreeMap<String, Class<? extends BlockCipher>>(String.CASE_INSENSITIVE_ORDER);
 		blockCipherMode = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 		blockCipherPadding = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-		digesters = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 		blockCipherCache = new HashMap<>();
 		paddingCache = new HashMap<>();
-		digestCache = new HashMap<>();
 		initBlockCipherEngines();
 		initBlockCipherModes();
 		initBlockCipherPaddings();
-		initDigesters();
-	}
-
-	private static void initDigesters() {
-		digesters.put("Blake2b", Blake2bDigest.class);
-		digesters.put("GOST3411", GOST3411Digest.class);
-		digesters.put("Keccak", KeccakDigest.class);
-		digesters.put("MD2", MD2Digest.class);
-		digesters.put("MD4", MD4Digest.class);
-		digesters.put("MD5", MD5Digest.class);
-		digesters.put("Null", NullDigest.class);
-		digesters.put("RIPEMD128", RIPEMD128Digest.class);
-		digesters.put("RIPEMD160", RIPEMD160Digest.class);
-		digesters.put("RIPEMD256", RIPEMD256Digest.class);
-		digesters.put("RIPEMD320", RIPEMD320Digest.class);
-		digesters.put("SHA1", SHA1Digest.class);
-		digesters.put("SHA224", SHA224Digest.class);
-		digesters.put("SHA256", SHA256Digest.class);
-		digesters.put("SHA384", SHA384Digest.class);
-		digesters.put("SHA3", SHA3Digest.class);
-		digesters.put("SHA512", SHA512Digest.class);
-		digesters.put("SHA512t", SHA512tDigest.class);
-		digesters.put("SHAKE", SHAKEDigest.class);
-		digesters.put("SM3", SM3Digest.class);
-		digesters.put("Tiger", TigerDigest.class);
-		digesters.put("Whirlpool", WhirlpoolDigest.class);
 	}
 
 	private static void initBlockCipherEngines() {
@@ -226,9 +167,6 @@ public class AlgorithmSpec {
 		if (algorithm.equalsIgnoreCase("NOEKEON")) {
 			return NOEKEON_KEY_SIZE;
 		}
-		if (algorithm.equalsIgnoreCase("RC2")) {
-			return RC2_KEY_SIZE;
-		}
 		if (algorithm.equalsIgnoreCase("RC5")) {
 			return RC5_KEYSIZE;
 		}
@@ -256,37 +194,6 @@ public class AlgorithmSpec {
 		}
 		if (algorithm.equalsIgnoreCase("XTEA")) {
 			return XTEA_KEY_SIZE;
-		}
-		if (algorithm.equalsIgnoreCase("RC4") || algorithm.equalsIgnoreCase("ARC4")
-				|| algorithm.equalsIgnoreCase("ARCFOUR")) {
-			return RC4_KEY_SIZE;
-		}
-		if (algorithm.equalsIgnoreCase("HC128")) {
-			return HC128_KEY_SIZE;
-		}
-		if (algorithm.equalsIgnoreCase("HC256")) {
-			return HC256_KEY_SIZE;
-		}
-		if (algorithm.equalsIgnoreCase("CHACHA")) {
-			return CHACHA_KEY_SIZE;
-		}
-		if (algorithm.equalsIgnoreCase("SALSA20")) {
-			return SALSA20_KEY_SIZE;
-		}
-		if (algorithm.equalsIgnoreCase("XSAlSA20")) {
-			return XSAlSA20_KEY_SIZE;
-		}
-		if (algorithm.equalsIgnoreCase("ISAAC")) {
-			return ISAAC_KEY_SIZE;
-		}
-		if (algorithm.equalsIgnoreCase("VMPC")) {
-			return VMPC_KEY_SIZE;
-		}
-		if (algorithm.equalsIgnoreCase("GRAINV1")) {
-			return GRAINV1_KEY_SIZE;
-		}
-		if (algorithm.equalsIgnoreCase("GRAIN128")) {
-			return GRAIN128_KEY_SIZE;
 		}
 		if (algorithm.matches("\\w+(\\W|\\S)?\\d+")) {
 			Matcher num = Pattern.compile("\\d+").matcher(algorithm);
@@ -354,19 +261,6 @@ public class AlgorithmSpec {
 		}
 	}
 
-	public static Digest getDigester(String digestName) {
-		try {
-			Digest result = digestCache.get(digestName);
-			if (result == null) {
-				result = digesters.get(digestName).newInstance();
-				digestCache.put(digestName, result);
-			}
-			return result;
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	public static Set<String> getSupportedBlockCipher() {
 		Set<String> result = new TreeSet<String>();
 		for (Entry<String, Class<? extends BlockCipher>> iter : blockCipherEngines.entrySet()) {
@@ -391,14 +285,6 @@ public class AlgorithmSpec {
 		return result;
 	}
 
-	public static Set<String> getSupportedDigest() {
-		Set<String> result = new TreeSet<>();
-		for (Entry<String, Class<? extends Digest>> iter : digesters.entrySet()) {
-			result.add(iter.getKey());
-		}
-		return result;
-	}
-
 	public static Set<String> getGmacAlgorithms() {
 		Set<String> result = new TreeSet<>();
 		for (Entry<String, Class<? extends BlockCipher>> iter : blockCipherEngines.entrySet()) {
@@ -412,4 +298,5 @@ public class AlgorithmSpec {
 		}
 		return result;
 	}
+
 }
