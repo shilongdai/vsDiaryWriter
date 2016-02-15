@@ -11,10 +11,14 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -92,7 +96,7 @@ public class JournalWindow {
 		tableViewer.setContentProvider(new ArrayContentProvider());
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		TableViewerColumn titles = new TableViewerColumn(tableViewer, SWT.NONE);
+		final TableViewerColumn titles = new TableViewerColumn(tableViewer, SWT.NONE);
 		titles.getColumn().setWidth(300);
 		titles.getColumn().setText("Title");
 		titles.getColumn().setResizable(true);
@@ -103,7 +107,7 @@ public class JournalWindow {
 				return j.getSubject();
 			}
 		});
-		TableViewerColumn dates = new TableViewerColumn(tableViewer, SWT.NONE);
+		final TableViewerColumn dates = new TableViewerColumn(tableViewer, SWT.NONE);
 		dates.getColumn().setWidth(100);
 		dates.getColumn().setResizable(true);
 		dates.getColumn().setText("Date");
@@ -171,13 +175,49 @@ public class JournalWindow {
 
 		search.displayAll();
 
+		shell.addControlListener(new ControlAdapter() {
+
+			@Override
+			public void controlResized(ControlEvent arg0) {
+				// TODO Auto-generated method stub
+				super.controlResized(arg0);
+				Rectangle area = shell.getClientArea();
+				Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				int width = area.width - table.getBorderWidth() * 2;
+				if (preferredSize.y > area.height + table.getHeaderHeight()) {
+					// Subtract the scrollbar width from the total column width
+					// if a vertical scrollbar will be required
+					Point vBarSize = table.getVerticalBar().getSize();
+					width -= vBarSize.x;
+				}
+				Point oldSize = table.getSize();
+				if (oldSize.x > area.width) {
+					// table is getting smaller so make the columns
+					// smaller first and then resize the table to
+					// match the client area width
+					titles.getColumn().setWidth(width / 3 * 2);
+					dates.getColumn().setWidth(width - titles.getColumn().getWidth() - 20);
+				} else {
+					// table is getting bigger so make the table
+					// bigger first and then make the columns wider
+					// to match the client area width
+					titles.getColumn().setWidth(width / 3 * 2);
+					dates.getColumn().setWidth(width - titles.getColumn().getWidth() - 20);
+				}
+			}
+
+		});
+
 		shell.open();
 		shell.layout();
-		while (!shell.isDisposed()) {
+		while (!shell.isDisposed())
+
+		{
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
 		}
+
 	}
 
 	private void handleException() {
