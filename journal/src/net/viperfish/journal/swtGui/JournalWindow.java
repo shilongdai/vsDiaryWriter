@@ -208,6 +208,7 @@ public class JournalWindow {
 
 		});
 
+		shell.setDefaultButton(searchButton);
 		shell.open();
 		shell.layout();
 		while (!shell.isDisposed())

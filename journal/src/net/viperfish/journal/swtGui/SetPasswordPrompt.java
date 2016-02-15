@@ -109,6 +109,8 @@ public class SetPasswordPrompt {
 			}
 		});
 
+		shell.setDefaultButton(done);
+
 		shell.open();
 		shell.layout();
 		while (!shell.isDisposed()) {
