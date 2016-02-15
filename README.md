@@ -1,22 +1,23 @@
 # journal-2
-This is my second attempt at a journal software, previous attempt is the journal-1 project. Also, this time I have actual support from friends and colleagues, so it will be maintained.
-
-# description:
-This project is a opensource journal writer for writing journal entries on "soft" medias. The current plan is finish the pc version, and then develop a mobile app.
+This is a journal writer application that support authentication, encryption, selectable modules, and rich-text/html editing.
 
 # build
 
 requirements:
   - maven
   - access to maven central repository
-  - jdk > 1.6
+  - jdk >= 1.7
 
 To build, enter the directory with the pom.xml file, and run mvn install. The finished uber-jar product should be in the target directory
 
 # using
-To use the application, it's recommended to install the unlimited strength policy files for your jvm to provide greater keylength for encryption purposes.
 To run the application,
-  execute: java -jar full-journal-version.jar
+  execute: java -jar full-journal-version.jar or java -jar -XstartOnFirstThread the-jar-file.jar if you are a Mac user
+  
 Or: if your operating system's graphical ui supports it, double click the jar file.(when the gui of the application is done)
 
 This application uses SWT for it's GUI, so please use the appropriate version/release, or modify the pom file according to your operating system.
+
+# binary distributions
+Binary distribution of this application is available at: 
+ftp://www.viperfish.net/journal/release/1.0/
