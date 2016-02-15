@@ -3,9 +3,7 @@ package net.viperfish.journal.dbProvider;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -27,44 +25,6 @@ public class FileEntryDatabase implements EntryDatabase {
 
 	private final IOFile file;
 	private FileMemoryStructure struct;
-
-	/**
-	 * the memory structure of journals in a FileEntryDatabase
-	 * 
-	 * @see FileEntryDatabase
-	 * @author sdai
-	 *
-	 */
-	protected class FileMemoryStructure {
-		private Long id;
-		private Map<Long, Journal> data;
-
-		public FileMemoryStructure() {
-			id = new Long(0);
-			data = new TreeMap<>();
-		}
-
-		public Long getId() {
-			return id;
-		}
-
-		public void setId(Long id) {
-			this.id = id;
-		}
-
-		public Map<Long, Journal> getData() {
-			return data;
-		}
-
-		public void setData(Map<Long, Journal> data) {
-			this.data = data;
-		}
-
-		public void incrementID() {
-			id += 1;
-		}
-
-	}
 
 	public FileEntryDatabase(IOFile ioFile) {
 		this.file = ioFile;

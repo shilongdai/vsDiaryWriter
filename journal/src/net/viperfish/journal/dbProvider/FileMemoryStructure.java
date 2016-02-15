@@ -5,6 +5,13 @@ import java.util.TreeMap;
 
 import net.viperfish.journal.framework.Journal;
 
+/**
+ * the memory structure of journals in a FileEntryDatabase
+ * 
+ * @see FileEntryDatabase
+ * @author sdai
+ *
+ */
 public class FileMemoryStructure {
 	private Long id;
 	private Map<Long, Journal> data;

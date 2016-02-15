@@ -14,9 +14,9 @@ import org.eclipse.swt.widgets.Composite;
 
 public class RichTextEditor extends Composite {
 
-	protected Browser browser;
-	protected String editor_content;
-	protected boolean loadCompleted = false;
+	private Browser browser;
+	private String editor_content;
+	private boolean loadCompleted = false;
 
 	public RichTextEditor(Composite parent, int style) {
 		super(parent, style);

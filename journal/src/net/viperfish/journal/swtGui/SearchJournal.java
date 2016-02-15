@@ -3,7 +3,7 @@ package net.viperfish.journal.swtGui;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -18,12 +18,12 @@ import net.viperfish.journal.ui.OperationExecutor;
 import net.viperfish.journal.ui.OperationFactory;
 
 public class SearchJournal {
-	private ListViewer renderer;
+	private TableViewer renderer;
 	private OperationExecutor e;
 	private OperationFactory f;
 	private Text search;
 
-	public SearchJournal(Text searchField, ListViewer render) {
+	public SearchJournal(Text searchField, TableViewer render) {
 		this.search = searchField;
 		this.renderer = render;
 		f = JournalApplication.getOperationFactory();
