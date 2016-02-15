@@ -13,6 +13,7 @@ To build, enter the directory with the pom.xml file, and run mvn install. The fi
 # using
 To run the application,
   execute: java -jar full-journal-version.jar or java -jar -XstartOnFirstThread the-jar-file.jar if you are a Mac user
+  
 Or: if your operating system's graphical ui supports it, double click the jar file.(when the gui of the application is done)
 
 This application uses SWT for it's GUI, so please use the appropriate version/release, or modify the pom file according to your operating system.
