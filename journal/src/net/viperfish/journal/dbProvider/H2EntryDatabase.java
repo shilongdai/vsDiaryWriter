@@ -3,14 +3,20 @@ package net.viperfish.journal.dbProvider;
 import java.io.File;
 import java.io.IOException;
 
-import net.viperfish.journal.framework.Journal;
-
 import org.h2.Driver;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.H2Dialect;
 
+import net.viperfish.journal.framework.Journal;
+
+/**
+ * an Hibernate managed database that uses H2
+ * 
+ * @author sdai
+ *
+ */
 public class H2EntryDatabase extends HibernateEntryDatabase {
 
 	private final SessionFactory factory;
@@ -19,11 +25,10 @@ public class H2EntryDatabase extends HibernateEntryDatabase {
 	public H2EntryDatabase(File dataDir) {
 		Configuration cfg = new Configuration();
 		cfg.addAnnotatedClass(Journal.class);
-		cfg.setProperty("hibernate.connection.driver_class",
-				Driver.class.getCanonicalName());
+		cfg.setProperty("hibernate.connection.driver_class", Driver.class.getCanonicalName());
 		try {
-			cfg.setProperty("hibernate.connection.url", "jdbc:h2:file:"
-					+ dataDir.getCanonicalPath() + "/journalEntries");
+			cfg.setProperty("hibernate.connection.url",
+					"jdbc:h2:file:" + dataDir.getCanonicalPath() + "/journalEntries");
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

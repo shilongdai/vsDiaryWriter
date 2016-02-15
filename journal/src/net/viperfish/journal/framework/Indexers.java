@@ -6,6 +6,12 @@ import java.util.Map.Entry;
 
 import net.viperfish.utils.index.Indexer;
 
+/**
+ * a provider manager for indexers
+ * 
+ * @author sdai
+ *
+ */
 public enum Indexers {
 	INSTANCE;
 	private Map<String, Provider<Indexer<Journal>>> indexerProviders;

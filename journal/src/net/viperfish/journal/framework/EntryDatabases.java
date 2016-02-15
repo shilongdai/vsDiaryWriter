@@ -4,6 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * a provider manager for the EntryDatabase
+ * 
+ * @author sdai
+ *
+ */
 public enum EntryDatabases {
 	INSTANCE;
 	private Map<String, Provider<EntryDatabase>> databaseProviders;

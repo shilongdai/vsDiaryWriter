@@ -2,10 +2,9 @@ package net.viperfish.journal.dbProvider;
 
 import java.io.File;
 
-import net.viperfish.journal.dbProvider.DataSourceFactory;
 import net.viperfish.journal.framework.EntryDatabase;
 
-public class StubDataSourceFactory implements DataSourceFactory {
+class StubDataSourceFactory implements DataSourceFactory {
 
 	private DatabaseStub db;
 

@@ -3,6 +3,12 @@ package net.viperfish.journal.secureAlgs;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * utils for macs
+ * 
+ * @author sdai
+ *
+ */
 public class Macs {
 
 	private Macs() {

@@ -47,6 +47,12 @@ import org.bouncycastle.crypto.paddings.TBCPadding;
 import org.bouncycastle.crypto.paddings.X923Padding;
 import org.bouncycastle.crypto.paddings.ZeroBytePadding;
 
+/**
+ * utils for blockcipher
+ * 
+ * @author sdai
+ *
+ */
 public class BlockCiphers {
 
 	private BlockCiphers() {
@@ -133,6 +139,13 @@ public class BlockCiphers {
 		blockCipherPadding.put("ZeroBytePadding", ZeroBytePadding.class);
 	}
 
+	/**
+	 * get the selected key size, usually max, for an encryption algorithm
+	 * 
+	 * @param algorithm
+	 *            the name of the algorithm, case insensitive
+	 * @return the key size
+	 */
 	public static int getKeySize(String algorithm) {
 		if (algorithm.compareToIgnoreCase("des") == 0) {
 			return DES_KEY_SIZE;
@@ -204,6 +217,13 @@ public class BlockCiphers {
 		return DEFAULT;
 	}
 
+	/**
+	 * gets a bouncy castle BlockCipher instance
+	 * 
+	 * @param alg
+	 *            the name of the algorithm
+	 * @return the engine
+	 */
 	public static BlockCipher getBlockCipherEngine(String alg) {
 		try {
 			BlockCipher result = blockCipherCache.get(alg);
@@ -217,6 +237,16 @@ public class BlockCiphers {
 		}
 	}
 
+	/**
+	 * gets an BlockCipher that is a combination of the Cipher Mode and Cipher
+	 * Engine
+	 * 
+	 * @param engine
+	 *            the engine to apply mode to
+	 * @param mode
+	 *            the name of the mode
+	 * @return the wrapped instance
+	 */
 	public static BlockCipher wrapBlockCipherMode(BlockCipher engine, String mode) {
 		String comboName = engine.getAlgorithmName() + "/" + mode;
 		BlockCipher result = blockCipherCache.get(comboName);
@@ -248,6 +278,13 @@ public class BlockCiphers {
 		return result;
 	}
 
+	/**
+	 * get the padding for an blockcipher
+	 * 
+	 * @param paddingName
+	 *            the name of the padding
+	 * @return the padding
+	 */
 	public static BlockCipherPadding getBlockCipherPadding(String paddingName) {
 		BlockCipherPadding padding = paddingCache.get(paddingName);
 		try {

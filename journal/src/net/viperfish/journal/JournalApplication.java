@@ -48,6 +48,7 @@ public class JournalApplication {
 
 	public static void initModules() {
 		// Saved for later reference
+
 		// moduleDir = new File("modules");
 		// authModules = new File("modules/auth");
 		// dbModules = new File("modules/db");
@@ -63,17 +64,26 @@ public class JournalApplication {
 		// ComponentProvider.loadDatabaseProvider(dbModules);
 		// ComponentProvider.loadIndexer(indexModules);
 		// ComponentProvider.loadTransformerProvider(transModule);
+
+		// register the providers
 		AuthManagers.INSTANCE.registerAuthProvider(new ViperfishAuthProvider());
 		EntryDatabases.INSTANCE.registerEntryDatabaseProvider(new ViperfishEntryDatabaseProvider());
 		Indexers.INSTANCE.registerIndexerProvider(new ViperfishIndexerProvider());
 		JournalTransformers.INSTANCE.registerTransformerProvider(new ViperfishEncryptionProvider());
 	}
 
+	/**
+	 * add the system configuration page to gui
+	 */
 	private static void initConfigUnits() {
 		Configuration.addProperty(ConfigMapping.CONFIG_PAGES,
 				new String[] { SystemConfigPage.class.getCanonicalName() });
 	}
 
+	/**
+	 * This cleans up all the resources, disposes all providers, and terminate
+	 * the worker
+	 */
 	public static void cleanUp() {
 		EntryDatabases.INSTANCE.dispose();
 		AuthManagers.INSTANCE.dispose();
@@ -111,16 +121,8 @@ public class JournalApplication {
 	}
 
 	/**
-	 * set the status of unit testing, if unit test, The current dataDir is
-	 * cleared, components reset, and file structure re initialized
-	 * 
-	 * @param isEnable
-	 *            the state of unit test
+	 * set the default providers to viperfish, the built-in provider
 	 */
-	public static void setUnitTest(boolean isEnable) {
-		defaultProviders();
-	}
-
 	public static void defaultProviders() {
 		if (!Configuration.containsKey(ConfigMapping.AUTH_PROVIDER)) {
 			Configuration.setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
@@ -134,10 +136,14 @@ public class JournalApplication {
 		if (!Configuration.containsKey(ConfigMapping.TRANSFORMER_PROVIDER)) {
 			Configuration.setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");
 		}
-		initDefaultProviders();
+		setDefaultProviders();
 	}
 
-	private static void initDefaultProviders() {
+	/**
+	 * synchronize the configuration of defualt providers with the actual
+	 * provider managers
+	 */
+	private static void setDefaultProviders() {
 		AuthManagers.INSTANCE.setDefaultAuthProvider(Configuration.getString(ConfigMapping.AUTH_PROVIDER));
 		EntryDatabases.INSTANCE.setDefaultDatabaseProvider(Configuration.getString(ConfigMapping.DB_PROVIDER));
 		Indexers.INSTANCE.setDefaultIndexerProvider(Configuration.getString(ConfigMapping.INDEX_PROVIDER));
@@ -147,42 +153,55 @@ public class JournalApplication {
 
 	public static void main(String[] args) {
 		try {
+
+			// register the providers
 			try {
 				initModules();
 			} catch (Throwable e) {
 				System.err.println("error:" + e);
 				e.printStackTrace();
-				System.exit(1);
+				return;
 			}
+
+			// create the graphical user interface manager
 			ui = new GraphicalUserInterface();
+
+			// load configuration from storage
 			try {
 				Configuration.load();
 			} catch (ConfigurationException e) {
 				System.err.println("failed to load configuration, exiting");
-				System.exit(1);
+				return;
 			}
+
+			// set the default providers
 			defaultProviders();
+
+			// run the setup if the application is first started
 			if (Configuration.getString(ConfigMapping.SET_UP) == null) {
 				try {
 					ui.setup();
 					ui.setFirstPassword();
-					Configuration.setProperty(ConfigMapping.SET_UP, true);
+					Configuration.setProperty(ConfigMapping.SET_UP, false);
 					Configuration.save();
 				} catch (ConfigurationException e) {
 					System.err.println("could not save configuration, terminating");
-					System.exit(1);
+					return;
 				} catch (TerminationControlFlowException e) {
-					cleanUp();
 					System.err.println("exitiing");
-					System.exit(0);
+					return;
 				}
 			}
+
+			// login
 			try {
 				ui.promptPassword();
 			} catch (TerminationControlFlowException e) {
 				System.err.println("exiting");
-				System.exit(0);
+				return;
 			}
+
+			// start the main portion of the application
 			ui.run();
 		} finally {
 			cleanUp();

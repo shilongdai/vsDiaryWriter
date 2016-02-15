@@ -5,6 +5,12 @@ import org.bouncycastle.crypto.PBEParametersGenerator;
 import org.bouncycastle.crypto.generators.PKCS12ParametersGenerator;
 import org.bouncycastle.crypto.params.KeyParameter;
 
+/**
+ * a PCKDF2 KDF function based on Bouncy Castle's crypto api
+ * 
+ * @author sdai
+ *
+ */
 public class BCPCKDF2Generator implements PBKDF2KeyGenerator {
 
 	private String digest;
@@ -46,10 +52,8 @@ public class BCPCKDF2Generator implements PBKDF2KeyGenerator {
 	public byte[] generate(String password, int length) {
 		Digest d = Digesters.getDigester(digest);
 		PBEParametersGenerator gen = new PKCS12ParametersGenerator(d);
-		gen.init(PBEParametersGenerator.PKCS12PasswordToBytes(password
-				.toCharArray()), salt, iteration);
-		KeyParameter param = (KeyParameter) gen
-				.generateDerivedParameters(length);
+		gen.init(PBEParametersGenerator.PKCS12PasswordToBytes(password.toCharArray()), salt, iteration);
+		KeyParameter param = (KeyParameter) gen.generateDerivedParameters(length);
 		return param.getKey();
 	}
 }

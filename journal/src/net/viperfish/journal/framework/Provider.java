@@ -1,5 +1,13 @@
 package net.viperfish.journal.framework;
 
+/**
+ * a provider that provides a type of service
+ * 
+ * @author sdai
+ *
+ * @param <T>
+ *            the type of service
+ */
 public interface Provider<T> {
 	public void setDefaultInstance(String instance);
 

@@ -7,6 +7,12 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.utils.index.Indexer;
 
+/**
+ * deletes an entry from system
+ * 
+ * @author sdai
+ *
+ */
 public class DeleteEntryOperation implements Operation {
 	private Long id;
 	private EntryDatabase db;

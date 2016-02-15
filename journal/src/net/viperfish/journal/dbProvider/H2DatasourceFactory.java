@@ -4,7 +4,7 @@ import java.io.File;
 
 import net.viperfish.journal.framework.EntryDatabase;
 
-public class H2DatasourceFactory implements DataSourceFactory {
+class H2DatasourceFactory implements DataSourceFactory {
 
 	private File dataDir;
 	private H2EntryDatabase db;

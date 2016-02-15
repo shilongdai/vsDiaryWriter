@@ -13,6 +13,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * the data model of a journal entry
+ * 
+ * @author sdai
+ *
+ */
 @Entity
 @Table
 public class Journal implements Comparable<Journal> {

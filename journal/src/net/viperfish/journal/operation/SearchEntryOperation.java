@@ -1,7 +1,7 @@
 package net.viperfish.journal.operation;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.EntryDatabases;
@@ -10,11 +10,15 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.utils.index.Indexer;
 
-public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
+/**
+ * search the system for entry matching keywords
+ * 
+ * @author sdai
+ *
+ */
+public class SearchEntryOperation extends OperationWithResult<Set<Journal>> {
 
 	private String query;
-	private Set<Journal> result;
-	private boolean done;
 	private EntryDatabase db;
 	private Indexer<Journal> indexer;
 	private static boolean firstTime;
@@ -25,8 +29,6 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 
 	public SearchEntryOperation(String query) {
 		this.query = query;
-		result = new HashSet<Journal>();
-		done = false;
 		db = EntryDatabases.INSTANCE.getEntryDatabase();
 		indexer = Indexers.INSTANCE.getIndexer();
 
@@ -34,6 +36,7 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 
 	@Override
 	public void execute() {
+		Set<Journal> searched = new TreeSet<>();
 		try {
 			if (firstTime) {
 				if (indexer.isMemoryBased()) {
@@ -50,37 +53,11 @@ public class SearchEntryOperation implements OperationWithResult<Set<Journal>> {
 					indexer.delete(id);
 					continue;
 				}
-				result.add(j);
+				searched.add(j);
 			}
 		} finally {
-			done = true;
-			synchronized (this) {
-				this.notifyAll();
-			}
+			setResult(searched);
 		}
-	}
-
-	@Override
-	public synchronized boolean isDone() {
-		return done;
-	}
-
-	@Override
-	public synchronized Set<Journal> getResult() {
-		if (done) {
-			return result;
-		}
-		while (true) {
-			try {
-				this.wait();
-			} catch (InterruptedException e) {
-				return null;
-			}
-			if (done) {
-				break;
-			}
-		}
-		return result;
 	}
 
 }

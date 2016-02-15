@@ -24,6 +24,12 @@ import org.apache.lucene.store.RAMDirectory;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.utils.index.LuceneIndexer;
 
+/**
+ * the built in indexer that uses Apache Lucene indexer for indexing
+ * 
+ * @author sdai
+ *
+ */
 public class JournalIndexer extends LuceneIndexer<Journal> {
 
 	private Directory dir;

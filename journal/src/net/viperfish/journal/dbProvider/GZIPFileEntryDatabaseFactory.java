@@ -7,7 +7,14 @@ import java.nio.charset.StandardCharsets;
 import net.viperfish.utils.file.GZIPIOStreamHandler;
 import net.viperfish.utils.file.IOFile;
 
-public class GZIPFileEntryDatabaseFactory extends FileEntryDatabaseFactory {
+/**
+ * a FileEntryDatabaseFactory that create a GZip compressed file for data
+ * storage
+ * 
+ * @author sdai
+ *
+ */
+class GZIPFileEntryDatabaseFactory extends FileEntryDatabaseFactory {
 
 	@Override
 	protected IOFile createIOFile(File dataFile) {

@@ -4,6 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * a provider manager for journal transformers
+ * 
+ * @author sdai
+ *
+ */
 public enum JournalTransformers {
 	INSTANCE;
 	private Map<String, Provider<JournalTransformer>> secureProviders;

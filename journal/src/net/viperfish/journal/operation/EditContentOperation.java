@@ -2,6 +2,12 @@ package net.viperfish.journal.operation;
 
 import net.viperfish.journal.framework.Journal;
 
+/**
+ * edits the content of an entry in the system
+ * 
+ * @author sdai
+ *
+ */
 public class EditContentOperation extends EditEntryOperation {
 
 	private String content;

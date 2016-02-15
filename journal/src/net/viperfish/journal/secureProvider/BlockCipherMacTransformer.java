@@ -1,13 +1,6 @@
 package net.viperfish.journal.secureProvider;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -34,7 +27,16 @@ import net.viperfish.utils.compression.Compressor;
 import net.viperfish.utils.compression.Compressors;
 import net.viperfish.utils.compression.FailToInitCompressionException;
 import net.viperfish.utils.compression.NullCompressor;
+import net.viperfish.utils.file.IOFile;
+import net.viperfish.utils.file.TextIOStreamHandler;
 
+/**
+ * a journal transformer that uses a compression, a block cipher, and a mac
+ * algorithm to cipher an entry
+ * 
+ * @author sdai
+ *
+ */
 public class BlockCipherMacTransformer implements JournalTransformer {
 
 	public static final String ENCRYPTION_ALG_NAME = "viperfish.secure.encrytion.algorithm";
@@ -55,6 +57,18 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 	private PBKDF2KeyGenerator keyGenerator;
 	private Compressor compress;
 
+	/**
+	 * encrypt raw data into format, compressing it first
+	 * 
+	 * @param bytes
+	 *            the data to encrypt
+	 * @return the encrypted compressed data in the format of iv$cipher in
+	 *         Base64
+	 * @throws InvalidKeyException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 */
 	private String encryptData(byte[] bytes) throws InvalidKeyException, InvalidAlgorithmParameterException,
 			IllegalBlockSizeException, BadPaddingException {
 		byte[] compressed = compress.compress(bytes);
@@ -66,12 +80,30 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		return cipherString;
 	}
 
+	/**
+	 * calculat a mac of the data and encode it into Base64
+	 * 
+	 * @param bytes
+	 *            the data
+	 * @return the mac encoded in Base64
+	 */
 	private String macData(byte[] bytes) {
 		byte[] macValue = mac.calculateMac(bytes);
 		String macString = Base64.encodeBase64String(macValue);
 		return macString;
 	}
 
+	/**
+	 * transform the field of a journal into the format of IV$Cipher$Mac
+	 * 
+	 * @param data
+	 *            the field of journal to cipher
+	 * @return the result of the ciphering
+	 * @throws InvalidKeyException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 */
 	private String encrypt_format(String data) throws InvalidKeyException, InvalidAlgorithmParameterException,
 			IllegalBlockSizeException, BadPaddingException {
 		byte[] bytes = data.getBytes(StandardCharsets.UTF_16);
@@ -87,6 +119,20 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		return cipherString;
 	}
 
+	/**
+	 * decrypt a field in an entry in the format of IV$Cipher$Mac, that the data
+	 * is compressed first
+	 * 
+	 * @param data
+	 *            the field in an entry
+	 * @return the plain text
+	 * @throws InvalidKeyException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 * @throws CompromisedDataException
+	 *             the stored Mac does not match the calculated Mac
+	 */
 	private String decrypt_format(String data) throws InvalidKeyException, InvalidAlgorithmParameterException,
 			IllegalBlockSizeException, BadPaddingException, CompromisedDataException {
 		String[] parts = data.split("\\$");
@@ -112,59 +158,23 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		return plainText;
 	}
 
+	private void newSalt() {
+		rand.nextBytes(saltForKDF);
+		writeSalt();
+	}
+
 	private void writeSalt() {
-		if (!saltStore.exists()) {
-			try {
-				saltStore.createNewFile();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		DataOutputStream out = null;
-		try {
-			out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(saltStore)));
-			out.write(saltForKDF);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
+		IOFile saltFile = new IOFile(saltStore, new TextIOStreamHandler());
+		saltFile.write(saltForKDF);
 	}
 
 	private void loadSalt() {
-		DataInputStream in = null;
 		if (!saltStore.exists()) {
-			try {
-				saltStore.createNewFile();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			rand.nextBytes(saltForKDF);
-			writeSalt();
+			newSalt();
 			return;
 		} else {
-			try {
-				in = new DataInputStream(new BufferedInputStream(new FileInputStream(saltStore)));
-				for (int i = 0; i < 10; ++i) {
-					saltForKDF[i] = in.readByte();
-				}
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			} finally {
-				if (in != null) {
-					try {
-						in.close();
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					}
-				}
-			}
+			IOFile saltFile = new IOFile(saltStore, new TextIOStreamHandler());
+			saltForKDF = saltFile.read();
 		}
 	}
 
@@ -204,12 +214,20 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		}
 	}
 
+	/**
+	 * initialize all the algorithm used to transform an entry
+	 */
 	private void initAlgorithms() {
+		// get the objects for blockcipher, mac, and digest
 		enc = new BCBlockCipherEncryptor();
 		dig = new BCDigester();
+		// get the type of mac
 		String macMethod = Configuration.getString(MAC_TYPE);
 		mac = Macs.getMac(macMethod);
+		// set the algorithm of mac
 		mac.setMode(Configuration.getString(MAC_ALGORITHM));
+
+		// combines information in the configuration into a mode string
 		String mode = new String();
 		mode += Configuration.getString(ENCRYPTION_ALG_NAME);
 		mode += "/";
@@ -217,8 +235,10 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		mode += "/";
 		mode += Configuration.getString(ENCRYPTION_PADDING);
 		enc.setMode(mode);
+
 		dig.setMode("SHA512");
 
+		// try to get a compressor, no compression if compressor not found
 		try {
 			compress = Compressors.getCompressor("gz");
 		} catch (FailToInitCompressionException e) {
@@ -227,6 +247,9 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		}
 	}
 
+	/**
+	 * initialize the Key Generation schema
+	 */
 	private void initKDF() {
 		rand = new SecureRandom();
 		saltForKDF = new byte[10];
@@ -243,12 +266,18 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		initKDF();
 	}
 
+	/**
+	 * derive the key from the password
+	 */
 	@Override
 	public void setPassword(String string) {
 		this.key = keyGenerator.generate(string, enc.getKeySize());
+		// the mac key is derived from the result of the KDF function via a
+		// digest
 		mac.setKey(this.keyGenerator.generate(Base64.encodeBase64String(dig.digest(this.key)), mac.getKeyLength()));
 		enc.setKey(key);
 		macIV = new byte[mac.getIvLength()];
+		// set mac IV to 0 based on experts
 		Arrays.fill(macIV, (byte) 0);
 		mac.setIv(macIV);
 	}

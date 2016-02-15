@@ -20,6 +20,12 @@ import org.apache.commons.configuration.reloading.ReloadingStrategy;
 
 import net.viperfish.utils.file.CommonFunctions;
 
+/**
+ * a static wrapper class around the Apache common configuration class
+ * 
+ * @author sdai
+ *
+ */
 public class Configuration {
 	private static FileConfiguration conf;
 

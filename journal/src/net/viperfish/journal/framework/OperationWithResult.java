@@ -8,18 +8,47 @@ package net.viperfish.journal.framework;
  * @param <T>
  *            the result type
  */
-public interface OperationWithResult<T> extends Operation {
+public abstract class OperationWithResult<T> implements Operation {
+
+	private boolean isDone;
+	private T result;
+
+	protected synchronized void setResult(T result) {
+		this.result = result;
+		this.notifyAll();
+		isDone = true;
+	}
+
 	/**
 	 * check whether this has finished executing
 	 * 
 	 * @return if complete
 	 */
-	public boolean isDone();
+	public synchronized boolean isDone() {
+		return isDone;
+	}
 
 	/**
 	 * get the result, will block if the operation is not executed
 	 * 
 	 * @return the result of the operation
 	 */
-	public T getResult();
+	public T getResult() {
+		if (!isDone) {
+			synchronized (this) {
+				while (true) {
+					try {
+						this.wait();
+					} catch (InterruptedException e) {
+						throw new RuntimeException(e);
+					}
+					if (isDone) {
+						break;
+					}
+				}
+
+			}
+		}
+		return result;
+	}
 }

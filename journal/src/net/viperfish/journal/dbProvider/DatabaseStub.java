@@ -9,6 +9,13 @@ import java.util.TreeMap;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 
+/**
+ * an in-memory EntryDatabase that is based on a map for persistent, should be
+ * used for testing only
+ * 
+ * @author sdai
+ *
+ */
 public class DatabaseStub implements EntryDatabase {
 
 	private Map<Long, Journal> backend;

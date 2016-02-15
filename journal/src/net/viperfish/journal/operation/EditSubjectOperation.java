@@ -2,6 +2,12 @@ package net.viperfish.journal.operation;
 
 import net.viperfish.journal.framework.Journal;
 
+/**
+ * edit the subject of an entry
+ * 
+ * @author sdai
+ *
+ */
 public class EditSubjectOperation extends EditEntryOperation {
 
 	private String subject;

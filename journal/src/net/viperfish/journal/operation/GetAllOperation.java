@@ -9,49 +9,28 @@ import net.viperfish.journal.framework.EntryDatabases;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationWithResult;
 
-public class GetAllOperation implements OperationWithResult<List<Journal>> {
+/**
+ * gets all entries in the system
+ * 
+ * @author sdai
+ *
+ */
+public class GetAllOperation extends OperationWithResult<List<Journal>> {
 
 	private EntryDatabase db;
-	private List<Journal> result;
-	private boolean done;
 
 	public GetAllOperation() {
 		db = EntryDatabases.INSTANCE.getEntryDatabase();
-		result = new LinkedList<>();
 	}
 
 	@Override
 	public void execute() {
+		List<Journal> all = new LinkedList<>();
 		try {
-			result = db.getAll();
-			Collections.sort(result);
+			all = db.getAll();
+			Collections.sort(all);
 		} finally {
-			synchronized (this) {
-				this.notifyAll();
-				done = true;
-			}
-		}
-	}
-
-	@Override
-	public synchronized boolean isDone() {
-		return done;
-	}
-
-	@Override
-	public synchronized List<Journal> getResult() {
-		if (done) {
-			return result;
-		}
-		while (true) {
-			try {
-				this.wait();
-			} catch (InterruptedException e) {
-				return null;
-			}
-			if (done) {
-				return result;
-			}
+			setResult(all);
 		}
 	}
 

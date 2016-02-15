@@ -1,8 +1,13 @@
 package net.viperfish.journal.secureAlgs;
 
-
 import org.bouncycastle.crypto.Mac;
 
+/**
+ * a mac calculator based on Bouncy Castle's crypto API
+ * 
+ * @author sdai
+ *
+ */
 public abstract class BCMacDigester implements MacDigester {
 
 	private String mode;

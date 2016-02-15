@@ -7,6 +7,12 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.utils.index.Indexer;
 
+/**
+ * adds an entry to the system
+ * 
+ * @author sdai
+ *
+ */
 public class AddEntryOperation implements Operation {
 
 	private Journal toAdd;

@@ -3,6 +3,13 @@ package net.viperfish.journal.framework;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * a wrapper around an EntryDatabase to provide encryption support via the
+ * decorator pattern
+ * 
+ * @author sdai
+ *
+ */
 public class JournalEncryptionWrapper implements EntryDatabase {
 
 	private JournalTransformer encryptor;

@@ -1,5 +1,11 @@
 package net.viperfish.journal.framework;
 
+/**
+ * a mapping of property names in the configuration
+ * 
+ * @author sdai
+ *
+ */
 public class ConfigMapping {
 	public static final String DB_PROVIDER = "providers.db";
 	public static final String AUTH_PROVIDER = "providers.auth";

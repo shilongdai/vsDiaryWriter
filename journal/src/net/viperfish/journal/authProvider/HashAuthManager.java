@@ -1,13 +1,6 @@
 package net.viperfish.journal.authProvider;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -17,25 +10,44 @@ import org.apache.commons.codec.binary.Base64;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.secureAlgs.BCDigester;
 import net.viperfish.journal.secureAlgs.Digester;
+import net.viperfish.utils.file.IOFile;
+import net.viperfish.utils.file.TextIOStreamHandler;
 
+/**
+ * an authenticator that uses hashing algorithms to verify a password
+ * 
+ * @author sdai
+ *
+ */
 public class HashAuthManager implements AuthenticationManager {
 
 	private Digester dig;
-	private File passwdFile;
+	private IOFile passwdFile;
 	private File dataDir;
 	private String password;
 	private boolean passwordSet;
 	private byte[] hash;
 	private byte[] salt;
 	private SecureRandom rand;
+	private boolean ready;
 
 	private byte[] hashWithSalt(byte[] data, byte[] salt, int iter) {
+		// the initial buffer to put the combination of salt and data
 		byte[] buffer = new byte[data.length + salt.length];
 		byte[] initial;
+
+		// copy the data and salt into the buffer
 		System.arraycopy(data, 0, buffer, 0, data.length);
 		System.arraycopy(salt, 0, buffer, data.length, salt.length);
+
+		// calculate the first round of hash
 		initial = dig.digest(buffer);
+
+		// re-allocate the buffer so that it can contain the hash + the salt
 		buffer = new byte[initial.length + salt.length];
+
+		// for every round, calculates the hash from the buffer of previous
+		// round, combines the hash with salt into the buffer for the next round
 		byte[] hash = initial;
 		for (int i = 0; i < iter - 1; ++i) {
 			System.arraycopy(hash, 0, buffer, 0, hash.length);
@@ -45,6 +57,12 @@ public class HashAuthManager implements AuthenticationManager {
 		return hash;
 	}
 
+	/**
+	 * encode the hash and salt into Base64 strings, and combine them so that
+	 * it's hash$salt
+	 * 
+	 * @return
+	 */
 	private String hashAuthFormat() {
 		String hash64 = Base64.encodeBase64String(hash);
 		String salt64 = Base64.encodeBase64String(salt);
@@ -52,76 +70,50 @@ public class HashAuthManager implements AuthenticationManager {
 		return result;
 	}
 
+	/**
+	 * generate a salt of specified length using a secure random number
+	 * generator
+	 * 
+	 * @param length
+	 *            the number of bytes to generate
+	 */
 	private void generateSalt(int length) {
 		salt = new byte[length];
 		rand.nextBytes(salt);
 	}
 
+	/**
+	 * writes the hash and salt to the "passwd" file, the content written are
+	 * UTF-8 characters
+	 * 
+	 * @param formatted
+	 *            the formatted hash and salt
+	 */
 	private void writePasswdFile(String formatted) {
-		byte[] data = formatted.getBytes(StandardCharsets.UTF_8);
-		DataOutputStream out = null;
-		try {
-			out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(passwdFile)));
-			out.write(data);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-					e.fillInStackTrace();
-					throw new RuntimeException(e);
-				}
-			}
-		}
+		passwdFile.write(formatted, StandardCharsets.UTF_8);
 	}
 
+	/**
+	 * read the hash and salt from the password file, the content read are UTF-8
+	 * characters
+	 * 
+	 * @return the combination of hash and salt
+	 */
 	private String readPasswdFile() {
-		DataInputStream in = null;
-		try {
-			in = new DataInputStream(new BufferedInputStream(new FileInputStream(passwdFile)));
-			int estLength = in.available();
-			byte[] buffer = new byte[estLength + 256];
-			int actualLength = 0;
-			while (!(in.available() == 0)) {
-				buffer[actualLength] = in.readByte();
-				actualLength++;
-			}
-			byte[] finalArray = new byte[actualLength];
-			System.arraycopy(buffer, 0, finalArray, 0, actualLength);
-			return new String(finalArray, StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					e.fillInStackTrace();
-					throw new RuntimeException(e);
-				}
-			}
-		}
+		return passwdFile.read(StandardCharsets.UTF_8);
 	}
 
+	/**
+	 * load the hash and salt from file into memory
+	 */
 	private void loadPasswd() {
-		try {
-			passwdFile = new File(dataDir.getCanonicalPath() + "/passwd");
-			if (!passwdFile.exists()) {
-				passwdFile.createNewFile();
-				passwordSet = false;
-				return;
-			}
-			String formatedPasswd = readPasswdFile();
-			String[] parts = formatedPasswd.split("\\$");
-			String hash = parts[0];
-			String salt = parts[1];
-			this.hash = Base64.decodeBase64(hash);
-			this.salt = Base64.decodeBase64(salt);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		String formatedPasswd = readPasswdFile();
+		String[] parts = formatedPasswd.split("\\$");
+		String hash = parts[0];
+		String salt = parts[1];
+		this.hash = Base64.decodeBase64(hash);
+		this.salt = Base64.decodeBase64(salt);
+		ready = true;
 	}
 
 	public HashAuthManager(File dataDir) {
@@ -129,19 +121,28 @@ public class HashAuthManager implements AuthenticationManager {
 		dig = new BCDigester();
 		rand = new SecureRandom();
 		passwordSet = true;
-		loadPasswd();
+		ready = false;
+		passwdFile = new IOFile(new File(dataDir.getPath() + "/passwd"), new TextIOStreamHandler());
 	}
 
 	public byte[] getSalt() {
 		return salt;
 	}
 
+	/**
+	 * empty the password file
+	 */
 	@Override
 	public void clear() {
-		passwdFile.delete();
+		passwdFile.clear();
 
 	}
 
+	/**
+	 * generate a 12 byte salt, and hash the password(UTF-16) with the salt for
+	 * 3000 round, format the hash and salt, then write the formatted result to
+	 * the passwd file
+	 */
 	@Override
 	public void setPassword(String pass) {
 		this.password = pass;
@@ -151,22 +152,34 @@ public class HashAuthManager implements AuthenticationManager {
 		hash = hashWithSalt(bytes, salt, 3000);
 		String formatted = hashAuthFormat();
 		writePasswdFile(formatted);
+		ready = true;
 	}
 
 	public byte[] getHash() {
 		return hash;
 	}
 
+	/**
+	 * reload the hash and salt from the file
+	 */
 	@Override
 	public void reload() {
-		passwdFile = null;
 		hash = null;
 		salt = null;
 		loadPasswd();
 	}
 
+	/**
+	 * calculate the hash, and compare it with the hash stored in the password
+	 * file
+	 * 
+	 * @see HashAuthManager#setPassword(String)
+	 */
 	@Override
 	public boolean verify(String pass) {
+		if (!ready) {
+			loadPasswd();
+		}
 		byte[] bytes = pass.getBytes(StandardCharsets.UTF_16);
 
 		byte[] providedHash = hashWithSalt(bytes, salt, 3000);

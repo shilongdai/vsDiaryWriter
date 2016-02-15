@@ -8,8 +8,20 @@ import org.hibernate.Session;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 
+/**
+ * an EntryDatabase that uses Hibernate ORM for database
+ * 
+ * @author sdai
+ *
+ */
 public abstract class HibernateEntryDatabase implements EntryDatabase {
 
+	/**
+	 * get a session for persistent operations, should be implemented to support
+	 * different type of hibernate dialect and options
+	 * 
+	 * @return a usable session
+	 */
 	protected abstract Session getSession();
 
 	{

@@ -15,6 +15,12 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
+/**
+ * an encryptor based on Bouncy Castle's crypto API
+ * 
+ * @author sdai
+ *
+ */
 public class BCBlockCipherEncryptor extends Encryptor {
 
 	private byte[] key;
@@ -25,6 +31,11 @@ public class BCBlockCipherEncryptor extends Encryptor {
 		rand = new SecureRandom();
 	}
 
+	/**
+	 * creates the object that can encrypt
+	 * 
+	 * @return
+	 */
 	private PaddedBufferedBlockCipher initCipherSuite() {
 		String[] parts = getMode().split("/");
 		BlockCipher engine = BlockCiphers.getBlockCipherEngine(parts[0]);
@@ -34,12 +45,27 @@ public class BCBlockCipherEncryptor extends Encryptor {
 		return result;
 	}
 
+	/**
+	 * the actual ciphering
+	 * 
+	 * @param cipher
+	 *            the encyption object
+	 * @param data
+	 *            the data to encrypt
+	 * @return the transformed data
+	 * @throws DataLengthException
+	 * @throws IllegalStateException
+	 * @throws InvalidCipherTextException
+	 */
 	private byte[] transformData(PaddedBufferedBlockCipher cipher, byte[] data)
 			throws DataLengthException, IllegalStateException, InvalidCipherTextException {
+		// allocate a buffer that's big enough
 		int minSize = cipher.getOutputSize(data.length);
 		byte[] outBuf = new byte[minSize];
+		// update the cipher
 		int length1 = cipher.processBytes(data, 0, data.length, outBuf, 0);
 		int length2 = cipher.doFinal(outBuf, length1);
+		// copy the actual result into a array of the correct length
 		int actualLength = length1 + length2;
 		byte[] result = new byte[actualLength];
 		System.arraycopy(outBuf, 0, result, 0, result.length);

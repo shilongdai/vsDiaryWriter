@@ -4,6 +4,12 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Provider;
 import net.viperfish.utils.index.Indexer;
 
+/**
+ * provides implementation of indexer this one provides an Apache Lucene indexer
+ * 
+ * @author sdai
+ *
+ */
 public class ViperfishIndexerProvider implements Provider<Indexer<Journal>> {
 
 	private JournalIndexer indexer;

@@ -31,6 +31,12 @@ import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.digests.TigerDigest;
 import org.bouncycastle.crypto.digests.WhirlpoolDigest;
 
+/**
+ * utils for Bouncy Castle digester
+ * 
+ * @author sdai
+ *
+ */
 public class Digesters {
 
 	private static Map<String, Class<? extends Digest>> digesters;

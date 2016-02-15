@@ -10,7 +10,7 @@ import net.viperfish.journal.framework.EntryDatabase;
  * @author sdai
  * @see EntryDatabase
  */
-public interface DataSourceFactory {
+interface DataSourceFactory {
 
 	/**
 	 * get a dao object
