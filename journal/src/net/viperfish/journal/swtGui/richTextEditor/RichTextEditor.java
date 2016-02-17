@@ -86,4 +86,5 @@ public class RichTextEditor extends Composite {
 
 		return content;
 	}
+
 }

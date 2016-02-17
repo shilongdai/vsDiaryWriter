@@ -2,7 +2,13 @@ package net.viperfish.journal.swtGui;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -13,8 +19,6 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -63,16 +67,8 @@ public class JournalWindow {
 		display = Display.getDefault();
 		shell = new Shell();
 		shell.setSize(450, 400);
-		shell.setText("vJournal - special, alpha version");
+		shell.setText("vJournal - developmental");
 		shell.setLayout(new GridLayout(13, false));
-		shell.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				JournalApplication.cleanUp();
-				// System.exit(0);
-			}
-		});
 		text = new Text(shell, SWT.BORDER);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 12, 1));
 
@@ -227,8 +223,25 @@ public class JournalWindow {
 		}
 	}
 
+	private MultiStatus createMultiStatus(String msg, Throwable t) {
+
+		List<Status> childStatuses = new ArrayList<>();
+		StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
+
+		for (StackTraceElement stackTrace : stackTraces) {
+			Status status = new Status(IStatus.ERROR, "net.viperfish.journal.swtGui", stackTrace.toString());
+			childStatuses.add(status);
+		}
+
+		MultiStatus ms = new MultiStatus("net.viperfish.journal.swtGui", IStatus.ERROR,
+				childStatuses.toArray(new Status[] {}), t.toString(), t);
+		return ms;
+	}
+
 	private void displayException(Throwable e) {
-		ErrorDialog dlg = new ErrorDialog(shell, SWT.None);
-		dlg.open(e);
+		MultiStatus status = createMultiStatus(e.getLocalizedMessage(), e);
+		ErrorDialog.openError(shell, "Error Occured",
+				"An Error has occured. If you would, please send the error to the developer at viperfish.net so we can improve the application",
+				status);
 	}
 }

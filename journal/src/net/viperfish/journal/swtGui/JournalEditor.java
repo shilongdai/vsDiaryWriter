@@ -2,6 +2,7 @@ package net.viperfish.journal.swtGui;
 
 import java.util.Date;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -23,6 +24,8 @@ public class JournalEditor {
 	protected Object result;
 	protected Shell shell;
 	private Text text;
+	private String initialTitle;
+	private String initialContent;
 	private RichTextEditor editor;
 	private Button saveButton;
 	private Journal target;
@@ -52,6 +55,17 @@ public class JournalEditor {
 		return target;
 	}
 
+	private void createTarget() {
+		target = new Journal();
+		target.setSubject(text.getText());
+		target.setContent(editor.getText());
+		target.setDate(new Date());
+	}
+
+	private boolean contentModified() {
+		return !(this.text.getText().equals(initialTitle) && this.editor.getText().equals(initialContent));
+	}
+
 	/**
 	 * Create contents of the dialog.
 	 */
@@ -64,10 +78,16 @@ public class JournalEditor {
 
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
-				if (savePressed) {
-					return;
-				} else {
-					target = null;
+				target = null;
+				if (contentModified()) {
+					if (savePressed) {
+						createTarget();
+					} else {
+						boolean confirm = MessageDialog.openConfirm(shell, "Save", "Save before exit?");
+						if (confirm) {
+							createTarget();
+						}
+					}
 				}
 
 			}
@@ -107,13 +127,15 @@ public class JournalEditor {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				savePressed = true;
-				target.setSubject(text.getText());
-				target.setContent(editor.getText());
-				target.setDate(new Date());
+
 				shell.dispose();
 			}
 		});
 		saveButton.setText("Save");
+
+		this.initialTitle = target.getSubject();
+		this.initialContent = target.getContent();
+
 	}
 
 }
