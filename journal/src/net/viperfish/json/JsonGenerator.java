@@ -2,6 +2,7 @@ package net.viperfish.json;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.text.DateFormat;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -15,10 +16,10 @@ public class JsonGenerator {
 	public JsonGenerator() {
 		objectMapper = new ObjectMapper();
 		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+		objectMapper.setDateFormat(DateFormat.getTimeInstance(DateFormat.FULL));
 	}
 
-	public String toJson(Object o) throws JsonGenerationException,
-			JsonMappingException {
+	public String toJson(Object o) throws JsonGenerationException, JsonMappingException {
 		StringWriter w = new StringWriter();
 		try {
 			objectMapper.writeValue(w, o);
@@ -30,8 +31,7 @@ public class JsonGenerator {
 
 	}
 
-	public <T> T fromJson(Class<T> srcClass, String data)
-			throws JsonParseException, JsonMappingException {
+	public <T> T fromJson(Class<T> srcClass, String data) throws JsonParseException, JsonMappingException {
 		T result = null;
 		try {
 			result = objectMapper.readValue(data, srcClass);
