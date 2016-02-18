@@ -1,13 +1,14 @@
 package test.java.dbTests;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.journal.framework.Journal;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import net.viperfish.journal.framework.EntryDatabase;
+import net.viperfish.journal.framework.Journal;
 
 public abstract class DatabaseTest {
 
@@ -72,18 +73,17 @@ public abstract class DatabaseTest {
 		Journal j = new Journal();
 		j.setContent("1");
 		j.setSubject("1");
-		j.setDate(new Date());
 		Journal result = getDB().addEntry(j);
 		j.setId(result.getId());
 		Journal i = new Journal();
 		i.setContent("2");
 		i.setSubject("2");
-		i.setDate(new Date());
 		result = getDB().addEntry(i);
 		i.setId(result.getId());
 		List<Journal> all = getDB().getAll();
-		Assert.assertEquals(true, all.get(0).equals(j));
-		Assert.assertEquals(true, all.get(1).equals(i));
+		Collections.sort(all);
+		Assert.assertEquals(true, (Collections.binarySearch(all, i) >= 0));
+		Assert.assertEquals(true, (Collections.binarySearch(all, j) >= 0));
 		cleanUp();
 	}
 

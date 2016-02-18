@@ -46,7 +46,7 @@ public class H2EntryDatabase extends HibernateEntryDatabase {
 
 	void createTable() {
 		s.createSQLQuery(
-				"create table if not exists JOURNAL(Id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, Subject TEXT, Date DATE, Content TEXT);")
+				"create table if not exists JOURNAL(Id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, Subject TEXT, Date TIMESTAMP, Content TEXT);")
 				.executeUpdate();
 	}
 

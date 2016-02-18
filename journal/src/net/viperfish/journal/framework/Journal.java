@@ -1,7 +1,5 @@
 package net.viperfish.journal.framework;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -49,7 +47,7 @@ public class Journal implements Comparable<Journal> {
 		this.subject = subject;
 	}
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getDate() {
 		return date;
 	}
@@ -122,17 +120,34 @@ public class Journal implements Comparable<Journal> {
 
 	@Override
 	public int compareTo(Journal o) {
-		return this.id.compareTo(o.getId());
+		if (o.equals(this)) {
+			return 0;
+		}
+		int idComp = this.id.compareTo(o.getId());
+		if (idComp == 0) {
+			int dateComp = this.date.compareTo(o.getDate());
+			if (dateComp == 0) {
+				int subjectComp = this.subject.compareTo(o.getSubject());
+				if (subjectComp == 0) {
+					int contentComp = this.content.compareTo(content);
+					return contentComp;
+				} else {
+					return subjectComp;
+				}
+			} else {
+				return dateComp;
+			}
+		} else {
+			return idComp;
+		}
 	}
 
 	@Override
 	public String toString() {
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		String result = new String();
-		result += subject;
-		result += " On ";
-		result += df.format(date);
-		return result;
+		return "Journal [subject=" + subject + ", date=" + date + ", content=" + content + ", id=" + id
+				+ ", getSubject()=" + getSubject() + ", getDate()=" + getDate() + ", getContent()=" + getContent()
+				+ ", getId()=" + getId() + ", hashCode()=" + hashCode() + ", getClass()=" + getClass() + ", toString()="
+				+ super.toString() + "]";
 	}
 
 }
