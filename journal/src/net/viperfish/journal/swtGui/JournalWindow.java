@@ -93,7 +93,7 @@ public class JournalWindow {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		final TableViewerColumn titles = new TableViewerColumn(tableViewer, SWT.NONE);
-		titles.getColumn().setWidth(300);
+		titles.getColumn().setWidth(200);
 		titles.getColumn().setText("Title");
 		titles.getColumn().setResizable(true);
 		titles.setLabelProvider(new ColumnLabelProvider() {
@@ -104,14 +104,14 @@ public class JournalWindow {
 			}
 		});
 		final TableViewerColumn dates = new TableViewerColumn(tableViewer, SWT.NONE);
-		dates.getColumn().setWidth(100);
+		dates.getColumn().setWidth(200);
 		dates.getColumn().setResizable(true);
 		dates.getColumn().setText("Date");
 		dates.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
 				Journal j = (Journal) element;
-				DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+				DateFormat df = new SimpleDateFormat("EEE h:mm a MM/dd/yyyy");
 				return df.format(j.getDate());
 			}
 		});
@@ -191,13 +191,13 @@ public class JournalWindow {
 					// table is getting smaller so make the columns
 					// smaller first and then resize the table to
 					// match the client area width
-					titles.getColumn().setWidth(width / 3 * 2);
+					titles.getColumn().setWidth(width / 2);
 					dates.getColumn().setWidth(width - titles.getColumn().getWidth() - 20);
 				} else {
 					// table is getting bigger so make the table
 					// bigger first and then make the columns wider
 					// to match the client area width
-					titles.getColumn().setWidth(width / 3 * 2);
+					titles.getColumn().setWidth(width / 2);
 					dates.getColumn().setWidth(width - titles.getColumn().getWidth() - 20);
 				}
 			}

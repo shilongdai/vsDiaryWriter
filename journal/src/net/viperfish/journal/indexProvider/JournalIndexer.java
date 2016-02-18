@@ -36,7 +36,7 @@ public class JournalIndexer extends LuceneIndexer<Journal> {
 	private final DateFormat df;
 
 	public JournalIndexer() {
-		df = new SimpleDateFormat("dd MM yyyy");
+		df = new SimpleDateFormat("EEE dd MM yyyy hh mm aa");
 	}
 
 	protected String parseJournal(Journal j) {
