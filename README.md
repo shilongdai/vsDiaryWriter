@@ -19,5 +19,4 @@ Or: if your operating system's graphical ui supports it, double click the jar fi
 This application uses SWT for it's GUI, so please use the appropriate version/release, or modify the pom file according to your operating system.
 
 # binary distributions
-Binary distribution of this application is available at: 
-https://sourceforge.net/projects/vjournalwriter/files/?source=navbar
+Binary distribution of this application is available at the release section of this software.
