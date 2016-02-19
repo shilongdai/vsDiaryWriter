@@ -20,4 +20,4 @@ This application uses SWT for it's GUI, so please use the appropriate version/re
 
 # binary distributions
 Binary distribution of this application is available at: 
-ftp://www.viperfish.net/journal/release/1.0/
+https://sourceforge.net/projects/vjournalwriter/files/?source=navbar
