@@ -82,7 +82,6 @@ public class JournalEditor {
 
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
-				target = null;
 				if (contentModified()) {
 					if (savePressed) {
 						createTarget();
@@ -90,8 +89,12 @@ public class JournalEditor {
 						boolean confirm = MessageDialog.openConfirm(shell, "Save", "Save before exit?");
 						if (confirm) {
 							createTarget();
+						} else {
+							target = null;
 						}
 					}
+				} else {
+					target = null;
 				}
 
 			}
