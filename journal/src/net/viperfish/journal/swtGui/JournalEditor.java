@@ -56,12 +56,10 @@ public class JournalEditor {
 	}
 
 	private void createTarget() {
-		Journal tmp = new Journal();
-		tmp.setId(target.getId());
-		tmp.setSubject(text.getText());
-		tmp.setContent(editor.getText());
-		tmp.setDate(new Date());
-		target = tmp;
+		target.setId(target.getId());
+		target.setSubject(text.getText());
+		target.setContent(editor.getText());
+		target.setDate(new Date());
 	}
 
 	private boolean contentModified() {
