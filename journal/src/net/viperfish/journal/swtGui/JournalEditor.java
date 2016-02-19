@@ -57,9 +57,7 @@ public class JournalEditor {
 
 	private void createTarget() {
 		Journal tmp = new Journal();
-		if (target.getId() != null) {
-			tmp.setId(target.getId());
-		}
+		tmp.setId(target.getId());
 		tmp.setSubject(text.getText());
 		tmp.setContent(editor.getText());
 		tmp.setDate(new Date());
