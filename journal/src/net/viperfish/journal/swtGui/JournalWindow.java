@@ -143,24 +143,6 @@ public class JournalWindow {
 			}
 		});
 
-		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent arg0) {
-				StructuredSelection selected = (StructuredSelection) arg0.getSelection();
-				if (selected.isEmpty()) {
-					return;
-				}
-				Journal result = new JournalEditor().open((Journal) selected.getFirstElement());
-				if (result == null) {
-					return;
-				}
-				e.submit(f.getEditContentOperation(result.getId(), result.getContent()));
-				e.submit(f.getEditSubjectOperation(result.getId(), result.getSubject()));
-				handleException();
-			}
-		});
-
 		search = new SearchJournal(searchText, tableViewer);
 
 		searchButton.addSelectionListener(search.createSelectAdapter());
@@ -184,6 +166,25 @@ public class JournalWindow {
 		});
 
 		search.displayAll();
+
+		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+
+			@Override
+			public void doubleClick(DoubleClickEvent arg0) {
+				StructuredSelection selected = (StructuredSelection) arg0.getSelection();
+				if (selected.isEmpty()) {
+					return;
+				}
+				Journal result = new JournalEditor().open((Journal) selected.getFirstElement());
+				if (result == null) {
+					return;
+				}
+				e.submit(f.getEditContentOperation(result.getId(), result.getContent()));
+				e.submit(f.getEditSubjectOperation(result.getId(), result.getSubject()));
+				search.searchJournals();
+				handleException();
+			}
+		});
 
 		shell.addControlListener(new ControlAdapter() {
 
@@ -264,6 +265,7 @@ public class JournalWindow {
 						"THIS ACTION CANNOT BE UNDONE. Clear All?");
 				if (toClear) {
 					JournalWindow.this.e.submit(f.getClearEntriesOperation());
+					search.searchJournals();
 				}
 			}
 
