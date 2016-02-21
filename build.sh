@@ -39,16 +39,19 @@ for i in $(ls); do
 	if [ $i = "journalLinux32" ]; then
 		wget $mozilla${xulRunner[0]};
 		tar -jxvf ${xulRunner[0]};
+		cp ../../linux-launcher.sh .
 	fi
 
 	if [ $i = "journalLinux64" ]; then
 		wget $mozilla${xulRunner[1]};
 		tar -jxvf ${xulRunner[1]};
+		cp ../../linux-launcher.sh .
 	fi
 
 	if [ $i = "journalMac64" ]; then
 		wget $mozilla${xulRunner[2]};
 		tar -jxvf${xulRunner[2]};
+		cp ../../mac-launcher.sh .
 	fi
 
 	#sign jar file
@@ -56,7 +59,7 @@ for i in $(ls); do
         /usr/java/default/bin/jarsigner -tsa http://timestamp.digicert.com -keystore $2 -storepass Mj2000629@DvpNt $jarFileName viperfish
 
 	#zip it up
-	zip -r $i.zip $jarFileName editor xulrunner;
+	zip -r $i.zip $jarFileName editor xulrunner $(ls | grep launcher.sh);
 	echo "copying product to $1";
 	mv $i.zip $1;
 	cd ../..;
