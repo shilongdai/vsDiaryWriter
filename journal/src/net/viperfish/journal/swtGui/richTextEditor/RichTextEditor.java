@@ -18,11 +18,16 @@ public class RichTextEditor extends Composite {
 	private String editor_content;
 	private boolean loadCompleted = false;
 
+	static {
+		File xulRunner = new File("./xulrunner");
+		System.setProperty("org.eclipse.swt.browser.XULRunnerPath", xulRunner.getAbsolutePath());
+	}
+
 	public RichTextEditor(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new GridLayout(1, true));
 
-		browser = new Browser(this, SWT.NONE);
+		browser = new Browser(this, SWT.MOZILLA);
 		browser.setJavascriptEnabled(true);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		browser.setDragDetect(true);
@@ -37,8 +42,10 @@ public class RichTextEditor extends Composite {
 
 			@Override
 			public void completed(ProgressEvent event) {
-				loadCompleted = true;
-				setText(editor_content);
+				if (!loadCompleted) {
+					loadCompleted = true;
+					setText(editor_content);
+				}
 			}
 
 		});
