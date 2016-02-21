@@ -39,19 +39,19 @@ for i in $(ls); do
 	if [ $i = "journalLinux32" ]; then
 		wget $mozilla${xulRunner[0]};
 		tar -jxvf ${xulRunner[0]};
-		cp ../../linux-launcher.sh .
+		cp ../../../linux-launcher.sh .
 	fi
 
 	if [ $i = "journalLinux64" ]; then
 		wget $mozilla${xulRunner[1]};
 		tar -jxvf ${xulRunner[1]};
-		cp ../../linux-launcher.sh .
+		cp ../../../linux-launcher.sh .
 	fi
 
 	if [ $i = "journalMac64" ]; then
 		wget $mozilla${xulRunner[2]};
 		tar -jxvf${xulRunner[2]};
-		cp ../../mac-launcher.sh .
+		cp ../../../mac-launcher.sh .
 	fi
 
 	#sign jar file
