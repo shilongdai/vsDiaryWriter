@@ -19,5 +19,4 @@ Or: if your operating system's graphical ui supports it, double click the jar fi
 This application uses SWT for it's GUI, so please use the appropriate version/release, or modify the pom file according to your operating system.
 
 # binary distributions
-Binary distribution of this application is available at: 
-ftp://www.viperfish.net/journal/release/1.0/
+Binary distribution of this application is available at the release section of this software.
