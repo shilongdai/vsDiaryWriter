@@ -12,10 +12,10 @@ The Browser must support the JavaScript File API.
 ## Installation
 
  1. Download the plugin from http://github.com/nmmf/base64image
- 
+
  2. Extract (decompress) the downloaded file into the plugins folder of your
 	CKEditor installation.
 	Example: http://example.com/ckeditor/plugins/base64image
-	
+
  3. Enable the plugin by using the extraPlugins configuration setting.
 	Example: CKEDITOR.config.extraPlugins = "base64image";
