@@ -1,6 +1,7 @@
 package test.java;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -21,6 +22,7 @@ import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.indexProvider.JournalIndexer;
 import net.viperfish.journal.operation.AddEntryOperation;
+import net.viperfish.journal.operation.ClearEntriesOperation;
 import net.viperfish.journal.operation.DeleteEntryOperation;
 import net.viperfish.journal.operation.EditContentOperation;
 import net.viperfish.journal.operation.EditSubjectOperation;
@@ -213,6 +215,23 @@ public class OperationTest {
 		Assert.assertEquals(true, isSorted(result));
 		Assert.assertEquals(100, result.size());
 		cleanUp();
+	}
+
+	@Test
+	public void testClearOperation() {
+		cleanUp();
+		List<Long> ids = new LinkedList<>();
+		for (int i = 0; i < 10; ++i) {
+			Journal j = new Journal();
+			Journal result = db.addEntry(j);
+			ids.add(result.getId());
+		}
+		ClearEntriesOperation c = new ClearEntriesOperation();
+		c.execute();
+		Assert.assertEquals(0, db.getAll().size());
+		for (Long i : ids) {
+			Assert.assertEquals(false, indexer.contains(i));
+		}
 	}
 
 	public void cleanUp() {

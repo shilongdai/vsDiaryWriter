@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -27,6 +28,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -40,22 +43,46 @@ import net.viperfish.journal.ui.OperationFactory;
 
 public class JournalWindow {
 
-	private Text text;
+	private Text searchText;
 	private Display display;
 	private Shell shell;
 	private Button searchButton;
-	private ToolBar toolBar;
+	private ToolBar operationBar;
 	private ToolItem newJournal;
 	private ToolItem deleteJournal;
 	private SearchJournal search;
 	private OperationExecutor e;
 	private OperationFactory f;
-	private Table table;
+	private Table searchResults;
 	private TableViewer tableViewer;
 
 	public JournalWindow() {
 		e = JournalApplication.getWorker();
 		f = JournalApplication.getOperationFactory();
+	}
+
+	private void newJournal() {
+		Journal result = new JournalEditor().open(new Journal());
+		if (result == null) {
+			return;
+		}
+		e.submit(f.getAddOperation(result));
+		search.searchJournals();
+		handleException();
+	}
+
+	private void deleteJournal() {
+		StructuredSelection selected = (StructuredSelection) tableViewer.getSelection();
+		if (selected.isEmpty()) {
+			return;
+		}
+		boolean toDelete = MessageDialog.openConfirm(shell, "Confirm", "THIS DELETION CANNOT BE UNDONE. Delete?");
+		if (toDelete) {
+			Journal s = (Journal) selected.getFirstElement();
+			e.submit(f.getDeleteOperation(s.getId()));
+			search.searchJournals();
+			handleException();
+		}
 	}
 
 	/**
@@ -69,29 +96,29 @@ public class JournalWindow {
 		shell.setSize(450, 400);
 		shell.setText("vJournal - 1.2.0-alpha.2");
 		shell.setLayout(new GridLayout(13, false));
-		text = new Text(shell, SWT.BORDER);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 12, 1));
+		searchText = new Text(shell, SWT.BORDER);
+		searchText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 12, 1));
 
 		searchButton = new Button(shell, SWT.NONE);
 		searchButton.setText("Search");
 
-		toolBar = new ToolBar(shell, SWT.FLAT | SWT.RIGHT);
-		toolBar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 13, 1));
+		operationBar = new ToolBar(shell, SWT.FLAT | SWT.RIGHT);
+		operationBar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 13, 1));
 
-		newJournal = new ToolItem(toolBar, SWT.NONE);
+		newJournal = new ToolItem(operationBar, SWT.NONE);
 		newJournal.setText("New");
 
-		deleteJournal = new ToolItem(toolBar, SWT.NONE);
+		deleteJournal = new ToolItem(operationBar, SWT.NONE);
 		deleteJournal.setText("Delete");
 
 		tableViewer = new TableViewer(shell, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		table = tableViewer.getTable();
-		GridData gd_table = new GridData(SWT.FILL, SWT.FILL, true, true, 13, 1);
-		gd_table.widthHint = 368;
-		table.setLayoutData(gd_table);
+		searchResults = tableViewer.getTable();
+		GridData gd_searchResults = new GridData(SWT.FILL, SWT.FILL, true, true, 13, 1);
+		gd_searchResults.widthHint = 368;
+		searchResults.setLayoutData(gd_searchResults);
 		tableViewer.setContentProvider(new ArrayContentProvider());
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
+		searchResults.setHeaderVisible(true);
+		searchResults.setLinesVisible(true);
 		final TableViewerColumn titles = new TableViewerColumn(tableViewer, SWT.NONE);
 		titles.getColumn().setWidth(200);
 		titles.getColumn().setText("Title");
@@ -134,21 +161,15 @@ public class JournalWindow {
 			}
 		});
 
-		search = new SearchJournal(text, tableViewer);
+		search = new SearchJournal(searchText, tableViewer);
 
 		searchButton.addSelectionListener(search.createSelectAdapter());
-		text.addModifyListener(search.createModifyAdapter());
+		searchText.addModifyListener(search.createModifyAdapter());
 		newJournal.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				Journal result = new JournalEditor().open(new Journal());
-				if (result == null) {
-					return;
-				}
-				e.submit(f.getAddOperation(result));
-				search.searchJournals();
-				handleException();
+				newJournal();
 			}
 
 		});
@@ -157,14 +178,7 @@ public class JournalWindow {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				StructuredSelection selected = (StructuredSelection) tableViewer.getSelection();
-				if (selected.isEmpty()) {
-					return;
-				}
-				Journal s = (Journal) selected.getFirstElement();
-				e.submit(f.getDeleteOperation(s.getId()));
-				search.searchJournals();
-				handleException();
+				deleteJournal();
 			}
 
 		});
@@ -178,15 +192,15 @@ public class JournalWindow {
 				// TODO Auto-generated method stub
 				super.controlResized(arg0);
 				Rectangle area = shell.getClientArea();
-				Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				int width = area.width - table.getBorderWidth() * 2;
-				if (preferredSize.y > area.height + table.getHeaderHeight()) {
+				Point preferredSize = searchResults.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				int width = area.width - searchResults.getBorderWidth() * 2;
+				if (preferredSize.y > area.height + searchResults.getHeaderHeight()) {
 					// Subtract the scrollbar width from the total column width
 					// if a vertical scrollbar will be required
-					Point vBarSize = table.getVerticalBar().getSize();
+					Point vBarSize = searchResults.getVerticalBar().getSize();
 					width -= vBarSize.x;
 				}
-				Point oldSize = table.getSize();
+				Point oldSize = searchResults.getSize();
 				if (oldSize.x > area.width) {
 					// table is getting smaller so make the columns
 					// smaller first and then resize the table to
@@ -205,11 +219,79 @@ public class JournalWindow {
 		});
 
 		shell.setDefaultButton(searchButton);
+
+		Menu mainMenu = new Menu(shell, SWT.BAR);
+		shell.setMenuBar(mainMenu);
+
+		MenuItem fileMenu = new MenuItem(mainMenu, SWT.CASCADE);
+		fileMenu.setText("File");
+
+		Menu menu = new Menu(fileMenu);
+		fileMenu.setMenu(menu);
+
+		MenuItem newEntryMenu = new MenuItem(menu, SWT.NONE);
+		newEntryMenu.setText("New Entry");
+		newEntryMenu.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e);
+				newJournal();
+			}
+
+		});
+
+		MenuItem deleteEntryMenu = new MenuItem(menu, SWT.NONE);
+		deleteEntryMenu.setText("Delete Entry");
+		deleteEntryMenu.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e);
+				deleteJournal();
+			}
+
+		});
+
+		MenuItem clearEntrieMenu = new MenuItem(menu, SWT.NONE);
+		clearEntrieMenu.setText("Clear All");
+		clearEntrieMenu.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e);
+				boolean toClear = MessageDialog.openConfirm(shell, "Confirm",
+						"THIS ACTION CANNOT BE UNDONE. Clear All?");
+				if (toClear) {
+					JournalWindow.this.e.submit(f.getClearEntriesOperation());
+				}
+			}
+
+		});
+
+		MenuItem exportMenu = new MenuItem(menu, SWT.NONE);
+		exportMenu.setText("Export");
+
+		MenuItem mntmImport = new MenuItem(menu, SWT.NONE);
+		mntmImport.setText("Import");
+
+		MenuItem preferenceMenu = new MenuItem(mainMenu, SWT.CASCADE);
+		preferenceMenu.setText("Preference");
+
+		Menu menu_1 = new Menu(preferenceMenu);
+		preferenceMenu.setMenu(menu_1);
+
+		MenuItem helpMenu = new MenuItem(mainMenu, SWT.CASCADE);
+		helpMenu.setText("Help");
+
+		Menu menu_2 = new Menu(helpMenu);
+		helpMenu.setMenu(menu_2);
+
+		MenuItem aboutMenu = new MenuItem(menu_2, SWT.NONE);
+		aboutMenu.setText("About");
 		shell.open();
 		shell.layout();
-		while (!shell.isDisposed())
-
-		{
+		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}

@@ -114,6 +114,8 @@ public class JournalSetup {
 			}
 
 		});
+
+		preferenceList.getList().select(0);
 		setupWindow.open();
 		setupWindow.layout();
 		while (!setupWindow.isDisposed()) {

@@ -7,6 +7,7 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.operation.AddEntryOperation;
+import net.viperfish.journal.operation.ClearEntriesOperation;
 import net.viperfish.journal.operation.DeleteEntryOperation;
 import net.viperfish.journal.operation.EditContentOperation;
 import net.viperfish.journal.operation.EditSubjectOperation;
@@ -49,6 +50,11 @@ public class StandardOperationFactory implements OperationFactory {
 	@Override
 	public OperationWithResult<Journal> getGetEntryOperation(Long id) {
 		return new GetEntryOperation(id);
+	}
+
+	@Override
+	public Operation getClearEntriesOperation() {
+		return new ClearEntriesOperation();
 	}
 
 }

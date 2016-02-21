@@ -84,4 +84,11 @@ public interface OperationFactory {
 	 */
 	public OperationWithResult<Journal> getGetEntryOperation(Long id);
 
+	/**
+	 * get an operation that can clear all entries
+	 * 
+	 * @return the operation that clear entries
+	 */
+	public Operation getClearEntriesOperation();
+
 }
