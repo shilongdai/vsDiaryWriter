@@ -67,7 +67,7 @@ public class JournalWindow {
 		display = Display.getDefault();
 		shell = new Shell();
 		shell.setSize(450, 400);
-		shell.setText("vJournal - developmental 0.3.3.1");
+		shell.setText("vJournal - 1.2.0-alpha.2");
 		shell.setLayout(new GridLayout(13, false));
 		text = new Text(shell, SWT.BORDER);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 12, 1));
