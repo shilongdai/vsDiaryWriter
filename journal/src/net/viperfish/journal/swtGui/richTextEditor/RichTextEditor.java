@@ -89,6 +89,7 @@ public class RichTextEditor extends Composite {
 
 		if (executed) {
 			content = (String) browser.getData("content");
+			this.editor_content = content;
 		}
 
 		return content;
