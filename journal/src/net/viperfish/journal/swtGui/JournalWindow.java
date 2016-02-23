@@ -1,7 +1,5 @@
 package net.viperfish.journal.swtGui;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +28,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -42,8 +41,6 @@ import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.ui.OperationExecutor;
 import net.viperfish.journal.ui.OperationFactory;
-import net.viperfish.utils.file.IOFile;
-import net.viperfish.utils.file.TextIOStreamHandler;
 
 public class JournalWindow {
 
@@ -277,9 +274,40 @@ public class JournalWindow {
 
 		MenuItem exportMenu = new MenuItem(menu, SWT.NONE);
 		exportMenu.setText("Export");
+		exportMenu.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e);
+				boolean toExport = MessageDialog.openConfirm(shell, "Export",
+						"All your entries will be exported to plain text, are you sure?");
+				if (toExport) {
+					JournalWindow.this.e.submit(f.getExportEntriesOperation("export.txt"));
+					MessageDialog.openInformation(shell, "Export Complete",
+							"All entries have been exported to export.txt, please store it safely and ensure the integrity of the data");
+				}
+			}
+
+		});
 
 		MenuItem mntmImport = new MenuItem(menu, SWT.NONE);
 		mntmImport.setText("Import");
+		mntmImport.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e);
+				FileDialog selecter = new FileDialog(shell);
+				selecter.setText("Select the file to import");
+				String selected = selecter.open();
+				if (selected == null) {
+					return;
+				}
+				JournalWindow.this.e.submit(f.getImportEntriesOperation(selected));
+				search.searchJournals();
+			}
+
+		});
 
 		MenuItem preferenceMenu = new MenuItem(mainMenu, SWT.CASCADE);
 		preferenceMenu.setText("Preference");
@@ -300,9 +328,8 @@ public class JournalWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
-				IOFile license = new IOFile(new File("LICENSE"), new TextIOStreamHandler());
-				String aboutLicense = license.read(StandardCharsets.UTF_8);
-				MessageDialog.openInformation(shell, "About", aboutLicense);
+				MessageDialog.openInformation(shell, "About",
+						"Under Construction. This is a diary writer that was created by Shilong Dai, inspired by Abigail Nunez, and others");
 			}
 
 		});

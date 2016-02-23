@@ -11,8 +11,10 @@ import net.viperfish.journal.operation.ClearEntriesOperation;
 import net.viperfish.journal.operation.DeleteEntryOperation;
 import net.viperfish.journal.operation.EditContentOperation;
 import net.viperfish.journal.operation.EditSubjectOperation;
+import net.viperfish.journal.operation.ExportJournalOperation;
 import net.viperfish.journal.operation.GetAllOperation;
 import net.viperfish.journal.operation.GetEntryOperation;
+import net.viperfish.journal.operation.ImportEntriesOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
 
 public class StandardOperationFactory implements OperationFactory {
@@ -55,6 +57,16 @@ public class StandardOperationFactory implements OperationFactory {
 	@Override
 	public Operation getClearEntriesOperation() {
 		return new ClearEntriesOperation();
+	}
+
+	@Override
+	public Operation getExportEntriesOperation(String targetFile) {
+		return new ExportJournalOperation(targetFile);
+	}
+
+	@Override
+	public Operation getImportEntriesOperation(String srcFile) {
+		return new ImportEntriesOperation(srcFile);
 	}
 
 }

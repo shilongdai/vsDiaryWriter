@@ -91,4 +91,22 @@ public interface OperationFactory {
 	 */
 	public Operation getClearEntriesOperation();
 
+	/**
+	 * get an operation that export all entries
+	 * 
+	 * @param targetFile
+	 *            the file name to export to
+	 * @return the operation to export
+	 */
+	public Operation getExportEntriesOperation(String targetFile);
+
+	/**
+	 * get an operation that import entries from a specified file
+	 * 
+	 * @param srcFile
+	 *            the name of the file to export
+	 * @return the operation to import
+	 */
+	public Operation getImportEntriesOperation(String srcFile);
+
 }

@@ -1,5 +1,7 @@
 package test.java;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +11,9 @@ import java.util.concurrent.Executors;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.AuthManagers;
@@ -26,10 +31,15 @@ import net.viperfish.journal.operation.ClearEntriesOperation;
 import net.viperfish.journal.operation.DeleteEntryOperation;
 import net.viperfish.journal.operation.EditContentOperation;
 import net.viperfish.journal.operation.EditSubjectOperation;
+import net.viperfish.journal.operation.ExportJournalOperation;
 import net.viperfish.journal.operation.GetAllOperation;
 import net.viperfish.journal.operation.GetEntryOperation;
+import net.viperfish.journal.operation.ImportEntriesOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
 import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
+import net.viperfish.json.JsonGenerator;
+import net.viperfish.utils.file.IOFile;
+import net.viperfish.utils.file.TextIOStreamHandler;
 
 public class OperationTest {
 
@@ -203,12 +213,7 @@ public class OperationTest {
 	@Test
 	public void testGetAllOperation() {
 		cleanUp();
-		for (int i = 0; i < 100; ++i) {
-			Journal j = new Journal();
-			j.setSubject("test " + i);
-			j.setContent("test " + i);
-			db.addEntry(j);
-		}
+		addEntries(100);
 		GetAllOperation getAll = new GetAllOperation();
 		executeAsyncOperation(getAll);
 		List<Journal> result = getAll.getResult();
@@ -220,23 +225,80 @@ public class OperationTest {
 	@Test
 	public void testClearOperation() {
 		cleanUp();
-		List<Long> ids = new LinkedList<>();
-		for (int i = 0; i < 10; ++i) {
-			Journal j = new Journal();
-			Journal result = db.addEntry(j);
-			ids.add(result.getId());
-		}
+		List<Long> ids = addEntries(10);
 		ClearEntriesOperation c = new ClearEntriesOperation();
 		c.execute();
 		Assert.assertEquals(0, db.getAll().size());
 		for (Long i : ids) {
 			Assert.assertEquals(false, indexer.contains(i));
 		}
+		cleanUp();
+	}
+
+	@Test
+	public void testExportOperation() {
+		cleanUp();
+		addEntries(20, "toExport");
+		List<Journal> all = db.getAll();
+		try {
+			String expectedOutput = new JsonGenerator().toJson(all.toArray(new Journal[1]));
+			new ExportJournalOperation("test.txt").execute();
+			IOFile exportFile = new IOFile(new File("test.txt"), new TextIOStreamHandler());
+			String actualOutput = exportFile.read(StandardCharsets.UTF_16);
+			Assert.assertEquals(expectedOutput, actualOutput);
+		} catch (JsonGenerationException | JsonMappingException e) {
+			throw new RuntimeException(e);
+		}
+		cleanUp();
+	}
+
+	@Test
+	public void testImportOperation() {
+		cleanUp();
+		addEntries(20, "testImport");
+		exportJournals(db.getAll());
+		cleanUp();
+		new ImportEntriesOperation("test.txt").execute();
+		List<Journal> imported = db.getAll();
+		int count = 0;
+		for (Journal i : imported) {
+			Assert.assertEquals("testImport", i.getSubject());
+			Assert.assertEquals("testImport", i.getContent());
+			++count;
+		}
+		Assert.assertEquals(20, count);
 	}
 
 	public void cleanUp() {
 		db.clear();
 		indexer.clear();
+	}
+
+	private void exportJournals(List<Journal> src) {
+		try {
+			String exported = new JsonGenerator().toJson(src);
+			IOFile exportFile = new IOFile(new File("test.txt"), new TextIOStreamHandler());
+			exportFile.write(exported, StandardCharsets.UTF_16);
+		} catch (JsonGenerationException | JsonMappingException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	private List<Long> addEntries(int howMany) {
+		return addEntries(howMany, "test");
+	}
+
+	private List<Long> addEntries(int howMany, String allContent) {
+		List<Long> resultList = new LinkedList<>();
+		for (int i = 0; i < howMany; ++i) {
+			Journal j = new Journal();
+			j.setContent(allContent);
+			j.setSubject(allContent);
+			Journal result = db.addEntry(j);
+			resultList.add(result.getId());
+		}
+		return resultList;
 	}
 
 	private void initComponents() {
