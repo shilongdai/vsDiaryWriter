@@ -59,7 +59,7 @@ for i in $(ls); do
         /usr/java/default/bin/jarsigner -tsa http://timestamp.digicert.com -keystore $2 -storepass Mj2000629@DvpNt $jarFileName viperfish
 
 	#zip it up
-	zip -r $i.zip $jarFileName editor xulrunner $(ls | grep launcher.sh);
+	zip -r $i.zip $jarFileName editor xulrunner $(ls | grep launcher.sh) ../../../LICENSE;
 	echo "copying product to $1";
 	mv $i.zip $1;
 	cd ../..;

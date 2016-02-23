@@ -1,5 +1,7 @@
 package net.viperfish.journal.swtGui;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,6 +42,8 @@ import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.ui.OperationExecutor;
 import net.viperfish.journal.ui.OperationFactory;
+import net.viperfish.utils.file.IOFile;
+import net.viperfish.utils.file.TextIOStreamHandler;
 
 public class JournalWindow {
 
@@ -291,6 +295,17 @@ public class JournalWindow {
 
 		MenuItem aboutMenu = new MenuItem(menu_2, SWT.NONE);
 		aboutMenu.setText("About");
+		aboutMenu.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e);
+				IOFile license = new IOFile(new File("LICENSE"), new TextIOStreamHandler());
+				String aboutLicense = license.read(StandardCharsets.UTF_8);
+				MessageDialog.openInformation(shell, "About", aboutLicense);
+			}
+
+		});
 		shell.open();
 		shell.layout();
 		while (!shell.isDisposed()) {
