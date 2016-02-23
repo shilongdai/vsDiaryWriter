@@ -95,7 +95,7 @@ public class JournalWindow {
 		display = Display.getDefault();
 		shell = new Shell();
 		shell.setSize(450, 400);
-		shell.setText("vsDiary - 1.0.0-alpha.1");
+		shell.setText("vsDiary - 1.0.0-alpha.2");
 		shell.setLayout(new GridLayout(13, false));
 		searchText = new Text(shell, SWT.BORDER);
 		searchText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 12, 1));
