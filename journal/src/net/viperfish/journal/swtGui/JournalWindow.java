@@ -2,13 +2,7 @@ package net.viperfish.journal.swtGui;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -56,6 +50,7 @@ public class JournalWindow {
 	private OperationFactory f;
 	private Table searchResults;
 	private TableViewer tableViewer;
+	private ExceptionDisplayer errorReporter;
 
 	public JournalWindow() {
 		e = JournalApplication.getWorker();
@@ -69,7 +64,6 @@ public class JournalWindow {
 		}
 		e.submit(f.getAddOperation(result));
 		search.searchJournals();
-		handleException();
 	}
 
 	private void deleteJournal() {
@@ -82,7 +76,6 @@ public class JournalWindow {
 			Journal s = (Journal) selected.getFirstElement();
 			e.submit(f.getDeleteOperation(s.getId()));
 			search.searchJournals();
-			handleException();
 		}
 	}
 
@@ -97,6 +90,11 @@ public class JournalWindow {
 		shell.setSize(450, 400);
 		shell.setText("vsDiary - 1.0.0-alpha.2");
 		shell.setLayout(new GridLayout(13, false));
+
+		errorReporter = new ExceptionDisplayer(shell);
+
+		e.addObserver(errorReporter);
+
 		searchText = new Text(shell, SWT.BORDER);
 		searchText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 12, 1));
 
@@ -166,8 +164,6 @@ public class JournalWindow {
 
 		});
 
-		search.displayAll();
-
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 
 			@Override
@@ -183,7 +179,6 @@ public class JournalWindow {
 				e.submit(f.getEditContentOperation(result.getId(), result.getContent()));
 				e.submit(f.getEditSubjectOperation(result.getId(), result.getSubject()));
 				search.searchJournals();
-				handleException();
 			}
 		});
 
@@ -279,9 +274,11 @@ public class JournalWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
-				boolean toExport = MessageDialog.openConfirm(shell, "Export",
-						"All your entries will be exported to plain text, are you sure?");
-				if (toExport) {
+				FileDialog exportSelector = new FileDialog(shell);
+				exportSelector.setOverwrite(true);
+				exportSelector.setText("Enter a location to export");
+				String toExport = exportSelector.open();
+				if (toExport != null) {
 					JournalWindow.this.e.submit(f.getExportEntriesOperation("export.txt"));
 					MessageDialog.openInformation(shell, "Export Complete",
 							"All entries have been exported to export.txt, please store it safely and ensure the integrity of the data");
@@ -310,10 +307,13 @@ public class JournalWindow {
 		});
 
 		MenuItem preferenceMenu = new MenuItem(mainMenu, SWT.CASCADE);
-		preferenceMenu.setText("Preference");
+		preferenceMenu.setText("Settings");
 
-		Menu menu_1 = new Menu(preferenceMenu);
-		preferenceMenu.setMenu(menu_1);
+		Menu settingMenu = new Menu(preferenceMenu);
+		preferenceMenu.setMenu(settingMenu);
+
+		MenuItem passwordMenu = new MenuItem(settingMenu, SWT.NONE);
+		passwordMenu.setText("Password");
 
 		MenuItem helpMenu = new MenuItem(mainMenu, SWT.CASCADE);
 		helpMenu.setText("Help");
@@ -329,12 +329,13 @@ public class JournalWindow {
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
 				MessageDialog.openInformation(shell, "About",
-						"Under Construction. This is a diary writer that was created by Shilong Dai, inspired by Abigail Nunez, and others");
+						"Created by Shilong Dai. This is a special thanks to Abigail Nunez, who has been a great friend and has helped me a lot. It is also created to enhance the privacy of user digitally. Everyone should be able to keep their most inner thoughts private");
 			}
 
 		});
 		shell.open();
 		shell.layout();
+		search.displayAll();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -343,31 +344,4 @@ public class JournalWindow {
 
 	}
 
-	private void handleException() {
-		while (e.hasException()) {
-			displayException(e.getNextError());
-		}
-	}
-
-	private MultiStatus createMultiStatus(String msg, Throwable t) {
-
-		List<Status> childStatuses = new ArrayList<>();
-		StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
-
-		for (StackTraceElement stackTrace : stackTraces) {
-			Status status = new Status(IStatus.ERROR, "net.viperfish.journal.swtGui", stackTrace.toString());
-			childStatuses.add(status);
-		}
-
-		MultiStatus ms = new MultiStatus("net.viperfish.journal.swtGui", IStatus.ERROR,
-				childStatuses.toArray(new Status[] {}), t.toString(), t);
-		return ms;
-	}
-
-	private void displayException(Throwable e) {
-		MultiStatus status = createMultiStatus(e.getLocalizedMessage(), e);
-		ErrorDialog.openError(shell, "Error Occured",
-				"An Error has occured. If you would, please send the error to the developer at viperfish.net so we can improve the application",
-				status);
-	}
 }

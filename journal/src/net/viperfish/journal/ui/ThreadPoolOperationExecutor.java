@@ -1,18 +1,13 @@
 package net.viperfish.journal.ui;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import net.viperfish.journal.framework.Operation;
 
-public class ThreadPoolOperationExecutor implements OperationExecutor {
+public class ThreadPoolOperationExecutor extends OperationExecutor {
 
 	private ExecutorService pool;
-	private List<Throwable> errors;
-	private ExceptionHandler e;
 
 	private class OperationRunner implements Runnable {
 
@@ -24,51 +19,23 @@ public class ThreadPoolOperationExecutor implements OperationExecutor {
 
 		@Override
 		public void run() {
-			o.execute();
-
-		}
-
-	}
-
-	private class ExceptionHandler implements Thread.UncaughtExceptionHandler {
-
-		@Override
-		public void uncaughtException(Thread t, Throwable e) {
-			errors.add(e);
-			e.printStackTrace();
+			try {
+				o.execute();
+			} catch (Throwable s) {
+				ThreadPoolOperationExecutor.this.notifyObservers(s);
+			}
 
 		}
 
 	}
 
 	public ThreadPoolOperationExecutor() {
-		errors = new LinkedList<Throwable>();
-		errors = java.util.Collections.synchronizedList(errors);
-		e = new ExceptionHandler();
-		pool = Executors.newSingleThreadExecutor(new ThreadFactory() {
-
-			@Override
-			public Thread newThread(Runnable r) {
-				Thread t = new Thread(r);
-				t.setUncaughtExceptionHandler(e);
-				return t;
-			}
-		});
+		pool = Executors.newSingleThreadExecutor();
 	}
 
 	@Override
 	public void submit(Operation o) {
 		pool.submit(new OperationRunner(o));
-	}
-
-	@Override
-	public boolean hasException() {
-		return !errors.isEmpty();
-	}
-
-	@Override
-	public Throwable getNextError() {
-		return errors.remove(0);
 	}
 
 	@Override

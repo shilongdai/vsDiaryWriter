@@ -110,10 +110,10 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		// encrypt
 		String cipherString;
 		cipherString = encryptData(bytes);
-		cipherString += "$";
 
 		// generate mac
-		String macString = macData(bytes);
+		String macString = macData(cipherString.getBytes(StandardCharsets.UTF_16));
+		cipherString += "$";
 
 		cipherString += macString;
 		return cipherString;
@@ -140,6 +140,14 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		String cData = parts[1];
 		String macString = parts[2];
 
+		// verify checksum
+		byte[] rawMac = Base64.decodeBase64(macString);
+
+		byte[] expectedMac = mac.calculateMac((ivData + "$" + cData).getBytes(StandardCharsets.UTF_16));
+		if (!Arrays.equals(expectedMac, rawMac)) {
+			throw new CompromisedDataException();
+		}
+
 		byte[] rIv = Base64.decodeBase64(ivData);
 		enc.setIv(rIv);
 
@@ -148,13 +156,6 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 		byte[] plain = compress.deflate(compressed);
 		String plainText = new String(plain, StandardCharsets.UTF_16);
 
-		// verify checksum
-		byte[] rawMac = Base64.decodeBase64(macString);
-
-		byte[] expectedMac = mac.calculateMac(plain);
-		if (!Arrays.equals(expectedMac, rawMac)) {
-			throw new CompromisedDataException();
-		}
 		return plainText;
 	}
 
@@ -191,7 +192,6 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 			return result;
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 				| BadPaddingException e) {
-			e.fillInStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
@@ -209,7 +209,6 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 			return result;
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 				| BadPaddingException | CompromisedDataException e) {
-			e.fillInStackTrace();
 			throw new RuntimeException(e);
 		}
 	}

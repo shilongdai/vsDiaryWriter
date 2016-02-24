@@ -51,6 +51,7 @@ for i in $(ls); do
 	if [ $i = "journalMac64" ]; then
 		wget $mozilla${xulRunner[2]};
 		tar -jxvf${xulRunner[2]};
+		mv XUL.framework/Versions/Current/ xulrunner
 		cp ../../../mac-launcher.sh .
 	fi
 

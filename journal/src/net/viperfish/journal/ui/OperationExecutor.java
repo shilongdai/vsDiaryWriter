@@ -1,5 +1,6 @@
 package net.viperfish.journal.ui;
 
+import net.viperfish.journal.framework.Observable;
 import net.viperfish.journal.framework.Operation;
 
 /**
@@ -8,7 +9,7 @@ import net.viperfish.journal.framework.Operation;
  * @author sdai
  *
  */
-public interface OperationExecutor {
+public abstract class OperationExecutor extends Observable<Throwable> {
 
 	/**
 	 * submit a operation to execute later
@@ -19,21 +20,7 @@ public interface OperationExecutor {
 	public abstract void submit(Operation o);
 
 	/**
-	 * check if any errors occurred
-	 * 
-	 * @return if error occurred
-	 */
-	public abstract boolean hasException();
-
-	/**
-	 * get the next caught exception
-	 * 
-	 * @return a caught exception
-	 */
-	public abstract Throwable getNextError();
-
-	/**
 	 * clean up
 	 */
-	public void terminate();
+	public abstract void terminate();
 }
