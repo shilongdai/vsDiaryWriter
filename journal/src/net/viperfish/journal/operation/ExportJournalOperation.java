@@ -34,6 +34,9 @@ public class ExportJournalOperation implements Operation {
 	public void execute() {
 		List<Journal> allJournals = db.getAll();
 		Journal[] toExport = allJournals.toArray(new Journal[1]);
+		for (Journal i : toExport) {
+			i.setId(null);
+		}
 		try {
 			String result = generator.toJson(toExport);
 			outputTarget.write(result, StandardCharsets.UTF_16);
