@@ -16,7 +16,7 @@ public class JsonGenerator {
 	public JsonGenerator() {
 		objectMapper = new ObjectMapper();
 		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-		objectMapper.setDateFormat(DateFormat.getTimeInstance(DateFormat.FULL));
+		objectMapper.setDateFormat(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL));
 	}
 
 	public String toJson(Object o) throws JsonGenerationException, JsonMappingException {

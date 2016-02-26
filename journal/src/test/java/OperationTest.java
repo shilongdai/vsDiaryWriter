@@ -240,6 +240,9 @@ public class OperationTest {
 		cleanUp();
 		addEntries(20, "toExport");
 		List<Journal> all = db.getAll();
+		for (Journal i : all) {
+			i.setId(null);
+		}
 		try {
 			String expectedOutput = new JsonGenerator().toJson(all.toArray(new Journal[1]));
 			new ExportJournalOperation("test.txt").execute();
