@@ -24,8 +24,7 @@ public class JsonGenerator {
 		try {
 			objectMapper.writeValue(w, o);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		return w.toString();
 
@@ -36,7 +35,7 @@ public class JsonGenerator {
 		try {
 			result = objectMapper.readValue(data, srcClass);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		return result;
 	}
