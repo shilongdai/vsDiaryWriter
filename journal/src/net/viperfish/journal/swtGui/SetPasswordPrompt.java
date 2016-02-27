@@ -13,15 +13,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import net.viperfish.journal.framework.AuthManagers;
-import net.viperfish.journal.framework.AuthenticationManager;
+import net.viperfish.journal.JournalApplication;
 
 public class SetPasswordPrompt {
 
-	private AuthenticationManager mgmt;
 	private Text newPassword;
 	private Text retypePassword;
 	private boolean result;
+	private PasswordOperation ops;
 
 	public SetPasswordPrompt() {
 	}
@@ -35,8 +34,7 @@ public class SetPasswordPrompt {
 	 * 
 	 * @wbp.parser.entryPoint
 	 */
-	public boolean open() {
-		mgmt = AuthManagers.INSTANCE.getAuthManager();
+	public boolean open(PasswordOperation ops) {
 		Display display = Display.getDefault();
 		final Shell shell = new Shell();
 		shell.setSize(450, 224);
@@ -44,6 +42,7 @@ public class SetPasswordPrompt {
 		shell.setLayout(new GridLayout(2, false));
 		new Label(shell, SWT.NONE);
 		new Label(shell, SWT.NONE);
+		this.ops = ops;
 
 		Label newPassLabel = new Label(shell, SWT.NONE);
 		newPassLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -79,7 +78,7 @@ public class SetPasswordPrompt {
 
 		});
 
-		Button done = new Button(shell, SWT.NONE);
+		final Button done = new Button(shell, SWT.NONE);
 		done.setText("Done");
 
 		done.addSelectionListener(new SelectionAdapter() {
@@ -87,9 +86,17 @@ public class SetPasswordPrompt {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if (canSavePassword()) {
-					mgmt.setPassword(newPassword.getText());
+					if (SetPasswordPrompt.this.ops == PasswordOperation.SET) {
+						JournalApplication.getWorker().submit(JournalApplication.getOperationFactory()
+								.getSetPasswordOperation(newPassword.getText()));
+					} else if (SetPasswordPrompt.this.ops == PasswordOperation.CHANGE) {
+						JournalApplication.getWorker().submit(JournalApplication.getOperationFactory()
+								.getChangePasswordOperation(newPassword.getText()));
+					}
 					result = true;
 					shell.dispose();
+				} else {
+					passwordMismatch.setVisible(true);
 				}
 			}
 
@@ -101,16 +108,18 @@ public class SetPasswordPrompt {
 			public void modifyText(ModifyEvent arg0) {
 				if (!canSavePassword()) {
 					passwordMismatch.setVisible(true);
+					done.setEnabled(false);
 
 				} else {
 					passwordMismatch.setVisible(false);
+					done.setEnabled(true);
 				}
 
 			}
 		});
 
 		shell.setDefaultButton(done);
-
+		done.setEnabled(false);
 		shell.open();
 		shell.layout();
 		while (!shell.isDisposed()) {

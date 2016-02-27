@@ -314,6 +314,16 @@ public class JournalWindow {
 
 		MenuItem passwordMenu = new MenuItem(settingMenu, SWT.NONE);
 		passwordMenu.setText("Password");
+		passwordMenu.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				super.widgetSelected(arg0);
+				SetPasswordPrompt prompt = new SetPasswordPrompt();
+				prompt.open(PasswordOperation.CHANGE);
+			}
+
+		});
 
 		MenuItem helpMenu = new MenuItem(mainMenu, SWT.CASCADE);
 		helpMenu.setText("Help");

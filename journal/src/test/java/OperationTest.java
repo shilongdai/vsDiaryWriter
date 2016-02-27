@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.AuthManagers;
+import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
@@ -27,6 +28,7 @@ import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.indexProvider.JournalIndexer;
 import net.viperfish.journal.operation.AddEntryOperation;
+import net.viperfish.journal.operation.ChangePasswordOperation;
 import net.viperfish.journal.operation.ClearEntriesOperation;
 import net.viperfish.journal.operation.DeleteEntryOperation;
 import net.viperfish.journal.operation.EditContentOperation;
@@ -36,6 +38,7 @@ import net.viperfish.journal.operation.GetAllOperation;
 import net.viperfish.journal.operation.GetEntryOperation;
 import net.viperfish.journal.operation.ImportEntriesOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
+import net.viperfish.journal.operation.SetPasswordOperation;
 import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
 import net.viperfish.json.JsonGenerator;
 import net.viperfish.utils.file.IOFile;
@@ -45,6 +48,7 @@ public class OperationTest {
 
 	private EntryDatabase db;
 	private JournalIndexer indexer;
+	private AuthenticationManager mger;
 	private final ExecutorService threadpool;
 
 	private void setupConfig() {
@@ -272,9 +276,32 @@ public class OperationTest {
 		Assert.assertEquals(20, count);
 	}
 
+	@Test
+	public void testChangePassword() {
+		cleanUp();
+		addEntries(20, "testPassword");
+		new ChangePasswordOperation("newPass").execute();
+		Assert.assertEquals("newPass", mger.getPassword());
+		for (Journal i : db.getAll()) {
+			Assert.assertEquals("testPassword", i.getSubject());
+			Assert.assertEquals("testPassword", i.getContent());
+		}
+		cleanUp();
+	}
+
+	@Test
+	public void testSetPassword() {
+		cleanUp();
+		new SetPasswordOperation("test-set").execute();
+		Assert.assertEquals("test-set", mger.getPassword());
+		cleanUp();
+	}
+
 	public void cleanUp() {
+		mger.clear();
 		db.clear();
 		indexer.clear();
+		mger.setPassword("test");
 	}
 
 	private void exportJournals(List<Journal> src) {
@@ -305,7 +332,8 @@ public class OperationTest {
 	}
 
 	private void initComponents() {
-		AuthManagers.INSTANCE.getAuthManager().setPassword("test");
+		mger = AuthManagers.INSTANCE.getAuthManager();
+		mger.setPassword("test");
 		db = EntryDatabases.INSTANCE.getEntryDatabase();
 		indexer = (JournalIndexer) Indexers.INSTANCE.getIndexer();
 	}

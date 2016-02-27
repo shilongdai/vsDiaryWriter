@@ -47,7 +47,7 @@ public class GraphicalUserInterface extends UserInterface {
 
 	@Override
 	public void setFirstPassword() throws TerminationControlFlowException {
-		boolean passwordSet = setPassword.open();
+		boolean passwordSet = setPassword.open(PasswordOperation.SET);
 		if (!passwordSet) {
 			throw new TerminationControlFlowException();
 		}

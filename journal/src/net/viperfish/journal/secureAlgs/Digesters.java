@@ -80,6 +80,7 @@ public class Digesters {
 				result = digesters.get(digestName).newInstance();
 				digestCache.put(digestName, result);
 			}
+			result.reset();
 			return result;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);

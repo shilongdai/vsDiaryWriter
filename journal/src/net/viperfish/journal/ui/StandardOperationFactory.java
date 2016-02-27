@@ -7,6 +7,7 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.operation.AddEntryOperation;
+import net.viperfish.journal.operation.ChangePasswordOperation;
 import net.viperfish.journal.operation.ClearEntriesOperation;
 import net.viperfish.journal.operation.DeleteEntryOperation;
 import net.viperfish.journal.operation.EditContentOperation;
@@ -16,6 +17,7 @@ import net.viperfish.journal.operation.GetAllOperation;
 import net.viperfish.journal.operation.GetEntryOperation;
 import net.viperfish.journal.operation.ImportEntriesOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
+import net.viperfish.journal.operation.SetPasswordOperation;
 
 public class StandardOperationFactory implements OperationFactory {
 
@@ -67,6 +69,16 @@ public class StandardOperationFactory implements OperationFactory {
 	@Override
 	public Operation getImportEntriesOperation(String srcFile) {
 		return new ImportEntriesOperation(srcFile);
+	}
+
+	@Override
+	public Operation getChangePasswordOperation(String newPass) {
+		return new ChangePasswordOperation(newPass);
+	}
+
+	@Override
+	public Operation getSetPasswordOperation(String pass) {
+		return new SetPasswordOperation(pass);
 	}
 
 }

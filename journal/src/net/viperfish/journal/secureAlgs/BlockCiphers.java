@@ -231,6 +231,7 @@ public class BlockCiphers {
 				result = blockCipherEngines.get(alg).newInstance();
 				blockCipherCache.put(alg, result);
 			}
+			result.reset();
 			return result;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
@@ -275,6 +276,7 @@ public class BlockCiphers {
 				throw new RuntimeException(e);
 			}
 		}
+		result.reset();
 		return result;
 	}
 

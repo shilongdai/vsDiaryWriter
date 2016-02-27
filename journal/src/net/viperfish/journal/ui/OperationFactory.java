@@ -109,4 +109,23 @@ public interface OperationFactory {
 	 */
 	public Operation getImportEntriesOperation(String srcFile);
 
+	/**
+	 * get an operation that changes the password and associated keys
+	 * 
+	 * @param newPass
+	 *            the new password
+	 * @return the operation to change password
+	 */
+	public Operation getChangePasswordOperation(String newPass);
+
+	/**
+	 * get an operation that INITIALIZES the password, not changing the
+	 * password.
+	 * 
+	 * @param pass
+	 *            the password to set
+	 * @return the operation to set password
+	 */
+	public Operation getSetPasswordOperation(String pass);
+
 }
