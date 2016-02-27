@@ -15,23 +15,20 @@ public enum EntryDatabases {
 	private Map<String, Provider<EntryDatabase>> databaseProviders;
 	private String defaultDatabaseProvider;
 	private JournalEncryptionWrapper wrapper;
-	private JournalTransformer tr;
 
 	private EntryDatabases() {
 		databaseProviders = new HashMap<>();
 		defaultDatabaseProvider = "viperfish";
-		wrapper = new JournalEncryptionWrapper();
 	}
 
 	private void initWrapper(EntryDatabase db) {
 		if (db == null) {
 			return;
 		}
-		String pass = AuthManagers.INSTANCE.getAuthManager().getPassword();
-		if (tr == null) {
-			tr = JournalTransformers.INSTANCE.getTransformer();
-			tr.setPassword(pass);
-			wrapper.setEncryptor(tr);
+		if (wrapper == null) {
+			wrapper = new JournalEncryptionWrapper();
+			AuthManagers.INSTANCE.registerObserver(wrapper);
+			AuthManagers.INSTANCE.propagatePassword();
 		}
 		wrapper.setDb(db);
 	}

@@ -10,20 +10,13 @@ import java.util.List;
  * @author sdai
  *
  */
-public class JournalEncryptionWrapper implements EntryDatabase {
+public class JournalEncryptionWrapper implements EntryDatabase, Observer<String> {
 
 	private JournalTransformer encryptor;
 	private EntryDatabase db;
 
 	public JournalEncryptionWrapper() {
-	}
-
-	public JournalTransformer getEncryptor() {
-		return encryptor;
-	}
-
-	public void setEncryptor(JournalTransformer encryptor) {
-		this.encryptor = encryptor;
+		encryptor = JournalTransformers.INSTANCE.getTransformer();
 	}
 
 	public EntryDatabase getDb() {
@@ -81,6 +74,11 @@ public class JournalEncryptionWrapper implements EntryDatabase {
 	public void clear() {
 		db.clear();
 
+	}
+
+	@Override
+	public void beNotified(String data) {
+		this.encryptor.setPassword(data);
 	}
 
 }

@@ -8,10 +8,12 @@ public enum AuthManagers {
 	INSTANCE;
 	private Map<String, Provider<AuthenticationManager>> authProviders;
 	private String defaultAuthProvider;
+	private AuthManagerAdapter adapter;
 
 	private AuthManagers() {
 		authProviders = new HashMap<>();
 		defaultAuthProvider = "viperfish";
+		adapter = new AuthManagerAdapter();
 	}
 
 	/**
@@ -71,12 +73,14 @@ public enum AuthManagers {
 	public AuthenticationManager newAuthManager(String instance) {
 		AuthenticationManager am = authProviders.get(defaultAuthProvider).newInstance();
 		if (am != null) {
-			return am;
+			adapter.setMger(am);
+			return adapter;
 		}
 		for (Entry<String, Provider<AuthenticationManager>> i : authProviders.entrySet()) {
 			AuthenticationManager result = i.getValue().newInstance(instance);
 			if (result != null) {
-				return result;
+				adapter.setMger(result);
+				return adapter;
 			}
 		}
 		return null;
@@ -115,12 +119,14 @@ public enum AuthManagers {
 	public AuthenticationManager getAuthManager(String instance) {
 		AuthenticationManager am = authProviders.get(defaultAuthProvider).getInstance(instance);
 		if (am != null) {
-			return am;
+			adapter.setMger(am);
+			return adapter;
 		}
 		for (Entry<String, Provider<AuthenticationManager>> i : authProviders.entrySet()) {
 			AuthenticationManager result = i.getValue().getInstance(instance);
 			if (result != null) {
-				return result;
+				adapter.setMger(result);
+				return adapter;
 			}
 		}
 		return null;
@@ -149,5 +155,21 @@ public enum AuthManagers {
 		}
 		authProviders.clear();
 		System.err.println("disposed auth providers");
+	}
+
+	/**
+	 * register an observer to be notified when setPassword is called
+	 * 
+	 * @param o
+	 */
+	public void registerObserver(Observer<String> o) {
+		adapter.addObserver(o);
+	}
+
+	/**
+	 * send password to all observers
+	 */
+	public void propagatePassword() {
+		adapter.pushPassword();
 	}
 }
