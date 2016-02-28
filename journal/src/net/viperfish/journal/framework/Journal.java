@@ -1,5 +1,6 @@
 package net.viperfish.journal.framework;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -19,7 +20,11 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table
-public class Journal implements Comparable<Journal> {
+public class Journal implements Comparable<Journal>, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -548617745977666047L;
 	private String subject;
 	private Date date;
 	private String content;

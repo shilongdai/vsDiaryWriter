@@ -1,7 +1,8 @@
 package net.viperfish.journal.dbProvider;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import net.viperfish.journal.framework.Journal;
 
@@ -12,13 +13,17 @@ import net.viperfish.journal.framework.Journal;
  * @author sdai
  *
  */
-public class FileMemoryStructure {
+public class FileMemoryStructure implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8983675555496559303L;
 	private Long id;
 	private Map<Long, Journal> data;
 
 	public FileMemoryStructure() {
 		id = new Long(0);
-		data = new TreeMap<>();
+		data = new HashMap<>();
 	}
 
 	public Long getId() {

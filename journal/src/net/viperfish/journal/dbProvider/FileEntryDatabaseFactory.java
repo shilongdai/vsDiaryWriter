@@ -30,17 +30,7 @@ abstract class FileEntryDatabaseFactory implements DataSourceFactory {
 
 	@Override
 	public EntryDatabase createDatabaseObject() {
-		db = new FileEntryDatabase(createIOFile(dataFile));
-		db.load();
-		// auto flush
-		executor.schedule(new TimerTask() {
-
-			@Override
-			public void run() {
-				db.flush();
-			}
-		}, 0, 60000);
-
+		FileEntryDatabase db = new FileEntryDatabase(createIOFile(dataFile));
 		return db;
 	}
 
