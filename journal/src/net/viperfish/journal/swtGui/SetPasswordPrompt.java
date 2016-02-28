@@ -36,7 +36,7 @@ public class SetPasswordPrompt {
 	 */
 	public boolean open(PasswordOperation ops) {
 		Display display = Display.getDefault();
-		final Shell shell = new Shell();
+		final Shell shell = new Shell(SWT.SYSTEM_MODAL | SWT.TITLE | SWT.BORDER);
 		shell.setSize(450, 224);
 		shell.setText("Set Password");
 		shell.setLayout(new GridLayout(2, false));
@@ -48,7 +48,7 @@ public class SetPasswordPrompt {
 		newPassLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		newPassLabel.setText("New Password");
 
-		newPassword = new Text(shell, SWT.PASSWORD);
+		newPassword = new Text(shell, SWT.PASSWORD | SWT.BORDER);
 		newPassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(shell, SWT.NONE);
 		new Label(shell, SWT.NONE);
@@ -57,7 +57,7 @@ public class SetPasswordPrompt {
 		retypeLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		retypeLabel.setText("Retype");
 
-		retypePassword = new Text(shell, SWT.PASSWORD);
+		retypePassword = new Text(shell, SWT.PASSWORD | SWT.BORDER);
 		retypePassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(shell, SWT.NONE);
 

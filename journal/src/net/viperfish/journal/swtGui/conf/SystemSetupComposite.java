@@ -83,10 +83,10 @@ public class SystemSetupComposite extends Composite {
 		fillInAuth();
 		fillDataStorageSelector();
 
-		dataStorageSelector.select(0);
-		indexerSelector.select(0);
-		authSelector.select(0);
-		transformerSelector.select(0);
+		dataStorageSelector.setText("H2Database");
+		indexerSelector.setText("LuceneIndexer");
+		authSelector.setText("HashAuthentication");
+		transformerSelector.setText("BlockCipherMAC");
 
 	}
 
