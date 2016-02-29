@@ -20,6 +20,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
+import org.jsoup.Jsoup;
 
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.utils.index.LuceneIndexer;
@@ -40,7 +41,8 @@ public class JournalIndexer extends LuceneIndexer<Journal> {
 	}
 
 	protected String parseJournal(Journal j) {
-		String content = df.format(j.getDate()) + " " + j.getSubject() + " " + j.getContent();
+		String textOnly = Jsoup.parse(j.getContent()).text();
+		String content = df.format(j.getDate()) + " " + j.getSubject() + " " + textOnly;
 		return content;
 	}
 
