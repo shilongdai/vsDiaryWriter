@@ -24,7 +24,9 @@ public abstract class LuceneIndexer<T> implements Indexer<T> {
 
 	private QueryParser parser;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.viperfish.utils.index.Indexer#search(java.lang.String)
 	 */
 	@Override
@@ -60,7 +62,9 @@ public abstract class LuceneIndexer<T> implements Indexer<T> {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.viperfish.utils.index.Indexer#delete(java.lang.Long)
 	 */
 	@Override
@@ -80,13 +84,17 @@ public abstract class LuceneIndexer<T> implements Indexer<T> {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.viperfish.utils.index.Indexer#add(T)
 	 */
 	@Override
 	public abstract void add(T toAdd);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.viperfish.utils.index.Indexer#clear()
 	 */
 	@Override
@@ -140,9 +148,9 @@ public abstract class LuceneIndexer<T> implements Indexer<T> {
 	protected String convertQuery(String raw) {
 		String[] temp = raw.split(" ");
 		String result = new String();
-		result = temp[0] + "~";
+		result = temp[0];
 		for (int i = 1; i < temp.length; i++) {
-			result = result + " AND " + temp[i] + "~";
+			result = result + " AND " + temp[i];
 		}
 		return result;
 	}

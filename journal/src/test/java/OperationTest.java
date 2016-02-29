@@ -188,13 +188,13 @@ public class OperationTest {
 	public void testSearchEntryOperation() {
 		cleanUp();
 		Journal t1 = new Journal();
-		t1.setContent("test1");
+		t1.setContent("test 1");
 		t1.setDate(new Date());
-		t1.setSubject("test1");
+		t1.setSubject("test 1");
 		Journal t2 = new Journal();
-		t2.setSubject("test2");
+		t2.setSubject("test 2");
 		t2.setDate(new Date());
-		t2.setContent("test2");
+		t2.setContent("test 2");
 		Journal t3 = new Journal();
 		t3.setContent("random stuff");
 		t3.setSubject("something");
