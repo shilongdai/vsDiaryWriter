@@ -19,7 +19,10 @@ public class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
 
 	public ViperfishEntryDatabaseProvider() {
 		mapping = new HashMap<>();
-		dataDir = new File("data");
+		File homeDir = new File(System.getProperty("user.home"));
+		File vDiaryDir = new File(homeDir, ".vsDiary");
+		CommonFunctions.initDir(vDiaryDir);
+		dataDir = new File(vDiaryDir, "data");
 		CommonFunctions.initDir(dataDir);
 		initMapping();
 		defaultInstance = "H2Database";

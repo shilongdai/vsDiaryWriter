@@ -18,7 +18,7 @@ public class CommonFunctions {
 
 	public static boolean initDir(File src) {
 		if (!src.exists()) {
-			src.mkdir();
+			src.mkdirs();
 			return true;
 		}
 		return false;

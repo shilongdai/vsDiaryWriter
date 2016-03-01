@@ -29,13 +29,17 @@ import net.viperfish.utils.file.CommonFunctions;
 public class Configuration {
 	private static FileConfiguration conf;
 
-	public static final String confFile = "config.properties";
+	public static final File confFile;
 
 	static {
+		File homeDir = new File(System.getProperty("user.home"));
+		File vDiaryDir = new File(homeDir, ".vsDiary");
+		CommonFunctions.initDir(vDiaryDir);
+		confFile = new File(vDiaryDir, "config");
 		conf = new PropertiesConfiguration();
-		conf.setFileName(confFile);
+		conf.setFileName(confFile.getAbsolutePath());
 		try {
-			CommonFunctions.initFile(new File(confFile));
+			CommonFunctions.initFile(confFile);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -46,7 +50,7 @@ public class Configuration {
 	}
 
 	public static void delete() {
-		CommonFunctions.delete(new File(confFile));
+		CommonFunctions.delete(confFile);
 	}
 
 	public static void addProperty(String arg0, Object arg1) {

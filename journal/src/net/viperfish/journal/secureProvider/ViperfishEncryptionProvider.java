@@ -16,7 +16,10 @@ public class ViperfishEncryptionProvider implements Provider<JournalTransformer>
 
 	public ViperfishEncryptionProvider() {
 		Configuration.addProperty(ConfigMapping.CONFIG_PAGES, BlockCipherMacConfigPage.class.getCanonicalName());
-		secureDir = new File("secure");
+		File homeDir = new File(System.getProperty("user.home"));
+		File vDiaryDir = new File(homeDir, ".vsDiary");
+		CommonFunctions.initDir(vDiaryDir);
+		secureDir = new File(vDiaryDir, "secure");
 		CommonFunctions.initDir(secureDir);
 	}
 

@@ -12,7 +12,10 @@ public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 	private File dataDir;
 
 	public ViperfishAuthProvider() {
-		dataDir = new File("secure");
+		File homeDir = new File(System.getProperty("user.home"));
+		File vDiaryDir = new File(homeDir, ".vsDiary");
+		CommonFunctions.initDir(vDiaryDir);
+		dataDir = new File(vDiaryDir, "secure");
 		CommonFunctions.initDir(dataDir);
 		auth = null;
 	}
