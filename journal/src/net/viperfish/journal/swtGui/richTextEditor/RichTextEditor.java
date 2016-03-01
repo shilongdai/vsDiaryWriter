@@ -18,16 +18,24 @@ public class RichTextEditor extends Composite {
 	private String editor_content;
 	private boolean loadCompleted = false;
 
+	private static boolean useMozilla = false;
+
 	static {
 		File xulRunner = new File("./xulrunner");
-		System.setProperty("org.eclipse.swt.browser.XULRunnerPath", xulRunner.getAbsolutePath());
+		if (xulRunner.exists()) {
+			System.setProperty("org.eclipse.swt.browser.XULRunnerPath", xulRunner.getAbsolutePath());
+			useMozilla = true;
+		}
 	}
 
 	public RichTextEditor(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new GridLayout(1, true));
-
-		browser = new Browser(this, SWT.MOZILLA);
+		if (useMozilla) {
+			browser = new Browser(this, SWT.MOZILLA);
+		} else {
+			browser = new Browser(this, SWT.NONE);
+		}
 		browser.setJavascriptEnabled(true);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		browser.setDragDetect(true);
