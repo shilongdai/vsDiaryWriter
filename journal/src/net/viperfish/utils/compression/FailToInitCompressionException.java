@@ -2,6 +2,11 @@ package net.viperfish.utils.compression;
 
 public class FailToInitCompressionException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5454607161992119351L;
+
 	public FailToInitCompressionException() {
 		// TODO Auto-generated constructor stub
 	}

@@ -23,7 +23,6 @@ public class HashAuthManager implements AuthenticationManager {
 
 	private Digester dig;
 	private IOFile passwdFile;
-	private File dataDir;
 	private String password;
 	private boolean passwordSet;
 	private byte[] hash;
@@ -117,7 +116,6 @@ public class HashAuthManager implements AuthenticationManager {
 	}
 
 	public HashAuthManager(File dataDir) {
-		this.dataDir = dataDir;
 		dig = new BCDigester();
 		rand = new SecureRandom();
 		passwordSet = true;
