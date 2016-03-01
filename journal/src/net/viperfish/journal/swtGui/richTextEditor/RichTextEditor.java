@@ -77,10 +77,6 @@ public class RichTextEditor extends Composite {
 		editor_content = text == null ? "" : text.replace("\n", "");
 
 		if (loadCompleted) {
-			/**
-			 * [TimPietrusky] 20120416 - tinyMCE might not yet been "completely"
-			 * initialized
-			 */
 			browser.execute("setContent('" + editor_content + "');");
 		}
 	}
