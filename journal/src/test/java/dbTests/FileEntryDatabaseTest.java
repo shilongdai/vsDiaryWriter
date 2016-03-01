@@ -1,7 +1,6 @@
 package test.java.dbTests;
 
 import java.io.File;
-import java.io.IOException;
 
 import net.viperfish.journal.dbProvider.FileEntryDatabase;
 import net.viperfish.journal.framework.EntryDatabase;
@@ -10,24 +9,17 @@ import net.viperfish.utils.file.IOFile;
 
 public class FileEntryDatabaseTest extends DatabaseTest {
 
-	private final FileEntryDatabase db;
+	private FileEntryDatabase db;
 
 	public FileEntryDatabaseTest() {
-		File test = new File("test");
-		if (!test.exists()) {
-			test.mkdir();
-		}
-		try {
-			db = new FileEntryDatabase(new IOFile(new File(
-					test.getCanonicalPath() + "/test"),
-					new GZIPIOStreamHandler()));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+
 	}
 
 	@Override
-	protected EntryDatabase getDB() {
+	protected EntryDatabase getDB(File dataDir) {
+		if (db == null) {
+			db = new FileEntryDatabase(new IOFile(new File(dataDir, "fileTest"), new GZIPIOStreamHandler()));
+		}
 		return db;
 	}
 

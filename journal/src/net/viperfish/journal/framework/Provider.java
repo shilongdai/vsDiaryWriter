@@ -27,4 +27,6 @@ public interface Provider<T> {
 
 	public void dispose();
 
+	public void delete();
+
 }

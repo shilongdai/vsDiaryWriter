@@ -45,6 +45,10 @@ public class Configuration {
 
 	}
 
+	public static void delete() {
+		CommonFunctions.delete(new File(confFile));
+	}
+
 	public static void addProperty(String arg0, Object arg1) {
 		conf.addProperty(arg0, arg1);
 	}

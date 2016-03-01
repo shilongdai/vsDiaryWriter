@@ -2,23 +2,25 @@ package test.java;
 
 import java.io.File;
 
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Test;
 
 import net.viperfish.journal.authProvider.HashAuthManager;
 import net.viperfish.journal.framework.AuthenticationManager;
-
-import org.junit.Assert;
-import org.junit.Test;
+import net.viperfish.utils.file.CommonFunctions;
 
 public class HashAuthTest {
 
 	private AuthenticationManager auth;
-	private File dataDir;
+	private static File dataDir;
+
+	static {
+		dataDir = new File("data");
+		CommonFunctions.initDir(dataDir);
+	}
 
 	public HashAuthTest() {
-		dataDir = new File("data");
-		if (!dataDir.exists()) {
-			dataDir.mkdir();
-		}
 		auth = new HashAuthManager(dataDir);
 	}
 
@@ -29,5 +31,10 @@ public class HashAuthTest {
 		auth.reload();
 		Assert.assertEquals(true, auth.verify("password"));
 		auth.clear();
+	}
+
+	@AfterClass
+	public static void cleanUpFiles() {
+		CommonFunctions.delete(dataDir);
 	}
 }

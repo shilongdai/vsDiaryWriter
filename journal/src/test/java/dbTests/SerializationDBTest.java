@@ -12,10 +12,8 @@ public class SerializationDBTest extends DatabaseTest {
 	private JavaSerializationEntryDatabase db;
 
 	@Override
-	protected EntryDatabase getDB() {
-		File test = new File("test");
-		CommonFunctions.initDir(test);
-		File f = new File("test/javaDBS");
+	protected EntryDatabase getDB(File dataDir) {
+		File f = new File(dataDir, "javaDBS");
 		try {
 			CommonFunctions.initFile(f);
 		} catch (IOException e) {

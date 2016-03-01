@@ -1,16 +1,23 @@
 package net.viperfish.journal;
 
+import java.util.Map.Entry;
+
 import org.apache.commons.configuration.ConfigurationException;
 
 import net.viperfish.journal.authProvider.ViperfishAuthProvider;
 import net.viperfish.journal.dbProvider.ViperfishEntryDatabaseProvider;
 import net.viperfish.journal.framework.AuthManagers;
+import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
+import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.EntryDatabases;
 import net.viperfish.journal.framework.Indexers;
+import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.JournalTransformers;
 import net.viperfish.journal.framework.Operation;
+import net.viperfish.journal.framework.Provider;
 import net.viperfish.journal.indexProvider.ViperfishIndexerProvider;
 import net.viperfish.journal.secureProvider.ViperfishEncryptionProvider;
 import net.viperfish.journal.swtGui.GraphicalUserInterface;
@@ -21,6 +28,7 @@ import net.viperfish.journal.ui.StandardOperationFactory;
 import net.viperfish.journal.ui.TerminationControlFlowException;
 import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
 import net.viperfish.journal.ui.UserInterface;
+import net.viperfish.utils.index.Indexer;
 
 /**
  * the Main class of the application, contains all the components
@@ -92,6 +100,26 @@ public class JournalApplication {
 		System.err.println("Providers disposed");
 		getWorker().terminate();
 		System.err.println("worker terminated");
+	}
+
+	public static void revert() {
+		for (Entry<String, Provider<EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders().entrySet()) {
+			i.getValue().delete();
+		}
+
+		for (Entry<String, Provider<Indexer<Journal>>> i : Indexers.INSTANCE.getIndexerProviders().entrySet()) {
+			i.getValue().delete();
+		}
+
+		for (Entry<String, Provider<JournalTransformer>> i : JournalTransformers.INSTANCE.getSecureProviders()
+				.entrySet()) {
+			i.getValue().delete();
+		}
+
+		for (Entry<String, Provider<AuthenticationManager>> i : AuthManagers.INSTANCE.getAuthProviders().entrySet()) {
+			i.getValue().delete();
+		}
+		Configuration.delete();
 	}
 
 	/**
@@ -185,10 +213,12 @@ public class JournalApplication {
 					Configuration.setProperty(ConfigMapping.SET_UP, false);
 					Configuration.save();
 				} catch (ConfigurationException e) {
+					revert();
 					System.err.println("could not save configuration, terminating");
 					return;
 				} catch (TerminationControlFlowException e) {
-					System.err.println("exitiing");
+					revert();
+					System.err.println("exiting");
 					return;
 				}
 			}

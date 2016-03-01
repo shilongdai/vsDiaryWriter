@@ -7,6 +7,7 @@ import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.Provider;
+import net.viperfish.utils.file.CommonFunctions;
 
 public class ViperfishEncryptionProvider implements Provider<JournalTransformer> {
 
@@ -14,12 +15,9 @@ public class ViperfishEncryptionProvider implements Provider<JournalTransformer>
 	private BlockCipherMacTransformer buffer;
 
 	public ViperfishEncryptionProvider() {
-		Configuration.addProperty(ConfigMapping.CONFIG_PAGES,
-				BlockCipherMacConfigPage.class.getCanonicalName());
+		Configuration.addProperty(ConfigMapping.CONFIG_PAGES, BlockCipherMacConfigPage.class.getCanonicalName());
 		secureDir = new File("secure");
-		if (!secureDir.exists()) {
-			secureDir.mkdir();
-		}
+		CommonFunctions.initDir(secureDir);
 	}
 
 	@Override
@@ -81,6 +79,12 @@ public class ViperfishEncryptionProvider implements Provider<JournalTransformer>
 	@Override
 	public String getDefaultInstance() {
 		return "BlockCipherMAC";
+	}
+
+	@Override
+	public void delete() {
+		CommonFunctions.delete(secureDir);
+
 	}
 
 }

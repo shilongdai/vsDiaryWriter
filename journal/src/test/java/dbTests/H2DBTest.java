@@ -10,13 +10,9 @@ public class H2DBTest extends DatabaseTest {
 	private H2EntryDatabase db;
 
 	@Override
-	protected EntryDatabase getDB() {
-		File test = new File("test");
-		if (!test.exists()) {
-			test.mkdir();
-		}
+	protected EntryDatabase getDB(File dataDir) {
 		if (db == null) {
-			db = new H2EntryDatabase(test);
+			db = new H2EntryDatabase(dataDir);
 		}
 		return db;
 	}

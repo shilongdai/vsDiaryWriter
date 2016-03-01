@@ -4,6 +4,7 @@ import java.io.File;
 
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.Provider;
+import net.viperfish.utils.file.CommonFunctions;
 
 public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 
@@ -12,9 +13,7 @@ public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 
 	public ViperfishAuthProvider() {
 		dataDir = new File("secure");
-		if (!dataDir.exists()) {
-			dataDir.mkdir();
-		}
+		CommonFunctions.initDir(dataDir);
 		auth = null;
 	}
 
@@ -74,6 +73,12 @@ public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 	@Override
 	public String getDefaultInstance() {
 		return "HashAuthentication";
+	}
+
+	@Override
+	public void delete() {
+		CommonFunctions.delete(dataDir);
+
 	}
 
 }

@@ -3,15 +3,23 @@ package test.java;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
+import net.viperfish.utils.file.CommonFunctions;
 
 public class SecurityWrapperTest {
 	private BlockCipherMacTransformer wrapper;
+	private static File testDir;
+
+	static {
+		testDir = new File("test");
+		CommonFunctions.initDir(testDir);
+	}
 
 	private void setupConfig() {
 		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "AES");
@@ -24,10 +32,6 @@ public class SecurityWrapperTest {
 
 	public SecurityWrapperTest() {
 		setupConfig();
-		File testDir = new File("test");
-		if (!testDir.exists()) {
-			testDir.mkdir();
-		}
 		try {
 			wrapper = new BlockCipherMacTransformer(new File(testDir.getCanonicalPath() + "/salt"));
 		} catch (IOException e) {
@@ -47,6 +51,11 @@ public class SecurityWrapperTest {
 		String plainContent = result.getContent();
 		Assert.assertEquals("test get content", plainContent);
 		Assert.assertEquals("test get", result.getSubject());
+	}
+
+	@AfterClass
+	public static void cleanUpDirs() {
+		CommonFunctions.delete(testDir);
 	}
 
 }

@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Provider;
+import net.viperfish.utils.file.CommonFunctions;
 
 public class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
 
@@ -19,9 +20,7 @@ public class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
 	public ViperfishEntryDatabaseProvider() {
 		mapping = new HashMap<>();
 		dataDir = new File("data");
-		if (!dataDir.exists()) {
-			dataDir.mkdir();
-		}
+		CommonFunctions.initDir(dataDir);
 		initMapping();
 		defaultInstance = "H2Database";
 	}
@@ -90,6 +89,12 @@ public class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
 	@Override
 	public String getDefaultInstance() {
 		return defaultInstance;
+	}
+
+	@Override
+	public void delete() {
+		CommonFunctions.delete(dataDir);
+
 	}
 
 }

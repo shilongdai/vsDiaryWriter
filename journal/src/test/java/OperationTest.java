@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,6 +42,7 @@ import net.viperfish.journal.operation.SearchEntryOperation;
 import net.viperfish.journal.operation.SetPasswordOperation;
 import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
 import net.viperfish.json.JsonGenerator;
+import net.viperfish.utils.file.CommonFunctions;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
 
@@ -295,6 +297,15 @@ public class OperationTest {
 		new SetPasswordOperation("test-set").execute();
 		Assert.assertEquals("test-set", mger.getPassword());
 		cleanUp();
+	}
+
+	@AfterClass
+	public static void cleanUpDirectory() {
+		JournalApplication.revert();
+		File testTxt = new File("test.txt");
+		if (testTxt.exists()) {
+			CommonFunctions.delete(testTxt);
+		}
 	}
 
 	public void cleanUp() {

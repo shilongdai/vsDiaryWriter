@@ -78,4 +78,10 @@ public class ViperfishIndexerProvider implements Provider<Indexer<Journal>> {
 		return "LuceneIndexer";
 	}
 
+	@Override
+	public void delete() {
+		// TODO Auto-generated method stub
+
+	}
+
 }
