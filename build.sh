@@ -30,35 +30,36 @@ for i in $(ls); do
 	cd target;
 	mv ../editor .;
 
+	cp ../../../LICENSE .
+
 	#get XULRunner
 	if [ $i = "journalWindows32" ]; then
 		wget $mozilla${xulRunner[3]};
 		unzip ${xulRunner[3]};
+		zip -r $i.zip full-journal*.jar editor xulrunner $(ls | grep launcher.sh) LICENSE;
 	fi
 
 	if [ $i = "journalLinux32" ]; then
 		wget $mozilla${xulRunner[0]};
 		tar -jxvf ${xulRunner[0]};
 		cp ../../../linux-launcher.sh .
+		tar -cJvf $i.tar.xz full-journal*.jar editor xulrunner $(ls | grep launcher.sh) LICENSE;
 	fi
 
 	if [ $i = "journalLinux64" ]; then
 		wget $mozilla${xulRunner[1]};
 		tar -jxvf ${xulRunner[1]};
 		cp ../../../linux-launcher.sh .
+		tar -cJvf $i.tar.xz full-journal*.jar editor xulrunner $(ls | grep launcher.sh) LICENSE;
 	fi
 
 	if [ $i = "journalMac64" ]; then
-		wget $mozilla${xulRunner[2]};
-		tar -jxvf${xulRunner[2]};
-		mv XUL.framework/Versions/Current/ xulrunner
 		cp ../../../mac-launcher.sh .
+		tar -cJvf $i.tar.xz full-journal*.jar editor $(ls | grep launcher.sh) LICENSE;
 	fi
-
-	#zip it up
-	zip -r $i.zip full-journal*.jar editor xulrunner $(ls | grep launcher.sh) ../../../LICENSE;
+	
 	echo "copying product to $1";
-	mv $i.zip $1;
+	mv $(ls | grep $i) $1;
 	cd ../..;
 done;
 
