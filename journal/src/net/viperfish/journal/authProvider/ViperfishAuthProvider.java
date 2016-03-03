@@ -3,6 +3,8 @@ package net.viperfish.journal.authProvider;
 import java.io.File;
 
 import net.viperfish.journal.framework.AuthenticationManager;
+import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Provider;
 import net.viperfish.utils.file.CommonFunctions;
 
@@ -12,6 +14,7 @@ public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 	private File dataDir;
 
 	public ViperfishAuthProvider() {
+		Configuration.addProperty(ConfigMapping.CONFIG_PAGES, HashAuthConfigPage.class.getCanonicalName());
 		File homeDir = new File(System.getProperty("user.home"));
 		File vDiaryDir = new File(homeDir, ".vsDiary");
 		CommonFunctions.initDir(vDiaryDir);

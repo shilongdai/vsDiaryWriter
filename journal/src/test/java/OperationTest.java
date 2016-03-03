@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.authProvider.HashAuthManager;
 import net.viperfish.journal.framework.AuthManagers;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
@@ -70,6 +71,8 @@ public class OperationTest {
 		Configuration.setProperty(ConfigMapping.INDEXER_COMPONENT, "LuceneIndexer");
 		Configuration.setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");
 		Configuration.setProperty(ConfigMapping.TRANSFORMER_COMPONENT, "BlockCipherMAC");
+		Configuration.setProperty(BlockCipherMacTransformer.COMPRESSION, "GZ");
+		Configuration.setProperty(HashAuthManager.HASH_ALG, "SHA256");
 	}
 
 	public OperationTest() {

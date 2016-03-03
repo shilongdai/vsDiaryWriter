@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Label;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.secureAlgs.BlockCiphers;
 import net.viperfish.journal.secureAlgs.Digesters;
+import net.viperfish.utils.compression.Compressors;
 
 public class SecurityConfigComposite extends Composite {
 
@@ -22,6 +23,8 @@ public class SecurityConfigComposite extends Composite {
 	private Combo macAlgSelector;
 	private Label kdfLabel;
 	private Combo kdfCombo;
+	private Label compressionLabel;
+	private Combo compressionSelector;
 
 	/**
 	 * Create the composite.
@@ -81,6 +84,13 @@ public class SecurityConfigComposite extends Composite {
 
 		kdfCombo = new Combo(this, SWT.READ_ONLY);
 		kdfCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		compressionLabel = new Label(this, SWT.NONE);
+		compressionLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		compressionLabel.setText("Compression");
+
+		compressionSelector = new Combo(this, SWT.READ_ONLY);
+		compressionSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		fillIn();
 
 	}
@@ -92,6 +102,7 @@ public class SecurityConfigComposite extends Composite {
 		Configuration.setProperty(BlockCipherMacTransformer.MAC_TYPE, macTypeSelector.getText());
 		Configuration.setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, macAlgSelector.getText());
 		Configuration.setProperty(BlockCipherMacTransformer.KDF_HASH, kdfCombo.getText());
+		Configuration.setProperty(BlockCipherMacTransformer.COMPRESSION, compressionSelector.getText());
 
 	}
 
@@ -108,6 +119,9 @@ public class SecurityConfigComposite extends Composite {
 		for (String i : Digesters.getSupportedDigest()) {
 			kdfCombo.add(i);
 		}
+		for (String i : Compressors.getCompressors()) {
+			compressionSelector.add(i);
+		}
 		macTypeSelector.add("CMAC");
 		macTypeSelector.add("GMAC");
 		macTypeSelector.add("CBCMAC");
@@ -118,6 +132,7 @@ public class SecurityConfigComposite extends Composite {
 		encModeSelector.setText("CFB");
 		encAlgSelector.setText("AES");
 		kdfCombo.setText("SHA256");
+		compressionSelector.setText("GZ");
 		fillInMacAlg();
 	}
 

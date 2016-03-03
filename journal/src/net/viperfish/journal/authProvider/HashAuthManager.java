@@ -8,6 +8,7 @@ import java.util.Arrays;
 import org.apache.commons.codec.binary.Base64;
 
 import net.viperfish.journal.framework.AuthenticationManager;
+import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.secureAlgs.BCDigester;
 import net.viperfish.journal.secureAlgs.Digester;
 import net.viperfish.utils.file.IOFile;
@@ -20,6 +21,8 @@ import net.viperfish.utils.file.TextIOStreamHandler;
  *
  */
 public class HashAuthManager implements AuthenticationManager {
+
+	public static final String HASH_ALG = "viperfish.auth.hash";
 
 	private Digester dig;
 	private IOFile passwdFile;
@@ -117,6 +120,7 @@ public class HashAuthManager implements AuthenticationManager {
 
 	public HashAuthManager(File dataDir) {
 		dig = new BCDigester();
+		dig.setMode(Configuration.getString(HASH_ALG));
 		rand = new SecureRandom();
 		passwordSet = true;
 		ready = false;

@@ -128,7 +128,9 @@ public class JournalSetup {
 
 	private void hideCurrent() {
 		current.setVisible(false);
-		current.setLayoutData(new GridData(0, 0));
+		GridData data = new GridData(0, 0);
+		data.exclude = true;
+		current.setLayoutData(data);
 		setupWindow.layout();
 	}
 

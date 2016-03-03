@@ -45,6 +45,7 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 	public static final String MAC_TYPE = "viperfish.secure.mac.type";
 	public static final String MAC_ALGORITHM = "viperfish.secure.mac.algorithm";
 	public static final String KDF_HASH = "viperfish.secure.kdf.algorithm";
+	public static final String COMPRESSION = "viperfish.secure.compression.algorithm";
 
 	private final File saltStore;
 	private byte[] key;
@@ -239,7 +240,7 @@ public class BlockCipherMacTransformer implements JournalTransformer {
 
 		// try to get a compressor, no compression if compressor not found
 		try {
-			compress = Compressors.getCompressor("gz");
+			compress = Compressors.getCompressor(Configuration.getString(COMPRESSION));
 		} catch (FailToInitCompressionException e) {
 			System.err.println("failed to find gz compression, using null compression");
 			compress = new NullCompressor();

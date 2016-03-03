@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>journal</groupId>
 	<artifactId>journal</artifactId>
-	<version>1.0.0-alpha.3</version>
+	<version>1.0.0-beta.1</version>
 	<name>The Viperfish Journal</name>
 	<description>A application for writing journals</description>
 	<repositories>
@@ -109,6 +109,16 @@
 		<groupId>org.eclipse</groupId>
 		<artifactId>core.commands</artifactId>
 		<version>3.7.0.v20150422-0725</version>
+	</dependency>
+	<dependency>
+		<groupId>org.tukaani</groupId>
+		<artifactId>xz</artifactId>
+		<version>1.5</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-compress</artifactId>
+		<version>1.10</version>
 	</dependency>
 	</dependencies>
 	<build>

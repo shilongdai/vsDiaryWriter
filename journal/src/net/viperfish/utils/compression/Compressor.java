@@ -8,9 +8,9 @@ import java.io.OutputStream;
 
 public abstract class Compressor {
 
-	protected abstract OutputStream createOutputStream(ByteArrayOutputStream out);
+	protected abstract OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException;
 
-	protected abstract InputStream createInputStream(ByteArrayInputStream in);
+	protected abstract InputStream createInputStream(ByteArrayInputStream in) throws IOException;
 
 	public byte[] compress(byte[] data) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
