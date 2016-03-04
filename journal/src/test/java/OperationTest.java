@@ -42,10 +42,10 @@ import net.viperfish.journal.operation.ImportEntriesOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
 import net.viperfish.journal.operation.SetPasswordOperation;
 import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
-import net.viperfish.json.JsonGenerator;
 import net.viperfish.utils.file.CommonFunctions;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
+import net.viperfish.utils.serialization.JsonGenerator;
 
 public class OperationTest {
 

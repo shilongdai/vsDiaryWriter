@@ -11,8 +11,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.json.JsonGenerator;
 import net.viperfish.utils.file.IOFile;
+import net.viperfish.utils.serialization.JsonGenerator;
 
 /**
  * an EntryDatabase that is based on a file for persistent, does not flush until

@@ -1,4 +1,4 @@
-package net.viperfish.json;
+package net.viperfish.utils.serialization;
 
 import java.io.IOException;
 import java.io.StringWriter;

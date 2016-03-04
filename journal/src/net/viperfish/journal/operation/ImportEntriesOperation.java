@@ -11,10 +11,10 @@ import net.viperfish.journal.framework.EntryDatabases;
 import net.viperfish.journal.framework.Indexers;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
-import net.viperfish.json.JsonGenerator;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
 import net.viperfish.utils.index.Indexer;
+import net.viperfish.utils.serialization.JsonGenerator;
 
 public class ImportEntriesOperation implements Operation {
 
