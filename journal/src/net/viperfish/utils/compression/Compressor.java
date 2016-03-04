@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.compress.utils.IOUtils;
+
 public abstract class Compressor {
 
 	protected abstract OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException;
@@ -28,13 +30,7 @@ public abstract class Compressor {
 	public byte[] deflate(byte[] data) {
 		ByteArrayInputStream in = new ByteArrayInputStream(data);
 		try (InputStream depressor = createInputStream(in)) {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			final byte[] buffer = new byte[64];
-			int n = 0;
-			while (-1 != (n = depressor.read(buffer))) {
-				out.write(buffer, 0, n);
-			}
-			return out.toByteArray();
+			return IOUtils.toByteArray(depressor);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

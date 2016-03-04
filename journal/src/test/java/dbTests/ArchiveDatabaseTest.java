@@ -11,8 +11,14 @@ import net.viperfish.utils.file.CommonFunctions;
 
 public abstract class ArchiveDatabaseTest extends DatabaseTest {
 
+	protected abstract ArchiveEntryDatabase getADB(File archiveFile);
+
 	@Override
-	protected abstract ArchiveEntryDatabase getDB(File dataDir);
+	protected ArchiveEntryDatabase getDB(File dataDir) {
+		CommonFunctions.initDir(dataDir);
+		File fileLocat = new File(dataDir, "archive");
+		return getADB(fileLocat);
+	}
 
 	@Test
 	public void testPersist() {

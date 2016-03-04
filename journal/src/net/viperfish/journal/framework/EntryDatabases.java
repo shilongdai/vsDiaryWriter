@@ -58,12 +58,13 @@ public enum EntryDatabases {
 		EntryDatabase def = databaseProviders.get(defaultDatabaseProvider).newInstance(instanceType);
 		if (def != null) {
 			result = def;
-		}
-		for (Entry<String, Provider<EntryDatabase>> p : databaseProviders.entrySet()) {
-			EntryDatabase db = p.getValue().newInstance(instanceType);
-			if (db != null) {
-				result = db;
-				break;
+		} else {
+			for (Entry<String, Provider<EntryDatabase>> p : databaseProviders.entrySet()) {
+				EntryDatabase db = p.getValue().newInstance(instanceType);
+				if (db != null) {
+					result = db;
+					break;
+				}
 			}
 		}
 		initWrapper(result);
@@ -84,12 +85,13 @@ public enum EntryDatabases {
 		EntryDatabase def = databaseProviders.get(defaultDatabaseProvider).getInstance(instanceType);
 		if (def != null) {
 			result = def;
-		}
-		for (Entry<String, Provider<EntryDatabase>> p : databaseProviders.entrySet()) {
-			EntryDatabase db = p.getValue().getInstance(instanceType);
-			if (db != null) {
-				result = db;
-				break;
+		} else {
+			for (Entry<String, Provider<EntryDatabase>> p : databaseProviders.entrySet()) {
+				EntryDatabase db = p.getValue().getInstance(instanceType);
+				if (db != null) {
+					result = db;
+					break;
+				}
 			}
 		}
 		initWrapper(result);

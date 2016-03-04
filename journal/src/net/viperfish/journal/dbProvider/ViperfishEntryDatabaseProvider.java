@@ -53,12 +53,20 @@ public class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
 
 	@Override
 	public EntryDatabase newInstance(String instance) {
-		return mapping.get(instance).createDatabaseObject();
+		DataSourceFactory f = mapping.get(instance);
+		if (f == null) {
+			return null;
+		}
+		return f.createDatabaseObject();
 	}
 
 	@Override
 	public EntryDatabase getInstance(String instance) {
-		return mapping.get(instance).getDatabaseObject();
+		DataSourceFactory f = mapping.get(instance);
+		if (f == null) {
+			return null;
+		}
+		return f.getDatabaseObject();
 	}
 
 	@Override

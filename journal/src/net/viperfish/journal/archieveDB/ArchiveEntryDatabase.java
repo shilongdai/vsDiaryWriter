@@ -11,7 +11,6 @@ import java.util.TreeMap;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
-import org.apache.commons.compress.archivers.ar.ArArchiveEntry;
 import org.apache.commons.compress.utils.IOUtils;
 
 import net.viperfish.journal.framework.EntryDatabase;
@@ -25,6 +24,12 @@ public abstract class ArchiveEntryDatabase implements EntryDatabase {
 
 	protected abstract ArchiveInputStream getArchiveIn(File f) throws IOException;
 
+	protected abstract ArchiveEntry newEntry(String name, int length);
+
+	protected File getArchiveFile() {
+		return archiveFile;
+	}
+
 	private void write(Journal[] j) {
 		try {
 			CommonFunctions.initFile(archiveFile);
@@ -35,7 +40,7 @@ public abstract class ArchiveEntryDatabase implements EntryDatabase {
 		try (ArchiveOutputStream out = getArchiveOut(archiveFile)) {
 			for (Journal i : j) {
 				byte[] data = s.serialize(i);
-				ArArchiveEntry entry = new ArArchiveEntry(i.getId().toString(), data.length);
+				ArchiveEntry entry = newEntry(i.getId().toString(), data.length);
 				out.putArchiveEntry(entry);
 				out.write(data);
 				out.closeArchiveEntry();
@@ -60,8 +65,7 @@ public abstract class ArchiveEntryDatabase implements EntryDatabase {
 		try (ArchiveInputStream in = getArchiveIn(archiveFile)) {
 			ArchiveEntry entry = in.getNextEntry();
 			while (entry != null) {
-				byte[] buffer = new byte[(int) entry.getSize()];
-				IOUtils.readFully(in, buffer);
+				byte[] buffer = IOUtils.toByteArray(in);
 				result.add(s.deSerilize(buffer));
 				entry = in.getNextEntry();
 			}

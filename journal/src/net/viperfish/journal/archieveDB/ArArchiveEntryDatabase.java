@@ -7,8 +7,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.archivers.ar.ArArchiveEntry;
 import org.apache.commons.compress.archivers.ar.ArArchiveInputStream;
 import org.apache.commons.compress.archivers.ar.ArArchiveOutputStream;
 
@@ -26,6 +28,11 @@ public class ArArchiveEntryDatabase extends ArchiveEntryDatabase {
 	@Override
 	protected ArchiveInputStream getArchiveIn(File f) throws FileNotFoundException {
 		return new ArArchiveInputStream(new BufferedInputStream(new FileInputStream(f)));
+	}
+
+	@Override
+	protected ArchiveEntry newEntry(String name, int length) {
+		return new ArArchiveEntry(name, length);
 	}
 
 }

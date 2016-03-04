@@ -1,68 +1,147 @@
 package net.viperfish.journal.archieveDB;
 
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Provider;
+import net.viperfish.utils.file.CommonFunctions;
 
 public class ViperfishArchiveDBProvider implements Provider<EntryDatabase> {
 
+	private Map<String, Class<? extends ArchiveEntryDatabase>> dbs;
+	private Map<String, ArchiveEntryDatabase> concretes;
+	private String defaultInstance;
+	private File archiveFile;
+	private File dataDir;
+	private Timer t;
+	private boolean isUsed;
+
+	public ViperfishArchiveDBProvider() {
+		dbs = new HashMap<>();
+		concretes = new HashMap<>();
+		defaultInstance = "ArArchive";
+		dataDir = new File(System.getProperty("user.home") + "/.vsDiary/data");
+		CommonFunctions.initDir(dataDir);
+		archiveFile = new File(dataDir, "archive");
+		addArchives();
+		isUsed = false;
+		t = new Timer();
+	}
+
+	private void addArchives() {
+		dbs.put("ArArchive", ArArchiveEntryDatabase.class);
+		dbs.put("CpioArchive", CpioArchiveEntryDatabase.class);
+		dbs.put("TarArchive", TarArchiveEntryDatabase.class);
+		dbs.put("ZipArchive", ZipArchiveEntryDatabase.class);
+	}
+
+	private void flushAll() {
+		for (Entry<String, ArchiveEntryDatabase> i : concretes.entrySet()) {
+			i.getValue().flush();
+		}
+
+	}
+
 	@Override
 	public void setDefaultInstance(String instance) {
-		// TODO Auto-generated method stub
-
+		this.defaultInstance = instance;
 	}
 
 	@Override
 	public String getDefaultInstance() {
-		// TODO Auto-generated method stub
-		return null;
+		return defaultInstance;
 	}
 
 	@Override
 	public EntryDatabase newInstance() {
-		// TODO Auto-generated method stub
-		return null;
+		return newInstance(defaultInstance);
 	}
 
 	@Override
 	public EntryDatabase getInstance() {
-		// TODO Auto-generated method stub
-		return null;
+		return getInstance(defaultInstance);
 	}
 
 	@Override
 	public EntryDatabase newInstance(String instance) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			Class<? extends ArchiveEntryDatabase> cl = dbs.get(instance);
+			if (cl == null) {
+				return null;
+			}
+			Constructor<? extends ArchiveEntryDatabase> ctor = cl.getConstructor(File.class);
+			ArchiveEntryDatabase tmp = ctor.newInstance(archiveFile);
+			tmp.load();
+			return tmp;
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
 	public EntryDatabase getInstance(String instance) {
-		// TODO Auto-generated method stub
-		return null;
+		ArchiveEntryDatabase result = concretes.get(instance);
+		if (result == null) {
+			try {
+				Class<? extends ArchiveEntryDatabase> cl = dbs.get(instance);
+				if (cl == null) {
+					return null;
+				}
+				Constructor<? extends ArchiveEntryDatabase> ctor = cl.getConstructor(File.class);
+				ArchiveEntryDatabase tmp = ctor.newInstance(archiveFile);
+				concretes.put(instance, tmp);
+				result = tmp;
+				result.load();
+			} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+					| IllegalArgumentException | InvocationTargetException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		if (!isUsed) {
+			t.schedule(new TimerTask() {
+
+				@Override
+				public void run() {
+					flushAll();
+				}
+			}, 0, 60000);
+		}
+		return result;
 	}
 
 	@Override
 	public String[] getSupported() {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> supported = new LinkedList<>();
+		for (Entry<String, Class<? extends ArchiveEntryDatabase>> i : dbs.entrySet()) {
+			supported.add(i.getKey());
+		}
+		return supported.toArray(new String[0]);
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "ViperfishArchive";
 	}
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		flushAll();
+		t.cancel();
 	}
 
 	@Override
 	public void delete() {
-		// TODO Auto-generated method stub
-
+		CommonFunctions.delete(dataDir);
 	}
 
 }

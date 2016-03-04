@@ -2,12 +2,11 @@ package net.viperfish.utils.file;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.LinkedList;
-import java.util.List;
+
+import org.apache.commons.compress.utils.IOUtils;
 
 public class IOFile {
 
@@ -46,19 +45,7 @@ public class IOFile {
 
 	public byte[] read() {
 		try (DataInputStream in = handler.getInputStream(src)) {
-			List<Byte> buffer = new LinkedList<Byte>();
-			while (in.available() != 0) {
-				try {
-					buffer.add(in.readByte());
-				} catch (EOFException e) {
-					break;
-				}
-			}
-			byte[] result = new byte[buffer.size()];
-			int current = 0;
-			for (Byte i : buffer) {
-				result[current++] = i;
-			}
+			byte[] result = IOUtils.toByteArray(in);
 			return result;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
