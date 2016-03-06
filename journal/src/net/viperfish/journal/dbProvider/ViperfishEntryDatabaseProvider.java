@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Provider;
 import net.viperfish.utils.file.CommonFunctions;
@@ -19,10 +21,14 @@ public class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
 
 	public ViperfishEntryDatabaseProvider() {
 		mapping = new HashMap<>();
-		File homeDir = new File(System.getProperty("user.home"));
-		File vDiaryDir = new File(homeDir, ".vsDiary");
-		CommonFunctions.initDir(vDiaryDir);
-		dataDir = new File(vDiaryDir, "data");
+		if (Configuration.containsKey(ConfigMapping.PORTABLE) && Configuration.getBoolean(ConfigMapping.PORTABLE)) {
+			dataDir = new File("data");
+		} else {
+			File homeDir = new File(System.getProperty("user.home"));
+			File vDiaryDir = new File(homeDir, ".vsDiary");
+			CommonFunctions.initDir(vDiaryDir);
+			dataDir = new File(vDiaryDir, "data");
+		}
 		CommonFunctions.initDir(dataDir);
 		initMapping();
 		defaultInstance = "H2Database";

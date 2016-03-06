@@ -49,7 +49,6 @@ public class JournalApplication {
 
 	static {
 		initConfigUnits();
-
 	}
 
 	public JournalApplication() {
@@ -184,6 +183,14 @@ public class JournalApplication {
 	public static void main(String[] args) {
 		try {
 
+			// load configuration from storage
+			try {
+				Configuration.load();
+			} catch (ConfigurationException e) {
+				System.err.println("failed to load configuration, exiting");
+				return;
+			}
+
 			// register the providers
 			try {
 				initModules();
@@ -195,14 +202,6 @@ public class JournalApplication {
 
 			// create the graphical user interface manager
 			ui = new GraphicalUserInterface();
-
-			// load configuration from storage
-			try {
-				Configuration.load();
-			} catch (ConfigurationException e) {
-				System.err.println("failed to load configuration, exiting");
-				return;
-			}
 
 			// set the default providers
 			defaultProviders();

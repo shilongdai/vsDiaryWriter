@@ -29,14 +29,17 @@ import net.viperfish.utils.file.CommonFunctions;
 public class Configuration {
 	private static FileConfiguration conf;
 
-	public static final File confFile;
+	private static File confFile;
 
 	static {
-		File homeDir = new File(System.getProperty("user.home"));
-		File vDiaryDir = new File(homeDir, ".vsDiary");
-		CommonFunctions.initDir(vDiaryDir);
-		confFile = new File(vDiaryDir, "config");
 		conf = new PropertiesConfiguration();
+		confFile = new File("config");
+		if (!confFile.exists()) {
+			File homeDir = new File(System.getProperty("user.home"));
+			File vDiaryDir = new File(homeDir, ".vsDiary");
+			CommonFunctions.initDir(vDiaryDir);
+			confFile = new File(vDiaryDir, "config");
+		}
 		conf.setFileName(confFile.getAbsolutePath());
 		try {
 			CommonFunctions.initFile(confFile);

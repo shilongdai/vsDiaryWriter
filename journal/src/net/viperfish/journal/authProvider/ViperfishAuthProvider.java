@@ -26,10 +26,14 @@ public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 		Configuration.addProperty(ConfigMapping.CONFIG_PAGES, HashAuthConfigPage.class.getCanonicalName());
 		Configuration.setProperty(UnixLikeAuthManager.ENCRYPTION_ALG, "DES");
 		Configuration.setProperty(UnixLikeAuthManager.KDF_HASH, "SHA256");
-		File homeDir = new File(System.getProperty("user.home"));
-		File vDiaryDir = new File(homeDir, ".vsDiary");
-		CommonFunctions.initDir(vDiaryDir);
-		dataDir = new File(vDiaryDir, "secure");
+		if (Configuration.containsKey(ConfigMapping.PORTABLE) && Configuration.getBoolean(ConfigMapping.PORTABLE)) {
+			dataDir = new File("secure");
+		} else {
+			File homeDir = new File(System.getProperty("user.home"));
+			File vDiaryDir = new File(homeDir, ".vsDiary");
+			CommonFunctions.initDir(vDiaryDir);
+			dataDir = new File(vDiaryDir, "secure");
+		}
 		CommonFunctions.initDir(dataDir);
 
 		authters = new HashMap<>();

@@ -37,7 +37,7 @@ public class SetPasswordPrompt {
 	public boolean open(PasswordOperation ops) {
 		Display display = Display.getDefault();
 		final Shell shell = new Shell(SWT.SYSTEM_MODAL | SWT.TITLE | SWT.BORDER);
-		shell.setSize(450, 224);
+		shell.setSize(500, 250);
 		shell.setText("Set Password");
 		shell.setLayout(new GridLayout(2, false));
 		new Label(shell, SWT.NONE);

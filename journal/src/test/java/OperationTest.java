@@ -55,6 +55,7 @@ public class OperationTest {
 	private final ExecutorService threadpool;
 
 	private void setupConfig() {
+		Configuration.setProperty(ConfigMapping.PORTABLE, true);
 		JournalApplication.initModules();
 		JournalApplication.defaultProviders();
 		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "AES");
