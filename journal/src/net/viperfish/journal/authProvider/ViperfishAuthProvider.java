@@ -1,6 +1,13 @@
 package net.viperfish.journal.authProvider;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
@@ -10,55 +17,87 @@ import net.viperfish.utils.file.CommonFunctions;
 
 public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 
-	private HashAuthManager auth;
 	private File dataDir;
+	private Map<String, Class<? extends AuthenticationManager>> authters;
+	private Map<String, AuthenticationManager> cache;
+	private String defaultInstance;
 
 	public ViperfishAuthProvider() {
 		Configuration.addProperty(ConfigMapping.CONFIG_PAGES, HashAuthConfigPage.class.getCanonicalName());
+		Configuration.setProperty(UnixLikeAuthManager.ENCRYPTION_ALG, "DES");
+		Configuration.setProperty(UnixLikeAuthManager.KDF_HASH, "SHA256");
 		File homeDir = new File(System.getProperty("user.home"));
 		File vDiaryDir = new File(homeDir, ".vsDiary");
 		CommonFunctions.initDir(vDiaryDir);
 		dataDir = new File(vDiaryDir, "secure");
 		CommonFunctions.initDir(dataDir);
-		auth = null;
+
+		authters = new HashMap<>();
+		cache = new HashMap<>();
+		initServices();
 	}
 
-	private AuthenticationManager lazyLoadAuth() {
-		if (auth == null) {
-			auth = new HashAuthManager(dataDir);
-		}
-		return auth;
+	private void initServices() {
+		authters.put("Hash", HashAuthManager.class);
+		authters.put("Unix-Style", UnixLikeAuthManager.class);
 	}
 
 	@Override
 	public AuthenticationManager newInstance() {
-		return new HashAuthManager(dataDir);
+		return newInstance(getDefaultInstance());
 	}
 
 	@Override
 	public AuthenticationManager getInstance() {
-		return lazyLoadAuth();
+		return getInstance(getDefaultInstance());
 	}
 
 	@Override
 	public AuthenticationManager newInstance(String instance) {
-		if (instance.equals("HashAuthentication")) {
-			return new HashAuthManager(dataDir);
+		Class<? extends AuthenticationManager> c = authters.get(instance);
+		if (c == null) {
+			return null;
 		}
-		return null;
+		try {
+			Constructor<? extends AuthenticationManager> ctor = c.getConstructor(File.class);
+			AuthenticationManager result = ctor.newInstance(dataDir);
+			result.reload();
+			return result;
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
 	public AuthenticationManager getInstance(String instance) {
-		if (instance.equals("HashAuthentication")) {
-			return lazyLoadAuth();
+		Class<? extends AuthenticationManager> c = authters.get(instance);
+		if (c == null) {
+			return null;
 		}
-		return null;
+		AuthenticationManager cached = cache.get(instance);
+		if (cached != null) {
+			return cached;
+		}
+		try {
+			Constructor<? extends AuthenticationManager> ctor = c.getConstructor(File.class);
+			AuthenticationManager result = ctor.newInstance(dataDir);
+			result.reload();
+			cache.put(instance, result);
+			return result;
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
 	public String[] getSupported() {
-		return new String[] { "HashAuthentication" };
+		List<String> result = new LinkedList<>();
+		for (Entry<String, Class<? extends AuthenticationManager>> i : authters.entrySet()) {
+			result.add(i.getKey());
+		}
+		return result.toArray(new String[0]);
 	}
 
 	@Override
@@ -73,12 +112,12 @@ public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 
 	@Override
 	public void setDefaultInstance(String instance) {
-
+		this.defaultInstance = instance;
 	}
 
 	@Override
 	public String getDefaultInstance() {
-		return "HashAuthentication";
+		return defaultInstance;
 	}
 
 	@Override

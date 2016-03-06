@@ -42,11 +42,4 @@ public interface AuthenticationManager {
 	 */
 	boolean verify(String string);
 
-	/**
-	 * get if the password is set
-	 * 
-	 * @return if password set
-	 */
-	boolean isPasswordSet();
-
 }

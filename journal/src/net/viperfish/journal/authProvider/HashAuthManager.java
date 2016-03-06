@@ -27,7 +27,6 @@ public class HashAuthManager implements AuthenticationManager {
 	private Digester dig;
 	private IOFile passwdFile;
 	private String password;
-	private boolean passwordSet;
 	private byte[] hash;
 	private byte[] salt;
 	private SecureRandom rand;
@@ -111,6 +110,9 @@ public class HashAuthManager implements AuthenticationManager {
 	private void loadPasswd() {
 		String formatedPasswd = readPasswdFile();
 		String[] parts = formatedPasswd.split("\\$");
+		if (parts.length < 2) {
+			return;
+		}
 		String hash = parts[0];
 		String salt = parts[1];
 		this.hash = Base64.decodeBase64(hash);
@@ -122,7 +124,6 @@ public class HashAuthManager implements AuthenticationManager {
 		dig = new BCDigester();
 		dig.setMode(Configuration.getString(HASH_ALG));
 		rand = new SecureRandom();
-		passwordSet = true;
 		ready = false;
 		passwdFile = new IOFile(new File(dataDir.getPath() + "/passwd"), new TextIOStreamHandler());
 	}
@@ -192,11 +193,6 @@ public class HashAuthManager implements AuthenticationManager {
 		} else {
 			return false;
 		}
-	}
-
-	@Override
-	public boolean isPasswordSet() {
-		return passwordSet;
 	}
 
 	@Override

@@ -37,11 +37,6 @@ public class AuthManagerAdapter extends Observable<String> implements Authentica
 		return mger.verify(string);
 	}
 
-	@Override
-	public boolean isPasswordSet() {
-		return mger.isPasswordSet();
-	}
-
 	public void pushPassword() {
 		this.notifyObservers(mger.getPassword());
 	}

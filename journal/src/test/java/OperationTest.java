@@ -64,7 +64,7 @@ public class OperationTest {
 		Configuration.setProperty(BlockCipherMacTransformer.MAC_TYPE, "HMAC");
 		Configuration.setProperty(BlockCipherMacTransformer.KDF_HASH, "SHA256");
 		Configuration.setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
-		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "HashAuthentication");
+		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "Hash");
 		Configuration.setProperty(ConfigMapping.DB_PROVIDER, "viperfish");
 		Configuration.setProperty(ConfigMapping.DB_COMPONENT, "MemoryHashMap");
 		Configuration.setProperty(ConfigMapping.INDEX_PROVIDER, "viperfish");

@@ -62,18 +62,6 @@ public abstract class UserInterface {
 	}
 
 	/**
-	 * get if the password is set, result delegated from authenticator
-	 * 
-	 * @see AuthenticationManager
-	 * @return if the password is set
-	 * @deprecated
-	 */
-	@Deprecated
-	protected boolean isPasswordSet() {
-		return auth.isPasswordSet();
-	}
-
-	/**
 	 * set a password
 	 * 
 	 * @param password
