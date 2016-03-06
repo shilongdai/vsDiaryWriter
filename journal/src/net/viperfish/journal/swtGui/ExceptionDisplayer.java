@@ -9,10 +9,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.viperfish.journal.framework.Observer;
+import net.viperfish.journal.secureProvider.CompromisedDataException;
 
 public class ExceptionDisplayer implements Observer<Throwable> {
 
@@ -52,11 +54,13 @@ public class ExceptionDisplayer implements Observer<Throwable> {
 	}
 
 	private void displayException(final Throwable e) {
-		System.err.println("handler called");
 		Display.getDefault().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
+				if (e.getCause() instanceof CompromisedDataException) {
+					MessageDialog.openWarning(null, "Security Compromise", "Your entries are corrupted or compromised");
+				}
 				errorDialogWithStackTrace("Exception Occured", e);
 			}
 		});

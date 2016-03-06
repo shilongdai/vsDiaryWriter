@@ -85,7 +85,7 @@ public class SystemSetupComposite extends Composite {
 
 		dataStorageSelector.setText("H2Database");
 		indexerSelector.setText("LuceneIndexer");
-		authSelector.setText("HashAuthentication");
+		authSelector.setText("Hash");
 		transformerSelector.setText("BlockCipherMAC");
 
 	}
