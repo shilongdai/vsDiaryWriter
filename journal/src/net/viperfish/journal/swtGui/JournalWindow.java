@@ -203,13 +203,13 @@ public class JournalWindow {
 					// smaller first and then resize the table to
 					// match the client area width
 					titles.getColumn().setWidth(width / 2);
-					dates.getColumn().setWidth(width - titles.getColumn().getWidth() - 20);
+					dates.getColumn().setWidth(width - titles.getColumn().getWidth() - 10);
 				} else {
 					// table is getting bigger so make the table
 					// bigger first and then make the columns wider
 					// to match the client area width
 					titles.getColumn().setWidth(width / 2);
-					dates.getColumn().setWidth(width - titles.getColumn().getWidth() - 20);
+					dates.getColumn().setWidth(width - titles.getColumn().getWidth() - 10);
 				}
 			}
 

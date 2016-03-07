@@ -73,6 +73,9 @@ public class JournalSetup {
 			@Override
 			public void selectionChanged(SelectionChangedEvent arg0) {
 				ConfigPage p = ((ConfigPage) ((StructuredSelection) arg0.getSelection()).getFirstElement());
+				if (p == null) {
+					return;
+				}
 				if (current != null) {
 					hideCurrent();
 				}
