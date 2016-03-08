@@ -69,7 +69,7 @@ public abstract class ArchiveEntryDatabase implements EntryDatabase {
 				result.add(s.deSerilize(buffer));
 				entry = in.getNextEntry();
 			}
-			return result.toArray(new Journal[1]);
+			return result.toArray(new Journal[0]);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
