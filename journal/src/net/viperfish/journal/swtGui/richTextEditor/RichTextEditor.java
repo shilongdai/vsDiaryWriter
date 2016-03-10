@@ -13,7 +13,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 public class RichTextEditor extends Composite {
-
 	private Browser browser;
 	private String editor_content;
 	private boolean loadCompleted = false;
