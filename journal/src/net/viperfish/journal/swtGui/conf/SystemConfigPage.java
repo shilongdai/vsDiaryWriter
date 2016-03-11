@@ -35,4 +35,9 @@ public class SystemConfigPage implements ConfigPage {
 
 	}
 
+	@Override
+	public boolean validate() {
+		return true;
+	}
+
 }

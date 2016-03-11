@@ -1,8 +1,8 @@
 package net.viperfish.journal.secureProvider;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -25,6 +25,17 @@ public class SecurityConfigComposite extends Composite {
 	private Combo kdfCombo;
 	private Label compressionLabel;
 	private Combo compressionSelector;
+	private Label errorLabel;
+
+	private class ValidateModifyListener implements ModifyListener {
+
+		@Override
+		public void modifyText(ModifyEvent arg0) {
+			validate();
+
+		}
+
+	}
 
 	/**
 	 * Create the composite.
@@ -42,6 +53,7 @@ public class SecurityConfigComposite extends Composite {
 
 		encAlgSelector = new Combo(this, SWT.READ_ONLY);
 		encAlgSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		encAlgSelector.addModifyListener(new ValidateModifyListener());
 
 		Label encModeLabel = new Label(this, SWT.NONE);
 		encModeLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -49,12 +61,14 @@ public class SecurityConfigComposite extends Composite {
 
 		encModeSelector = new Combo(this, SWT.READ_ONLY);
 		encModeSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		encModeSelector.addModifyListener(new ValidateModifyListener());
 
 		Label encPadLabel = new Label(this, SWT.NONE);
 		encPadLabel.setText("Encryption Padding");
 
 		encPadSelector = new Combo(this, SWT.READ_ONLY);
 		encPadSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		encPadSelector.addModifyListener(new ValidateModifyListener());
 
 		Label macTypeLabel = new Label(this, SWT.NONE);
 		macTypeLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -62,13 +76,12 @@ public class SecurityConfigComposite extends Composite {
 
 		macTypeSelector = new Combo(this, SWT.READ_ONLY);
 		macTypeSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		macTypeSelector.addSelectionListener(new SelectionAdapter() {
+		macTypeSelector.addModifyListener(new ModifyListener() {
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void modifyText(ModifyEvent arg0) {
 				fillInMacAlg();
 			}
-
 		});
 
 		Label macAlgLabel = new Label(this, SWT.NONE);
@@ -77,6 +90,7 @@ public class SecurityConfigComposite extends Composite {
 
 		macAlgSelector = new Combo(this, SWT.READ_ONLY);
 		macAlgSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		macAlgSelector.addModifyListener(new ValidateModifyListener());
 
 		kdfLabel = new Label(this, SWT.NONE);
 		kdfLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -84,6 +98,7 @@ public class SecurityConfigComposite extends Composite {
 
 		kdfCombo = new Combo(this, SWT.READ_ONLY);
 		kdfCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		kdfCombo.addModifyListener(new ValidateModifyListener());
 
 		compressionLabel = new Label(this, SWT.NONE);
 		compressionLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -91,6 +106,10 @@ public class SecurityConfigComposite extends Composite {
 
 		compressionSelector = new Combo(this, SWT.READ_ONLY);
 		compressionSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		errorLabel = new Label(this, SWT.NONE);
+		errorLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		errorLabel.setText("");
 		fillIn();
 
 	}
@@ -143,16 +162,49 @@ public class SecurityConfigComposite extends Composite {
 			for (String i : BlockCiphers.getSupportedBlockCipher()) {
 				macAlgSelector.add(i);
 			}
+			macAlgSelector.setText("Twofish");
 		} else if (macTypeSelector.getText().equals("GMAC")) {
 			for (String i : BlockCiphers.getGmacAlgorithms()) {
 				macAlgSelector.add(i);
 			}
+			macAlgSelector.setText("Twofish");
 		} else {
 			for (String i : Digesters.getSupportedDigest()) {
 				macAlgSelector.add(i);
+
 			}
+			macAlgSelector.setText("SHA256");
 		}
-		macAlgSelector.setText("SHA256");
+		validate();
+	}
+
+	public boolean validate() {
+		if (encAlgSelector.getText().length() == 0) {
+			errorLabel.setText("You must select an encryption algorithm");
+			return false;
+		}
+		if (encModeSelector.getText().length() == 0) {
+			errorLabel.setText("You must select an encryption mode");
+			return false;
+		}
+		if (encPadSelector.getText().length() == 0) {
+			errorLabel.setText("You must select an encryption padding");
+			return false;
+		}
+		if (macTypeSelector.getText().length() == 0) {
+			errorLabel.setText("You must select an MAC type");
+			return false;
+		}
+		if (macAlgSelector.getText().length() == 0) {
+			errorLabel.setText("You must select an MAC algorithm");
+			return false;
+		}
+		if (kdfCombo.getText().length() == 0) {
+			errorLabel.setText("You must select an KDF algorithm");
+			return false;
+		}
+		errorLabel.setText("");
+		return true;
 	}
 
 	@Override

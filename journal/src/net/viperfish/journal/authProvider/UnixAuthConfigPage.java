@@ -33,4 +33,9 @@ public class UnixAuthConfigPage implements ConfigPage {
 		this.parent = p;
 	}
 
+	@Override
+	public boolean validate() {
+		return true;
+	}
+
 }

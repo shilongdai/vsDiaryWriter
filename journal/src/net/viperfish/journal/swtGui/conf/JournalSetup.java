@@ -110,6 +110,14 @@ public class JournalSetup {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (ConfigPage p : pages) {
+					if (!p.validate()) {
+						if (current != null) {
+							hideCurrent();
+						}
+						current = p.getDisplay();
+						showCurrent();
+						return;
+					}
 					p.done();
 				}
 				isComplete = true;

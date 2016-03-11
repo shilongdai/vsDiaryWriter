@@ -37,4 +37,9 @@ public class BlockCipherMacConfigPage implements ConfigPage {
 
 	}
 
+	@Override
+	public boolean validate() {
+		return com.validate();
+	}
+
 }

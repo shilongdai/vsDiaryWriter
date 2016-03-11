@@ -9,5 +9,7 @@ public interface ConfigPage {
 
 	public void done();
 
+	public boolean validate();
+
 	public void setParent(Composite p);
 }

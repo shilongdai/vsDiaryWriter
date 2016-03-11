@@ -34,4 +34,9 @@ public class HashAuthConfigPage implements ConfigPage {
 		this.p = p;
 	}
 
+	@Override
+	public boolean validate() {
+		return true;
+	}
+
 }
