@@ -15,8 +15,7 @@ public class GZIPIOStreamHandler implements IOStreamHandler {
 	public DataOutputStream getOutputStream(File src) {
 		try {
 			CommonFunctions.initFile(src);
-			return new DataOutputStream(new GZIPOutputStream(
-					new FileOutputStream(src)));
+			return new DataOutputStream(new GZIPOutputStream(new FileOutputStream(src)));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -26,8 +25,7 @@ public class GZIPIOStreamHandler implements IOStreamHandler {
 	public DataInputStream getInputStream(File src) {
 		try {
 			CommonFunctions.initFile(src);
-			return new DataInputStream(new GZIPInputStream(new FileInputStream(
-					src)));
+			return new DataInputStream(new GZIPInputStream(new FileInputStream(src)));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

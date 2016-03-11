@@ -73,7 +73,11 @@ public class RichTextEditor extends Composite {
 	 *            text
 	 */
 	public void setText(String text) {
-		editor_content = text == null ? "" : text.replace("\n", "");
+		if (text == null) {
+			editor_content = "";
+		} else {
+			editor_content = text.replace("\n", "");
+		}
 
 		if (loadCompleted) {
 			browser.execute("setContent('" + editor_content + "');");
