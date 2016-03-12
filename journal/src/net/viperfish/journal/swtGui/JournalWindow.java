@@ -1,5 +1,6 @@
 package net.viperfish.journal.swtGui;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -279,9 +280,11 @@ public class JournalWindow {
 				FileDialog exportSelector = new FileDialog(shell);
 				exportSelector.setOverwrite(true);
 				exportSelector.setText("Enter a location to export");
-				String toExport = exportSelector.open();
+				exportSelector.open();
+				String toExport = new File(exportSelector.getFilterPath(), exportSelector.getFileName())
+						.getAbsolutePath();
 				if (toExport != null) {
-					JournalWindow.this.e.submit(f.getExportEntriesOperation("export.txt"));
+					JournalWindow.this.e.submit(f.getExportEntriesOperation(toExport));
 					MessageDialog.openInformation(shell, "Export Complete",
 							"All entries have been exported to export.txt, please store it safely and ensure the integrity of the data");
 				}
@@ -298,7 +301,8 @@ public class JournalWindow {
 				super.widgetSelected(e);
 				FileDialog selecter = new FileDialog(shell);
 				selecter.setText("Select the file to import");
-				String selected = selecter.open();
+				selecter.open();
+				String selected = new File(selecter.getFilterPath(), selecter.getFileName()).getAbsolutePath();
 				if (selected == null) {
 					return;
 				}
