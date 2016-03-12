@@ -1,5 +1,8 @@
 package net.viperfish.journal.authProvider;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -62,17 +65,31 @@ public class UnixAuthComposite extends Composite {
 		for (String i : BlockCiphers.getSupportedBlockCipher()) {
 			encryptionCombo.add(i);
 		}
-		encryptionCombo.setText("DESede");
+
 		for (String i : Digesters.getSupportedDigest()) {
 			kdfCombo.add(i);
 		}
-		kdfCombo.setText("GOST3411");
+
+		String encryptionAlg = Configuration.getString(UnixLikeAuthManager.ENCRYPTION_ALG);
+		if (encryptionAlg != null) {
+			encryptionCombo.setText(encryptionAlg);
+		} else {
+			encryptionCombo.setText("DESede");
+		}
+
+		String kdfAlgorithm = Configuration.getString(UnixLikeAuthManager.KDF_HASH);
+		if (kdfAlgorithm != null) {
+			kdfCombo.setText(kdfAlgorithm);
+		} else {
+			kdfCombo.setText("GOST3411");
+		}
 	}
 
-	public void save() {
-		Configuration.setProperty(UnixLikeAuthManager.ENCRYPTION_ALG, encryptionCombo.getText());
-		Configuration.setProperty(UnixLikeAuthManager.KDF_HASH, kdfCombo.getText());
-		return;
+	public Map<String, String> save() {
+		Map<String, String> result = new HashMap<>();
+		result.put(UnixLikeAuthManager.ENCRYPTION_ALG, encryptionCombo.getText());
+		result.put(UnixLikeAuthManager.KDF_HASH, kdfCombo.getText());
+		return result;
 	}
 
 	@Override

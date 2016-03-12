@@ -1,5 +1,8 @@
 package net.viperfish.journal.authProvider;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -7,7 +10,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.secureAlgs.Digesters;
 
 public class HashAuthConfigComposite extends Composite {
@@ -39,8 +41,10 @@ public class HashAuthConfigComposite extends Composite {
 
 	}
 
-	public void save() {
-		Configuration.setProperty(HashAuthManager.HASH_ALG, hashSelector.getText());
+	public Map<String, String> save() {
+		Map<String, String> result = new HashMap<>();
+		result.put(HashAuthManager.HASH_ALG, hashSelector.getText());
+		return result;
 	}
 
 	@Override

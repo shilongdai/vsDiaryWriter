@@ -1,5 +1,7 @@
 package net.viperfish.journal.authProvider;
 
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
@@ -24,8 +26,8 @@ public class HashAuthConfigPage implements ConfigPage {
 	}
 
 	@Override
-	public void done() {
-		com.save();
+	public Map<String, String> done() {
+		return com.save();
 
 	}
 

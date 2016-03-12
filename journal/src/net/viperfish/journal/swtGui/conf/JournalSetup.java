@@ -1,6 +1,7 @@
 package net.viperfish.journal.swtGui.conf;
 
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -118,7 +119,9 @@ public class JournalSetup {
 						showCurrent();
 						return;
 					}
-					p.done();
+					for (Entry<String, String> i : p.done().entrySet()) {
+						Configuration.setProperty(i.getKey(), i.getValue());
+					}
 				}
 				isComplete = true;
 				setupWindow.dispose();

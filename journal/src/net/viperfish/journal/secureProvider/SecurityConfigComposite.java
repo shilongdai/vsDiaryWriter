@@ -1,5 +1,8 @@
 package net.viperfish.journal.secureProvider;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -114,14 +117,16 @@ public class SecurityConfigComposite extends Composite {
 
 	}
 
-	public void save() {
-		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, encAlgSelector.getText());
-		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_MODE, encModeSelector.getText());
-		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, encPadSelector.getText());
-		Configuration.setProperty(BlockCipherMacTransformer.MAC_TYPE, macTypeSelector.getText());
-		Configuration.setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, macAlgSelector.getText());
-		Configuration.setProperty(BlockCipherMacTransformer.KDF_HASH, kdfCombo.getText());
-		Configuration.setProperty(BlockCipherMacTransformer.COMPRESSION, compressionSelector.getText());
+	public Map<String, String> save() {
+		Map<String, String> result = new HashMap<>();
+		result.put(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, encAlgSelector.getText());
+		result.put(BlockCipherMacTransformer.ENCRYPTION_MODE, encModeSelector.getText());
+		result.put(BlockCipherMacTransformer.ENCRYPTION_PADDING, encPadSelector.getText());
+		result.put(BlockCipherMacTransformer.MAC_TYPE, macTypeSelector.getText());
+		result.put(BlockCipherMacTransformer.MAC_ALGORITHM, macAlgSelector.getText());
+		result.put(BlockCipherMacTransformer.KDF_HASH, kdfCombo.getText());
+		result.put(BlockCipherMacTransformer.COMPRESSION, compressionSelector.getText());
+		return result;
 
 	}
 
@@ -141,17 +146,54 @@ public class SecurityConfigComposite extends Composite {
 		for (String i : Compressors.getCompressors()) {
 			compressionSelector.add(i);
 		}
+
 		macTypeSelector.add("CMAC");
 		macTypeSelector.add("GMAC");
 		macTypeSelector.add("CBCMAC");
 		macTypeSelector.add("CFBMAC");
 		macTypeSelector.add("HMAC");
-		macTypeSelector.setText("HMAC");
-		encPadSelector.setText("PKCS7Padding");
-		encModeSelector.setText("CFB");
-		encAlgSelector.setText("AES");
-		kdfCombo.setText("SHA256");
-		compressionSelector.setText("GZ");
+
+		String macType = Configuration.getString(BlockCipherMacTransformer.MAC_TYPE);
+		if (macType != null) {
+			macTypeSelector.setText(macType);
+		} else {
+			macTypeSelector.setText("HMAC");
+		}
+
+		String encryptionPad = Configuration.getString(BlockCipherMacTransformer.ENCRYPTION_PADDING);
+		if (encryptionPad != null) {
+			encPadSelector.setText(encryptionPad);
+		} else {
+			encPadSelector.setText("PKCS7Padding");
+		}
+
+		String encryptionMode = Configuration.getString(BlockCipherMacTransformer.ENCRYPTION_MODE);
+		if (encryptionMode != null) {
+			encModeSelector.setText(encryptionMode);
+		} else {
+			encModeSelector.setText("CFB");
+		}
+
+		String encryptionAlgorithm = Configuration.getString(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME);
+		if (encryptionAlgorithm != null) {
+			encAlgSelector.setText(encryptionAlgorithm);
+		} else {
+			encAlgSelector.setText("AES");
+		}
+
+		String kdfAlg = Configuration.getString(BlockCipherMacTransformer.KDF_HASH);
+		if (kdfAlg != null) {
+			kdfCombo.setText(kdfAlg);
+		} else {
+			kdfCombo.setText("SHA256");
+		}
+
+		String compressionType = Configuration.getString(BlockCipherMacTransformer.COMPRESSION);
+		if (compressionType != null) {
+			compressionSelector.setText(compressionType);
+		} else {
+			compressionSelector.setText("GZ");
+		}
 		fillInMacAlg();
 	}
 
@@ -174,6 +216,10 @@ public class SecurityConfigComposite extends Composite {
 
 			}
 			macAlgSelector.setText("SHA256");
+		}
+		String macAlorithm = Configuration.getString(BlockCipherMacTransformer.MAC_ALGORITHM);
+		if (macAlorithm != null) {
+			macAlgSelector.setText(macAlorithm);
 		}
 		validate();
 	}

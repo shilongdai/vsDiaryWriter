@@ -1,6 +1,8 @@
 package net.viperfish.journal.swtGui.conf;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
@@ -83,10 +85,7 @@ public class SystemSetupComposite extends Composite {
 		fillInAuth();
 		fillDataStorageSelector();
 
-		dataStorageSelector.setText("H2Database");
-		indexerSelector.setText("LuceneIndexer");
-		authSelector.setText("Hash");
-		transformerSelector.setText("BlockCipherMAC");
+		fillInConfigValues();
 
 	}
 
@@ -132,11 +131,40 @@ public class SystemSetupComposite extends Composite {
 		}
 	}
 
-	public void save() {
-		Configuration.setProperty(ConfigMapping.DB_COMPONENT, dataStorageSelector.getText());
-		Configuration.setProperty(ConfigMapping.INDEXER_COMPONENT, indexerSelector.getText());
-		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, authSelector.getText());
-		Configuration.setProperty(ConfigMapping.TRANSFORMER_COMPONENT, transformerSelector.getText());
+	private void fillInConfigValues() {
+		String dbComponent = Configuration.getString(ConfigMapping.DB_COMPONENT);
+		if (dbComponent != null) {
+			dataStorageSelector.setText(dbComponent);
+		} else {
+			dataStorageSelector.setText("H2Database");
+		}
+		String indexerComponent = Configuration.getString(ConfigMapping.INDEXER_COMPONENT);
+		if (indexerComponent != null) {
+			indexerSelector.setText(indexerComponent);
+		} else {
+			indexerSelector.setText("LuceneIndexer");
+		}
+		String authComponent = Configuration.getString(ConfigMapping.AUTH_COMPONENT);
+		if (authComponent != null) {
+			authSelector.setText(authComponent);
+		} else {
+			authSelector.setText("Hash");
+		}
+		String encryptionComponent = Configuration.getString(ConfigMapping.TRANSFORMER_COMPONENT);
+		if (encryptionComponent != null) {
+			transformerSelector.setText(encryptionComponent);
+		} else {
+			transformerSelector.setText("BlockCipherMAC");
+		}
+	}
+
+	public Map<String, String> save() {
+		Map<String, String> configuration = new HashMap<>();
+		configuration.put(ConfigMapping.DB_COMPONENT, dataStorageSelector.getText());
+		configuration.put(ConfigMapping.INDEXER_COMPONENT, indexerSelector.getText());
+		configuration.put(ConfigMapping.AUTH_COMPONENT, authSelector.getText());
+		configuration.put(ConfigMapping.TRANSFORMER_COMPONENT, transformerSelector.getText());
+		return configuration;
 	}
 
 	@Override

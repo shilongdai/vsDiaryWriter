@@ -1,5 +1,7 @@
 package net.viperfish.journal.swtGui.conf;
 
+import java.util.Map;
+
 import org.eclipse.swt.widgets.Composite;
 
 public interface ConfigPage {
@@ -7,7 +9,7 @@ public interface ConfigPage {
 
 	public Composite getDisplay();
 
-	public void done();
+	public Map<String, String> done();
 
 	public boolean validate();
 

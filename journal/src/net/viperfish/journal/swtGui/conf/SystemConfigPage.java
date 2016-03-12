@@ -1,5 +1,7 @@
 package net.viperfish.journal.swtGui.conf;
 
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
@@ -25,8 +27,8 @@ public class SystemConfigPage implements ConfigPage {
 	}
 
 	@Override
-	public void done() {
-		com.save();
+	public Map<String, String> done() {
+		return com.save();
 	}
 
 	@Override
