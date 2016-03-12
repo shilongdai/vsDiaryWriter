@@ -91,7 +91,7 @@ public class JournalWindow {
 		display = Display.getDefault();
 		shell = new Shell();
 		shell.setSize(450, 400);
-		shell.setText("vsDiary - 1.0.0-beta.1");
+		shell.setText("vsDiary - 1.0.0");
 		shell.setLayout(new GridLayout(13, false));
 
 		errorReporter = new ExceptionDisplayer(shell);
@@ -357,7 +357,7 @@ public class JournalWindow {
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
 				MessageDialog.openInformation(shell, "About",
-						"Created by Shilong Dai. This is a special thanks to Abigail Nunez, who has been a great friend and has helped me a lot. It is also created to enhance the privacy of user digitally. Everyone should be able to keep their most inner thoughts private");
+						"Created by Shilong Dai. This is an application to write diary using a rich and secure tool. This is also a gift (intellectual property) to Abigail Nunez, an amazing friend to have.");
 			}
 
 		});
