@@ -1,23 +1,13 @@
-package net.viperfish.journal.ui;
+package net.viperfish.journal.operation;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
-import net.viperfish.journal.operation.AddEntryOperation;
-import net.viperfish.journal.operation.ChangePasswordOperation;
-import net.viperfish.journal.operation.ClearEntriesOperation;
-import net.viperfish.journal.operation.DeleteEntryOperation;
-import net.viperfish.journal.operation.EditContentOperation;
-import net.viperfish.journal.operation.EditSubjectOperation;
-import net.viperfish.journal.operation.ExportJournalOperation;
-import net.viperfish.journal.operation.GetAllOperation;
-import net.viperfish.journal.operation.GetEntryOperation;
-import net.viperfish.journal.operation.ImportEntriesOperation;
-import net.viperfish.journal.operation.SearchEntryOperation;
-import net.viperfish.journal.operation.SetPasswordOperation;
+import net.viperfish.journal.ui.OperationFactory;
 
 public class StandardOperationFactory implements OperationFactory {
 
@@ -79,6 +69,16 @@ public class StandardOperationFactory implements OperationFactory {
 	@Override
 	public Operation getSetPasswordOperation(String pass) {
 		return new SetPasswordOperation(pass);
+	}
+
+	@Override
+	public Operation getSetConfigOperation(Map<String, String> config) {
+		return new SetConfigurationOperation(config);
+	}
+
+	@Override
+	public Operation getChangeConfigOperaion(Map<String, String> config) {
+		return new ChangeConfigurationOperation(config);
 	}
 
 }

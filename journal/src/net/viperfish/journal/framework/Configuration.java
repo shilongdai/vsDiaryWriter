@@ -72,10 +72,6 @@ public class Configuration {
 		return conf.containsKey(arg0);
 	}
 
-	public static String getBasePath() {
-		return conf.getBasePath();
-	}
-
 	public static BigDecimal getBigDecimal(String arg0, BigDecimal arg1) {
 		return conf.getBigDecimal(arg0, arg1);
 	}

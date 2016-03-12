@@ -5,7 +5,7 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-import net.viperfish.journal.swtGui.conf.ConfigPage;
+import net.viperfish.journal.framework.ConfigPage;
 
 public class UnixAuthConfigPage implements ConfigPage {
 

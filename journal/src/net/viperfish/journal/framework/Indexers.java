@@ -24,6 +24,9 @@ public enum Indexers {
 
 	public void registerIndexerProvider(Provider<Indexer<Journal>> p) {
 		indexerProviders.put(p.getName(), p);
+		if (p.getConfigPages() != null) {
+			ConfigPages.registerConfig(p.getConfigPages());
+		}
 	}
 
 	public Map<String, Provider<Indexer<Journal>>> getIndexerProviders() {
@@ -89,6 +92,12 @@ public enum Indexers {
 		}
 		indexerProviders.clear();
 		System.err.println("disposed indexer providers");
+	}
+
+	public void refreshAll() {
+		for (Entry<String, Provider<Indexer<Journal>>> j : indexerProviders.entrySet()) {
+			j.getValue().refresh();
+		}
 	}
 
 }

@@ -3,6 +3,8 @@ package net.viperfish.journal.authProvider;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.Map.Entry;
 
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.ConfigPage;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Provider;
 import net.viperfish.utils.file.CommonFunctions;
@@ -23,8 +26,6 @@ public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 	private String defaultInstance;
 
 	public ViperfishAuthProvider() {
-		Configuration.addProperty(ConfigMapping.CONFIG_PAGES, HashAuthConfigPage.class.getCanonicalName());
-		Configuration.addProperty(ConfigMapping.CONFIG_PAGES, UnixAuthConfigPage.class.getCanonicalName());
 		if (Configuration.containsKey(ConfigMapping.PORTABLE) && Configuration.getBoolean(ConfigMapping.PORTABLE)) {
 			dataDir = new File("secure");
 		} else {
@@ -127,6 +128,20 @@ public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 	public void delete() {
 		CommonFunctions.delete(dataDir);
 
+	}
+
+	@Override
+	public void refresh() {
+		cache.clear();
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection<Class<? extends ConfigPage>> getConfigPages() {
+		List<Class<? extends ConfigPage>> result = new LinkedList<>();
+		Collections.addAll(result, HashAuthConfigPage.class, UnixAuthConfigPage.class);
+		return result;
 	}
 
 }

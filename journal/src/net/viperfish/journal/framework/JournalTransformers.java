@@ -22,6 +22,9 @@ public enum JournalTransformers {
 
 	public void registerTransformerProvider(Provider<JournalTransformer> p) {
 		secureProviders.put(p.getName(), p);
+		if (p.getConfigPages() != null) {
+			ConfigPages.registerConfig(p.getConfigPages());
+		}
 	}
 
 	public String getDefaultTransformerProvider() {
@@ -87,6 +90,13 @@ public enum JournalTransformers {
 
 	public Map<String, Provider<JournalTransformer>> getSecureProviders() {
 		return secureProviders;
+	}
+
+	public void refreshAll() {
+		for (Entry<String, Provider<JournalTransformer>> iter : secureProviders.entrySet()) {
+			iter.getValue().refresh();
+		}
+		EntryDatabases.INSTANCE.refreshAdapter();
 	}
 
 }

@@ -2,8 +2,13 @@ package net.viperfish.journal.secureProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.ConfigPage;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.Provider;
@@ -15,7 +20,6 @@ public class ViperfishEncryptionProvider implements Provider<JournalTransformer>
 	private BlockCipherMacTransformer buffer;
 
 	public ViperfishEncryptionProvider() {
-		Configuration.addProperty(ConfigMapping.CONFIG_PAGES, BlockCipherMacConfigPage.class.getCanonicalName());
 		if (Configuration.containsKey(ConfigMapping.PORTABLE) && Configuration.getBoolean(ConfigMapping.PORTABLE)) {
 			secureDir = new File("secure");
 		} else {
@@ -92,6 +96,19 @@ public class ViperfishEncryptionProvider implements Provider<JournalTransformer>
 	public void delete() {
 		CommonFunctions.delete(secureDir);
 
+	}
+
+	@Override
+	public void refresh() {
+		buffer = null;
+
+	}
+
+	@Override
+	public Collection<Class<? extends ConfigPage>> getConfigPages() {
+		List<Class<? extends ConfigPage>> result = new LinkedList<>();
+		Collections.addAll(result, BlockCipherMacConfigPage.class);
+		return result;
 	}
 
 }

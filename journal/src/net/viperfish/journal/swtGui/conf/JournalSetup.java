@@ -1,6 +1,8 @@
 package net.viperfish.journal.swtGui.conf;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -19,8 +21,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
-import net.viperfish.journal.framework.ConfigMapping;
-import net.viperfish.journal.framework.Configuration;
+import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.framework.ConfigPage;
+import net.viperfish.journal.framework.ConfigPages;
+import net.viperfish.journal.ui.OperationExecutor;
+import net.viperfish.journal.ui.OperationFactory;
 
 public class JournalSetup {
 
@@ -31,11 +36,15 @@ public class JournalSetup {
 	private LinkedList<ConfigPage> pages;
 	private Button doneButton;
 	private boolean isComplete;
+	private OperationExecutor ops;
+	private OperationFactory factory;
 
 	public JournalSetup() {
 		isComplete = false;
 		current = null;
 		pages = new LinkedList<>();
+		ops = JournalApplication.getWorker();
+		factory = JournalApplication.getOperationFactory();
 	}
 
 	/**
@@ -43,7 +52,7 @@ public class JournalSetup {
 	 * 
 	 * @wbp.parser.entryPoint
 	 */
-	public boolean open() {
+	public boolean open(final ConfigurationOption option) {
 		Display display = Display.getDefault();
 		setupWindow = new Shell();
 		setupWindow.setSize(700, 345);
@@ -86,16 +95,16 @@ public class JournalSetup {
 			}
 		});
 
-		for (String i : Configuration.getStringArray(ConfigMapping.CONFIG_PAGES)) {
+		for (Class<? extends ConfigPage> i : ConfigPages.getConfigs()) {
 			try {
-				ConfigPage p = (ConfigPage) Class.forName(i).newInstance();
+				ConfigPage p = i.newInstance();
 				p.setParent(setupWindow);
 				current = p.getDisplay();
 				current.setLayoutData(this.displayLayout);
 				hideCurrent();
 				preferenceList.add(p);
 				pages.add(p);
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			} catch (InstantiationException | IllegalAccessException e) {
 				System.err.println("Failed to load preference page " + i + ":" + e.getMessage());
 				e.printStackTrace();
 			}
@@ -110,6 +119,7 @@ public class JournalSetup {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				Map<String, String> toSet = new HashMap<>();
 				for (ConfigPage p : pages) {
 					if (!p.validate()) {
 						if (current != null) {
@@ -120,8 +130,13 @@ public class JournalSetup {
 						return;
 					}
 					for (Entry<String, String> i : p.done().entrySet()) {
-						Configuration.setProperty(i.getKey(), i.getValue());
+						toSet.put(i.getKey(), i.getValue());
 					}
+				}
+				if (option == ConfigurationOption.SETUP) {
+					ops.submit(factory.getSetConfigOperation(toSet));
+				} else if (option == ConfigurationOption.CHANGE) {
+					ops.submit(factory.getChangeConfigOperaion(toSet));
 				}
 				isComplete = true;
 				setupWindow.dispose();

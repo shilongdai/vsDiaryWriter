@@ -10,6 +10,7 @@ import net.viperfish.journal.dbProvider.ViperfishEntryDatabaseProvider;
 import net.viperfish.journal.framework.AuthManagers;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.ConfigPages;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.EntryDatabases;
@@ -20,12 +21,12 @@ import net.viperfish.journal.framework.JournalTransformers;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.Provider;
 import net.viperfish.journal.indexProvider.ViperfishIndexerProvider;
+import net.viperfish.journal.operation.StandardOperationFactory;
 import net.viperfish.journal.secureProvider.ViperfishEncryptionProvider;
 import net.viperfish.journal.swtGui.GraphicalUserInterface;
 import net.viperfish.journal.swtGui.conf.SystemConfigPage;
 import net.viperfish.journal.ui.OperationExecutor;
 import net.viperfish.journal.ui.OperationFactory;
-import net.viperfish.journal.ui.StandardOperationFactory;
 import net.viperfish.journal.ui.TerminationControlFlowException;
 import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
 import net.viperfish.journal.ui.UserInterface;
@@ -85,8 +86,7 @@ public class JournalApplication {
 	 * add the system configuration page to gui
 	 */
 	private static void initConfigUnits() {
-		Configuration.addProperty(ConfigMapping.CONFIG_PAGES,
-				new String[] { SystemConfigPage.class.getCanonicalName() });
+		ConfigPages.registerConfig(SystemConfigPage.class);
 	}
 
 	/**

@@ -15,7 +15,6 @@ public class ConfigMapping {
 	public static final String INDEXER_COMPONENT = "providers.indexComponent";
 	public static final String AUTH_COMPONENT = "providers.authComponent";
 	public static final String TRANSFORMER_COMPONENT = "providers.transformerComponent";
-	public static final String CONFIG_PAGES = "config.pages";
 	public static final String SET_UP = "system.firstRun";
 	public static final String PORTABLE = "system.portable";
 }

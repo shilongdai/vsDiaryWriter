@@ -33,6 +33,8 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.swtGui.conf.ConfigurationOption;
+import net.viperfish.journal.swtGui.conf.JournalSetup;
 import net.viperfish.journal.ui.OperationExecutor;
 import net.viperfish.journal.ui.OperationFactory;
 
@@ -312,6 +314,18 @@ public class JournalWindow {
 		Menu settingMenu = new Menu(preferenceMenu);
 		preferenceMenu.setMenu(settingMenu);
 
+		MenuItem changeConfigMenu = new MenuItem(settingMenu, SWT.NONE);
+		changeConfigMenu.setText("Configuration");
+		changeConfigMenu.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				super.widgetSelected(arg0);
+				new JournalSetup().open(ConfigurationOption.CHANGE);
+			}
+
+		});
+
 		MenuItem passwordMenu = new MenuItem(settingMenu, SWT.NONE);
 		passwordMenu.setText("Password");
 		passwordMenu.addSelectionListener(new SelectionAdapter() {
@@ -353,5 +367,4 @@ public class JournalWindow {
 		}
 
 	}
-
 }

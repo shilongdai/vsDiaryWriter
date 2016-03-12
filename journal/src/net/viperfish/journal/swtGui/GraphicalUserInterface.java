@@ -1,5 +1,6 @@
 package net.viperfish.journal.swtGui;
 
+import net.viperfish.journal.swtGui.conf.ConfigurationOption;
 import net.viperfish.journal.swtGui.conf.JournalSetup;
 import net.viperfish.journal.ui.TerminationControlFlowException;
 import net.viperfish.journal.ui.UserInterface;
@@ -30,7 +31,7 @@ public class GraphicalUserInterface extends UserInterface {
 
 	@Override
 	public void setup() throws TerminationControlFlowException {
-		if (!setup.open()) {
+		if (!setup.open(ConfigurationOption.SETUP)) {
 			throw new TerminationControlFlowException();
 		}
 	}

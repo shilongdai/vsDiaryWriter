@@ -1,5 +1,8 @@
 package net.viperfish.journal.indexProvider;
 
+import java.util.Collection;
+
+import net.viperfish.journal.framework.ConfigPage;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Provider;
 import net.viperfish.utils.index.Indexer;
@@ -82,6 +85,18 @@ public class ViperfishIndexerProvider implements Provider<Indexer<Journal>> {
 	public void delete() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void refresh() {
+		indexer = null;
+
+	}
+
+	@Override
+	public Collection<Class<? extends ConfigPage>> getConfigPages() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

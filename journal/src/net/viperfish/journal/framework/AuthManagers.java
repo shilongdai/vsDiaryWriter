@@ -24,6 +24,9 @@ public enum AuthManagers {
 	 */
 	public void registerAuthProvider(Provider<AuthenticationManager> p) {
 		authProviders.put(p.getName(), p);
+		if (p.getConfigPages() != null) {
+			ConfigPages.registerConfig(p.getConfigPages());
+		}
 	}
 
 	/**
@@ -171,5 +174,16 @@ public enum AuthManagers {
 	 */
 	public void propagatePassword() {
 		adapter.pushPassword();
+	}
+
+	/**
+	 * refresh all providers
+	 */
+	public void refreshAll() {
+		for (Entry<String, Provider<AuthenticationManager>> i : authProviders.entrySet()) {
+			i.getValue().refresh();
+		}
+		adapter = new AuthManagerAdapter();
+		return;
 	}
 }

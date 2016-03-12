@@ -37,6 +37,15 @@ public class AuthManagerAdapter extends Observable<String> implements Authentica
 		return mger.verify(string);
 	}
 
+	@Override
+	public void addObserver(Observer<String> o) {
+		super.addObserver(o);
+		String password = getPassword();
+		if (password != null) {
+			o.beNotified(password);
+		}
+	}
+
 	public void pushPassword() {
 		this.notifyObservers(mger.getPassword());
 	}

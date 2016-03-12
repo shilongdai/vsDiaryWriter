@@ -1,6 +1,7 @@
 package net.viperfish.journal.dbProvider;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.ConfigPage;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Provider;
@@ -112,6 +114,20 @@ public class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
 	public void delete() {
 		CommonFunctions.delete(dataDir);
 
+	}
+
+	@Override
+	public void refresh() {
+		dispose();
+		mapping.clear();
+		initMapping();
+
+	}
+
+	@Override
+	public Collection<Class<? extends ConfigPage>> getConfigPages() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

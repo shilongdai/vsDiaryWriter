@@ -28,13 +28,15 @@ public enum EntryDatabases {
 		if (wrapper == null) {
 			wrapper = new JournalEncryptionWrapper();
 			AuthManagers.INSTANCE.registerObserver(wrapper);
-			AuthManagers.INSTANCE.propagatePassword();
 		}
 		wrapper.setDb(db);
 	}
 
 	public void registerEntryDatabaseProvider(Provider<EntryDatabase> p) {
 		databaseProviders.put(p.getName(), p);
+		if (p.getConfigPages() != null) {
+			ConfigPages.registerConfig(p.getConfigPages());
+		}
 	}
 
 	public Map<String, Provider<EntryDatabase>> getDatabaseProviders() {
@@ -110,5 +112,15 @@ public enum EntryDatabases {
 		}
 		databaseProviders.clear();
 		System.err.println("disposed database providers");
+	}
+
+	void refreshAdapter() {
+		wrapper = null;
+	}
+
+	public void refreshAll() {
+		for (Entry<String, Provider<EntryDatabase>> p : databaseProviders.entrySet()) {
+			p.getValue().refresh();
+		}
 	}
 }

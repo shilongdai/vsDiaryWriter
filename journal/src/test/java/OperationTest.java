@@ -3,8 +3,10 @@ package test.java;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.authProvider.HashAuthManager;
+import net.viperfish.journal.dbProvider.H2EntryDatabase;
 import net.viperfish.journal.framework.AuthManagers;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
@@ -26,10 +29,12 @@ import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.EntryDatabases;
 import net.viperfish.journal.framework.Indexers;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.JournalEncryptionWrapper;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.indexProvider.JournalIndexer;
 import net.viperfish.journal.operation.AddEntryOperation;
+import net.viperfish.journal.operation.ChangeConfigurationOperation;
 import net.viperfish.journal.operation.ChangePasswordOperation;
 import net.viperfish.journal.operation.ClearEntriesOperation;
 import net.viperfish.journal.operation.DeleteEntryOperation;
@@ -40,6 +45,7 @@ import net.viperfish.journal.operation.GetAllOperation;
 import net.viperfish.journal.operation.GetEntryOperation;
 import net.viperfish.journal.operation.ImportEntriesOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
+import net.viperfish.journal.operation.SetConfigurationOperation;
 import net.viperfish.journal.operation.SetPasswordOperation;
 import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
 import net.viperfish.utils.file.CommonFunctions;
@@ -300,6 +306,42 @@ public class OperationTest {
 		cleanUp();
 		new SetPasswordOperation("test-set").execute();
 		Assert.assertEquals("test-set", mger.getPassword());
+		cleanUp();
+	}
+
+	@Test
+	public void testSetConfig() {
+		cleanUp();
+		Map<String, String> testConfig = new HashMap<>();
+		testConfig.put("test.test1", "pass");
+		testConfig.put("test.test2", "pass");
+		new SetConfigurationOperation(testConfig).execute();
+		Assert.assertEquals("pass", Configuration.getString("test.test1"));
+		Assert.assertEquals("pass", Configuration.getString("test.test2"));
+		cleanUp();
+		Configuration.clearProperty("test.test1");
+		Configuration.clearProperty("test.test2");
+		setupConfig();
+		initComponents();
+	}
+
+	@Test
+	public void testChangeConfig() {
+		cleanUp();
+		Map<String, String> testConfig = new HashMap<>();
+		addEntries(10);
+		testConfig.put(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "DES");
+		testConfig.put(ConfigMapping.DB_COMPONENT, "H2Database");
+		new ChangeConfigurationOperation(testConfig).execute();
+		Assert.assertEquals("DES", Configuration.getString(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME));
+		Assert.assertEquals("H2Database", Configuration.getString(ConfigMapping.DB_COMPONENT));
+		initComponents();
+		Assert.assertEquals(((JournalEncryptionWrapper) db).getDb().getClass(), H2EntryDatabase.class);
+		for (Journal i : db.getAll()) {
+			Assert.assertEquals("test", i.getContent());
+		}
+		setupConfig();
+		initComponents();
 		cleanUp();
 	}
 

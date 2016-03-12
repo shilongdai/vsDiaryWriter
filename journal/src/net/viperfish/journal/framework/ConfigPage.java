@@ -1,4 +1,4 @@
-package net.viperfish.journal.swtGui.conf;
+package net.viperfish.journal.framework;
 
 import java.util.Map;
 

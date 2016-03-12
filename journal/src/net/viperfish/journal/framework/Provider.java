@@ -1,5 +1,7 @@
 package net.viperfish.journal.framework;
 
+import java.util.Collection;
+
 /**
  * a provider that provides a type of service
  * 
@@ -28,5 +30,9 @@ public interface Provider<T> {
 	public void dispose();
 
 	public void delete();
+
+	public void refresh();
+
+	public Collection<Class<? extends ConfigPage>> getConfigPages();
 
 }

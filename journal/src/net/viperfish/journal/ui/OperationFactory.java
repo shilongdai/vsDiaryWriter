@@ -1,6 +1,7 @@
 package net.viperfish.journal.ui;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.viperfish.journal.framework.Journal;
@@ -127,5 +128,24 @@ public interface OperationFactory {
 	 * @return the operation to set password
 	 */
 	public Operation getSetPasswordOperation(String pass);
+
+	/**
+	 * get an operation that INITIALIZES configurations, not change the
+	 * configuration
+	 * 
+	 * @param config
+	 *            the configuration to init
+	 * @return the operation to init configurations
+	 */
+	public Operation getSetConfigOperation(Map<String, String> config);
+
+	/**
+	 * get an operation that changes configuration
+	 * 
+	 * @param config
+	 *            the new configuration
+	 * @return the operation to change configuration
+	 */
+	public Operation getChangeConfigOperaion(Map<String, String> config);
 
 }
