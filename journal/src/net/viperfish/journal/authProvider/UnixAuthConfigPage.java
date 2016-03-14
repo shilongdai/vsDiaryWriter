@@ -6,6 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import net.viperfish.journal.framework.ConfigPage;
+import net.viperfish.journal.framework.Configuration;
 
 public class UnixAuthConfigPage implements ConfigPage {
 
@@ -38,6 +39,13 @@ public class UnixAuthConfigPage implements ConfigPage {
 	@Override
 	public boolean validate() {
 		return true;
+	}
+
+	@Override
+	public void saveDefault() {
+		Configuration.setProperty(UnixLikeAuthManager.ENCRYPTION_ALG, "DESede");
+		Configuration.setProperty(UnixLikeAuthManager.KDF_HASH, "SHA256");
+
 	}
 
 }

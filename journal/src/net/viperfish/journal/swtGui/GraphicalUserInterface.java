@@ -1,7 +1,12 @@
 package net.viperfish.journal.swtGui;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+
+import net.viperfish.journal.framework.ConfigPage;
+import net.viperfish.journal.framework.ConfigPages;
 import net.viperfish.journal.swtGui.conf.ConfigurationOption;
 import net.viperfish.journal.swtGui.conf.JournalSetup;
+import net.viperfish.journal.swtGui.conf.SetupChooserDialog;
 import net.viperfish.journal.ui.TerminationControlFlowException;
 import net.viperfish.journal.ui.UserInterface;
 
@@ -31,8 +36,26 @@ public class GraphicalUserInterface extends UserInterface {
 
 	@Override
 	public void setup() throws TerminationControlFlowException {
-		if (!setup.open(ConfigurationOption.SETUP)) {
+		SetupChooserDialog choose = new SetupChooserDialog(null);
+		int result = choose.open();
+		if (result == IDialogConstants.CANCEL_ID) {
 			throw new TerminationControlFlowException();
+		}
+		boolean isAdvanced = choose.isAdvanced();
+		if (isAdvanced) {
+			if (!setup.open(ConfigurationOption.SETUP)) {
+				throw new TerminationControlFlowException();
+			}
+		} else {
+			for (Class<? extends ConfigPage> i : ConfigPages.getConfigs()) {
+				try {
+					ConfigPage p = i.newInstance();
+					p.saveDefault();
+				} catch (InstantiationException | IllegalAccessException e) {
+					System.err.println("Failed to load preference page " + i + ":" + e.getMessage());
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 

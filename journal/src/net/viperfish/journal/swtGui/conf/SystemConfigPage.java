@@ -5,7 +5,9 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
+import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.ConfigPage;
+import net.viperfish.journal.framework.Configuration;
 
 public class SystemConfigPage implements ConfigPage {
 
@@ -42,6 +44,15 @@ public class SystemConfigPage implements ConfigPage {
 	@Override
 	public boolean validate() {
 		return true;
+	}
+
+	@Override
+	public void saveDefault() {
+		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "Hash");
+		Configuration.setProperty(ConfigMapping.DB_COMPONENT, "H2Database");
+		Configuration.setProperty(ConfigMapping.INDEXER_COMPONENT, "LuceneIndexer");
+		Configuration.setProperty(ConfigMapping.TRANSFORMER_COMPONENT, "BlockCipherMAC");
+
 	}
 
 }

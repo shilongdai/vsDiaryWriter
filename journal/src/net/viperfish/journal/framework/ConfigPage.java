@@ -14,4 +14,6 @@ public interface ConfigPage {
 	public boolean validate();
 
 	public void setParent(Composite p);
+
+	public void saveDefault();
 }

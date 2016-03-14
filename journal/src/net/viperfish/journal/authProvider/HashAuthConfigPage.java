@@ -6,6 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import net.viperfish.journal.framework.ConfigPage;
+import net.viperfish.journal.framework.Configuration;
 
 public class HashAuthConfigPage implements ConfigPage {
 
@@ -39,6 +40,12 @@ public class HashAuthConfigPage implements ConfigPage {
 	@Override
 	public boolean validate() {
 		return true;
+	}
+
+	@Override
+	public void saveDefault() {
+		Configuration.setProperty(HashAuthManager.HASH_ALG, "SHA256");
+
 	}
 
 }
