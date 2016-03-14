@@ -56,7 +56,6 @@ public class SetupChooserDialog extends Dialog {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
 				super.widgetSelected(arg0);
 				isAdvance = false;
 			}
@@ -68,7 +67,6 @@ public class SetupChooserDialog extends Dialog {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
 				super.widgetSelected(arg0);
 				isAdvance = true;
 			}
