@@ -1,5 +1,6 @@
 package net.viperfish.journal.operation;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -79,6 +80,11 @@ public class StandardOperationFactory implements OperationFactory {
 	@Override
 	public Operation getChangeConfigOperaion(Map<String, String> config) {
 		return new ChangeConfigurationOperation(config);
+	}
+
+	@Override
+	public OperationWithResult<Set<Journal>> getDateRangeOperation(Date lowerBound, Date upperBound) {
+		return new GetDateRangeOperation(lowerBound, upperBound);
 	}
 
 }

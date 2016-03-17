@@ -1,5 +1,6 @@
 package net.viperfish.journal.ui;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -147,5 +148,17 @@ public interface OperationFactory {
 	 * @return the operation to change configuration
 	 */
 	public Operation getChangeConfigOperaion(Map<String, String> config);
+
+	/**
+	 * get an operation that gets a set of entries between the lower bound and
+	 * the upper bound
+	 * 
+	 * @param lowerBound
+	 *            the earliest possible date
+	 * @param upperBound
+	 *            the latest possible date
+	 * @return the operation that get date range
+	 */
+	public OperationWithResult<Set<Journal>> getDateRangeOperation(Date lowerBound, Date upperBound);
 
 }

@@ -128,9 +128,9 @@ public class Journal implements Comparable<Journal>, Serializable {
 		if (o.equals(this)) {
 			return 0;
 		}
-		int idComp = this.id.compareTo(o.getId());
-		if (idComp == 0) {
-			int dateComp = this.date.compareTo(o.getDate());
+		int dateComp = this.date.compareTo(o.getDate());
+		if (dateComp == 0) {
+			int idComp = this.id.compareTo(o.getId());
 			if (dateComp == 0) {
 				int subjectComp = this.subject.compareTo(o.getSubject());
 				if (subjectComp == 0) {
@@ -140,10 +140,10 @@ public class Journal implements Comparable<Journal>, Serializable {
 					return subjectComp;
 				}
 			} else {
-				return dateComp;
+				return idComp;
 			}
 		} else {
-			return idComp;
+			return dateComp;
 		}
 	}
 

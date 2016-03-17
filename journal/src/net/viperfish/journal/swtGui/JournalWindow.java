@@ -3,6 +3,12 @@ package net.viperfish.journal.swtGui;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -15,15 +21,20 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -34,12 +45,123 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.swtGui.conf.ConfigurationOption;
 import net.viperfish.journal.swtGui.conf.JournalSetup;
 import net.viperfish.journal.ui.OperationExecutor;
 import net.viperfish.journal.ui.OperationFactory;
+import net.viperfish.utils.time.TimeUtils;
 
 public class JournalWindow {
+
+	private class SearchJournal {
+		private OperationExecutor e;
+		private OperationFactory f;
+
+		public SearchJournal() {
+			f = JournalApplication.getOperationFactory();
+			e = JournalApplication.getWorker();
+		}
+
+		private Date datePickerToDate(DateTime dt) {
+			Calendar cal = Calendar.getInstance();
+			cal.set(dt.getYear(), dt.getMonth(), dt.getDay());
+			return cal.getTime();
+		}
+
+		private Collection<Journal> filterByDate(Collection<Journal> results) {
+			Set<Journal> filtered = new HashSet<>();
+			Date upperDate = TimeUtils.truncDate(datePickerToDate(upperBoound));
+			Date lowerDate = TimeUtils.truncDate(datePickerToDate(lowerBound));
+			for (Journal i : results) {
+				Date entryDate = TimeUtils.truncDate(i.getDate());
+				if (entryDate.equals(lowerDate) || entryDate.equals(upperDate)) {
+					filtered.add(i);
+					continue;
+				}
+				if (i.getDate().before(upperDate) && i.getDate().after(lowerDate)) {
+					filtered.add(i);
+				}
+			}
+			return filtered;
+		}
+
+		public void displayAll() {
+			tableViewer.setInput(null);
+			OperationWithResult<List<Journal>> result = f.getListAllOperation();
+			e.submit(result);
+			Date min = null;
+			Date max = null;
+			for (Journal i : result.getResult()) {
+				if (min == null || min.after(i.getDate())) {
+					min = i.getDate();
+				}
+				if (max == null || max.before(i.getDate())) {
+					max = i.getDate();
+				}
+				tableViewer.add(i);
+			}
+			Calendar cal = Calendar.getInstance();
+			if (min != null) {
+				cal.setTime(min);
+			}
+			lowerBound.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+			if (max != null) {
+				cal.setTime(max);
+			}
+			upperBoound.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		}
+
+		public void displayFiltered() {
+			tableViewer.setInput(null);
+			Date lower = TimeUtils.truncDate(datePickerToDate(lowerBound));
+			Date upper = TimeUtils.truncDate(datePickerToDate(upperBoound));
+			OperationWithResult<Set<Journal>> getRange = f.getDateRangeOperation(lower, upper);
+			e.submit(getRange);
+			for (Journal i : getRange.getResult()) {
+				tableViewer.add(i);
+			}
+		}
+
+		public void searchJournals() {
+			if (searchText.getText().length() == 0) {
+				displayFiltered();
+				return;
+			}
+			tableViewer.setInput(null);
+			OperationWithResult<Set<Journal>> search = f.getSearchOperation(searchText.getText());
+			e.submit(search);
+			for (Journal i : filterByDate(search.getResult())) {
+				tableViewer.add(i);
+			}
+		}
+
+		private class SearchSelectionAdapter extends SelectionAdapter {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				searchJournals();
+			}
+
+		}
+
+		private class SearchTextChangeAdapter implements ModifyListener {
+
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				searchJournals();
+			}
+
+		}
+
+		public SelectionListener createSelectAdapter() {
+			return new SearchSelectionAdapter();
+		}
+
+		public ModifyListener createModifyAdapter() {
+			return new SearchTextChangeAdapter();
+		}
+	}
 
 	private Text searchText;
 	private Display display;
@@ -54,6 +176,9 @@ public class JournalWindow {
 	private Table searchResults;
 	private TableViewer tableViewer;
 	private ExceptionDisplayer errorReporter;
+	private Label recentLabel;
+	private DateTime lowerBound;
+	private DateTime upperBoound;
 
 	public JournalWindow() {
 		e = JournalApplication.getWorker();
@@ -90,8 +215,8 @@ public class JournalWindow {
 	public void open() {
 		display = Display.getDefault();
 		shell = new Shell();
-		shell.setSize(450, 400);
-		shell.setText("vsDiary - 1.0.0");
+		shell.setSize(495, 480);
+		shell.setText("vsDiary - 1.1.0");
 		shell.setLayout(new GridLayout(13, false));
 
 		errorReporter = new ExceptionDisplayer(shell);
@@ -112,6 +237,27 @@ public class JournalWindow {
 
 		deleteJournal = new ToolItem(operationBar, SWT.NONE);
 		deleteJournal.setText("Delete");
+
+		recentLabel = new Label(shell, SWT.NONE);
+		recentLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		recentLabel.setText("Entries:");
+
+		lowerBound = new DateTime(shell, SWT.DROP_DOWN);
+
+		Label lblTo = new Label(shell, SWT.NONE);
+		lblTo.setText("To");
+
+		upperBoound = new DateTime(shell, SWT.DROP_DOWN);
+
+		new Label(shell, SWT.NONE);
+		new Label(shell, SWT.NONE);
+		new Label(shell, SWT.NONE);
+		new Label(shell, SWT.NONE);
+		new Label(shell, SWT.NONE);
+		new Label(shell, SWT.NONE);
+		new Label(shell, SWT.NONE);
+		new Label(shell, SWT.NONE);
+		new Label(shell, SWT.NONE);
 
 		tableViewer = new TableViewer(shell, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		searchResults = tableViewer.getTable();
@@ -145,7 +291,10 @@ public class JournalWindow {
 			}
 		});
 
-		search = new SearchJournal(searchText, tableViewer);
+		search = new SearchJournal();
+
+		lowerBound.addSelectionListener(search.createSelectAdapter());
+		upperBoound.addSelectionListener(search.createSelectAdapter());
 
 		searchButton.addSelectionListener(search.createSelectAdapter());
 		searchText.addModifyListener(search.createModifyAdapter());
@@ -241,35 +390,6 @@ public class JournalWindow {
 
 		});
 
-		MenuItem deleteEntryMenu = new MenuItem(menu, SWT.NONE);
-		deleteEntryMenu.setText("Delete Entry");
-		deleteEntryMenu.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				super.widgetSelected(e);
-				deleteJournal();
-			}
-
-		});
-
-		MenuItem clearEntrieMenu = new MenuItem(menu, SWT.NONE);
-		clearEntrieMenu.setText("Clear All");
-		clearEntrieMenu.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				super.widgetSelected(e);
-				boolean toClear = MessageDialog.openConfirm(shell, "Confirm",
-						"THIS ACTION CANNOT BE UNDONE. Clear All?");
-				if (toClear) {
-					JournalWindow.this.e.submit(f.getClearEntriesOperation());
-					search.searchJournals();
-				}
-			}
-
-		});
-
 		MenuItem exportMenu = new MenuItem(menu, SWT.NONE);
 		exportMenu.setText("Export");
 		exportMenu.addSelectionListener(new SelectionAdapter() {
@@ -294,6 +414,19 @@ public class JournalWindow {
 
 		MenuItem mntmImport = new MenuItem(menu, SWT.NONE);
 		mntmImport.setText("Import");
+
+		MenuItem exit = new MenuItem(menu, SWT.NONE);
+		exit.setText("Exit");
+		exit.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				shell.dispose();
+				Display.getCurrent().close();
+			}
+
+		});
+
 		mntmImport.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -308,6 +441,52 @@ public class JournalWindow {
 				}
 				JournalWindow.this.e.submit(f.getImportEntriesOperation(selected));
 				search.searchJournals();
+			}
+
+		});
+
+		MenuItem editMenu = new MenuItem(mainMenu, SWT.CASCADE);
+		editMenu.setText("Edit");
+
+		Menu menu_1 = new Menu(editMenu);
+		editMenu.setMenu(menu_1);
+
+		MenuItem deleteEntryMenu = new MenuItem(menu_1, SWT.NONE);
+		deleteEntryMenu.setText("Delete Entry");
+		deleteEntryMenu.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e);
+				deleteJournal();
+			}
+
+		});
+
+		MenuItem clearEntrieMenu = new MenuItem(menu_1, SWT.NONE);
+		clearEntrieMenu.setText("Clear All");
+		clearEntrieMenu.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e);
+				boolean toClear = MessageDialog.openConfirm(shell, "Confirm",
+						"THIS ACTION CANNOT BE UNDONE. Clear All?");
+				if (toClear) {
+					JournalWindow.this.e.submit(f.getClearEntriesOperation());
+					search.searchJournals();
+				}
+			}
+
+		});
+
+		MenuItem showAllMenu = new MenuItem(menu_1, SWT.NONE);
+		showAllMenu.setText("Show All");
+		showAllMenu.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				search.displayAll();
 			}
 
 		});
@@ -357,13 +536,14 @@ public class JournalWindow {
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
 				MessageDialog.openInformation(shell, "About",
-						"Created by Shilong Dai. This is an application to write diary using a rich and secure tool. This is also a gift (intellectual property) to Abigail Nunez, an amazing friend to have.");
+						"Created by Shilong Dai. This is an application to write diary using a rich and secure tool. This is also for to Abigail Nunez, an amazing friend who inspired me greatly.");
 			}
 
 		});
+
+		search.displayAll();
 		shell.open();
 		shell.layout();
-		search.displayAll();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();

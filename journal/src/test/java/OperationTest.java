@@ -2,6 +2,7 @@ package test.java;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -42,6 +43,7 @@ import net.viperfish.journal.operation.EditContentOperation;
 import net.viperfish.journal.operation.EditSubjectOperation;
 import net.viperfish.journal.operation.ExportJournalOperation;
 import net.viperfish.journal.operation.GetAllOperation;
+import net.viperfish.journal.operation.GetDateRangeOperation;
 import net.viperfish.journal.operation.GetEntryOperation;
 import net.viperfish.journal.operation.ImportEntriesOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
@@ -343,6 +345,39 @@ public class OperationTest {
 		setupConfig();
 		initComponents();
 		cleanUp();
+	}
+
+	@Test
+	public void testGetDateRange() {
+		cleanUp();
+		Calendar cal = Calendar.getInstance();
+		cal.set(1990, 0, 1);
+		Date lowerBound = cal.getTime();
+		cal.set(1990, 1, 12);
+		Date upperBound = cal.getTime();
+
+		cal.set(1990, 0, 22);
+		Date inBound = cal.getTime();
+		Journal valid = new Journal();
+		valid.setDate(inBound);
+		valid.setSubject("valid entry");
+		valid.setContent("valid content");
+		db.addEntry(valid);
+
+		cal.set(1990, 2, 4);
+		Date outBound = cal.getTime();
+		Journal invalid = new Journal();
+		invalid.setDate(outBound);
+		invalid.setContent("out of bound");
+		invalid.setSubject("out of bound");
+		db.addEntry(invalid);
+
+		GetDateRangeOperation range = new GetDateRangeOperation(lowerBound, upperBound);
+		range.execute();
+		Set<Journal> result = range.getResult();
+
+		Assert.assertEquals(true, result.contains(valid));
+		Assert.assertEquals(false, result.contains(invalid));
 	}
 
 	@AfterClass
