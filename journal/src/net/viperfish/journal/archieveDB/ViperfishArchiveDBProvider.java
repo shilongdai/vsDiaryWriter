@@ -40,7 +40,7 @@ public class ViperfishArchiveDBProvider implements Provider<EntryDatabase> {
 			dataDir = new File(vDiaryDir, "data");
 		}
 		CommonFunctions.initDir(dataDir);
-		archiveFile = new File(dataDir, "archive");
+		archiveFile = null;
 		addArchives();
 		isUsed = false;
 		t = new Timer();
@@ -88,6 +88,7 @@ public class ViperfishArchiveDBProvider implements Provider<EntryDatabase> {
 				return null;
 			}
 			Constructor<? extends ArchiveEntryDatabase> ctor = cl.getConstructor(File.class);
+			archiveFile = new File(dataDir, instance);
 			ArchiveEntryDatabase tmp = ctor.newInstance(archiveFile);
 			tmp.load();
 			return tmp;
@@ -107,6 +108,7 @@ public class ViperfishArchiveDBProvider implements Provider<EntryDatabase> {
 					return null;
 				}
 				Constructor<? extends ArchiveEntryDatabase> ctor = cl.getConstructor(File.class);
+				archiveFile = new File(dataDir, instance);
 				ArchiveEntryDatabase tmp = ctor.newInstance(archiveFile);
 				concretes.put(instance, tmp);
 				result = tmp;

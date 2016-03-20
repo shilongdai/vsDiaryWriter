@@ -78,12 +78,13 @@ public abstract class ArchiveEntryDatabase implements EntryDatabase {
 	private long currentId;
 	private Map<Long, Journal> buffer;
 	private File archiveFile;
+	private boolean isLoaded;
 
 	public ArchiveEntryDatabase(File archiveFile) {
-		new ObjectSerializer<>(Journal.class);
 		buffer = new TreeMap<>();
 		currentId = 0;
 		this.archiveFile = archiveFile;
+		isLoaded = false;
 	}
 
 	@Override
@@ -133,6 +134,10 @@ public abstract class ArchiveEntryDatabase implements EntryDatabase {
 	}
 
 	public void load() {
+		if (isLoaded) {
+			return;
+		}
+		isLoaded = true;
 		long max = 0;
 		for (Journal i : read()) {
 			buffer.put(i.getId(), i);

@@ -15,7 +15,6 @@ abstract class FileEntryDatabaseFactory implements DataSourceFactory {
 	private Timer executor;
 
 	public FileEntryDatabaseFactory() {
-		executor = new Timer("flusher");
 	}
 
 	/**
@@ -39,6 +38,10 @@ abstract class FileEntryDatabaseFactory implements DataSourceFactory {
 		if (db == null) {
 			db = new FileEntryDatabase(createIOFile(dataFile));
 			db.load();
+			if (executor != null) {
+				executor.cancel();
+			}
+			executor = new Timer("flusher");
 			// auto flush
 			executor.schedule(new TimerTask() {
 
@@ -55,7 +58,8 @@ abstract class FileEntryDatabaseFactory implements DataSourceFactory {
 	public void cleanUp() {
 		if (db != null)
 			db.flush();
-		executor.cancel();
+		if (executor != null)
+			executor.cancel();
 	}
 
 	@Override
