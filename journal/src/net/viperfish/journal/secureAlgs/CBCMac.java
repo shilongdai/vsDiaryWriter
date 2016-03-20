@@ -34,4 +34,9 @@ class CBCMac extends BCMacDigester {
 		getMac(currentMode).init(new ParametersWithIV(new KeyParameter(key), iv));
 
 	}
+
+	@Override
+	public int getIvLength() {
+		return BlockCiphers.getBlockCipherEngine(currentMode).getBlockSize();
+	}
 }

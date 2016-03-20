@@ -7,15 +7,13 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import net.viperfish.journal.framework.EntryDatabase;
+import net.viperfish.journal.framework.InjectedOperation;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.framework.Operation;
-import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
 import net.viperfish.utils.serialization.JsonGenerator;
 
-public class ExportJournalOperation implements Operation {
+public class ExportJournalOperation extends InjectedOperation {
 
 	static {
 		generator = new JsonGenerator();
@@ -23,16 +21,14 @@ public class ExportJournalOperation implements Operation {
 
 	private static final JsonGenerator generator;
 	private IOFile outputTarget;
-	private EntryDatabase db;
 
 	public ExportJournalOperation(String outputFile) {
 		outputTarget = new IOFile(new File(outputFile), new TextIOStreamHandler());
-		db = EntryDatabases.INSTANCE.getEntryDatabase();
 	}
 
 	@Override
 	public void execute() {
-		List<Journal> allJournals = db.getAll();
+		List<Journal> allJournals = db().getAll();
 		Journal[] toExport = allJournals.toArray(new Journal[1]);
 		for (Journal i : toExport) {
 			i.setId(null);

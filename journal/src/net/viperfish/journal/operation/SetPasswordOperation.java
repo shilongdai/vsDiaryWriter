@@ -1,22 +1,18 @@
 package net.viperfish.journal.operation;
 
-import net.viperfish.journal.framework.AuthenticationManager;
-import net.viperfish.journal.framework.Operation;
-import net.viperfish.journal.framework.provider.AuthManagers;
+import net.viperfish.journal.framework.InjectedOperation;
 
-public class SetPasswordOperation implements Operation {
+public class SetPasswordOperation extends InjectedOperation {
 
 	private String password;
-	private AuthenticationManager auth;
 
 	public SetPasswordOperation(String pass) {
 		this.password = pass;
-		auth = AuthManagers.INSTANCE.getAuthManager();
 	}
 
 	@Override
 	public void execute() {
-		auth.setPassword(password);
+		auth().setPassword(password);
 
 	}
 

@@ -8,7 +8,7 @@ package net.viperfish.journal.framework;
  * @param <T>
  *            the result type
  */
-public abstract class OperationWithResult<T> implements Operation {
+public abstract class OperationWithResult<T> extends InjectedOperation {
 
 	private boolean isDone;
 	private T result;

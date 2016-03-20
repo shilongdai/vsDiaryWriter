@@ -67,11 +67,6 @@ public abstract class BCMacDigester implements MacDigester {
 	}
 
 	@Override
-	public int getIvLength() {
-		return getMac(mode).getMacSize();
-	}
-
-	@Override
 	public int getKeyLength() {
 		return getKeySize();
 	}

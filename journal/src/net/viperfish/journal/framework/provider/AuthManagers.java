@@ -29,7 +29,6 @@ public enum AuthManagers {
 	 */
 	public void registerAuthProvider(Provider<AuthenticationManager> p) {
 		authProviders.put(p.getName(), p);
-		p.initDefaults();
 		p.registerConfig();
 	}
 

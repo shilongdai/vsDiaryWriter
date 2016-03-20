@@ -36,4 +36,9 @@ class CMac extends BCMacDigester {
 
 	}
 
+	@Override
+	public int getIvLength() {
+		return BlockCiphers.getBlockCipherEngine(currentMode).getBlockSize();
+	}
+
 }

@@ -26,7 +26,6 @@ public enum JournalTransformers {
 
 	public void registerTransformerProvider(Provider<JournalTransformer> p) {
 		secureProviders.put(p.getName(), p);
-		p.initDefaults();
 		p.registerConfig();
 	}
 

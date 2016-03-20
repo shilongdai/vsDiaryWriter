@@ -34,4 +34,10 @@ class HMac extends BCMacDigester {
 
 	}
 
+	@Override
+	public int getIvLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

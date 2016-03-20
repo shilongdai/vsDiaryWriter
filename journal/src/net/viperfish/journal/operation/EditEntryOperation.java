@@ -1,11 +1,7 @@
 package net.viperfish.journal.operation;
 
-import net.viperfish.journal.framework.EntryDatabase;
+import net.viperfish.journal.framework.InjectedOperation;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.framework.Operation;
-import net.viperfish.journal.framework.provider.EntryDatabases;
-import net.viperfish.journal.framework.provider.Indexers;
-import net.viperfish.utils.index.Indexer;
 
 /**
  * edits an entry in the system
@@ -13,11 +9,9 @@ import net.viperfish.utils.index.Indexer;
  * @author sdai
  *
  */
-public abstract class EditEntryOperation implements Operation {
+public abstract class EditEntryOperation extends InjectedOperation {
 
 	private Long id;
-	private EntryDatabase db;
-	private Indexer<Journal> indexer;
 
 	/**
 	 * edit the journal
@@ -29,18 +23,16 @@ public abstract class EditEntryOperation implements Operation {
 
 	public EditEntryOperation(Long id) {
 		this.id = id;
-		db = EntryDatabases.INSTANCE.getEntryDatabase();
-		indexer = Indexers.INSTANCE.getIndexer();
 
 	}
 
 	@Override
 	public void execute() {
-		Journal e = db.getEntry(id);
+		Journal e = db().getEntry(id);
 		edit(e);
-		indexer.delete(id);
-		indexer.add(e);
-		db.updateEntry(id, e);
+		indexer().delete(id);
+		indexer().add(e);
+		db().updateEntry(id, e);
 
 	}
 

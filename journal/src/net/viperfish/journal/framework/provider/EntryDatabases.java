@@ -38,7 +38,6 @@ public enum EntryDatabases {
 
 	public void registerEntryDatabaseProvider(Provider<EntryDatabase> p) {
 		databaseProviders.put(p.getName(), p);
-		p.initDefaults();
 		p.registerConfig();
 	}
 

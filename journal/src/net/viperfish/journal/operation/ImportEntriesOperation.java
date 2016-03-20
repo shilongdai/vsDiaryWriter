@@ -6,22 +6,16 @@ import java.nio.charset.StandardCharsets;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import net.viperfish.journal.framework.EntryDatabase;
+import net.viperfish.journal.framework.InjectedOperation;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.framework.Operation;
-import net.viperfish.journal.framework.provider.EntryDatabases;
-import net.viperfish.journal.framework.provider.Indexers;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
-import net.viperfish.utils.index.Indexer;
 import net.viperfish.utils.serialization.JsonGenerator;
 
-public class ImportEntriesOperation implements Operation {
+public class ImportEntriesOperation extends InjectedOperation {
 
 	private IOFile importFile;
 	private static final JsonGenerator generator;
-	private EntryDatabase db;
-	private Indexer<Journal> indexer;
 
 	static {
 		generator = new JsonGenerator();
@@ -29,8 +23,6 @@ public class ImportEntriesOperation implements Operation {
 
 	public ImportEntriesOperation(String importFile) {
 		this.importFile = new IOFile(new File(importFile), new TextIOStreamHandler());
-		db = EntryDatabases.INSTANCE.getEntryDatabase();
-		indexer = Indexers.INSTANCE.getIndexer();
 	}
 
 	@Override
@@ -39,8 +31,8 @@ public class ImportEntriesOperation implements Operation {
 		try {
 			Journal[] result = generator.fromJson(Journal[].class, json);
 			for (Journal i : result) {
-				db.addEntry(i);
-				indexer.add(i);
+				db().addEntry(i);
+				indexer().add(i);
 			}
 		} catch (JsonParseException | JsonMappingException e) {
 			throw new RuntimeException(e);

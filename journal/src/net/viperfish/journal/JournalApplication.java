@@ -141,6 +141,22 @@ public class JournalApplication {
 				.setDefaultTransformerProvider(Configuration.getString(ConfigMapping.TRANSFORMER_PROVIDER));
 	}
 
+	private static void defaultPreferences() {
+		for (Entry<String, Provider<EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders().entrySet()) {
+			i.getValue().initDefaults();
+		}
+		for (Entry<String, Provider<Indexer<Journal>>> i : Indexers.INSTANCE.getIndexerProviders().entrySet()) {
+			i.getValue().initDefaults();
+		}
+		for (Entry<String, Provider<AuthenticationManager>> i : AuthManagers.INSTANCE.getAuthProviders().entrySet()) {
+			i.getValue().initDefaults();
+		}
+		for (Entry<String, Provider<JournalTransformer>> i : JournalTransformers.INSTANCE.getSecureProviders()
+				.entrySet()) {
+			i.getValue().initDefaults();
+		}
+	}
+
 	public static void main(String[] args) {
 		try {
 
@@ -170,6 +186,7 @@ public class JournalApplication {
 			// run the setup if the application is first started
 			if (Configuration.getString(ConfigMapping.SET_UP) == null) {
 				try {
+					defaultPreferences();
 					ui.setup();
 					ui.setFirstPassword();
 					Configuration.setProperty(ConfigMapping.SET_UP, false);

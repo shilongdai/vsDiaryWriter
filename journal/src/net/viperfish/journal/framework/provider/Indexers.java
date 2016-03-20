@@ -27,7 +27,6 @@ public enum Indexers {
 
 	public void registerIndexerProvider(Provider<Indexer<Journal>> p) {
 		indexerProviders.put(p.getName(), p);
-		p.initDefaults();
 		p.registerConfig();
 	}
 

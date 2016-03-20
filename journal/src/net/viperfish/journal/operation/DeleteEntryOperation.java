@@ -1,11 +1,6 @@
 package net.viperfish.journal.operation;
 
-import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.framework.Operation;
-import net.viperfish.journal.framework.provider.EntryDatabases;
-import net.viperfish.journal.framework.provider.Indexers;
-import net.viperfish.utils.index.Indexer;
+import net.viperfish.journal.framework.InjectedOperation;
 
 /**
  * deletes an entry from system
@@ -13,21 +8,17 @@ import net.viperfish.utils.index.Indexer;
  * @author sdai
  *
  */
-public class DeleteEntryOperation implements Operation {
+public class DeleteEntryOperation extends InjectedOperation {
 	private Long id;
-	private EntryDatabase db;
-	private Indexer<Journal> indexer;
 
 	public DeleteEntryOperation(Long i) {
 		this.id = i;
-		db = EntryDatabases.INSTANCE.getEntryDatabase();
-		indexer = Indexers.INSTANCE.getIndexer();
 	}
 
 	@Override
 	public void execute() {
-		db.removeEntry(id);
-		indexer.delete(id);
+		db().removeEntry(id);
+		indexer().delete(id);
 	}
 
 }

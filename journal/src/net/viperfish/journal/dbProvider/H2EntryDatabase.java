@@ -41,7 +41,7 @@ public class H2EntryDatabase extends HibernateEntryDatabase {
 		cfg.setProperty("hibernate.c3p0.timeout", "1800");
 		cfg.setProperty("hibernate.c3p0.max_statements", "50");
 		factory = cfg.buildSessionFactory();
-		s = null;
+		s = factory.openSession();
 		createTable();
 	}
 
@@ -54,18 +54,11 @@ public class H2EntryDatabase extends HibernateEntryDatabase {
 
 	@Override
 	protected Session getSession() {
-		if (s == null) {
-			if (factory.isClosed()) {
-				factory = cfg.buildSessionFactory();
-			}
-			s = factory.openSession();
-		}
 		return s;
 	}
 
 	public void closeSession() {
 		s.close();
-		s = null;
 		factory.close();
 	}
 
