@@ -1,4 +1,4 @@
-package net.viperfish.journal.ui;
+package net.viperfish.journal.framework.operationUtils;
 
 import java.util.Date;
 import java.util.List;

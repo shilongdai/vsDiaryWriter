@@ -4,10 +4,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.journal.framework.EntryDatabases;
-import net.viperfish.journal.framework.Indexers;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationWithResult;
+import net.viperfish.journal.framework.provider.EntryDatabases;
+import net.viperfish.journal.framework.provider.Indexers;
 import net.viperfish.utils.index.Indexer;
 
 /**

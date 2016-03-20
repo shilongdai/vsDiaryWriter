@@ -1,10 +1,10 @@
 package net.viperfish.journal.operation;
 
 import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.journal.framework.EntryDatabases;
-import net.viperfish.journal.framework.Indexers;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
+import net.viperfish.journal.framework.provider.EntryDatabases;
+import net.viperfish.journal.framework.provider.Indexers;
 import net.viperfish.utils.index.Indexer;
 
 public class ClearEntriesOperation implements Operation {

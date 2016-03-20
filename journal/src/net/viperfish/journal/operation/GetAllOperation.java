@@ -5,9 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.journal.framework.EntryDatabases;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationWithResult;
+import net.viperfish.journal.framework.provider.EntryDatabases;
 
 /**
  * gets all entries in the system

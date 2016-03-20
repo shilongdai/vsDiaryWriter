@@ -1,7 +1,4 @@
-package net.viperfish.journal.ui;
-
-import net.viperfish.journal.framework.Observable;
-import net.viperfish.journal.framework.Operation;
+package net.viperfish.journal.framework;
 
 /**
  * An operation executor that will call the execute method on an operation

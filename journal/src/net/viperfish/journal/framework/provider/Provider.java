@@ -1,6 +1,4 @@
-package net.viperfish.journal.framework;
-
-import java.util.Collection;
+package net.viperfish.journal.framework.provider;
 
 /**
  * a provider that provides a type of service
@@ -33,6 +31,8 @@ public interface Provider<T> {
 
 	public void refresh();
 
-	public Collection<Class<? extends ConfigPage>> getConfigPages();
+	public void initDefaults();
+
+	public void registerConfig();
 
 }

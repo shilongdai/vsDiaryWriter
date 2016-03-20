@@ -19,11 +19,12 @@ import net.viperfish.journal.framework.Journal;
  */
 public class H2EntryDatabase extends HibernateEntryDatabase {
 
-	private final SessionFactory factory;
-	private final Session s;
+	private SessionFactory factory;
+	private Session s;
+	private Configuration cfg;
 
 	public H2EntryDatabase(File dataDir) {
-		Configuration cfg = new Configuration();
+		cfg = new Configuration();
 		cfg.addAnnotatedClass(Journal.class);
 		cfg.setProperty("hibernate.connection.driver_class", Driver.class.getCanonicalName());
 		try {
@@ -40,23 +41,31 @@ public class H2EntryDatabase extends HibernateEntryDatabase {
 		cfg.setProperty("hibernate.c3p0.timeout", "1800");
 		cfg.setProperty("hibernate.c3p0.max_statements", "50");
 		factory = cfg.buildSessionFactory();
-		s = factory.openSession();
+		s = null;
 		createTable();
 	}
 
 	void createTable() {
-		s.createSQLQuery(
-				"create table if not exists JOURNAL(Id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, Subject TEXT, Date TIMESTAMP, Content TEXT);")
+		getSession()
+				.createSQLQuery(
+						"create table if not exists JOURNAL(Id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, Subject TEXT, Date TIMESTAMP, Content TEXT);")
 				.executeUpdate();
 	}
 
 	@Override
 	protected Session getSession() {
+		if (s == null) {
+			if (factory.isClosed()) {
+				factory = cfg.buildSessionFactory();
+			}
+			s = factory.openSession();
+		}
 		return s;
 	}
 
 	public void closeSession() {
 		s.close();
+		s = null;
 		factory.close();
 	}
 

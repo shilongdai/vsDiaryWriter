@@ -1,8 +1,13 @@
-package net.viperfish.journal.framework;
+package net.viperfish.journal.framework.provider;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import net.viperfish.journal.framework.AuthenticationManager;
+import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.Configuration;
+import net.viperfish.journal.framework.Observer;
 
 public enum AuthManagers {
 	INSTANCE;
@@ -24,9 +29,8 @@ public enum AuthManagers {
 	 */
 	public void registerAuthProvider(Provider<AuthenticationManager> p) {
 		authProviders.put(p.getName(), p);
-		if (p.getConfigPages() != null) {
-			ConfigPages.registerConfig(p.getConfigPages());
-		}
+		p.initDefaults();
+		p.registerConfig();
 	}
 
 	/**

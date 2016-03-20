@@ -6,15 +6,15 @@ import java.util.Map.Entry;
 
 import org.apache.commons.configuration.ConfigurationException;
 
-import net.viperfish.journal.framework.AuthManagers;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.journal.framework.EntryDatabases;
-import net.viperfish.journal.framework.Indexers;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.framework.JournalTransformers;
 import net.viperfish.journal.framework.Operation;
+import net.viperfish.journal.framework.provider.AuthManagers;
+import net.viperfish.journal.framework.provider.EntryDatabases;
+import net.viperfish.journal.framework.provider.Indexers;
+import net.viperfish.journal.framework.provider.JournalTransformers;
 import net.viperfish.utils.index.Indexer;
 
 public class ChangeConfigurationOperation implements Operation {

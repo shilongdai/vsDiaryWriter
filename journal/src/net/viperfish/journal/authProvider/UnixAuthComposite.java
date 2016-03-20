@@ -92,6 +92,11 @@ public class UnixAuthComposite extends Composite {
 		return result;
 	}
 
+	public void defaultAll() {
+		encryptionCombo.setText("DESede");
+		kdfCombo.setText("GOST3411");
+	}
+
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components

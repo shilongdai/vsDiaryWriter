@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.secureAlgs.Digesters;
 
 public class HashAuthConfigComposite extends Composite {
@@ -37,14 +38,22 @@ public class HashAuthConfigComposite extends Composite {
 			hashSelector.add(i);
 		}
 
-		hashSelector.setText("SHA256");
-
+		String hashAlg = Configuration.getString(HashAuthManager.HASH_ALG);
+		if (hashAlg != null) {
+			hashSelector.setText(hashAlg);
+		} else {
+			defaultAll();
+		}
 	}
 
 	public Map<String, String> save() {
 		Map<String, String> result = new HashMap<>();
 		result.put(HashAuthManager.HASH_ALG, hashSelector.getText());
 		return result;
+	}
+
+	public void defaultAll() {
+		hashSelector.setText("SHA256");
 	}
 
 	@Override

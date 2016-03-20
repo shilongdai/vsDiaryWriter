@@ -253,6 +253,15 @@ public class SecurityConfigComposite extends Composite {
 		return true;
 	}
 
+	public void defaultAll() {
+		macTypeSelector.setText("HMAC");
+		encPadSelector.setText("PKCS7Padding");
+		encModeSelector.setText("CFB");
+		encAlgSelector.setText("AES");
+		kdfCombo.setText("SHA256");
+		compressionSelector.setText("GZ");
+	}
+
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components

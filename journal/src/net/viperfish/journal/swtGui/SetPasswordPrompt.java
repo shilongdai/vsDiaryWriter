@@ -13,7 +13,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import net.viperfish.journal.JournalApplication;
+import net.viperfish.journal.framework.operationUtils.OperationExecutors;
+import net.viperfish.journal.framework.operationUtils.OperationFactories;
 
 public class SetPasswordPrompt {
 
@@ -87,10 +88,10 @@ public class SetPasswordPrompt {
 			public void widgetSelected(SelectionEvent arg0) {
 				if (canSavePassword()) {
 					if (SetPasswordPrompt.this.ops == PasswordOperation.SET) {
-						JournalApplication.getWorker().submit(JournalApplication.getOperationFactory()
+						OperationExecutors.getExecutor().submit(OperationFactories.getOperationFactory()
 								.getSetPasswordOperation(newPassword.getText()));
 					} else if (SetPasswordPrompt.this.ops == PasswordOperation.CHANGE) {
-						JournalApplication.getWorker().submit(JournalApplication.getOperationFactory()
+						OperationExecutors.getExecutor().submit(OperationFactories.getOperationFactory()
 								.getChangePasswordOperation(newPassword.getText()));
 					}
 					result = true;

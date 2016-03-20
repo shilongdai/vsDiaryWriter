@@ -1,8 +1,8 @@
 package net.viperfish.journal.operation;
 
-import net.viperfish.journal.framework.AuthManagers;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.Operation;
+import net.viperfish.journal.framework.provider.AuthManagers;
 
 public class SetPasswordOperation implements Operation {
 

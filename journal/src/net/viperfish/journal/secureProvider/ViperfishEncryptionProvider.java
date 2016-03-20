@@ -2,16 +2,14 @@ package net.viperfish.journal.secureProvider;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+
+import org.eclipse.jface.preference.PreferenceNode;
 
 import net.viperfish.journal.framework.ConfigMapping;
-import net.viperfish.journal.framework.ConfigPage;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.JournalTransformer;
-import net.viperfish.journal.framework.Provider;
+import net.viperfish.journal.framework.provider.PreferenceGUIManager;
+import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.utils.file.CommonFunctions;
 
 public class ViperfishEncryptionProvider implements Provider<JournalTransformer> {
@@ -105,10 +103,22 @@ public class ViperfishEncryptionProvider implements Provider<JournalTransformer>
 	}
 
 	@Override
-	public Collection<Class<? extends ConfigPage>> getConfigPages() {
-		List<Class<? extends ConfigPage>> result = new LinkedList<>();
-		Collections.addAll(result, BlockCipherMacConfigPage.class);
-		return result;
+	public void initDefaults() {
+		Configuration.setProperty(BlockCipherMacTransformer.COMPRESSION, "GZ");
+		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "AES");
+		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_MODE, "CFB");
+		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, "PKCS7Padding");
+		Configuration.setProperty(BlockCipherMacTransformer.KDF_HASH, "SHA256");
+		Configuration.setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, "SHA256");
+		Configuration.setProperty(BlockCipherMacTransformer.MAC_TYPE, "HMAC");
+
+	}
+
+	@Override
+	public void registerConfig() {
+		PreferenceNode encryption = new PreferenceNode("blockCipherMac", "Encryption", null,
+				BlockCipherMacPreference.class.getCanonicalName());
+		PreferenceGUIManager.addToRoot(encryption);
 	}
 
 }

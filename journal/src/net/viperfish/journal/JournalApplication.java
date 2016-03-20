@@ -3,32 +3,28 @@ package net.viperfish.journal;
 import java.util.Map.Entry;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.eclipse.jface.preference.PreferenceNode;
 
 import net.viperfish.journal.archieveDB.ViperfishArchiveDBProvider;
 import net.viperfish.journal.authProvider.ViperfishAuthProvider;
 import net.viperfish.journal.dbProvider.ViperfishEntryDatabaseProvider;
-import net.viperfish.journal.framework.AuthManagers;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
-import net.viperfish.journal.framework.ConfigPages;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.journal.framework.EntryDatabases;
-import net.viperfish.journal.framework.Indexers;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
-import net.viperfish.journal.framework.JournalTransformers;
-import net.viperfish.journal.framework.Operation;
-import net.viperfish.journal.framework.Provider;
+import net.viperfish.journal.framework.operationUtils.OperationExecutors;
+import net.viperfish.journal.framework.provider.AuthManagers;
+import net.viperfish.journal.framework.provider.EntryDatabases;
+import net.viperfish.journal.framework.provider.Indexers;
+import net.viperfish.journal.framework.provider.JournalTransformers;
+import net.viperfish.journal.framework.provider.PreferenceGUIManager;
+import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.journal.indexProvider.ViperfishIndexerProvider;
-import net.viperfish.journal.operation.StandardOperationFactory;
 import net.viperfish.journal.secureProvider.ViperfishEncryptionProvider;
 import net.viperfish.journal.swtGui.GraphicalUserInterface;
-import net.viperfish.journal.swtGui.conf.SystemConfigPage;
-import net.viperfish.journal.ui.OperationExecutor;
-import net.viperfish.journal.ui.OperationFactory;
 import net.viperfish.journal.ui.TerminationControlFlowException;
-import net.viperfish.journal.ui.ThreadPoolOperationExecutor;
 import net.viperfish.journal.ui.UserInterface;
 import net.viperfish.utils.index.Indexer;
 
@@ -40,17 +36,11 @@ import net.viperfish.utils.index.Indexer;
  */
 public class JournalApplication {
 	private static UserInterface ui;
-	private static OperationExecutor worker;
-	private static OperationFactory opsFactory;
 	// private static File moduleDir;
 	// private static File authModules;
 	// private static File dbModules;
 	// private static File indexModules;
 	// private static File transModule;
-
-	static {
-		initConfigUnits();
-	}
 
 	public JournalApplication() {
 	}
@@ -74,19 +64,16 @@ public class JournalApplication {
 		// ComponentProvider.loadIndexer(indexModules);
 		// ComponentProvider.loadTransformerProvider(transModule);
 
+		PreferenceNode system = new PreferenceNode("system", "System", null,
+				SystemPreferencePage.class.getCanonicalName());
+		PreferenceGUIManager.addToRoot(system);
+
 		// register the providers
 		AuthManagers.INSTANCE.registerAuthProvider(new ViperfishAuthProvider());
 		EntryDatabases.INSTANCE.registerEntryDatabaseProvider(new ViperfishEntryDatabaseProvider());
 		EntryDatabases.INSTANCE.registerEntryDatabaseProvider(new ViperfishArchiveDBProvider());
 		Indexers.INSTANCE.registerIndexerProvider(new ViperfishIndexerProvider());
 		JournalTransformers.INSTANCE.registerTransformerProvider(new ViperfishEncryptionProvider());
-	}
-
-	/**
-	 * add the system configuration page to gui
-	 */
-	private static void initConfigUnits() {
-		ConfigPages.registerConfig(SystemConfigPage.class);
 	}
 
 	/**
@@ -99,7 +86,7 @@ public class JournalApplication {
 		Indexers.INSTANCE.dispose();
 		JournalTransformers.INSTANCE.dispose();
 		System.err.println("Providers disposed");
-		getWorker().terminate();
+		OperationExecutors.dispose();
 		System.err.println("worker terminated");
 	}
 
@@ -121,32 +108,6 @@ public class JournalApplication {
 			i.getValue().delete();
 		}
 		Configuration.delete();
-	}
-
-	/**
-	 * get the factory for creating an appropriate OperationExecuter
-	 * 
-	 * @return the operation executer
-	 * @see OperationExecutor
-	 */
-	public static OperationExecutor getWorker() {
-		if (worker == null) {
-			worker = new ThreadPoolOperationExecutor();
-		}
-		return worker;
-	}
-
-	/**
-	 * gets a factory that returns a Operation
-	 * 
-	 * @return the factory
-	 * @see Operation
-	 */
-	public static OperationFactory getOperationFactory() {
-		if (opsFactory == null) {
-			opsFactory = new StandardOperationFactory();
-		}
-		return opsFactory;
 	}
 
 	/**

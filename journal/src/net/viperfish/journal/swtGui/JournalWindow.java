@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -43,25 +44,18 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationWithResult;
-import net.viperfish.journal.swtGui.conf.ConfigurationOption;
-import net.viperfish.journal.swtGui.conf.JournalSetup;
-import net.viperfish.journal.ui.OperationExecutor;
-import net.viperfish.journal.ui.OperationFactory;
+import net.viperfish.journal.framework.operationUtils.OperationExecutors;
+import net.viperfish.journal.framework.operationUtils.OperationFactories;
+import net.viperfish.journal.framework.operationUtils.OperationFactory;
+import net.viperfish.journal.framework.provider.PreferenceGUIManager;
 import net.viperfish.utils.time.TimeUtils;
 
 public class JournalWindow {
 
 	private class SearchJournal {
-		private OperationExecutor e;
-		private OperationFactory f;
-
-		public SearchJournal() {
-			f = JournalApplication.getOperationFactory();
-			e = JournalApplication.getWorker();
-		}
 
 		private Date datePickerToDate(DateTime dt) {
 			Calendar cal = Calendar.getInstance();
@@ -181,8 +175,8 @@ public class JournalWindow {
 	private DateTime upperBoound;
 
 	public JournalWindow() {
-		e = JournalApplication.getWorker();
-		f = JournalApplication.getOperationFactory();
+		e = OperationExecutors.getExecutor();
+		f = OperationFactories.getOperationFactory();
 	}
 
 	private void newJournal() {
@@ -504,7 +498,8 @@ public class JournalWindow {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				super.widgetSelected(arg0);
-				new JournalSetup().open(ConfigurationOption.CHANGE);
+				PreferenceDialog pd = new PreferenceDialog(shell, PreferenceGUIManager.getMger());
+				pd.open();
 			}
 
 		});

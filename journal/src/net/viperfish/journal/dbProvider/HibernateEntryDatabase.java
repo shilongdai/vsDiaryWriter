@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
@@ -31,20 +32,32 @@ public abstract class HibernateEntryDatabase implements EntryDatabase {
 
 	@Override
 	public Journal addEntry(Journal j) {
-		this.getSession().getTransaction().begin();
-		this.getSession().persist(j);
-		this.getSession().getTransaction().commit();
-		this.getSession().flush();
-		return j;
+		Transaction tr = this.getSession().getTransaction();
+		try {
+			tr.begin();
+			this.getSession().persist(j);
+			tr.commit();
+			this.getSession().flush();
+			return j;
+		} catch (RuntimeException e) {
+			tr.rollback();
+			throw e;
+		}
 	}
 
 	@Override
 	public Journal removeEntry(Long id) {
-		this.getSession().getTransaction().begin();
-		Journal deleted = getEntry(id);
-		this.getSession().delete(getEntry(id));
-		this.getSession().getTransaction().commit();
-		return deleted;
+		Transaction tr = this.getSession().getTransaction();
+		try {
+			tr.begin();
+			Journal deleted = getEntry(id);
+			this.getSession().delete(getEntry(id));
+			tr.commit();
+			return deleted;
+		} catch (RuntimeException e) {
+			tr.rollback();
+			throw e;
+		}
 	}
 
 	@Override
@@ -55,11 +68,17 @@ public abstract class HibernateEntryDatabase implements EntryDatabase {
 
 	@Override
 	public Journal updateEntry(Long id, Journal j) {
-		this.getSession().getTransaction().begin();
-		j.setId(id);
-		this.getSession().merge(j);
-		this.getSession().getTransaction().commit();
-		return j;
+		Transaction tr = this.getSession().getTransaction();
+		try {
+			tr.begin();
+			j.setId(id);
+			this.getSession().merge(j);
+			tr.commit();
+			return j;
+		} catch (RuntimeException e) {
+			tr.rollback();
+			throw e;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -71,9 +90,15 @@ public abstract class HibernateEntryDatabase implements EntryDatabase {
 
 	@Override
 	public void clear() {
-		this.getSession().getTransaction().begin();
-		this.getSession().createQuery("DELETE FROM Journal").executeUpdate();
-		this.getSession().getTransaction().commit();
+		Transaction tr = this.getSession().getTransaction();
+		try {
+			tr.begin();
+			this.getSession().createQuery("DELETE FROM Journal").executeUpdate();
+			tr.commit();
+		} catch (RuntimeException e) {
+			tr.rollback();
+			throw e;
+		}
 		return;
 	}
 

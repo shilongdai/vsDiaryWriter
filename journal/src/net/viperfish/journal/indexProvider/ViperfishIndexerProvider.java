@@ -1,10 +1,7 @@
 package net.viperfish.journal.indexProvider;
 
-import java.util.Collection;
-
-import net.viperfish.journal.framework.ConfigPage;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.framework.Provider;
+import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.utils.index.Indexer;
 
 /**
@@ -94,9 +91,15 @@ public class ViperfishIndexerProvider implements Provider<Indexer<Journal>> {
 	}
 
 	@Override
-	public Collection<Class<? extends ConfigPage>> getConfigPages() {
+	public void initDefaults() {
 		// TODO Auto-generated method stub
-		return null;
+
+	}
+
+	@Override
+	public void registerConfig() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

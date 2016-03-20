@@ -1,9 +1,9 @@
 package net.viperfish.journal.operation;
 
 import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.journal.framework.EntryDatabases;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationWithResult;
+import net.viperfish.journal.framework.provider.EntryDatabases;
 
 /**
  * gets an entry from the system

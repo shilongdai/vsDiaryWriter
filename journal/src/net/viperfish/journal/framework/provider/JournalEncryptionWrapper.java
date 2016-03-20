@@ -1,7 +1,12 @@
-package net.viperfish.journal.framework;
+package net.viperfish.journal.framework.provider;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import net.viperfish.journal.framework.EntryDatabase;
+import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.JournalTransformer;
+import net.viperfish.journal.framework.Observer;
 
 /**
  * a wrapper around an EntryDatabase to provide encryption support via the

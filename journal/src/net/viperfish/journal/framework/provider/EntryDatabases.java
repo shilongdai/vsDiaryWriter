@@ -1,8 +1,12 @@
-package net.viperfish.journal.framework;
+package net.viperfish.journal.framework.provider;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import net.viperfish.journal.framework.ConfigMapping;
+import net.viperfish.journal.framework.Configuration;
+import net.viperfish.journal.framework.EntryDatabase;
 
 /**
  * a provider manager for the EntryDatabase
@@ -34,9 +38,8 @@ public enum EntryDatabases {
 
 	public void registerEntryDatabaseProvider(Provider<EntryDatabase> p) {
 		databaseProviders.put(p.getName(), p);
-		if (p.getConfigPages() != null) {
-			ConfigPages.registerConfig(p.getConfigPages());
-		}
+		p.initDefaults();
+		p.registerConfig();
 	}
 
 	public Map<String, Provider<EntryDatabase>> getDatabaseProviders() {

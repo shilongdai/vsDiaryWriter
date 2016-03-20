@@ -3,7 +3,6 @@ package net.viperfish.journal.archieveDB;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,10 +12,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import net.viperfish.journal.framework.ConfigMapping;
-import net.viperfish.journal.framework.ConfigPage;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.journal.framework.Provider;
+import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.utils.file.CommonFunctions;
 
 public class ViperfishArchiveDBProvider implements Provider<EntryDatabase> {
@@ -162,8 +160,15 @@ public class ViperfishArchiveDBProvider implements Provider<EntryDatabase> {
 	}
 
 	@Override
-	public Collection<Class<? extends ConfigPage>> getConfigPages() {
-		return null;
+	public void initDefaults() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void registerConfig() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

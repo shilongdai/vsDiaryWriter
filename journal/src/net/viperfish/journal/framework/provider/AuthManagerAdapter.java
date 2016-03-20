@@ -1,6 +1,10 @@
-package net.viperfish.journal.framework;
+package net.viperfish.journal.framework.provider;
 
-public class AuthManagerAdapter extends Observable<String> implements AuthenticationManager {
+import net.viperfish.journal.framework.AuthenticationManager;
+import net.viperfish.journal.framework.Observable;
+import net.viperfish.journal.framework.Observer;
+
+class AuthManagerAdapter extends Observable<String> implements AuthenticationManager {
 	private AuthenticationManager mger;
 
 	public AuthenticationManager getMger() {
