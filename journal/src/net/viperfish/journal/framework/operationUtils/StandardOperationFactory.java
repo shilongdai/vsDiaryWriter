@@ -21,6 +21,7 @@ import net.viperfish.journal.operation.GetDateRangeOperation;
 import net.viperfish.journal.operation.GetEntryOperation;
 import net.viperfish.journal.operation.ImportEntriesOperation;
 import net.viperfish.journal.operation.SearchEntryOperation;
+import net.viperfish.journal.operation.SearchOperationDateFilter;
 import net.viperfish.journal.operation.SetConfigurationOperation;
 import net.viperfish.journal.operation.SetPasswordOperation;
 
@@ -99,6 +100,11 @@ public class StandardOperationFactory implements OperationFactory {
 	@Override
 	public OperationWithResult<Set<Journal>> getDateRangeOperation(Date lowerBound, Date upperBound) {
 		return new GetDateRangeOperation(lowerBound, upperBound);
+	}
+
+	@Override
+	public OperationWithResult<Set<Journal>> getDateRangeSearchOperation(String keyword, Date lower, Date upper) {
+		return new SearchOperationDateFilter(new SearchEntryOperation(keyword), upper, lower);
 	}
 
 }

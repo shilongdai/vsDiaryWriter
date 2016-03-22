@@ -1,6 +1,9 @@
 package net.viperfish.journal.swtGui;
 
+import java.text.DateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -23,16 +26,19 @@ public class JournalEditor {
 
 	protected Object result;
 	protected Shell shell;
-	private Text text;
+	private Text titleText;
 	private String initialTitle;
 	private String initialContent;
 	private RichTextEditor editor;
 	private Button saveButton;
 	private Journal target;
 	private boolean savePressed;
+	private Timer dateUpdater;
+	private Label titleLabel;
 
 	public JournalEditor() {
 		savePressed = false;
+		dateUpdater = new Timer("dateUpdater");
 	}
 
 	/**
@@ -52,18 +58,19 @@ public class JournalEditor {
 				display.sleep();
 			}
 		}
+		dateUpdater.cancel();
 		return target;
 	}
 
 	private void createTarget() {
 		target.setId(target.getId());
-		target.setSubject(text.getText());
+		target.setSubject(titleText.getText());
 		target.setContent(editor.getText());
 		target.setDate(new Date());
 	}
 
 	private boolean contentModified() {
-		return !(this.text.getText().equals(initialTitle) && this.editor.getText().equals(initialContent));
+		return !(this.titleText.getText().equals(initialTitle) && this.editor.getText().equals(initialContent));
 	}
 
 	/**
@@ -73,7 +80,7 @@ public class JournalEditor {
 		shell = new Shell();
 		shell.setSize(1000, 800);
 		shell.setText("Journal Editor");
-		shell.setLayout(new GridLayout(1, false));
+		shell.setLayout(new GridLayout(2, false));
 		shell.addDisposeListener(new DisposeListener() {
 
 			@Override
@@ -96,20 +103,44 @@ public class JournalEditor {
 			}
 		});
 
-		Label lblNewLabel = new Label(shell, SWT.NONE);
-		lblNewLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
-		lblNewLabel.setText("Title:");
+		final Label dateDisplayer = new Label(shell, SWT.NONE);
+		dateDisplayer.setText("Date");
+		GridData gd_dateDisplayer = new GridData(SWT.LEFT, SWT.TOP, false, false);
+		gd_dateDisplayer.horizontalSpan = 2;
+		dateDisplayer.setLayoutData(gd_dateDisplayer);
+		dateUpdater.scheduleAtFixedRate(new TimerTask() {
 
-		text = new Text(shell, SWT.BORDER);
-		GridData gd_text = new GridData(SWT.LEFT, SWT.TOP, true, false);
-		gd_text.widthHint = 670;
-		gd_text.horizontalAlignment = GridData.FILL;
-		gd_text.grabExcessHorizontalSpace = true;
-		text.setLayoutData(gd_text);
-		text.pack();
+			@Override
+			public void run() {
+				final DateFormat df = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL);
+				Display.getDefault().asyncExec(new Runnable() {
+
+					@Override
+					public void run() {
+						dateDisplayer.setText(df.format(new Date()));
+						dateDisplayer.pack();
+					}
+				});
+
+			}
+		}, 0, 1001);
+
+		titleLabel = new Label(shell, SWT.NONE);
+		titleLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		titleLabel.setText("Title:");
+
+		titleText = new Text(shell, SWT.BORDER);
+		titleText.setMessage("Title of your entry");
+		GridData gd_titleText = new GridData(SWT.LEFT, SWT.TOP, true, false);
+		gd_titleText.widthHint = 670;
+		gd_titleText.horizontalAlignment = GridData.FILL;
+		gd_titleText.grabExcessHorizontalSpace = true;
+		titleText.setLayoutData(gd_titleText);
+		titleText.pack();
 
 		editor = new RichTextEditor(shell, SWT.NONE);
 		GridData gd_browser = new GridData(SWT.CENTER, SWT.CENTER, true, true);
+		gd_browser.horizontalSpan = 2;
 		gd_browser.widthHint = 690;
 		gd_browser.heightHint = 450;
 		gd_browser.grabExcessHorizontalSpace = true;
@@ -118,9 +149,10 @@ public class JournalEditor {
 		gd_browser.verticalAlignment = GridData.FILL;
 		editor.setLayoutData(gd_browser);
 		editor.pack();
-
-		text.setText(target.getSubject());
 		editor.setText(target.getContent());
+
+		titleText.setText(target.getSubject());
+		new Label(shell, SWT.NONE);
 
 		saveButton = new Button(shell, SWT.NONE);
 		GridData gd_btnNewButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);

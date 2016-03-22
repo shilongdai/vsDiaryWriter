@@ -161,4 +161,18 @@ public interface OperationFactory {
 	 */
 	public OperationWithResult<Set<Journal>> getDateRangeOperation(Date lowerBound, Date upperBound);
 
+	/**
+	 * get an operation that searched a set of entries between the upper and
+	 * lower bound
+	 * 
+	 * @param keyword
+	 *            search query
+	 * @param lower
+	 *            the lower date
+	 * @param upper
+	 *            the max date
+	 * @return the operation that searches date range
+	 */
+	public OperationWithResult<Set<Journal>> getDateRangeSearchOperation(String keyword, Date lower, Date upper);
+
 }

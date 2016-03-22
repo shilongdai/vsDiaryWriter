@@ -4,9 +4,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -63,23 +61,6 @@ public class JournalWindow {
 			return cal.getTime();
 		}
 
-		private Collection<Journal> filterByDate(Collection<Journal> results) {
-			Set<Journal> filtered = new HashSet<>();
-			Date upperDate = TimeUtils.truncDate(datePickerToDate(upperBoound));
-			Date lowerDate = TimeUtils.truncDate(datePickerToDate(lowerBound));
-			for (Journal i : results) {
-				Date entryDate = TimeUtils.truncDate(i.getDate());
-				if (entryDate.equals(lowerDate) || entryDate.equals(upperDate)) {
-					filtered.add(i);
-					continue;
-				}
-				if (i.getDate().before(upperDate) && i.getDate().after(lowerDate)) {
-					filtered.add(i);
-				}
-			}
-			return filtered;
-		}
-
 		public void displayAll() {
 			tableViewer.setInput(null);
 			OperationWithResult<List<Journal>> result = f.getListAllOperation();
@@ -117,9 +98,12 @@ public class JournalWindow {
 				return;
 			}
 			tableViewer.setInput(null);
-			OperationWithResult<Set<Journal>> search = f.getSearchOperation(searchText.getText());
+			Date lower = TimeUtils.truncDate(datePickerToDate(lowerBound));
+			Date upper = TimeUtils.truncDate(datePickerToDate(upperBoound));
+			OperationWithResult<Set<Journal>> search = f.getDateRangeSearchOperation(searchText.getText(), lower,
+					upper);
 			e.submit(search);
-			for (Journal i : filterByDate(search.getResult())) {
+			for (Journal i : search.getResult()) {
 				tableViewer.add(i);
 			}
 		}
