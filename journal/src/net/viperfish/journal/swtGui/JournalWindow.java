@@ -85,13 +85,9 @@ public class JournalWindow {
 			OperationWithResult<List<Journal>> result = f.getListAllOperation();
 			e.submit(result);
 			Date min = null;
-			Date max = null;
 			for (Journal i : result.getResult()) {
 				if (min == null || min.after(i.getDate())) {
 					min = i.getDate();
-				}
-				if (max == null || max.before(i.getDate())) {
-					max = i.getDate();
 				}
 				tableViewer.add(i);
 			}
@@ -100,9 +96,7 @@ public class JournalWindow {
 				cal.setTime(min);
 			}
 			lowerBound.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-			if (max != null) {
-				cal.setTime(max);
-			}
+			cal.setTime(new Date());
 			upperBoound.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 		}
 
