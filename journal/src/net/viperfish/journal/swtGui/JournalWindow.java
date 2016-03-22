@@ -204,7 +204,7 @@ public class JournalWindow {
 		display = Display.getDefault();
 		shell = new Shell();
 		shell.setSize(495, 480);
-		shell.setText("vsDiary - 1.2.1");
+		shell.setText("vsDiary - 1.2.2");
 		shell.setLayout(new GridLayout(13, false));
 
 		errorReporter = new ExceptionDisplayer(shell);
