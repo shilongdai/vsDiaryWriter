@@ -155,7 +155,7 @@ public class JournalEditor {
 		new Label(shell, SWT.NONE);
 
 		saveButton = new Button(shell, SWT.NONE);
-		GridData gd_btnNewButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		GridData gd_btnNewButton = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 		gd_btnNewButton.widthHint = 64;
 		saveButton.setLayoutData(gd_btnNewButton);
 		saveButton.addSelectionListener(new SelectionAdapter() {
