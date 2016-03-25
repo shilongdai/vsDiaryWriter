@@ -30,6 +30,7 @@ import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.framework.provider.AuthManagers;
 import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.journal.framework.provider.Indexers;
+import net.viperfish.journal.framework.provider.JournalEncryptionWrapper;
 import net.viperfish.utils.file.CommonFunctions;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
@@ -319,7 +320,8 @@ public class OperationTest {
 		Assert.assertEquals("DES", Configuration.getString("viperfish.secure.encrytion.algorithm"));
 		Assert.assertEquals("H2Database", Configuration.getString(ConfigMapping.DB_COMPONENT));
 		initComponents();
-
+		Assert.assertEquals(((JournalEncryptionWrapper) db).getDb().getClass(),
+				((JournalEncryptionWrapper) EntryDatabases.INSTANCE.getEntryDatabase("H2Database")).getDb().getClass());
 		for (Journal i : db.getAll()) {
 			Assert.assertEquals("test", i.getContent());
 		}
