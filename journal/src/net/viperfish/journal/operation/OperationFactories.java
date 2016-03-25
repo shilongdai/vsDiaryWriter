@@ -1,4 +1,6 @@
-package net.viperfish.journal.framework.operationUtils;
+package net.viperfish.journal.operation;
+
+import net.viperfish.journal.framework.OperationFactory;
 
 public class OperationFactories {
 

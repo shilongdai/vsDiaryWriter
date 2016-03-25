@@ -1,13 +1,9 @@
-package net.viperfish.journal.framework.operationUtils;
+package net.viperfish.journal.framework;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.framework.Operation;
-import net.viperfish.journal.framework.OperationWithResult;
 
 /**
  * the higher level api facade factory for creating an appropriate operation for

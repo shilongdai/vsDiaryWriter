@@ -14,7 +14,7 @@ import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.secureAlgs.BlockCiphers;
 import net.viperfish.journal.secureAlgs.Digesters;
 
-public class UnixAuthComposite extends Composite {
+class UnixAuthComposite extends Composite {
 
 	private Combo encryptionCombo;
 

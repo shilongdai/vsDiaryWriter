@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 
-public class BZ2Compressor extends Compressor {
+class BZ2Compressor extends Compressor {
 
 	@Override
 	protected OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException {

@@ -17,7 +17,7 @@ import net.viperfish.journal.secureAlgs.PBKDF2KeyGenerator;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
 
-public class UnixLikeAuthManager implements AuthenticationManager {
+class UnixLikeAuthManager implements AuthenticationManager {
 
 	public static final String ENCRYPTION_ALG = "viperfish.unixAuth.cipher";
 	public static final String KDF_HASH = "viperfish.unixAuth.kdf";

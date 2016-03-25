@@ -20,8 +20,6 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.viperfish.journal.JournalApplication;
-import net.viperfish.journal.authProvider.HashAuthManager;
-import net.viperfish.journal.dbProvider.H2EntryDatabase;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
@@ -33,17 +31,16 @@ import net.viperfish.journal.framework.provider.AuthManagers;
 import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.journal.framework.provider.Indexers;
 import net.viperfish.journal.framework.provider.JournalEncryptionWrapper;
-import net.viperfish.journal.indexProvider.JournalIndexer;
-import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
 import net.viperfish.utils.file.CommonFunctions;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
+import net.viperfish.utils.index.Indexer;
 import net.viperfish.utils.serialization.JsonGenerator;
 
 public class OperationTest {
 
 	private EntryDatabase db;
-	private JournalIndexer indexer;
+	private Indexer<Journal> indexer;
 	private AuthenticationManager mger;
 	private final ExecutorService threadpool;
 
@@ -51,12 +48,12 @@ public class OperationTest {
 		Configuration.setProperty(ConfigMapping.PORTABLE, true);
 		JournalApplication.initModules();
 		JournalApplication.defaultProviders();
-		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "AES");
-		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_MODE, "CFB");
-		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, "PKCS7PADDING");
-		Configuration.setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, "MD5");
-		Configuration.setProperty(BlockCipherMacTransformer.MAC_TYPE, "HMAC");
-		Configuration.setProperty(BlockCipherMacTransformer.KDF_HASH, "SHA256");
+		Configuration.setProperty("viperfish.secure.encrytion.algorithm", "AES");
+		Configuration.setProperty("viperfish.secure.encryption.mode", "CFB");
+		Configuration.setProperty("viperfish.secure.mac.algorithm", "PKCS7PADDING");
+		Configuration.setProperty("viperfish.secure.mac.algorithm", "MD5");
+		Configuration.setProperty("viperfish.secure.mac.type", "HMAC");
+		Configuration.setProperty("viperfish.secure.kdf.algorithm", "SHA256");
 		Configuration.setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
 		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "Hash");
 		Configuration.setProperty(ConfigMapping.DB_PROVIDER, "viperfish");
@@ -65,8 +62,8 @@ public class OperationTest {
 		Configuration.setProperty(ConfigMapping.INDEXER_COMPONENT, "LuceneIndexer");
 		Configuration.setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");
 		Configuration.setProperty(ConfigMapping.TRANSFORMER_COMPONENT, "BlockCipherMAC");
-		Configuration.setProperty(BlockCipherMacTransformer.COMPRESSION, "GZ");
-		Configuration.setProperty(HashAuthManager.HASH_ALG, "SHA256");
+		Configuration.setProperty("viperfish.secure.compression.algorithm", "GZ");
+		Configuration.setProperty("viperfish.auth.hash", "SHA256");
 	}
 
 	public OperationTest() {
@@ -317,13 +314,14 @@ public class OperationTest {
 		cleanUp();
 		Map<String, String> testConfig = new HashMap<>();
 		addEntries(10);
-		testConfig.put(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "DES");
+		testConfig.put("viperfish.secure.encrytion.algorithm", "DES");
 		testConfig.put(ConfigMapping.DB_COMPONENT, "H2Database");
 		new ChangeConfigurationOperation(testConfig).execute();
-		Assert.assertEquals("DES", Configuration.getString(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME));
+		Assert.assertEquals("DES", Configuration.getString("viperfish.secure.encrytion.algorithm"));
 		Assert.assertEquals("H2Database", Configuration.getString(ConfigMapping.DB_COMPONENT));
 		initComponents();
-		Assert.assertEquals(((JournalEncryptionWrapper) db).getDb().getClass(), H2EntryDatabase.class);
+		Assert.assertEquals(((JournalEncryptionWrapper) db).getDb().getClass(),
+				EntryDatabases.INSTANCE.getEntryDatabase("H2Database").getClass());
 		for (Journal i : db.getAll()) {
 			Assert.assertEquals("test", i.getContent());
 		}
@@ -412,6 +410,6 @@ public class OperationTest {
 		mger = AuthManagers.INSTANCE.getAuthManager();
 		mger.setPassword("test");
 		db = EntryDatabases.INSTANCE.getEntryDatabase();
-		indexer = (JournalIndexer) Indexers.INSTANCE.getIndexer();
+		indexer = Indexers.INSTANCE.getIndexer();
 	}
 }

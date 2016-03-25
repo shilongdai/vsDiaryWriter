@@ -12,4 +12,6 @@ public interface Indexer<T> {
 
 	public boolean isMemoryBased();
 
+	public boolean contains(Long id);
+
 }

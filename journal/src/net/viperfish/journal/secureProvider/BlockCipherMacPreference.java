@@ -5,10 +5,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import net.viperfish.journal.framework.operationUtils.OperationExecutors;
-import net.viperfish.journal.framework.operationUtils.OperationFactories;
+import net.viperfish.journal.operation.OperationExecutors;
+import net.viperfish.journal.operation.OperationFactories;
 
-public class BlockCipherMacPreference extends PreferencePage {
+class BlockCipherMacPreference extends PreferencePage {
 
 	private SecurityConfigComposite com;
 

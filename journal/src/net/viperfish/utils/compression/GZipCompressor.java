@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 
-public class GZipCompressor extends Compressor {
+class GZipCompressor extends Compressor {
 
 	protected GZipCompressor() {
 		// TODO Auto-generated constructor stub

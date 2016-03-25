@@ -14,7 +14,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
-public class TarArchiveEntryDatabase extends ArchiveEntryDatabase {
+class TarArchiveEntryDatabase extends ArchiveEntryDatabase {
 
 	public TarArchiveEntryDatabase(File archiveFile) {
 		super(archiveFile);

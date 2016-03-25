@@ -9,7 +9,7 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.utils.time.TimeUtils;
 
-public class GetDateRangeOperation extends OperationWithResult<Set<Journal>> {
+class GetDateRangeOperation extends OperationWithResult<Set<Journal>> {
 
 	private Date lowerBound;
 	private Date upperBound;

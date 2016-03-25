@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
 
-public class XZCompressor extends Compressor {
+class XZCompressor extends Compressor {
 
 	@Override
 	protected OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException {

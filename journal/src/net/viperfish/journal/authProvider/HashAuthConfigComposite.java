@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Label;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.secureAlgs.Digesters;
 
-public class HashAuthConfigComposite extends Composite {
+class HashAuthConfigComposite extends Composite {
 
 	private Combo hashSelector;
 

@@ -14,7 +14,7 @@ import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream;
 
-public class CpioArchiveEntryDatabase extends ArchiveEntryDatabase {
+class CpioArchiveEntryDatabase extends ArchiveEntryDatabase {
 
 	public CpioArchiveEntryDatabase(File archiveFile) {
 		super(archiveFile);

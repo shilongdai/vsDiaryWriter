@@ -9,7 +9,7 @@ import net.viperfish.journal.framework.Journal;
  * @author sdai
  *
  */
-public abstract class EditEntryOperation extends InjectedOperation {
+abstract class EditEntryOperation extends InjectedOperation {
 
 	private Long id;
 

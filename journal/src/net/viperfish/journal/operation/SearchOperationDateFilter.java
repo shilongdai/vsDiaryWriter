@@ -9,7 +9,7 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.utils.time.TimeUtils;
 
-public class SearchOperationDateFilter extends OperationWithResult<Set<Journal>> {
+class SearchOperationDateFilter extends OperationWithResult<Set<Journal>> {
 
 	private SearchEntryOperation ops;
 	private Date upperBound;

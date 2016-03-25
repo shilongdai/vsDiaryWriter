@@ -18,7 +18,7 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.utils.file.CommonFunctions;
 import net.viperfish.utils.serialization.ObjectSerializer;
 
-public abstract class ArchiveEntryDatabase implements EntryDatabase {
+abstract class ArchiveEntryDatabase implements EntryDatabase {
 
 	protected abstract ArchiveOutputStream getArchiveOut(File f) throws IOException;
 

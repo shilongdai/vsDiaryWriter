@@ -5,7 +5,7 @@ import java.util.List;
 import net.viperfish.journal.framework.InjectedOperation;
 import net.viperfish.journal.framework.Journal;
 
-public class ChangePasswordOperation extends InjectedOperation {
+class ChangePasswordOperation extends InjectedOperation {
 
 	private String pass;
 

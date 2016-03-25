@@ -17,7 +17,7 @@ import net.viperfish.journal.secureAlgs.BlockCiphers;
 import net.viperfish.journal.secureAlgs.Digesters;
 import net.viperfish.utils.compression.Compressors;
 
-public class SecurityConfigComposite extends Composite {
+class SecurityConfigComposite extends Composite {
 
 	private Combo encAlgSelector;
 	private Combo encModeSelector;

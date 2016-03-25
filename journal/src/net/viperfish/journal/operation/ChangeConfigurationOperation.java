@@ -14,7 +14,7 @@ import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.journal.framework.provider.Indexers;
 import net.viperfish.journal.framework.provider.JournalTransformers;
 
-public class ChangeConfigurationOperation extends InjectedOperation {
+class ChangeConfigurationOperation extends InjectedOperation {
 
 	private Map<String, String> config;
 

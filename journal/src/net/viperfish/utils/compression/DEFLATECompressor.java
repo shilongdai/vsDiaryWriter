@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import org.apache.commons.compress.compressors.deflate.DeflateCompressorInputStream;
 import org.apache.commons.compress.compressors.deflate.DeflateCompressorOutputStream;
 
-public class DEFLATECompressor extends Compressor {
+class DEFLATECompressor extends Compressor {
 
 	@Override
 	protected OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException {

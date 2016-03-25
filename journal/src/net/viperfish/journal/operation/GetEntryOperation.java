@@ -9,7 +9,7 @@ import net.viperfish.journal.framework.OperationWithResult;
  * @author sdai
  *
  */
-public class GetEntryOperation extends OperationWithResult<Journal> {
+class GetEntryOperation extends OperationWithResult<Journal> {
 
 	private Long id;
 

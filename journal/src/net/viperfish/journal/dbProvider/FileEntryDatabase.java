@@ -21,7 +21,7 @@ import net.viperfish.utils.serialization.JsonGenerator;
  * @author sdai
  *
  */
-public class FileEntryDatabase implements EntryDatabase {
+class FileEntryDatabase implements EntryDatabase {
 
 	private final IOFile file;
 	private FileMemoryStructure struct;

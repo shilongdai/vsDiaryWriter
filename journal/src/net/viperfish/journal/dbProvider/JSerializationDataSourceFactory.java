@@ -6,7 +6,7 @@ import java.util.TimerTask;
 
 import net.viperfish.journal.framework.EntryDatabase;
 
-public class JSerializationDataSourceFactory implements DataSourceFactory {
+class JSerializationDataSourceFactory implements DataSourceFactory {
 
 	private File sFile;
 	private JavaSerializationEntryDatabase db;

@@ -6,11 +6,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import net.viperfish.journal.framework.OperationExecutor;
-import net.viperfish.journal.framework.operationUtils.OperationExecutors;
-import net.viperfish.journal.framework.operationUtils.OperationFactories;
-import net.viperfish.journal.framework.operationUtils.OperationFactory;
+import net.viperfish.journal.framework.OperationFactory;
+import net.viperfish.journal.operation.OperationExecutors;
+import net.viperfish.journal.operation.OperationFactories;
 
-public class HashAuthPreferencePage extends PreferencePage {
+class HashAuthPreferencePage extends PreferencePage {
 
 	private HashAuthConfigComposite com;
 

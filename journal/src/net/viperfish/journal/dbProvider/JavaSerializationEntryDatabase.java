@@ -20,7 +20,7 @@ import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.utils.file.CommonFunctions;
 
-public class JavaSerializationEntryDatabase implements EntryDatabase, Serializable {
+class JavaSerializationEntryDatabase implements EntryDatabase, Serializable {
 
 	/**
 	 * 

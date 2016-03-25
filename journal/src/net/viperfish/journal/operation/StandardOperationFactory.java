@@ -1,4 +1,4 @@
-package net.viperfish.journal.framework.operationUtils;
+package net.viperfish.journal.operation;
 
 import java.util.Date;
 import java.util.List;
@@ -7,25 +7,10 @@ import java.util.Set;
 
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.Operation;
+import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
-import net.viperfish.journal.operation.AddEntryOperation;
-import net.viperfish.journal.operation.ChangeConfigurationOperation;
-import net.viperfish.journal.operation.ChangePasswordOperation;
-import net.viperfish.journal.operation.ClearEntriesOperation;
-import net.viperfish.journal.operation.DeleteEntryOperation;
-import net.viperfish.journal.operation.EditContentOperation;
-import net.viperfish.journal.operation.EditSubjectOperation;
-import net.viperfish.journal.operation.ExportJournalOperation;
-import net.viperfish.journal.operation.GetAllOperation;
-import net.viperfish.journal.operation.GetDateRangeOperation;
-import net.viperfish.journal.operation.GetEntryOperation;
-import net.viperfish.journal.operation.ImportEntriesOperation;
-import net.viperfish.journal.operation.SearchEntryOperation;
-import net.viperfish.journal.operation.SearchOperationDateFilter;
-import net.viperfish.journal.operation.SetConfigurationOperation;
-import net.viperfish.journal.operation.SetPasswordOperation;
 
-public class StandardOperationFactory implements OperationFactory {
+class StandardOperationFactory implements OperationFactory {
 
 	@Override
 	public Operation getAddOperation(Journal toAdd) {

@@ -8,7 +8,7 @@ import org.bouncycastle.crypto.Mac;
  * @author sdai
  *
  */
-public abstract class BCMacDigester implements MacDigester {
+abstract class BCMacDigester implements MacDigester {
 
 	private String mode;
 	private byte[] key;

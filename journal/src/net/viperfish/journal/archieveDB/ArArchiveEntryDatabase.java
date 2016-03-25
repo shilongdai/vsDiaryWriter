@@ -14,7 +14,7 @@ import org.apache.commons.compress.archivers.ar.ArArchiveEntry;
 import org.apache.commons.compress.archivers.ar.ArArchiveInputStream;
 import org.apache.commons.compress.archivers.ar.ArArchiveOutputStream;
 
-public class ArArchiveEntryDatabase extends ArchiveEntryDatabase {
+class ArArchiveEntryDatabase extends ArchiveEntryDatabase {
 
 	public ArArchiveEntryDatabase(File archiveFile) {
 		super(archiveFile);

@@ -13,7 +13,7 @@ import net.viperfish.journal.framework.OperationWithResult;
  * @author sdai
  *
  */
-public class GetAllOperation extends OperationWithResult<List<Journal>> {
+class GetAllOperation extends OperationWithResult<List<Journal>> {
 
 	public GetAllOperation() {
 	}

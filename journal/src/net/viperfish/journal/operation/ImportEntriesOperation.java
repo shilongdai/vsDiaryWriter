@@ -12,7 +12,7 @@ import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
 import net.viperfish.utils.serialization.JsonGenerator;
 
-public class ImportEntriesOperation extends InjectedOperation {
+class ImportEntriesOperation extends InjectedOperation {
 
 	private IOFile importFile;
 	private static final JsonGenerator generator;

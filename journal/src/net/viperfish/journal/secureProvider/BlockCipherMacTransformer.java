@@ -37,7 +37,7 @@ import net.viperfish.utils.file.TextIOStreamHandler;
  * @author sdai
  *
  */
-public class BlockCipherMacTransformer implements JournalTransformer {
+class BlockCipherMacTransformer implements JournalTransformer {
 
 	public static final String ENCRYPTION_ALG_NAME = "viperfish.secure.encrytion.algorithm";
 	public static final String ENCRYPTION_MODE = "viperfish.secure.encryption.mode";

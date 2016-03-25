@@ -1,4 +1,4 @@
-package net.viperfish.journal.framework.operationUtils;
+package net.viperfish.journal.operation;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationExecutor;
 
-public class ThreadPoolOperationExecutor extends OperationExecutor {
+class ThreadPoolOperationExecutor extends OperationExecutor {
 
 	private ExecutorService pool;
 

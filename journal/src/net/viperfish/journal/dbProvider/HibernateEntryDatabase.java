@@ -15,7 +15,7 @@ import net.viperfish.journal.framework.Journal;
  * @author sdai
  *
  */
-public abstract class HibernateEntryDatabase implements EntryDatabase {
+abstract class HibernateEntryDatabase implements EntryDatabase {
 
 	/**
 	 * get a session for persistent operations, should be implemented to support

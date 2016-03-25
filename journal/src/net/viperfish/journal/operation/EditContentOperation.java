@@ -8,7 +8,7 @@ import net.viperfish.journal.framework.Journal;
  * @author sdai
  *
  */
-public class EditContentOperation extends EditEntryOperation {
+class EditContentOperation extends EditEntryOperation {
 
 	private String content;
 

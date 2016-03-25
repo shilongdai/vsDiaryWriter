@@ -14,7 +14,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
-public class ZipArchiveEntryDatabase extends ArchiveEntryDatabase {
+class ZipArchiveEntryDatabase extends ArchiveEntryDatabase {
 
 	public ZipArchiveEntryDatabase(File archiveFile) {
 		super(archiveFile);

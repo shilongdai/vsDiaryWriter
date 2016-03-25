@@ -9,7 +9,7 @@ import net.viperfish.journal.framework.Journal;
  * @author sdai
  *
  */
-public class AddEntryOperation extends InjectedOperation {
+class AddEntryOperation extends InjectedOperation {
 
 	private Journal toAdd;
 

@@ -8,7 +8,7 @@ import net.viperfish.journal.framework.InjectedOperation;
  * @author sdai
  *
  */
-public class DeleteEntryOperation extends InjectedOperation {
+class DeleteEntryOperation extends InjectedOperation {
 	private Long id;
 
 	public DeleteEntryOperation(Long i) {
