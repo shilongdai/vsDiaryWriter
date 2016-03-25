@@ -45,6 +45,9 @@ class H2EntryDatabase extends HibernateEntryDatabase {
 		createTable();
 	}
 
+	/**
+	 * create the table of entries if not already exists
+	 */
 	void createTable() {
 		getSession()
 				.createSQLQuery(
@@ -57,6 +60,9 @@ class H2EntryDatabase extends HibernateEntryDatabase {
 		return s;
 	}
 
+	/**
+	 * close resources
+	 */
 	public void closeSession() {
 		s.close();
 		factory.close();

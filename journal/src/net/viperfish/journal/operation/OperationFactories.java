@@ -2,6 +2,12 @@ package net.viperfish.journal.operation;
 
 import net.viperfish.journal.framework.OperationFactory;
 
+/**
+ * static for getting operation factories
+ * 
+ * @author sdai
+ *
+ */
 public class OperationFactories {
 
 	static {

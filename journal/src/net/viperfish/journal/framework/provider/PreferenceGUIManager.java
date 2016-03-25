@@ -5,6 +5,12 @@ import java.util.List;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 
+/**
+ * static adapter for PreferenceManager
+ * 
+ * @author sdai
+ *
+ */
 public final class PreferenceGUIManager {
 	private static PreferenceManager mger;
 

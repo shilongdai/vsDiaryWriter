@@ -6,6 +6,12 @@ import java.util.TimerTask;
 
 import net.viperfish.journal.framework.EntryDatabase;
 
+/**
+ * a EntryDatabase factory that creates JavaSerialization EntryDatabase
+ * 
+ * @author sdai
+ *
+ */
 class JSerializationDataSourceFactory implements DataSourceFactory {
 
 	private File sFile;

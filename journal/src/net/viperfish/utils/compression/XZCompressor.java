@@ -9,6 +9,12 @@ import java.io.OutputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
 
+/**
+ * compressor with XZ algorithm
+ * 
+ * @author sdai
+ *
+ */
 class XZCompressor extends Compressor {
 
 	@Override

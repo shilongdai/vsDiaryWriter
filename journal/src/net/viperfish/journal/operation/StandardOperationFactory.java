@@ -10,6 +10,12 @@ import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
 
+/**
+ * operation factory using built in operations
+ * 
+ * @author sdai
+ *
+ */
 class StandardOperationFactory implements OperationFactory {
 
 	@Override

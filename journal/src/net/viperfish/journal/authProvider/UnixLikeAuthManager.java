@@ -17,6 +17,13 @@ import net.viperfish.journal.secureAlgs.PBKDF2KeyGenerator;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
 
+/**
+ * An Authentication Manager using encryption algorithm as a hash function with
+ * operation similar to traditional Unix authentication
+ * 
+ * @author sdai
+ *
+ */
 class UnixLikeAuthManager implements AuthenticationManager {
 
 	public static final String ENCRYPTION_ALG = "viperfish.unixAuth.cipher";
@@ -32,6 +39,13 @@ class UnixLikeAuthManager implements AuthenticationManager {
 	private int keySize;
 	private boolean ready;
 
+	/**
+	 * Encrypt salt(one block) using ECB mode of a block cipher
+	 * 
+	 * @param key
+	 *            the key to encrypt salt with
+	 * @return the encrypted salt
+	 */
 	private byte[] ecbEncrypt(byte[] key) {
 		ecbCipher.init(true, new KeyParameter(key));
 		byte[] result = new byte[ecbCipher.getBlockSize()];
@@ -42,16 +56,26 @@ class UnixLikeAuthManager implements AuthenticationManager {
 		return result;
 	}
 
+	/**
+	 * writes the encrypted salt and salt to the password file in the format of
+	 * encrypted$salt
+	 */
 	public void flushPassword() {
 		String combo = Base64.encodeBase64String(shadowPassword) + "$" + Base64.encodeBase64String(salt);
 		passwdFile.write(combo, StandardCharsets.UTF_8);
 	}
 
+	/**
+	 * generate salt with a secure random number generator
+	 */
 	private void generateSalt() {
 		salt = new byte[ecbCipher.getBlockSize()];
 		rand.nextBytes(salt);
 	}
 
+	/**
+	 * initialize the block cipher, kdf, and random number generator
+	 */
 	private void initAlg() {
 		ecbCipher = BlockCiphers.getBlockCipherEngine(Configuration.getString(ENCRYPTION_ALG));
 		generator = new BCPCKDF2Generator();

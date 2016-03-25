@@ -20,6 +20,13 @@ import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.utils.file.CommonFunctions;
 
+/**
+ * An EntryDatabase that stores Journal in memory but serialize itself with Java
+ * Serialization
+ * 
+ * @author sdai
+ *
+ */
 class JavaSerializationEntryDatabase implements EntryDatabase, Serializable {
 
 	/**
@@ -78,6 +85,14 @@ class JavaSerializationEntryDatabase implements EntryDatabase, Serializable {
 
 	}
 
+	/**
+	 * serialize a JavaSerializationEntryDatabase into a file
+	 * 
+	 * @param serializedFile
+	 *            the file to store the database
+	 * @param db
+	 *            the database
+	 */
 	public static void serialize(File serializedFile, JavaSerializationEntryDatabase db) {
 		try {
 			CommonFunctions.initFile(serializedFile);
@@ -95,6 +110,13 @@ class JavaSerializationEntryDatabase implements EntryDatabase, Serializable {
 
 	}
 
+	/**
+	 * load an JavaSerializationEntryDatabase from file
+	 * 
+	 * @param serializedFile
+	 *            the file containing the EntryDatabase
+	 * @return the db
+	 */
 	public static JavaSerializationEntryDatabase deSerialize(File serializedFile) {
 		try {
 			CommonFunctions.initFile(serializedFile);

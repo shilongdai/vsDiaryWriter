@@ -1,5 +1,6 @@
 package net.viperfish.journal;
 
+import java.io.File;
 import java.util.Map.Entry;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -14,6 +15,7 @@ import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
+import net.viperfish.journal.framework.ModuleLoader;
 import net.viperfish.journal.framework.provider.AuthManagers;
 import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.journal.framework.provider.Indexers;
@@ -26,6 +28,7 @@ import net.viperfish.journal.secureProvider.ViperfishEncryptionProvider;
 import net.viperfish.journal.swtGui.GraphicalUserInterface;
 import net.viperfish.journal.ui.TerminationControlFlowException;
 import net.viperfish.journal.ui.UserInterface;
+import net.viperfish.utils.file.CommonFunctions;
 import net.viperfish.utils.index.Indexer;
 
 /**
@@ -36,33 +39,21 @@ import net.viperfish.utils.index.Indexer;
  */
 public class JournalApplication {
 	private static UserInterface ui;
-	// private static File moduleDir;
-	// private static File authModules;
-	// private static File dbModules;
-	// private static File indexModules;
-	// private static File transModule;
+	private static File modules;
+	private static ModuleLoader m;
 
 	public JournalApplication() {
 	}
 
 	public static void initModules() {
-		// Saved for later reference
 
-		// moduleDir = new File("modules");
-		// authModules = new File("modules/auth");
-		// dbModules = new File("modules/db");
-		// indexModules = new File("modules/index");
-		// transModule = new File("modules/trans");
-		// CommonFunctions.initDir(moduleDir);
-		// CommonFunctions.initDir(authModules);
-		// CommonFunctions.initDir(dbModules);
-		// CommonFunctions.initDir(indexModules);
-		// CommonFunctions.initDir(transModule);
-		// ComponentProvider.setLoader(new JarBasedModuleLoader());
-		// ComponentProvider.loadAuthProvider(authModules);
-		// ComponentProvider.loadDatabaseProvider(dbModules);
-		// ComponentProvider.loadIndexer(indexModules);
-		// ComponentProvider.loadTransformerProvider(transModule);
+		// prepare to load modules
+
+		modules = new File("modules");
+		CommonFunctions.initDir(modules);
+		m = new JarBasedModuleLoader();
+
+		// put system configuration first
 
 		PreferenceNode system = new PreferenceNode("system", "System", null,
 				SystemPreferencePage.class.getCanonicalName());
@@ -74,6 +65,9 @@ public class JournalApplication {
 		EntryDatabases.INSTANCE.registerEntryDatabaseProvider(new ViperfishArchiveDBProvider());
 		Indexers.INSTANCE.registerIndexerProvider(new ViperfishIndexerProvider());
 		JournalTransformers.INSTANCE.registerTransformerProvider(new ViperfishEncryptionProvider());
+
+		// load third party
+		m.loadModules(modules);
 	}
 
 	/**
@@ -90,6 +84,9 @@ public class JournalApplication {
 		System.err.println("worker terminated");
 	}
 
+	/**
+	 * clear all for testing purposes and if configuration was aborted
+	 */
 	public static void revert() {
 		for (Entry<String, Provider<EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders().entrySet()) {
 			i.getValue().delete();
@@ -108,6 +105,7 @@ public class JournalApplication {
 			i.getValue().delete();
 		}
 		Configuration.delete();
+		CommonFunctions.delete(modules);
 	}
 
 	/**

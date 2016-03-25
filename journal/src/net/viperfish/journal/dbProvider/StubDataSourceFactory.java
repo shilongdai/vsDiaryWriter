@@ -4,6 +4,12 @@ import java.io.File;
 
 import net.viperfish.journal.framework.EntryDatabase;
 
+/**
+ * an EntryDatabase factory that creates Memory Only EntryDatabase
+ * 
+ * @author sdai
+ *
+ */
 class StubDataSourceFactory implements DataSourceFactory {
 
 	private DatabaseStub db;

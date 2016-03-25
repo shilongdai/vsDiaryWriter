@@ -7,6 +7,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+/**
+ * static factory for compressors
+ * 
+ * @author sdai
+ *
+ */
 public class Compressors {
 
 	private static Map<String, Class<? extends Compressor>> compressorMap;
@@ -30,6 +36,15 @@ public class Compressors {
 
 	}
 
+	/**
+	 * get a compressor of specified type
+	 * 
+	 * @param type
+	 *            the type of compressor
+	 * @return the compressor
+	 * @throws FailToInitCompressionException
+	 *             if the compressor is not found
+	 */
 	public static Compressor getCompressor(String type) throws FailToInitCompressionException {
 		try {
 			Compressor result = cache.get(type);
@@ -44,6 +59,11 @@ public class Compressors {
 		}
 	}
 
+	/**
+	 * get supported compressors
+	 * 
+	 * @return supported compressors
+	 */
 	public static String[] getCompressors() {
 		List<String> result = new LinkedList<>();
 		for (Entry<String, Class<? extends Compressor>> i : compressorMap.entrySet()) {

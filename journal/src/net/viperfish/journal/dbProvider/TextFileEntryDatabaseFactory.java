@@ -5,6 +5,12 @@ import java.io.File;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
 
+/**
+ * creates Text File based EntryDatabase
+ * 
+ * @author sdai
+ *
+ */
 class TextFileEntryDatabaseFactory extends FileEntryDatabaseFactory {
 
 	@Override

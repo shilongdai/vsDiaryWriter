@@ -18,18 +18,72 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.utils.file.CommonFunctions;
 import net.viperfish.utils.serialization.ObjectSerializer;
 
+/**
+ * an archive entry database that uses Apache common compression archive formats
+ * to store entries. Sub classes should implement a specific format of an
+ * archive.
+ * 
+ * @author sdai
+ *
+ */
 abstract class ArchiveEntryDatabase implements EntryDatabase {
 
+	/**
+	 * this should return an Apache common compress archive output stream ready
+	 * to write. Used to write entries into archive. Should match with the
+	 * {@link ArchiveEntryDatabase#getArchiveIn(File)}
+	 * 
+	 * @param f
+	 *            the archive file
+	 * @return the archive output stream ready to write
+	 * @throws IOException
+	 *             if failed to create archive output stream
+	 */
 	protected abstract ArchiveOutputStream getArchiveOut(File f) throws IOException;
 
+	/**
+	 * this should return an Apache common compress archive ready to read. Used
+	 * to read entries from archive. It should match with the
+	 * {@link ArchiveEntryDatabase#getArchiveOut(File)}
+	 * 
+	 * @param f
+	 *            the archive file
+	 * @return the archive input stream ready to read
+	 * @throws IOException
+	 *             if failed to create an archive input stream
+	 */
 	protected abstract ArchiveInputStream getArchiveIn(File f) throws IOException;
 
+	/**
+	 * this should create an Apache common compress archive entry ready to be
+	 * used. The entry format should match with the
+	 * {@link ArchiveEntryDatabase#getArchiveIn(File)} and the
+	 * {@link ArchiveEntryDatabase#getArchiveOut(File)}
+	 * 
+	 * @param name
+	 *            the name of the entry
+	 * @param length
+	 *            the number of bytes
+	 * @return the archive entry ready to be used
+	 */
 	protected abstract ArchiveEntry newEntry(String name, int length);
 
+	/**
+	 * get the specified archive file
+	 * 
+	 * @return the archive file
+	 */
 	protected File getArchiveFile() {
 		return archiveFile;
 	}
 
+	/**
+	 * write entries into the archive file. The archive entry would then contain
+	 * the serialized {@link Journal} Object. Overwrites existing entries.
+	 * 
+	 * @param j
+	 *            the journals to write
+	 */
 	private void write(Journal[] j) {
 		try {
 			CommonFunctions.initFile(archiveFile);
@@ -52,6 +106,11 @@ abstract class ArchiveEntryDatabase implements EntryDatabase {
 		}
 	}
 
+	/**
+	 * read all entries from an archive
+	 * 
+	 * @return the entries
+	 */
 	private Journal[] read() {
 		try {
 			if (CommonFunctions.initFile(archiveFile)) {
@@ -129,10 +188,16 @@ abstract class ArchiveEntryDatabase implements EntryDatabase {
 
 	}
 
+	/**
+	 * write all entries in memory to the archive
+	 */
 	public void flush() {
 		write(getAll().toArray(new Journal[0]));
 	}
 
+	/**
+	 * load all entries from an archive into memory
+	 */
 	public void load() {
 		if (isLoaded) {
 			return;

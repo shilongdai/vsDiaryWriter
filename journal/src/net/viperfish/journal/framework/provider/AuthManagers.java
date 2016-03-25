@@ -9,6 +9,12 @@ import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Observer;
 
+/**
+ * Component manager for AuthenticationManagers
+ * 
+ * @author sdai
+ *
+ */
 public enum AuthManagers {
 	INSTANCE;
 	private Map<String, Provider<AuthenticationManager>> authProviders;

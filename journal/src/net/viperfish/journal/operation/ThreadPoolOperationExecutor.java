@@ -6,6 +6,12 @@ import java.util.concurrent.Executors;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationExecutor;
 
+/**
+ * Concurrent operation executor with a thread pool
+ * 
+ * @author sdai
+ *
+ */
 class ThreadPoolOperationExecutor extends OperationExecutor {
 
 	private ExecutorService pool;

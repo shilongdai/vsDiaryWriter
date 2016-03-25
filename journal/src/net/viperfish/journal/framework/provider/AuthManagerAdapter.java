@@ -4,6 +4,13 @@ import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.Observable;
 import net.viperfish.journal.framework.Observer;
 
+/**
+ * An adapter to a regular AuthenticationManager that pushes data to subscriber
+ * observers when a password is set
+ * 
+ * @author sdai
+ *
+ */
 class AuthManagerAdapter extends Observable<String> implements AuthenticationManager {
 	private AuthenticationManager mger;
 

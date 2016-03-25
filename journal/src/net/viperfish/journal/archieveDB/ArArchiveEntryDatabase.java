@@ -14,6 +14,12 @@ import org.apache.commons.compress.archivers.ar.ArArchiveEntry;
 import org.apache.commons.compress.archivers.ar.ArArchiveInputStream;
 import org.apache.commons.compress.archivers.ar.ArArchiveOutputStream;
 
+/**
+ * EntryDatabase using Ar archive format
+ * 
+ * @author sdai
+ *
+ */
 class ArArchiveEntryDatabase extends ArchiveEntryDatabase {
 
 	public ArArchiveEntryDatabase(File archiveFile) {

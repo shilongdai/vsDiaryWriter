@@ -20,6 +20,7 @@ class AddEntryOperation extends InjectedOperation {
 
 	@Override
 	public void execute() {
+		// add to database and indexer
 		toAdd = db().addEntry(toAdd);
 		indexer().add(toAdd);
 	}

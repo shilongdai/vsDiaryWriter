@@ -8,6 +8,12 @@ import java.util.TimerTask;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.utils.file.IOFile;
 
+/**
+ * factory for creating EntryDatabase stored as flat file
+ * 
+ * @author sdai
+ *
+ */
 abstract class FileEntryDatabaseFactory implements DataSourceFactory {
 
 	private FileEntryDatabase db;

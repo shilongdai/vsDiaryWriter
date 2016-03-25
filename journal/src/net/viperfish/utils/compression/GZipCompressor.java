@@ -9,6 +9,12 @@ import java.io.OutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 
+/**
+ * compressor with GZip algorithm
+ * 
+ * @author sdai
+ *
+ */
 class GZipCompressor extends Compressor {
 
 	protected GZipCompressor() {

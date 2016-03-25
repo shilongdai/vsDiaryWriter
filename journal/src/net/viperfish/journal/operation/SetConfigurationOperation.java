@@ -6,6 +6,12 @@ import java.util.Map.Entry;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Operation;
 
+/**
+ * set the configuration (For the first time)
+ * 
+ * @author sdai
+ *
+ */
 class SetConfigurationOperation implements Operation {
 
 	private Map<String, String> newConfig;

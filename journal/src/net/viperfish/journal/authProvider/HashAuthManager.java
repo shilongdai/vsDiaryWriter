@@ -32,6 +32,17 @@ class HashAuthManager implements AuthenticationManager {
 	private SecureRandom rand;
 	private boolean ready;
 
+	/**
+	 * hash a data with salt for a number of iteration
+	 * 
+	 * @param data
+	 *            the bytes to hash
+	 * @param salt
+	 *            the salts to hash with the data
+	 * @param iter
+	 *            the number of iterations
+	 * @return the hash result
+	 */
 	private byte[] hashWithSalt(byte[] data, byte[] salt, int iter) {
 		// the initial buffer to put the combination of salt and data
 		byte[] buffer = new byte[data.length + salt.length];

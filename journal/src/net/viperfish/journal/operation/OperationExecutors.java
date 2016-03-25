@@ -2,6 +2,12 @@ package net.viperfish.journal.operation;
 
 import net.viperfish.journal.framework.OperationExecutor;
 
+/**
+ * static for getting OperationExecutors
+ * 
+ * @author sdai
+ *
+ */
 public class OperationExecutors {
 	private static ThreadPoolOperationExecutor exec;
 

@@ -4,6 +4,12 @@ import java.io.File;
 
 import net.viperfish.journal.framework.EntryDatabase;
 
+/**
+ * a EntryDatabase factory that creates H2 based EntryDatabase
+ * 
+ * @author sdai
+ *
+ */
 class H2DatasourceFactory implements DataSourceFactory {
 
 	private File dataDir;

@@ -14,6 +14,12 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
+/**
+ * EntryDatabase using Zip archive
+ * 
+ * @author sdai
+ *
+ */
 class ZipArchiveEntryDatabase extends ArchiveEntryDatabase {
 
 	public ZipArchiveEntryDatabase(File archiveFile) {

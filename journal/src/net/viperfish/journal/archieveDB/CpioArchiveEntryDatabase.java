@@ -14,6 +14,12 @@ import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream;
 
+/**
+ * EntryDatabase using Cpio archive
+ * 
+ * @author sdai
+ *
+ */
 class CpioArchiveEntryDatabase extends ArchiveEntryDatabase {
 
 	public CpioArchiveEntryDatabase(File archiveFile) {

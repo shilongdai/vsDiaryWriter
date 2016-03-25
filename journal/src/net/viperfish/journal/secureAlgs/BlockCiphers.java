@@ -300,6 +300,11 @@ public class BlockCiphers {
 		}
 	}
 
+	/**
+	 * get usable block ciphers
+	 * 
+	 * @return names of usable block ciphers
+	 */
 	public static Set<String> getSupportedBlockCipher() {
 		Set<String> result = new TreeSet<String>();
 		for (Entry<String, Class<? extends BlockCipher>> iter : blockCipherEngines.entrySet()) {
@@ -308,6 +313,11 @@ public class BlockCiphers {
 		return result;
 	}
 
+	/**
+	 * get usable block cipher modes
+	 * 
+	 * @return names of usable block cipher modes
+	 */
 	public static Set<String> getSupportedBlockCipherMode() {
 		Set<String> result = new TreeSet<>();
 		for (Entry<String, Class<? extends BlockCipher>> iter : blockCipherMode.entrySet()) {
@@ -316,6 +326,11 @@ public class BlockCiphers {
 		return result;
 	}
 
+	/**
+	 * get usable block cipher paddings
+	 * 
+	 * @return names of usable block cipher paddings
+	 */
 	public static Set<String> getSupportedBlockCipherPadding() {
 		Set<String> result = new TreeSet<>();
 		for (Entry<String, Class<? extends BlockCipherPadding>> iter : blockCipherPadding.entrySet()) {
@@ -324,6 +339,11 @@ public class BlockCiphers {
 		return result;
 	}
 
+	/**
+	 * get algorithms that has a 16 byte block size and thus usable for GMAC
+	 * 
+	 * @return names of algorithm usable with GMAC
+	 */
 	public static Set<String> getGmacAlgorithms() {
 		Set<String> result = new TreeSet<>();
 		for (Entry<String, Class<? extends BlockCipher>> iter : blockCipherEngines.entrySet()) {

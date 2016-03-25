@@ -9,6 +9,12 @@ import java.io.OutputStream;
 import org.apache.commons.compress.compressors.deflate.DeflateCompressorInputStream;
 import org.apache.commons.compress.compressors.deflate.DeflateCompressorOutputStream;
 
+/**
+ * compressor with DEFLATE algorithm
+ * 
+ * @author sdai
+ *
+ */
 class DEFLATECompressor extends Compressor {
 
 	@Override

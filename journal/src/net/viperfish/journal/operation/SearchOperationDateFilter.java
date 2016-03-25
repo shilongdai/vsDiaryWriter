@@ -9,6 +9,12 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.utils.time.TimeUtils;
 
+/**
+ * filters the result from a search operation with date range
+ * 
+ * @author sdai
+ *
+ */
 class SearchOperationDateFilter extends OperationWithResult<Set<Journal>> {
 
 	private SearchEntryOperation ops;
@@ -18,11 +24,14 @@ class SearchOperationDateFilter extends OperationWithResult<Set<Journal>> {
 	private Set<Journal> filterByDate(Collection<Journal> results) {
 		Set<Journal> filtered = new HashSet<>();
 		for (Journal i : results) {
+			// truncate date to only year month date
 			Date entryDate = TimeUtils.truncDate(i.getDate());
+			// inclusive filter
 			if (entryDate.equals(lowerBound) || entryDate.equals(upperBound)) {
 				filtered.add(i);
 				continue;
 			}
+			// filter range
 			if (i.getDate().before(upperBound) && i.getDate().after(lowerBound)) {
 				filtered.add(i);
 			}

@@ -14,6 +14,12 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
+/**
+ * EntryDatabase using Tar archive
+ * 
+ * @author sdai
+ *
+ */
 class TarArchiveEntryDatabase extends ArchiveEntryDatabase {
 
 	public TarArchiveEntryDatabase(File archiveFile) {

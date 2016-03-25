@@ -9,6 +9,12 @@ import java.io.OutputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 
+/**
+ * compressor with BZip 2 algorithm
+ * 
+ * @author sdai
+ *
+ */
 class BZ2Compressor extends Compressor {
 
 	@Override

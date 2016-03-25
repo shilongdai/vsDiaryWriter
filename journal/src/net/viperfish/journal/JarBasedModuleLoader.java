@@ -5,10 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collection;
 import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -18,50 +15,14 @@ import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.ModuleLoader;
+import net.viperfish.journal.framework.provider.AuthManagers;
+import net.viperfish.journal.framework.provider.EntryDatabases;
+import net.viperfish.journal.framework.provider.Indexers;
+import net.viperfish.journal.framework.provider.JournalTransformers;
 import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.utils.index.Indexer;
 
 public class JarBasedModuleLoader implements ModuleLoader {
-
-	private Collection<?> loadIndividual(String path) {
-		try (JarFile jarFile = new JarFile(path)) {
-			Manifest manifest = jarFile.getManifest();
-			String provider = manifest.getMainAttributes().getValue("provider-class");
-			if (provider == null) {
-				return new LinkedList<>();
-			}
-			List<Provider<?>> result = new LinkedList<>();
-			Enumeration<JarEntry> e = jarFile.entries();
-			URL[] urls = { new URL("jar:file:" + path + "!/") };
-			URLClassLoader cl = URLClassLoader.newInstance(urls);
-			while (e.hasMoreElements()) {
-				JarEntry je = e.nextElement();
-				if (je.isDirectory() || !je.getName().endsWith(".class")) {
-					continue;
-				}
-				String className = je.getName().substring(0, je.getName().length() - 6);
-				className = className.replace('/', '.');
-				if (className.equals(provider)) {
-					Class<?> c = cl.loadClass(className);
-					if (isUsable(c)) {
-
-						if (Provider.class.isAssignableFrom(c)) {
-							try {
-								result.add((Provider<?>) c.newInstance());
-								System.err.println("loading:" + c);
-							} catch (InstantiationException | IllegalAccessException e1) {
-								e1.printStackTrace();
-								continue;
-							}
-						}
-					}
-				}
-			}
-			return result;
-		} catch (IOException | ClassNotFoundException e1) {
-			return new LinkedList<>();
-		}
-	}
 
 	public boolean isUsable(Class<?> toTest) {
 		if (Modifier.isAbstract(toTest.getModifiers())) {
@@ -81,70 +42,56 @@ public class JarBasedModuleLoader implements ModuleLoader {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Collection<Provider<EntryDatabase>> loadDatabaseProvider(File baseDir) {
-		List<Provider<EntryDatabase>> result = new LinkedList<>();
-		if (baseDir.isDirectory()) {
-			for (File i : baseDir.listFiles()) {
-				try {
-					result.addAll((Collection<? extends Provider<EntryDatabase>>) loadIndividual(i.getCanonicalPath()));
-				} catch (IOException e) {
+	public void loadModules(File baseDir) {
+		for (File i : baseDir.listFiles()) {
+			try (JarFile jarFile = new JarFile(i)) {
+				Manifest manifest = jarFile.getManifest();
+				String provider = manifest.getMainAttributes().getValue("provider-class");
+				String type = manifest.getMainAttributes().getValue("provider-type:");
+				if (provider == null || type == null) {
 					continue;
 				}
+				Enumeration<JarEntry> e = jarFile.entries();
+				URL[] urls = { new URL("jar:file:" + i.getAbsolutePath() + "!/") };
+				URLClassLoader cl = URLClassLoader.newInstance(urls);
+				while (e.hasMoreElements()) {
+					JarEntry je = e.nextElement();
+					if (je.isDirectory() || !je.getName().endsWith(".class")) {
+						continue;
+					}
+					String className = je.getName().substring(0, je.getName().length() - 6);
+					className = className.replace('/', '.');
+					if (className.equals(provider)) {
+						Class<?> c = cl.loadClass(className);
+						if (isUsable(c)) {
+							if (Provider.class.isAssignableFrom(c)) {
+								try {
+									Object o = c.newInstance();
+									if (type.equals("database")) {
+										EntryDatabases.INSTANCE
+												.registerEntryDatabaseProvider((Provider<EntryDatabase>) o);
+									} else if (type.equals("indexer")) {
+										Indexers.INSTANCE.registerIndexerProvider((Provider<Indexer<Journal>>) o);
+									} else if (type.equals("transformer")) {
+										JournalTransformers.INSTANCE
+												.registerTransformerProvider((Provider<JournalTransformer>) o);
+									} else if (type.equals("auth")) {
+										AuthManagers.INSTANCE.registerAuthProvider((Provider<AuthenticationManager>) o);
+									}
+									System.err.println("loading:" + c);
+								} catch (Throwable e1) {
+									e1.printStackTrace();
+									continue;
+								}
+							}
+						}
+					}
+				}
+			} catch (IOException | ClassNotFoundException e1) {
+				continue;
 			}
 		}
-		return result;
-	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Collection<Provider<AuthenticationManager>> loadAuthProvider(File baseDir) {
-		List<Provider<AuthenticationManager>> result = new LinkedList<>();
-		if (baseDir.isDirectory()) {
-			for (File i : baseDir.listFiles()) {
-				try {
-					result.addAll((Collection<? extends Provider<AuthenticationManager>>) loadIndividual(
-							i.getCanonicalPath()));
-				} catch (IOException e) {
-					continue;
-				}
-			}
-		}
-		return result;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Collection<Provider<JournalTransformer>> loadTransformerProvider(File baseDir) {
-		List<Provider<JournalTransformer>> result = new LinkedList<>();
-		if (baseDir.isDirectory()) {
-			for (File i : baseDir.listFiles()) {
-				try {
-					result.addAll(
-							(Collection<? extends Provider<JournalTransformer>>) loadIndividual(i.getCanonicalPath()));
-				} catch (IOException e) {
-					e.printStackTrace();
-					continue;
-				}
-			}
-		}
-		return result;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Collection<Provider<Indexer<Journal>>> loadIndexer(File baseDir) {
-		List<Provider<Indexer<Journal>>> result = new LinkedList<>();
-		if (baseDir.isDirectory()) {
-			for (File i : baseDir.listFiles()) {
-				try {
-					result.addAll(
-							(Collection<? extends Provider<Indexer<Journal>>>) loadIndividual(i.getCanonicalPath()));
-				} catch (IOException e) {
-					continue;
-				}
-			}
-		}
-		return result;
 	}
 
 }

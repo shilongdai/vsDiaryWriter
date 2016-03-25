@@ -12,6 +12,12 @@ import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
 import net.viperfish.utils.serialization.JsonGenerator;
 
+/**
+ * Operation to import entries from a text file containing enties in JSON
+ * 
+ * @author sdai
+ *
+ */
 class ImportEntriesOperation extends InjectedOperation {
 
 	private IOFile importFile;
@@ -27,8 +33,11 @@ class ImportEntriesOperation extends InjectedOperation {
 
 	@Override
 	public void execute() {
+		// load the file
 		String json = importFile.read(StandardCharsets.UTF_16);
 		try {
+
+			// de-serialize and add
 			Journal[] result = generator.fromJson(Journal[].class, json);
 			for (Journal i : result) {
 				db().addEntry(i);

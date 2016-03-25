@@ -1,19 +1,22 @@
 package net.viperfish.journal.framework;
 
 import java.io.File;
-import java.util.Collection;
 
-import net.viperfish.journal.framework.provider.Provider;
-import net.viperfish.utils.index.Indexer;
-
+/**
+ * loader that loads third party components into the application
+ * 
+ * @author sdai
+ *
+ */
 public interface ModuleLoader {
 
-	public Collection<Provider<EntryDatabase>> loadDatabaseProvider(File baseDir);
-
-	public Collection<Provider<AuthenticationManager>> loadAuthProvider(File baseDir);
-
-	public Collection<Provider<JournalTransformer>> loadTransformerProvider(File baseDir);
-
-	public Collection<Provider<Indexer<Journal>>> loadIndexer(File baseDir);
+	/**
+	 * load EntryDatabases, Indexers, JournalTransformers, and Authentication
+	 * Manager Providers into the application
+	 * 
+	 * @param baseDir
+	 *            the dir containing the providers
+	 */
+	public void loadModules(File baseDir);
 
 }

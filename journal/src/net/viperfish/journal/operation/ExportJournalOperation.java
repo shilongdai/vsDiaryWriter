@@ -13,6 +13,12 @@ import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
 import net.viperfish.utils.serialization.JsonGenerator;
 
+/**
+ * exports all entries to a text file. Entries are serialized in JSON format
+ * 
+ * @author sdai
+ *
+ */
 class ExportJournalOperation extends InjectedOperation {
 
 	static {
@@ -28,11 +34,16 @@ class ExportJournalOperation extends InjectedOperation {
 
 	@Override
 	public void execute() {
+		// get all entries
 		List<Journal> allJournals = db().getAll();
-		Journal[] toExport = allJournals.toArray(new Journal[1]);
+		Journal[] toExport = allJournals.toArray(new Journal[0]);
+
+		// set the id to null to reassign id when importing
 		for (Journal i : toExport) {
 			i.setId(null);
 		}
+
+		// serialize to JSON and write
 		try {
 			String result = generator.toJson(toExport);
 			outputTarget.write(result, StandardCharsets.UTF_16);
