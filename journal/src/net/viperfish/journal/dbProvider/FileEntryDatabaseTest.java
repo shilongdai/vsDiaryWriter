@@ -1,11 +1,11 @@
-package test.java.dbTests;
+package net.viperfish.journal.dbProvider;
 
 import java.io.File;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import net.viperfish.journal.dbProvider.FileEntryDatabase;
+import net.viperfish.journal.framework.DatabaseTest;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.utils.file.CommonFunctions;
@@ -16,7 +16,6 @@ import net.viperfish.utils.file.TextIOStreamHandler;
 public class FileEntryDatabaseTest extends DatabaseTest {
 
 	private FileEntryDatabase db;
-	private File dir;
 
 	public FileEntryDatabaseTest() {
 
@@ -25,7 +24,6 @@ public class FileEntryDatabaseTest extends DatabaseTest {
 	@Override
 	protected EntryDatabase getDB(File dataDir) {
 		if (db == null) {
-			this.dir = dataDir;
 			db = new FileEntryDatabase(new IOFile(new File(dataDir, "fileTest"), new GZIPIOStreamHandler()));
 		}
 		return db;

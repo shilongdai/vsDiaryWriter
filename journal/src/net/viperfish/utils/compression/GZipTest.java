@@ -1,8 +1,4 @@
-package test.java.compressorTests;
-
-import net.viperfish.utils.compression.Compressor;
-import net.viperfish.utils.compression.Compressors;
-import net.viperfish.utils.compression.FailToInitCompressionException;
+package net.viperfish.utils.compression;
 
 public class GZipTest extends CompressorTest {
 

@@ -1,11 +1,11 @@
-package test.java.dbTests;
+package net.viperfish.journal.archieveDB;
 
 import java.io.File;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import net.viperfish.journal.archieveDB.ArchiveEntryDatabase;
+import net.viperfish.journal.framework.DatabaseTest;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.utils.file.CommonFunctions;
 

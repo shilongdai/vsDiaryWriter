@@ -1,4 +1,4 @@
-package test.java;
+package net.viperfish.journal.operation;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -34,21 +34,6 @@ import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.journal.framework.provider.Indexers;
 import net.viperfish.journal.framework.provider.JournalEncryptionWrapper;
 import net.viperfish.journal.indexProvider.JournalIndexer;
-import net.viperfish.journal.operation.AddEntryOperation;
-import net.viperfish.journal.operation.ChangeConfigurationOperation;
-import net.viperfish.journal.operation.ChangePasswordOperation;
-import net.viperfish.journal.operation.ClearEntriesOperation;
-import net.viperfish.journal.operation.DeleteEntryOperation;
-import net.viperfish.journal.operation.EditContentOperation;
-import net.viperfish.journal.operation.EditSubjectOperation;
-import net.viperfish.journal.operation.ExportJournalOperation;
-import net.viperfish.journal.operation.GetAllOperation;
-import net.viperfish.journal.operation.GetDateRangeOperation;
-import net.viperfish.journal.operation.GetEntryOperation;
-import net.viperfish.journal.operation.ImportEntriesOperation;
-import net.viperfish.journal.operation.SearchEntryOperation;
-import net.viperfish.journal.operation.SetConfigurationOperation;
-import net.viperfish.journal.operation.SetPasswordOperation;
 import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
 import net.viperfish.utils.file.CommonFunctions;
 import net.viperfish.utils.file.IOFile;

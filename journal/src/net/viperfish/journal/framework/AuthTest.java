@@ -1,4 +1,4 @@
-package test.java;
+package net.viperfish.journal.framework;
 
 import java.io.File;
 
@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.utils.file.CommonFunctions;
 
 public abstract class AuthTest {

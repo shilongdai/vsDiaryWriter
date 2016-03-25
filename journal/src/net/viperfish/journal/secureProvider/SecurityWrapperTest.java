@@ -1,4 +1,4 @@
-package test.java;
+package net.viperfish.journal.secureProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.secureProvider.BlockCipherMacTransformer;
 import net.viperfish.utils.file.CommonFunctions;
 
 public class SecurityWrapperTest {

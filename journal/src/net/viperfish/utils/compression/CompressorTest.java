@@ -1,9 +1,7 @@
-package test.java.compressorTests;
+package net.viperfish.utils.compression;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import net.viperfish.utils.compression.Compressor;
 
 public abstract class CompressorTest {
 

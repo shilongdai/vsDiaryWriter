@@ -1,4 +1,4 @@
-package test.java.dbTests;
+package net.viperfish.journal.dbProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import net.viperfish.journal.dbProvider.JavaSerializationEntryDatabase;
+import net.viperfish.journal.framework.DatabaseTest;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.utils.file.CommonFunctions;

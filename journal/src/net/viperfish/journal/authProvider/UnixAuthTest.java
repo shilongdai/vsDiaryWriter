@@ -1,8 +1,8 @@
-package test.java;
+package net.viperfish.journal.authProvider;
 
 import java.io.File;
 
-import net.viperfish.journal.authProvider.UnixLikeAuthManager;
+import net.viperfish.journal.framework.AuthTest;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.Configuration;
 

@@ -1,9 +1,6 @@
-package test.java.dbTests;
+package net.viperfish.journal.archieveDB;
 
 import java.io.File;
-
-import net.viperfish.journal.archieveDB.ArArchiveEntryDatabase;
-import net.viperfish.journal.archieveDB.ArchiveEntryDatabase;
 
 public class ArArchiveDatabaseTest extends ArchiveDatabaseTest {
 

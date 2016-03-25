@@ -1,8 +1,8 @@
-package test.java.dbTests;
+package net.viperfish.journal.dbProvider;
 
 import java.io.File;
 
-import net.viperfish.journal.dbProvider.H2EntryDatabase;
+import net.viperfish.journal.framework.DatabaseTest;
 import net.viperfish.journal.framework.EntryDatabase;
 
 public class H2DBTest extends DatabaseTest {

@@ -1,4 +1,4 @@
-package test.java.dbTests;
+package net.viperfish.journal.framework;
 
 import java.io.File;
 import java.util.Collections;
@@ -10,8 +10,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.journal.framework.Journal;
 import net.viperfish.utils.file.CommonFunctions;
 
 public abstract class DatabaseTest {
