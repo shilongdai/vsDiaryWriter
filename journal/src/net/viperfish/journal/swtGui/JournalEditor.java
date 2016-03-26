@@ -117,6 +117,9 @@ public class JournalEditor {
 
 					@Override
 					public void run() {
+						if (dateDisplayer.isDisposed()) {
+							return;
+						}
 						dateDisplayer.setText(df.format(new Date()));
 						dateDisplayer.pack();
 					}

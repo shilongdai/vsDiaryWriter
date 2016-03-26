@@ -38,6 +38,9 @@ public final class ViperfishEntryDatabaseProvider implements Provider<EntryDatab
 		mapping.put("TextFile", initFactory(new TextFileEntryDatabaseFactory()));
 		mapping.put("GZipFile", initFactory(new GZIPFileEntryDatabaseFactory()));
 		mapping.put("H2Database", initFactory(new H2DatasourceFactory()));
+		mapping.put("HSQLDatabase", initFactory(new HSQLEntryDatabaseFactory()));
+		mapping.put("SQLiteDatabase", initFactory(new SQLiteEntryDatabaseFactory()));
+		mapping.put("DerbyDatabase", initFactory(new DerbyEntryDatabaseFactory()));
 		mapping.put("MemoryHashMap", initFactory(new StubDataSourceFactory()));
 		mapping.put("JavaSerialization", initFactory(new JSerializationDataSourceFactory()));
 	}
