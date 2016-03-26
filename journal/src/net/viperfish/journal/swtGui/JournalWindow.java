@@ -378,7 +378,7 @@ public class JournalWindow {
 				if (toExport != null) {
 					JournalWindow.this.e.submit(f.getExportEntriesOperation(toExport));
 					MessageDialog.openInformation(shell, "Export Complete",
-							"All entries have been exported to export.txt, please store it safely and ensure the integrity of the data");
+							"All entries have been exported, please store it safely and ensure the integrity of the data");
 				}
 			}
 
