@@ -8,11 +8,11 @@ import org.eclipse.swt.widgets.Control;
 import net.viperfish.journal.operation.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
 
-class UnixLikeAuthPreferencePage extends PreferencePage {
+public final class UnixLikeAuthPreferencePage extends PreferencePage {
 
 	private UnixAuthComposite com;
 
-	UnixLikeAuthPreferencePage() {
+	public UnixLikeAuthPreferencePage() {
 		super("Unix Style Authentication");
 		this.setDescription(
 				"Configures the setting for Unix Like Authentication: Using an encryption algorithm to generate a hash");

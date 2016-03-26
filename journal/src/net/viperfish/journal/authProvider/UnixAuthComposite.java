@@ -14,7 +14,7 @@ import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.secureAlgs.BlockCiphers;
 import net.viperfish.journal.secureAlgs.Digesters;
 
-class UnixAuthComposite extends Composite {
+final class UnixAuthComposite extends Composite {
 
 	private Combo encryptionCombo;
 
@@ -26,7 +26,7 @@ class UnixAuthComposite extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	UnixAuthComposite(Composite parent, int style) {
+	public UnixAuthComposite(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new GridLayout(3, false));
 		new Label(this, SWT.NONE);

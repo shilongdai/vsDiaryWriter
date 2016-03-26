@@ -40,7 +40,7 @@ final class SystemSetupComposite extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	SystemSetupComposite(Composite parent, int style) {
+	public SystemSetupComposite(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new GridLayout(4, false));
 		new Label(this, SWT.NONE);

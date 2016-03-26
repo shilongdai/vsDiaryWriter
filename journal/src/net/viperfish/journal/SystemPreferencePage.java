@@ -8,11 +8,11 @@ import org.eclipse.swt.widgets.Control;
 import net.viperfish.journal.operation.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
 
-final class SystemPreferencePage extends PreferencePage {
+public final class SystemPreferencePage extends PreferencePage {
 
 	private SystemSetupComposite com;
 
-	SystemPreferencePage() {
+	public SystemPreferencePage() {
 		super("System");
 		this.setDescription("Configures the components that the application use to proccess entries");
 	}

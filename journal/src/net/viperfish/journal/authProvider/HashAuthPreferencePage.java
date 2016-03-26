@@ -10,11 +10,11 @@ import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.operation.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
 
-class HashAuthPreferencePage extends PreferencePage {
+public final class HashAuthPreferencePage extends PreferencePage {
 
 	private HashAuthConfigComposite com;
 
-	HashAuthPreferencePage() {
+	public HashAuthPreferencePage() {
 		super("Hash Authentication");
 		this.setDescription("Configuring for authentication using hashing algorithms");
 	}

@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Control;
 import net.viperfish.journal.operation.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
 
-class BlockCipherMacPreference extends PreferencePage {
+public final class BlockCipherMacPreference extends PreferencePage {
 
 	private SecurityConfigComposite com;
 
