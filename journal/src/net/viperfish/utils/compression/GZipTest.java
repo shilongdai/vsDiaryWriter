@@ -1,6 +1,6 @@
 package net.viperfish.utils.compression;
 
-public class GZipTest extends CompressorTest {
+public final class GZipTest extends CompressorTest {
 
 	@Override
 	protected Compressor getCompressor() {

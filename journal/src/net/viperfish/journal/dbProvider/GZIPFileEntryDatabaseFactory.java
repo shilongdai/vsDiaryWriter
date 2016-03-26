@@ -14,7 +14,7 @@ import net.viperfish.utils.file.IOFile;
  * @author sdai
  *
  */
-class GZIPFileEntryDatabaseFactory extends FileEntryDatabaseFactory {
+final class GZIPFileEntryDatabaseFactory extends FileEntryDatabaseFactory {
 
 	@Override
 	protected IOFile createIOFile(File dataFile) {

@@ -17,7 +17,7 @@ import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.utils.file.CommonFunctions;
 
-public class ViperfishArchiveDBProvider implements Provider<EntryDatabase> {
+public final class ViperfishArchiveDBProvider implements Provider<EntryDatabase> {
 
 	private final Map<String, Class<? extends ArchiveEntryDatabase>> dbs;
 	private final Map<String, ArchiveEntryDatabase> concretes;

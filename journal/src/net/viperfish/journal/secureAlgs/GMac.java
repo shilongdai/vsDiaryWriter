@@ -6,12 +6,12 @@ import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
-class GMac extends BCMacDigester {
+final class GMac extends BCMacDigester {
 
 	private Mac mac;
 	private String currentMode;
 
-	public GMac() {
+	GMac() {
 		currentMode = "AES";
 	}
 

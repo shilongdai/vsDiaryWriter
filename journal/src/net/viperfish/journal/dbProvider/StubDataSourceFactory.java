@@ -10,7 +10,7 @@ import net.viperfish.journal.framework.EntryDatabase;
  * @author sdai
  *
  */
-class StubDataSourceFactory implements DataSourceFactory {
+final class StubDataSourceFactory implements DataSourceFactory {
 
 	private DatabaseStub db;
 

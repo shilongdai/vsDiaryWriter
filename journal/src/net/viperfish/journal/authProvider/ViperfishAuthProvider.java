@@ -18,7 +18,7 @@ import net.viperfish.journal.framework.provider.PreferenceGUIManager;
 import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.utils.file.CommonFunctions;
 
-public class ViperfishAuthProvider implements Provider<AuthenticationManager> {
+public final class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 
 	private File dataDir;
 	private Map<String, Class<? extends AuthenticationManager>> authters;

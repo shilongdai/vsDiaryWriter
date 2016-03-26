@@ -15,7 +15,7 @@ import org.apache.commons.compress.compressors.deflate.DeflateCompressorOutputSt
  * @author sdai
  *
  */
-class DEFLATECompressor extends Compressor {
+final class DEFLATECompressor extends Compressor {
 
 	@Override
 	protected OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException {

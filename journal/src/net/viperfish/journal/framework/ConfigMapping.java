@@ -6,7 +6,7 @@ package net.viperfish.journal.framework;
  * @author sdai
  *
  */
-public class ConfigMapping {
+public final class ConfigMapping {
 	public static final String DB_PROVIDER = "providers.db";
 	public static final String AUTH_PROVIDER = "providers.auth";
 	public static final String INDEX_PROVIDER = "providers.index";

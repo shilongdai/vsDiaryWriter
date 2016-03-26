@@ -16,7 +16,11 @@ import net.viperfish.journal.framework.OperationWithResult;
  * @author sdai
  *
  */
-class StandardOperationFactory implements OperationFactory {
+final class StandardOperationFactory implements OperationFactory {
+
+	StandardOperationFactory() {
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public Operation getAddOperation(Journal toAdd) {

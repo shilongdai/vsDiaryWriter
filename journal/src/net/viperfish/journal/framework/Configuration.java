@@ -26,7 +26,7 @@ import net.viperfish.utils.file.CommonFunctions;
  * @author sdai
  *
  */
-public class Configuration {
+public final class Configuration {
 	private static FileConfiguration conf;
 
 	private static File confFile;

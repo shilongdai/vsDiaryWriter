@@ -27,7 +27,7 @@ import net.viperfish.utils.file.CommonFunctions;
  * @author sdai
  *
  */
-class JavaSerializationEntryDatabase implements EntryDatabase, Serializable {
+final class JavaSerializationEntryDatabase implements EntryDatabase, Serializable {
 
 	/**
 	 * 

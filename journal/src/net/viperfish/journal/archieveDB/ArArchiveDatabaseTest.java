@@ -2,7 +2,7 @@ package net.viperfish.journal.archieveDB;
 
 import java.io.File;
 
-public class ArArchiveDatabaseTest extends ArchiveDatabaseTest {
+public final class ArArchiveDatabaseTest extends ArchiveDatabaseTest {
 
 	@Override
 	protected ArchiveEntryDatabase getADB(File archiveFile) {

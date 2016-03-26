@@ -21,7 +21,7 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
  * @author sdai
  *
  */
-public class BCBlockCipherEncryptor extends Encryptor {
+public final class BCBlockCipherEncryptor extends Encryptor {
 
 	private byte[] key;
 	private byte[] iv;

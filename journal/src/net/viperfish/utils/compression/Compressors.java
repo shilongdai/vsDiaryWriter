@@ -13,7 +13,7 @@ import java.util.TreeMap;
  * @author sdai
  *
  */
-public class Compressors {
+public final class Compressors {
 
 	private static Map<String, Class<? extends Compressor>> compressorMap;
 	private static Map<String, Compressor> cache;

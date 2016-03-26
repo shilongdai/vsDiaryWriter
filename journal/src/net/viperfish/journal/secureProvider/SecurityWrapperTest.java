@@ -11,7 +11,7 @@ import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.utils.file.CommonFunctions;
 
-public class SecurityWrapperTest {
+public final class SecurityWrapperTest {
 	private BlockCipherMacTransformer wrapper;
 	private static File testDir;
 

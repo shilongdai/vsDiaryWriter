@@ -20,7 +20,7 @@ import net.viperfish.utils.file.TextIOStreamHandler;
  * @author sdai
  *
  */
-class HashAuthManager implements AuthenticationManager {
+final class HashAuthManager implements AuthenticationManager {
 
 	public static final String HASH_ALG = "viperfish.auth.hash";
 

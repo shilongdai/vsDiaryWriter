@@ -37,7 +37,7 @@ import net.viperfish.utils.file.TextIOStreamHandler;
  * @author sdai
  *
  */
-class BlockCipherMacTransformer implements JournalTransformer {
+final class BlockCipherMacTransformer implements JournalTransformer {
 
 	public static final String ENCRYPTION_ALG_NAME = "viperfish.secure.encrytion.algorithm";
 	public static final String ENCRYPTION_MODE = "viperfish.secure.encryption.mode";
@@ -260,7 +260,7 @@ class BlockCipherMacTransformer implements JournalTransformer {
 		keyGenerator.setSalt(saltForKDF);
 	}
 
-	public BlockCipherMacTransformer(File salt) {
+	BlockCipherMacTransformer(File salt) {
 		this.saltStore = salt;
 		initAlgorithms();
 		initKDF();

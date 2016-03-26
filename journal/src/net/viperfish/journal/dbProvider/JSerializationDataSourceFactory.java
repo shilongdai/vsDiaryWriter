@@ -12,7 +12,7 @@ import net.viperfish.journal.framework.EntryDatabase;
  * @author sdai
  *
  */
-class JSerializationDataSourceFactory implements DataSourceFactory {
+final class JSerializationDataSourceFactory implements DataSourceFactory {
 
 	private File sFile;
 	private JavaSerializationEntryDatabase db;

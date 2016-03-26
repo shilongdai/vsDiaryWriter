@@ -9,11 +9,11 @@ import net.viperfish.journal.framework.Journal;
  * @author sdai
  *
  */
-class AddEntryOperation extends InjectedOperation {
+final class AddEntryOperation extends InjectedOperation {
 
 	private Journal toAdd;
 
-	public AddEntryOperation(Journal add) {
+	AddEntryOperation(Journal add) {
 		this.toAdd = add;
 
 	}

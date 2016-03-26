@@ -12,7 +12,7 @@ import net.viperfish.journal.framework.OperationExecutor;
  * @author sdai
  *
  */
-class ThreadPoolOperationExecutor extends OperationExecutor {
+final class ThreadPoolOperationExecutor extends OperationExecutor {
 
 	private ExecutorService pool;
 
@@ -20,7 +20,7 @@ class ThreadPoolOperationExecutor extends OperationExecutor {
 
 		private Operation o;
 
-		public OperationRunner(Operation toRun) {
+		OperationRunner(Operation toRun) {
 			this.o = toRun;
 		}
 

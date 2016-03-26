@@ -20,7 +20,7 @@ import org.apache.commons.compress.archivers.ar.ArArchiveOutputStream;
  * @author sdai
  *
  */
-class ArArchiveEntryDatabase extends ArchiveEntryDatabase {
+final class ArArchiveEntryDatabase extends ArchiveEntryDatabase {
 
 	public ArArchiveEntryDatabase(File archiveFile) {
 		super(archiveFile);

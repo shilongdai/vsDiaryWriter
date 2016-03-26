@@ -6,7 +6,7 @@ import net.viperfish.journal.framework.AuthTest;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.Configuration;
 
-public class UnixAuthTest extends AuthTest {
+public final class UnixAuthTest extends AuthTest {
 
 	static {
 		Configuration.setProperty(UnixLikeAuthManager.ENCRYPTION_ALG, "DES");

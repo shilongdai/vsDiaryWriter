@@ -9,11 +9,11 @@ import net.viperfish.journal.framework.OperationWithResult;
  * @author sdai
  *
  */
-class GetEntryOperation extends OperationWithResult<Journal> {
+final class GetEntryOperation extends OperationWithResult<Journal> {
 
 	private Long id;
 
-	public GetEntryOperation(Long id) {
+	GetEntryOperation(Long id) {
 		this.id = id;
 
 	}

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-public class JsonGenerator {
+public final class JsonGenerator {
 	protected ObjectMapper objectMapper;
 
 	public JsonGenerator() {

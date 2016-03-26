@@ -37,7 +37,7 @@ import net.viperfish.utils.file.TextIOStreamHandler;
 import net.viperfish.utils.index.Indexer;
 import net.viperfish.utils.serialization.JsonGenerator;
 
-public class OperationTest {
+public final class OperationTest {
 
 	private EntryDatabase db;
 	private Indexer<Journal> indexer;

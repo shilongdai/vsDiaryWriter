@@ -24,7 +24,7 @@ import net.viperfish.utils.file.TextIOStreamHandler;
  * @author sdai
  *
  */
-class UnixLikeAuthManager implements AuthenticationManager {
+final class UnixLikeAuthManager implements AuthenticationManager {
 
 	public static final String ENCRYPTION_ALG = "viperfish.unixAuth.cipher";
 	public static final String KDF_HASH = "viperfish.unixAuth.kdf";

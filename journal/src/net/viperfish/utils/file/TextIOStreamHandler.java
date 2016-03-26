@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class TextIOStreamHandler implements IOStreamHandler {
+public final class TextIOStreamHandler implements IOStreamHandler {
 
 	@Override
 	public DataOutputStream getOutputStream(File src) {

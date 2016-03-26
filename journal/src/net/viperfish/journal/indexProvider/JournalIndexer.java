@@ -31,7 +31,7 @@ import net.viperfish.utils.index.LuceneIndexer;
  * @author sdai
  *
  */
-class JournalIndexer extends LuceneIndexer<Journal> {
+final class JournalIndexer extends LuceneIndexer<Journal> {
 
 	private Directory dir;
 	private final DateFormat df;

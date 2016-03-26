@@ -3,7 +3,7 @@ package net.viperfish.utils.file;
 import java.io.File;
 import java.io.IOException;
 
-public class CommonFunctions {
+public final class CommonFunctions {
 	public static boolean initFile(File src) throws IOException {
 		if (!src.exists()) {
 			src.createNewFile();

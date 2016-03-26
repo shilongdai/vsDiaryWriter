@@ -8,11 +8,11 @@ import net.viperfish.journal.framework.InjectedOperation;
  * @author sdai
  *
  */
-class SetPasswordOperation extends InjectedOperation {
+final class SetPasswordOperation extends InjectedOperation {
 
 	private String password;
 
-	public SetPasswordOperation(String pass) {
+	SetPasswordOperation(String pass) {
 		this.password = pass;
 	}
 

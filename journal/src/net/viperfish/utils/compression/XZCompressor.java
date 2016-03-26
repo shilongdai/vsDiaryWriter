@@ -15,7 +15,7 @@ import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
  * @author sdai
  *
  */
-class XZCompressor extends Compressor {
+final class XZCompressor extends Compressor {
 
 	@Override
 	protected OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException {

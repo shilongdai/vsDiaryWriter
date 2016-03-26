@@ -19,7 +19,7 @@ import net.viperfish.utils.serialization.JsonGenerator;
  * @author sdai
  *
  */
-class ExportJournalOperation extends InjectedOperation {
+final class ExportJournalOperation extends InjectedOperation {
 
 	static {
 		generator = new JsonGenerator();
@@ -28,7 +28,7 @@ class ExportJournalOperation extends InjectedOperation {
 	private static final JsonGenerator generator;
 	private IOFile outputTarget;
 
-	public ExportJournalOperation(String outputFile) {
+	ExportJournalOperation(String outputFile) {
 		outputTarget = new IOFile(new File(outputFile), new TextIOStreamHandler());
 	}
 

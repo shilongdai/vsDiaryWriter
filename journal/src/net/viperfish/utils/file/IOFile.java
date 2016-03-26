@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
 
 import org.apache.commons.compress.utils.IOUtils;
 
-public class IOFile {
+public final class IOFile {
 
 	private final File src;
 	private IOStreamHandler handler;

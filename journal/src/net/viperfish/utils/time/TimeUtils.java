@@ -3,7 +3,7 @@ package net.viperfish.utils.time;
 import java.util.Calendar;
 import java.util.Date;
 
-public class TimeUtils {
+public final class TimeUtils {
 	private TimeUtils() {
 
 	}

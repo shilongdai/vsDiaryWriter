@@ -15,7 +15,7 @@ import net.viperfish.journal.framework.Observer;
  * @author sdai
  *
  */
-public class JournalEncryptionWrapper implements EntryDatabase, Observer<String> {
+public final class JournalEncryptionWrapper implements EntryDatabase, Observer<String> {
 
 	private JournalTransformer encryptor;
 	private EntryDatabase db;

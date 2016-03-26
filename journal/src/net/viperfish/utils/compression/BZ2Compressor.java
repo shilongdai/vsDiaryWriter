@@ -15,7 +15,7 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream
  * @author sdai
  *
  */
-class BZ2Compressor extends Compressor {
+final class BZ2Compressor extends Compressor {
 
 	@Override
 	protected OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException {

@@ -20,7 +20,7 @@ import org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream;
  * @author sdai
  *
  */
-class CpioArchiveEntryDatabase extends ArchiveEntryDatabase {
+final class CpioArchiveEntryDatabase extends ArchiveEntryDatabase {
 
 	public CpioArchiveEntryDatabase(File archiveFile) {
 		super(archiveFile);

@@ -5,7 +5,7 @@ import java.io.File;
 import net.viperfish.journal.framework.DatabaseTest;
 import net.viperfish.journal.framework.EntryDatabase;
 
-public class H2DBTest extends DatabaseTest {
+final public class H2DBTest extends DatabaseTest {
 
 	private H2EntryDatabase db;
 

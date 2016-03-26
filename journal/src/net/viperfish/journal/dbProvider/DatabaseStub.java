@@ -16,7 +16,7 @@ import net.viperfish.journal.framework.Journal;
  * @author sdai
  *
  */
-class DatabaseStub implements EntryDatabase {
+final class DatabaseStub implements EntryDatabase {
 
 	private final Map<Long, Journal> backend;
 	private Long currentMax;

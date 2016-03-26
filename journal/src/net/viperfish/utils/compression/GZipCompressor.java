@@ -15,11 +15,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
  * @author sdai
  *
  */
-class GZipCompressor extends Compressor {
-
-	protected GZipCompressor() {
-		// TODO Auto-generated constructor stub
-	}
+final class GZipCompressor extends Compressor {
 
 	@Override
 	protected OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException {

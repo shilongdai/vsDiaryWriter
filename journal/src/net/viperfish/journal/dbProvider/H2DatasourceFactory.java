@@ -10,7 +10,7 @@ import net.viperfish.journal.framework.EntryDatabase;
  * @author sdai
  *
  */
-class H2DatasourceFactory implements DataSourceFactory {
+final class H2DatasourceFactory implements DataSourceFactory {
 
 	private File dataDir;
 	private H2EntryDatabase db;

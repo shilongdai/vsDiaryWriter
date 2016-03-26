@@ -11,7 +11,7 @@ import net.viperfish.utils.file.TextIOStreamHandler;
  * @author sdai
  *
  */
-class TextFileEntryDatabaseFactory extends FileEntryDatabaseFactory {
+final class TextFileEntryDatabaseFactory extends FileEntryDatabaseFactory {
 
 	@Override
 	protected IOFile createIOFile(File dataFile) {

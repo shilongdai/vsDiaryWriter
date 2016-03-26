@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class NullCompressor extends Compressor {
+final public class NullCompressor extends Compressor {
 
 	public NullCompressor() {
 		// TODO Auto-generated constructor stub

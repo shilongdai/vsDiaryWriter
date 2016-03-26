@@ -9,7 +9,7 @@ import java.util.TreeSet;
  * @author sdai
  *
  */
-public class Macs {
+public final class Macs {
 
 	private Macs() {
 		// TODO Auto-generated constructor stub

@@ -8,7 +8,7 @@ import org.bouncycastle.crypto.Digest;
  * @author sdai
  *
  */
-public class BCDigester implements Digester {
+public final class BCDigester implements Digester {
 
 	private String mode;
 

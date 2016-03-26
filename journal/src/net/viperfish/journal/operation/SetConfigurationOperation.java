@@ -12,11 +12,11 @@ import net.viperfish.journal.framework.Operation;
  * @author sdai
  *
  */
-class SetConfigurationOperation implements Operation {
+final class SetConfigurationOperation implements Operation {
 
 	private Map<String, String> newConfig;
 
-	public SetConfigurationOperation(Map<String, String> config) {
+	SetConfigurationOperation(Map<String, String> config) {
 		this.newConfig = config;
 	}
 

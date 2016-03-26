@@ -8,11 +8,11 @@ import net.viperfish.journal.framework.Journal;
  * @author sdai
  *
  */
-class EditSubjectOperation extends EditEntryOperation {
+final class EditSubjectOperation extends EditEntryOperation {
 
 	private String subject;
 
-	public EditSubjectOperation(Long id, String s) {
+	EditSubjectOperation(Long id, String s) {
 		super(id);
 		this.subject = s;
 	}

@@ -4,12 +4,12 @@ import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.params.KeyParameter;
 
-class HMac extends BCMacDigester {
+final class HMac extends BCMacDigester {
 
 	private Mac mac;
 	private String currentMode;
 
-	public HMac() {
+	HMac() {
 		currentMode = "SHA512";
 	}
 

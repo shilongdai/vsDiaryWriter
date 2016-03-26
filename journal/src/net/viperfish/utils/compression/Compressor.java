@@ -16,6 +16,10 @@ import org.apache.commons.compress.utils.IOUtils;
  */
 public abstract class Compressor {
 
+	Compressor() {
+
+	}
+
 	/**
 	 * create a compression output stream used to compress data
 	 * 

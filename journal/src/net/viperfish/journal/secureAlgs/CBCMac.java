@@ -6,11 +6,11 @@ import org.bouncycastle.crypto.macs.CBCBlockCipherMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
-class CBCMac extends BCMacDigester {
+final class CBCMac extends BCMacDigester {
 	private Mac mac;
 	private String currentMode;
 
-	public CBCMac() {
+	CBCMac() {
 		currentMode = "AES";
 	}
 

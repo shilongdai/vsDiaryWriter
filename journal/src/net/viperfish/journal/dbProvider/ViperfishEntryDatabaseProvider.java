@@ -13,7 +13,7 @@ import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.utils.file.CommonFunctions;
 
-public class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
+public final class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
 
 	private Map<String, DataSourceFactory> mapping;
 	private File dataDir;

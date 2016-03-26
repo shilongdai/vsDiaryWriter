@@ -11,7 +11,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
  * @author sdai
  *
  */
-public class BCPCKDF2Generator implements PBKDF2KeyGenerator {
+public final class BCPCKDF2Generator implements PBKDF2KeyGenerator {
 
 	private String digest;
 	private byte[] salt;

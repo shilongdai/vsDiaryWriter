@@ -21,11 +21,11 @@ import net.viperfish.journal.framework.provider.JournalTransformers;
  * @author sdai
  *
  */
-class ChangeConfigurationOperation extends InjectedOperation {
+final class ChangeConfigurationOperation extends InjectedOperation {
 
 	private Map<String, String> config;
 
-	public ChangeConfigurationOperation(Map<String, String> config) {
+	ChangeConfigurationOperation(Map<String, String> config) {
 		this.config = config;
 	}
 

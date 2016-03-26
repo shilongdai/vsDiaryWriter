@@ -1,6 +1,6 @@
 package net.viperfish.utils.compression;
 
-public class BZ2Test extends CompressorTest {
+public final class BZ2Test extends CompressorTest {
 
 	@Override
 	protected Compressor getCompressor() {

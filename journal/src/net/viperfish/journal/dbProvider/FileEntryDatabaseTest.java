@@ -13,7 +13,7 @@ import net.viperfish.utils.file.GZIPIOStreamHandler;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
 
-public class FileEntryDatabaseTest extends DatabaseTest {
+public final class FileEntryDatabaseTest extends DatabaseTest {
 
 	private FileEntryDatabase db;
 

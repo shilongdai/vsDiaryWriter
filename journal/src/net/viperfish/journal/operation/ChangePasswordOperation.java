@@ -11,11 +11,11 @@ import net.viperfish.journal.framework.Journal;
  * @author sdai
  *
  */
-class ChangePasswordOperation extends InjectedOperation {
+final class ChangePasswordOperation extends InjectedOperation {
 
 	private String pass;
 
-	public ChangePasswordOperation(String password) {
+	ChangePasswordOperation(String password) {
 		this.pass = password;
 	}
 

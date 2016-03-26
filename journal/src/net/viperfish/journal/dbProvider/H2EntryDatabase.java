@@ -20,7 +20,7 @@ import net.viperfish.journal.framework.Journal;
  * @author sdai
  *
  */
-class H2EntryDatabase extends HibernateEntryDatabase {
+final class H2EntryDatabase extends HibernateEntryDatabase {
 
 	private static SessionFactory factory;
 	private Session s;

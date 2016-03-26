@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class GZIPIOStreamHandler implements IOStreamHandler {
+public final class GZIPIOStreamHandler implements IOStreamHandler {
 
 	@Override
 	public DataOutputStream getOutputStream(File src) {

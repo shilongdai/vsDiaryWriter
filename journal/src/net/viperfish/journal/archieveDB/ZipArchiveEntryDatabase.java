@@ -20,7 +20,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
  * @author sdai
  *
  */
-class ZipArchiveEntryDatabase extends ArchiveEntryDatabase {
+final class ZipArchiveEntryDatabase extends ArchiveEntryDatabase {
 
 	public ZipArchiveEntryDatabase(File archiveFile) {
 		super(archiveFile);

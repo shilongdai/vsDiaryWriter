@@ -20,7 +20,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table
-public class Journal implements Comparable<Journal>, Serializable {
+public final class Journal implements Comparable<Journal>, Serializable {
 	/**
 	 * 
 	 */

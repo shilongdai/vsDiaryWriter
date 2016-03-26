@@ -13,9 +13,9 @@ import net.viperfish.journal.framework.OperationWithResult;
  * @author sdai
  *
  */
-class GetAllOperation extends OperationWithResult<List<Journal>> {
+final class GetAllOperation extends OperationWithResult<List<Journal>> {
 
-	public GetAllOperation() {
+	GetAllOperation() {
 	}
 
 	@Override

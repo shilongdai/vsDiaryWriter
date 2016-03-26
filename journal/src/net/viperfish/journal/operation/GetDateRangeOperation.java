@@ -15,12 +15,12 @@ import net.viperfish.utils.time.TimeUtils;
  * @author sdai
  *
  */
-class GetDateRangeOperation extends OperationWithResult<Set<Journal>> {
+final class GetDateRangeOperation extends OperationWithResult<Set<Journal>> {
 
 	private Date lowerBound;
 	private Date upperBound;
 
-	public GetDateRangeOperation(Date lowerBound, Date upperBound) {
+	GetDateRangeOperation(Date lowerBound, Date upperBound) {
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
 	}

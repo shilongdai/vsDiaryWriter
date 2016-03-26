@@ -8,7 +8,7 @@ import net.viperfish.journal.framework.OperationExecutor;
  * @author sdai
  *
  */
-public class OperationExecutors {
+final public class OperationExecutors {
 	private static ThreadPoolOperationExecutor exec;
 
 	static {

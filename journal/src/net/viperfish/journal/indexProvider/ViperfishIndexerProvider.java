@@ -10,7 +10,7 @@ import net.viperfish.utils.index.Indexer;
  * @author sdai
  *
  */
-public class ViperfishIndexerProvider implements Provider<Indexer<Journal>> {
+public final class ViperfishIndexerProvider implements Provider<Indexer<Journal>> {
 
 	private JournalIndexer indexer;
 

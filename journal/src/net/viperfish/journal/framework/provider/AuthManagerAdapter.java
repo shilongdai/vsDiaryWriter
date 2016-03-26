@@ -11,7 +11,7 @@ import net.viperfish.journal.framework.Observer;
  * @author sdai
  *
  */
-class AuthManagerAdapter extends Observable<String> implements AuthenticationManager {
+final class AuthManagerAdapter extends Observable<String> implements AuthenticationManager {
 	private AuthenticationManager mger;
 
 	public AuthenticationManager getMger() {

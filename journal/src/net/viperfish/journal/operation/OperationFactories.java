@@ -8,7 +8,7 @@ import net.viperfish.journal.framework.OperationFactory;
  * @author sdai
  *
  */
-public class OperationFactories {
+final public class OperationFactories {
 
 	static {
 		ops = new StandardOperationFactory();

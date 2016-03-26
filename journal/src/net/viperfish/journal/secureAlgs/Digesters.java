@@ -37,7 +37,7 @@ import org.bouncycastle.crypto.digests.WhirlpoolDigest;
  * @author sdai
  *
  */
-public class Digesters {
+public final class Digesters {
 
 	private static Map<String, Class<? extends Digest>> digesters;
 	private static Map<String, Digest> digestCache;

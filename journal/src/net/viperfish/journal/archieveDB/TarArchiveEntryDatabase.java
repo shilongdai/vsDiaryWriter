@@ -20,7 +20,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
  * @author sdai
  *
  */
-class TarArchiveEntryDatabase extends ArchiveEntryDatabase {
+final class TarArchiveEntryDatabase extends ArchiveEntryDatabase {
 
 	public TarArchiveEntryDatabase(File archiveFile) {
 		super(archiveFile);

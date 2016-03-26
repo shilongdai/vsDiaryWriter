@@ -15,7 +15,7 @@ import net.viperfish.utils.time.TimeUtils;
  * @author sdai
  *
  */
-class SearchOperationDateFilter extends OperationWithResult<Set<Journal>> {
+final class SearchOperationDateFilter extends OperationWithResult<Set<Journal>> {
 
 	private SearchEntryOperation ops;
 	private Date upperBound;
@@ -39,7 +39,7 @@ class SearchOperationDateFilter extends OperationWithResult<Set<Journal>> {
 		return filtered;
 	}
 
-	public SearchOperationDateFilter(SearchEntryOperation wrap, Date upperBound, Date lowerBound) {
+	SearchOperationDateFilter(SearchEntryOperation wrap, Date upperBound, Date lowerBound) {
 		this.ops = wrap;
 		this.upperBound = upperBound;
 		this.lowerBound = lowerBound;

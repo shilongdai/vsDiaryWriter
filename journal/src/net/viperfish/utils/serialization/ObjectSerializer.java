@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class ObjectSerializer<T> {
+public final class ObjectSerializer<T> {
 
 	private Class<? extends T> caster;
 

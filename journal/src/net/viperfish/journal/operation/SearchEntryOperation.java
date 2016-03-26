@@ -12,7 +12,7 @@ import net.viperfish.journal.framework.OperationWithResult;
  * @author sdai
  *
  */
-class SearchEntryOperation extends OperationWithResult<Set<Journal>> {
+final class SearchEntryOperation extends OperationWithResult<Set<Journal>> {
 
 	private String query;
 	private static boolean firstTime;
@@ -21,7 +21,7 @@ class SearchEntryOperation extends OperationWithResult<Set<Journal>> {
 		firstTime = true;
 	}
 
-	public SearchEntryOperation(String query) {
+	SearchEntryOperation(String query) {
 		this.query = query;
 
 	}

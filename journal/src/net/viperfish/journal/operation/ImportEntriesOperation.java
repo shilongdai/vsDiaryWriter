@@ -18,7 +18,7 @@ import net.viperfish.utils.serialization.JsonGenerator;
  * @author sdai
  *
  */
-class ImportEntriesOperation extends InjectedOperation {
+final class ImportEntriesOperation extends InjectedOperation {
 
 	private IOFile importFile;
 	private static final JsonGenerator generator;
@@ -27,7 +27,7 @@ class ImportEntriesOperation extends InjectedOperation {
 		generator = new JsonGenerator();
 	}
 
-	public ImportEntriesOperation(String importFile) {
+	ImportEntriesOperation(String importFile) {
 		this.importFile = new IOFile(new File(importFile), new TextIOStreamHandler());
 	}
 

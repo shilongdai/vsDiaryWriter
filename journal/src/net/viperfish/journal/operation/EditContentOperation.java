@@ -8,11 +8,11 @@ import net.viperfish.journal.framework.Journal;
  * @author sdai
  *
  */
-class EditContentOperation extends EditEntryOperation {
+final class EditContentOperation extends EditEntryOperation {
 
 	private String content;
 
-	public EditContentOperation(Long id, String c) {
+	EditContentOperation(Long id, String c) {
 		super(id);
 		content = c;
 	}

@@ -13,7 +13,7 @@ import net.viperfish.journal.framework.Journal;
  * @author sdai
  *
  */
-class FileMemoryStructure implements Serializable {
+final class FileMemoryStructure implements Serializable {
 	/**
 	 * 
 	 */

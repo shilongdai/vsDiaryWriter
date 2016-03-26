@@ -21,7 +21,7 @@ abstract class EditEntryOperation extends InjectedOperation {
 	 */
 	protected abstract void edit(Journal e);
 
-	public EditEntryOperation(Long id) {
+	EditEntryOperation(Long id) {
 		this.id = id;
 
 	}

@@ -53,7 +53,7 @@ import org.bouncycastle.crypto.paddings.ZeroBytePadding;
  * @author sdai
  *
  */
-public class BlockCiphers {
+public final class BlockCiphers {
 
 	private BlockCiphers() {
 		// TODO Auto-generated constructor stub

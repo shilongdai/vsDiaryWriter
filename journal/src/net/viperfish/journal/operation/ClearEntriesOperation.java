@@ -8,9 +8,9 @@ import net.viperfish.journal.framework.InjectedOperation;
  * @author sdai
  *
  */
-class ClearEntriesOperation extends InjectedOperation {
+final class ClearEntriesOperation extends InjectedOperation {
 
-	public ClearEntriesOperation() {
+	ClearEntriesOperation() {
 	}
 
 	@Override
