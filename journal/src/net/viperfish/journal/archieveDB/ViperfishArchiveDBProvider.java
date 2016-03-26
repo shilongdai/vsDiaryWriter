@@ -19,11 +19,11 @@ import net.viperfish.utils.file.CommonFunctions;
 
 public class ViperfishArchiveDBProvider implements Provider<EntryDatabase> {
 
-	private Map<String, Class<? extends ArchiveEntryDatabase>> dbs;
-	private Map<String, ArchiveEntryDatabase> concretes;
+	private final Map<String, Class<? extends ArchiveEntryDatabase>> dbs;
+	private final Map<String, ArchiveEntryDatabase> concretes;
 	private String defaultInstance;
 	private File archiveFile;
-	private File dataDir;
+	private final File dataDir;
 	private Timer t;
 	private boolean isUsed;
 

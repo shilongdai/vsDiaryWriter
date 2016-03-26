@@ -23,7 +23,7 @@ class HashAuthConfigComposite extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	public HashAuthConfigComposite(Composite parent, int style) {
+	HashAuthConfigComposite(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new GridLayout(3, false));
 

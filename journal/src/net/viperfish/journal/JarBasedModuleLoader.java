@@ -22,9 +22,9 @@ import net.viperfish.journal.framework.provider.JournalTransformers;
 import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.utils.index.Indexer;
 
-public class JarBasedModuleLoader implements ModuleLoader {
+final class JarBasedModuleLoader implements ModuleLoader {
 
-	public boolean isUsable(Class<?> toTest) {
+	private boolean isUsable(Class<?> toTest) {
 		if (Modifier.isAbstract(toTest.getModifiers())) {
 			return false;
 		}

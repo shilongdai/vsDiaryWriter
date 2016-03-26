@@ -135,8 +135,8 @@ abstract class ArchiveEntryDatabase implements EntryDatabase {
 	}
 
 	private long currentId;
-	private Map<Long, Journal> buffer;
-	private File archiveFile;
+	private final Map<Long, Journal> buffer;
+	private final File archiveFile;
 	private boolean isLoaded;
 
 	public ArchiveEntryDatabase(File archiveFile) {

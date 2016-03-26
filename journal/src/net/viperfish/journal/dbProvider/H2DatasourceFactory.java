@@ -26,6 +26,7 @@ class H2DatasourceFactory implements DataSourceFactory {
 		if (db != null) {
 			db.closeSession();
 		}
+		H2EntryDatabase.disposeShared();
 
 	}
 
@@ -41,6 +42,12 @@ class H2DatasourceFactory implements DataSourceFactory {
 			db = new H2EntryDatabase(dataDir);
 		}
 		return db;
+	}
+
+	@Override
+	public void refresh() {
+		db = null;
+
 	}
 
 }

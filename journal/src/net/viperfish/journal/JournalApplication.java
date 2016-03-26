@@ -37,7 +37,7 @@ import net.viperfish.utils.index.Indexer;
  * @author sdai
  * 
  */
-public class JournalApplication {
+final public class JournalApplication {
 	private static UserInterface ui;
 	private static File modules;
 	private static ModuleLoader m;

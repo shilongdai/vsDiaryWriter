@@ -24,12 +24,12 @@ class HashAuthManager implements AuthenticationManager {
 
 	public static final String HASH_ALG = "viperfish.auth.hash";
 
-	private Digester dig;
-	private IOFile passwdFile;
+	private final Digester dig;
+	private final IOFile passwdFile;
 	private String password;
 	private byte[] hash;
 	private byte[] salt;
-	private SecureRandom rand;
+	private final SecureRandom rand;
 	private boolean ready;
 
 	/**

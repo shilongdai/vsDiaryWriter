@@ -116,9 +116,9 @@ public class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
 
 	@Override
 	public void refresh() {
-		dispose();
-		mapping.clear();
-		initMapping();
+		for (Entry<String, DataSourceFactory> i : mapping.entrySet()) {
+			i.getValue().refresh();
+		}
 
 	}
 

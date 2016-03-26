@@ -62,4 +62,16 @@ class JSerializationDataSourceFactory implements DataSourceFactory {
 		this.sFile = new File(dir, "journalEntrySerialized");
 	}
 
+	@Override
+	public void refresh() {
+		if (executer != null) {
+			executer.cancel();
+		}
+		if (db != null) {
+			JavaSerializationEntryDatabase.serialize(sFile, db);
+			db = null;
+		}
+
+	}
+
 }

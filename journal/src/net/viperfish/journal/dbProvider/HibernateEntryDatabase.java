@@ -32,31 +32,31 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 
 	@Override
 	public Journal addEntry(Journal j) {
-		Transaction tr = this.getSession().getTransaction();
+		Transaction tr = this.getSession().beginTransaction();
 		try {
-			tr.begin();
 			this.getSession().persist(j);
-			tr.commit();
 			this.getSession().flush();
 			return j;
 		} catch (RuntimeException e) {
 			tr.rollback();
 			throw e;
+		} finally {
+			tr.commit();
 		}
 	}
 
 	@Override
 	public Journal removeEntry(Long id) {
-		Transaction tr = this.getSession().getTransaction();
+		Transaction tr = this.getSession().beginTransaction();
 		try {
-			tr.begin();
 			Journal deleted = getEntry(id);
 			this.getSession().delete(getEntry(id));
-			tr.commit();
 			return deleted;
 		} catch (RuntimeException e) {
 			tr.rollback();
 			throw e;
+		} finally {
+			tr.commit();
 		}
 	}
 
@@ -68,16 +68,16 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 
 	@Override
 	public Journal updateEntry(Long id, Journal j) {
-		Transaction tr = this.getSession().getTransaction();
+		Transaction tr = this.getSession().beginTransaction();
 		try {
-			tr.begin();
 			j.setId(id);
 			this.getSession().merge(j);
-			tr.commit();
 			return j;
 		} catch (RuntimeException e) {
 			tr.rollback();
 			throw e;
+		} finally {
+			tr.commit();
 		}
 	}
 
@@ -90,14 +90,14 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 
 	@Override
 	public void clear() {
-		Transaction tr = this.getSession().getTransaction();
+		Transaction tr = this.getSession().beginTransaction();
 		try {
-			tr.begin();
 			this.getSession().createQuery("DELETE FROM Journal").executeUpdate();
-			tr.commit();
 		} catch (RuntimeException e) {
 			tr.rollback();
 			throw e;
+		} finally {
+			tr.commit();
 		}
 		return;
 	}

@@ -19,7 +19,7 @@ class FileMemoryStructure implements Serializable {
 	 */
 	private static final long serialVersionUID = -8983675555496559303L;
 	private Long id;
-	private Map<Long, Journal> data;
+	private final Map<Long, Journal> data;
 
 	public FileMemoryStructure() {
 		id = new Long(0);
@@ -36,10 +36,6 @@ class FileMemoryStructure implements Serializable {
 
 	public Map<Long, Journal> getData() {
 		return data;
-	}
-
-	public void setData(Map<Long, Journal> data) {
-		this.data = data;
 	}
 
 	public void incrementID() {

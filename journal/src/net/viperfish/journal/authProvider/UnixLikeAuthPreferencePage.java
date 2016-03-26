@@ -12,7 +12,7 @@ class UnixLikeAuthPreferencePage extends PreferencePage {
 
 	private UnixAuthComposite com;
 
-	public UnixLikeAuthPreferencePage() {
+	UnixLikeAuthPreferencePage() {
 		super("Unix Style Authentication");
 		this.setDescription(
 				"Configures the setting for Unix Like Authentication: Using an encryption algorithm to generate a hash");

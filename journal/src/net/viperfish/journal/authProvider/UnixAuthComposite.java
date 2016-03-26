@@ -26,7 +26,7 @@ class UnixAuthComposite extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	public UnixAuthComposite(Composite parent, int style) {
+	UnixAuthComposite(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new GridLayout(3, false));
 		new Label(this, SWT.NONE);

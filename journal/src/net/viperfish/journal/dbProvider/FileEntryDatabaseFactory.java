@@ -20,7 +20,7 @@ abstract class FileEntryDatabaseFactory implements DataSourceFactory {
 	private File dataFile;
 	private Timer executor;
 
-	public FileEntryDatabaseFactory() {
+	FileEntryDatabaseFactory() {
 	}
 
 	/**
@@ -76,6 +76,17 @@ abstract class FileEntryDatabaseFactory implements DataSourceFactory {
 			throw new RuntimeException(e);
 		}
 
+	}
+
+	@Override
+	public void refresh() {
+		if (executor != null) {
+			executor.cancel();
+		}
+		if (db != null) {
+			db.flush();
+			db = null;
+		}
 	}
 
 }

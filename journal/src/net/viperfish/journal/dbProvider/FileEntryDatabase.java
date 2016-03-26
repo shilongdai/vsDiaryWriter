@@ -26,7 +26,7 @@ class FileEntryDatabase implements EntryDatabase {
 	private final IOFile file;
 	private FileMemoryStructure struct;
 
-	public FileEntryDatabase(IOFile ioFile) {
+	FileEntryDatabase(IOFile ioFile) {
 		this.file = ioFile;
 		struct = new FileMemoryStructure();
 	}

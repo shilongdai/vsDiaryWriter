@@ -40,4 +40,9 @@ class StubDataSourceFactory implements DataSourceFactory {
 		return db;
 	}
 
+	@Override
+	public void refresh() {
+
+	}
+
 }

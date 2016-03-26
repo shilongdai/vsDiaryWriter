@@ -38,4 +38,11 @@ interface DataSourceFactory {
 	 *            the data directory
 	 */
 	public void setDataDirectory(File dir);
+
+	/**
+	 * refresh the EntryDatabase to reflect change in configuration or settings
+	 * 
+	 *
+	 */
+	public void refresh();
 }

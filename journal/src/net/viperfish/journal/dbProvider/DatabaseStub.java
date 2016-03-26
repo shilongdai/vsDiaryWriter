@@ -18,10 +18,10 @@ import net.viperfish.journal.framework.Journal;
  */
 class DatabaseStub implements EntryDatabase {
 
-	private Map<Long, Journal> backend;
+	private final Map<Long, Journal> backend;
 	private Long currentMax;
 
-	public DatabaseStub() {
+	DatabaseStub() {
 		backend = new TreeMap<Long, Journal>();
 		currentMax = new Long(0);
 	}

@@ -14,7 +14,7 @@ class HashAuthPreferencePage extends PreferencePage {
 
 	private HashAuthConfigComposite com;
 
-	public HashAuthPreferencePage() {
+	HashAuthPreferencePage() {
 		super("Hash Authentication");
 		this.setDescription("Configuring for authentication using hashing algorithms");
 	}
