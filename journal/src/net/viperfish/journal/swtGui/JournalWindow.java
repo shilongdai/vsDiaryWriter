@@ -509,7 +509,7 @@ public class JournalWindow {
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
 				MessageDialog.openInformation(shell, "About",
-						"Created by Shilong Dai. This is an application to write diary using a rich and secure tool. This is also for to Abigail Nunez.");
+						"This is an application to write secure and authenticated diary digitally");
 			}
 
 		});
