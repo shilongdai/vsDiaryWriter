@@ -79,6 +79,7 @@ public final class BlockCiphers {
 	private static int TEA_KEY_SIZE = 128;
 	private static int TWOFISH_KEY_SIZE = 256;
 	private static int XTEA_KEY_SIZE = 128;
+	private static int SM4_KEY_SIZE = 128;
 
 	private static Map<String, Class<? extends BlockCipher>> blockCipherEngines;
 	private static Map<String, Class<? extends BlockCipher>> blockCipherMode;
@@ -207,6 +208,9 @@ public final class BlockCiphers {
 		}
 		if (algorithm.equalsIgnoreCase("XTEA")) {
 			return XTEA_KEY_SIZE;
+		}
+		if (algorithm.equalsIgnoreCase("SM4")) {
+			return SM4_KEY_SIZE;
 		}
 		if (algorithm.matches("\\w+(\\W|\\S)?\\d+")) {
 			Matcher num = Pattern.compile("\\d+").matcher(algorithm);

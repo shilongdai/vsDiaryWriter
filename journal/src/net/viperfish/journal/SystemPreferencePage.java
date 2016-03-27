@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Control;
 
 import net.viperfish.journal.operation.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
+import net.viperfish.journal.operation.StoreConfigurationBufferOperation;
 
 public final class SystemPreferencePage extends PreferencePage {
 
@@ -30,9 +31,15 @@ public final class SystemPreferencePage extends PreferencePage {
 
 	@Override
 	public boolean performOk() {
+		OperationExecutors.getExecutor().submit(new StoreConfigurationBufferOperation(com.save()));
+		return this.isValid();
+	}
+
+	@Override
+	protected void performApply() {
 		OperationExecutors.getExecutor()
 				.submit(OperationFactories.getOperationFactory().getChangeConfigOperaion(com.save()));
-		return this.isValid();
+		;
 	}
 
 }

@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Control;
 
 import net.viperfish.journal.operation.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
+import net.viperfish.journal.operation.StoreConfigurationBufferOperation;
 
 public final class BlockCipherMacPreference extends PreferencePage {
 
@@ -31,9 +32,17 @@ public final class BlockCipherMacPreference extends PreferencePage {
 
 	@Override
 	public boolean performOk() {
+		boolean isValid = com.validate();
+		if (isValid) {
+			OperationExecutors.getExecutor().submit(new StoreConfigurationBufferOperation(com.save()));
+		}
+		return isValid;
+	}
+
+	@Override
+	protected void performApply() {
 		OperationExecutors.getExecutor()
 				.submit(OperationFactories.getOperationFactory().getChangeConfigOperaion(com.save()));
-		return com.validate();
 	}
 
 }

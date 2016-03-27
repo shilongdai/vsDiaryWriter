@@ -1,5 +1,6 @@
 package net.viperfish.journal.operation;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,7 +27,8 @@ final class ChangeConfigurationOperation extends InjectedOperation {
 	private Map<String, String> config;
 
 	ChangeConfigurationOperation(Map<String, String> config) {
-		this.config = config;
+		this.config = new HashMap<>();
+		this.config.putAll(config);
 	}
 
 	private void resetUnits() {
@@ -37,6 +39,8 @@ final class ChangeConfigurationOperation extends InjectedOperation {
 
 	@Override
 	public void execute() {
+		System.err.println("performing expensive apply configuration");
+
 		// actually load all units
 		this.refresh();
 

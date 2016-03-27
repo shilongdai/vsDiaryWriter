@@ -9,6 +9,7 @@ import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.operation.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
+import net.viperfish.journal.operation.StoreConfigurationBufferOperation;
 
 public final class HashAuthPreferencePage extends PreferencePage {
 
@@ -33,10 +34,17 @@ public final class HashAuthPreferencePage extends PreferencePage {
 
 	@Override
 	public boolean performOk() {
-		OperationFactory ops = OperationFactories.getOperationFactory();
 		OperationExecutor exe = OperationExecutors.getExecutor();
-		exe.submit(ops.getChangeConfigOperaion(com.save()));
+
+		exe.submit(new StoreConfigurationBufferOperation(com.save()));
 		return this.isValid();
+	}
+
+	@Override
+	protected void performApply() {
+		OperationExecutor exe = OperationExecutors.getExecutor();
+		OperationFactory ops = OperationFactories.getOperationFactory();
+		exe.submit(ops.getChangeConfigOperaion(com.save()));
 	}
 
 }

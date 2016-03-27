@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Control;
 
 import net.viperfish.journal.operation.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
+import net.viperfish.journal.operation.StoreConfigurationBufferOperation;
 
 public final class UnixLikeAuthPreferencePage extends PreferencePage {
 
@@ -26,14 +27,19 @@ public final class UnixLikeAuthPreferencePage extends PreferencePage {
 
 	@Override
 	public boolean performOk() {
-		OperationExecutors.getExecutor()
-				.submit(OperationFactories.getOperationFactory().getChangeConfigOperaion(com.save()));
+		OperationExecutors.getExecutor().submit(new StoreConfigurationBufferOperation(com.save()));
 		return true;
 	}
 
 	@Override
 	protected void performDefaults() {
 		com.defaultAll();
+	}
+
+	@Override
+	protected void performApply() {
+		OperationExecutors.getExecutor()
+				.submit(OperationFactories.getOperationFactory().getChangeConfigOperaion(com.save()));
 	}
 
 }

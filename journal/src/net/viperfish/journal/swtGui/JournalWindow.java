@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -49,6 +50,7 @@ import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.framework.provider.PreferenceGUIManager;
 import net.viperfish.journal.operation.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
+import net.viperfish.journal.operation.StoreConfigurationBufferOperation;
 import net.viperfish.utils.time.TimeUtils;
 
 public class JournalWindow {
@@ -188,7 +190,7 @@ public class JournalWindow {
 		display = Display.getDefault();
 		shell = new Shell();
 		shell.setSize(495, 480);
-		shell.setText("vsDiary - 1.2.2");
+		shell.setText("vsDiary - 1.2.4");
 		shell.setLayout(new GridLayout(13, false));
 
 		errorReporter = new ExceptionDisplayer(shell);
@@ -477,7 +479,10 @@ public class JournalWindow {
 			public void widgetSelected(SelectionEvent arg0) {
 				super.widgetSelected(arg0);
 				PreferenceDialog pd = new PreferenceDialog(shell, PreferenceGUIManager.getMger());
-				pd.open();
+				int result = pd.open();
+				if (result == Window.OK) {
+					JournalWindow.this.e.submit(StoreConfigurationBufferOperation.applyOperation());
+				}
 			}
 
 		});
