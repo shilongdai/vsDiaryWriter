@@ -1,10 +1,7 @@
-package net.viperfish.journal.operation;
+package net.viperfish.journal.framework;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import net.viperfish.journal.framework.Operation;
-import net.viperfish.journal.framework.OperationExecutor;
 
 /**
  * Concurrent operation executor with a thread pool

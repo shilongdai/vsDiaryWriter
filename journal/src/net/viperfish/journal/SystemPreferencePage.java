@@ -5,7 +5,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import net.viperfish.journal.operation.OperationExecutors;
+import net.viperfish.journal.framework.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
 import net.viperfish.journal.operation.StoreConfigurationBufferOperation;
 

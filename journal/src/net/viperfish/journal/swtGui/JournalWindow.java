@@ -45,10 +45,10 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.OperationExecutor;
+import net.viperfish.journal.framework.OperationExecutors;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.framework.provider.PreferenceGUIManager;
-import net.viperfish.journal.operation.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
 import net.viperfish.journal.operation.StoreConfigurationBufferOperation;
 import net.viperfish.utils.time.TimeUtils;

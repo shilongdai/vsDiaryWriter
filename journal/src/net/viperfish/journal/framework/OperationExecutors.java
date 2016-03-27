@@ -1,6 +1,4 @@
-package net.viperfish.journal.operation;
-
-import net.viperfish.journal.framework.OperationExecutor;
+package net.viperfish.journal.framework;
 
 /**
  * static for getting OperationExecutors

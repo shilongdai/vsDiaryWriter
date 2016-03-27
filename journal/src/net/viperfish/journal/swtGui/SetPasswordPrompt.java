@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import net.viperfish.journal.operation.OperationExecutors;
+import net.viperfish.journal.framework.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
 
 public class SetPasswordPrompt {
