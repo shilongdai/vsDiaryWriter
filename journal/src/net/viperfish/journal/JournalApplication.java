@@ -75,6 +75,10 @@ final public class JournalApplication {
 	 * the worker
 	 */
 	public static void cleanUp() {
+		// submit a final operation to make sure everything is complete
+		WaitUntillCompleteOperation waiter = new WaitUntillCompleteOperation();
+		OperationExecutors.getExecutor().submit(waiter);
+		waiter.getResult();
 		OperationExecutors.dispose();
 		System.err.println("worker terminated");
 		EntryDatabases.INSTANCE.dispose();

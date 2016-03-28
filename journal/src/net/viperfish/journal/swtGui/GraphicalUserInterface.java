@@ -1,5 +1,7 @@
 package net.viperfish.journal.swtGui;
 
+import org.eclipse.swt.widgets.Display;
+
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.ui.TerminationControlFlowException;
@@ -23,7 +25,7 @@ public class GraphicalUserInterface extends UserInterface {
 	@Override
 	public void run() {
 		w.open();
-		System.err.println("windows closed");
+		Display.getCurrent().close();
 	}
 
 	@Override

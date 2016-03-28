@@ -396,7 +396,6 @@ public class JournalWindow {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				shell.dispose();
-				Display.getCurrent().close();
 			}
 
 		});
