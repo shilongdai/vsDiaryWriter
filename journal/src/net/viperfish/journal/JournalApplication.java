@@ -75,13 +75,13 @@ final public class JournalApplication {
 	 * the worker
 	 */
 	public static void cleanUp() {
+		OperationExecutors.dispose();
+		System.err.println("worker terminated");
 		EntryDatabases.INSTANCE.dispose();
 		AuthManagers.INSTANCE.dispose();
 		Indexers.INSTANCE.dispose();
 		JournalTransformers.INSTANCE.dispose();
 		System.err.println("Providers disposed");
-		OperationExecutors.dispose();
-		System.err.println("worker terminated");
 	}
 
 	/**
