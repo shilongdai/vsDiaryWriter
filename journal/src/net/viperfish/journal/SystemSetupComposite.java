@@ -91,7 +91,8 @@ final class SystemSetupComposite extends Composite {
 
 	private void fillDataStorageSelector() {
 		Set<String> buf = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-		for (Entry<String, Provider<EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders().entrySet()) {
+		for (Entry<String, Provider<? extends EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders()
+				.entrySet()) {
 			buf.addAll(Arrays.asList(i.getValue().getSupported()));
 		}
 		for (String i : buf) {
@@ -102,7 +103,8 @@ final class SystemSetupComposite extends Composite {
 
 	private void fillIndexerSelector() {
 		Set<String> buf = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-		for (Entry<String, Provider<Indexer<Journal>>> i : Indexers.INSTANCE.getIndexerProviders().entrySet()) {
+		for (Entry<String, Provider<? extends Indexer<Journal>>> i : Indexers.INSTANCE.getIndexerProviders()
+				.entrySet()) {
 			buf.addAll(Arrays.asList(i.getValue().getSupported()));
 		}
 		for (String i : buf) {
@@ -112,7 +114,8 @@ final class SystemSetupComposite extends Composite {
 
 	private void fillInAuth() {
 		Set<String> buf = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-		for (Entry<String, Provider<AuthenticationManager>> i : AuthManagers.INSTANCE.getAuthProviders().entrySet()) {
+		for (Entry<String, Provider<? extends AuthenticationManager>> i : AuthManagers.INSTANCE.getAuthProviders()
+				.entrySet()) {
 			buf.addAll(Arrays.asList(i.getValue().getSupported()));
 		}
 		for (String i : buf) {
@@ -122,7 +125,7 @@ final class SystemSetupComposite extends Composite {
 
 	private void fillInTransformer() {
 		Set<String> buf = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-		for (Entry<String, Provider<JournalTransformer>> i : JournalTransformers.INSTANCE.getSecureProviders()
+		for (Entry<String, Provider<? extends JournalTransformer>> i : JournalTransformers.INSTANCE.getSecureProviders()
 				.entrySet()) {
 			buf.addAll(Arrays.asList(i.getValue().getSupported()));
 		}

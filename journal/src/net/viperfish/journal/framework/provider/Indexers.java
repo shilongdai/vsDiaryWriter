@@ -17,7 +17,7 @@ import net.viperfish.utils.index.Indexer;
  */
 public enum Indexers {
 	INSTANCE;
-	private Map<String, Provider<Indexer<Journal>>> indexerProviders;
+	private Map<String, Provider<? extends Indexer<Journal>>> indexerProviders;
 	private String defaultIndexerProvider;
 
 	private Indexers() {
@@ -25,12 +25,12 @@ public enum Indexers {
 		defaultIndexerProvider = "viperfish";
 	}
 
-	public void registerIndexerProvider(Provider<Indexer<Journal>> p) {
+	public void registerIndexerProvider(Provider<? extends Indexer<Journal>> p) {
 		indexerProviders.put(p.getName(), p);
 		p.registerConfig();
 	}
 
-	public Map<String, Provider<Indexer<Journal>>> getIndexerProviders() {
+	public Map<String, Provider<? extends Indexer<Journal>>> getIndexerProviders() {
 		return indexerProviders;
 	}
 
@@ -51,7 +51,7 @@ public enum Indexers {
 		if (ind != null) {
 			return ind;
 		}
-		for (Entry<String, Provider<Indexer<Journal>>> j : indexerProviders.entrySet()) {
+		for (Entry<String, Provider<? extends Indexer<Journal>>> j : indexerProviders.entrySet()) {
 			Indexer<Journal> indexer = j.getValue().newInstance(instance);
 			if (indexer != null) {
 				return indexer;
@@ -73,7 +73,7 @@ public enum Indexers {
 		if (ind != null) {
 			return ind;
 		}
-		for (Entry<String, Provider<Indexer<Journal>>> j : indexerProviders.entrySet()) {
+		for (Entry<String, Provider<? extends Indexer<Journal>>> j : indexerProviders.entrySet()) {
 			Indexer<Journal> indexer = j.getValue().getInstance(instance);
 			if (indexer != null) {
 				return indexer;
@@ -87,7 +87,7 @@ public enum Indexers {
 	}
 
 	public void dispose() {
-		for (Entry<String, Provider<Indexer<Journal>>> j : indexerProviders.entrySet()) {
+		for (Entry<String, Provider<? extends Indexer<Journal>>> j : indexerProviders.entrySet()) {
 			j.getValue().dispose();
 			System.err.println("disposed " + j.getKey());
 		}
@@ -96,7 +96,7 @@ public enum Indexers {
 	}
 
 	public void refreshAll() {
-		for (Entry<String, Provider<Indexer<Journal>>> j : indexerProviders.entrySet()) {
+		for (Entry<String, Provider<? extends Indexer<Journal>>> j : indexerProviders.entrySet()) {
 			j.getValue().refresh();
 		}
 	}

@@ -88,20 +88,23 @@ final public class JournalApplication {
 	 * clear all for testing purposes and if configuration was aborted
 	 */
 	public static void revert() {
-		for (Entry<String, Provider<EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders().entrySet()) {
-			i.getValue().delete();
-		}
-
-		for (Entry<String, Provider<Indexer<Journal>>> i : Indexers.INSTANCE.getIndexerProviders().entrySet()) {
-			i.getValue().delete();
-		}
-
-		for (Entry<String, Provider<JournalTransformer>> i : JournalTransformers.INSTANCE.getSecureProviders()
+		for (Entry<String, Provider<? extends EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders()
 				.entrySet()) {
 			i.getValue().delete();
 		}
 
-		for (Entry<String, Provider<AuthenticationManager>> i : AuthManagers.INSTANCE.getAuthProviders().entrySet()) {
+		for (Entry<String, Provider<? extends Indexer<Journal>>> i : Indexers.INSTANCE.getIndexerProviders()
+				.entrySet()) {
+			i.getValue().delete();
+		}
+
+		for (Entry<String, Provider<? extends JournalTransformer>> i : JournalTransformers.INSTANCE.getSecureProviders()
+				.entrySet()) {
+			i.getValue().delete();
+		}
+
+		for (Entry<String, Provider<? extends AuthenticationManager>> i : AuthManagers.INSTANCE.getAuthProviders()
+				.entrySet()) {
 			i.getValue().delete();
 		}
 		Configuration.delete();
@@ -140,16 +143,19 @@ final public class JournalApplication {
 	}
 
 	private static void defaultPreferences() {
-		for (Entry<String, Provider<EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders().entrySet()) {
+		for (Entry<String, Provider<? extends EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders()
+				.entrySet()) {
 			i.getValue().initDefaults();
 		}
-		for (Entry<String, Provider<Indexer<Journal>>> i : Indexers.INSTANCE.getIndexerProviders().entrySet()) {
+		for (Entry<String, Provider<? extends Indexer<Journal>>> i : Indexers.INSTANCE.getIndexerProviders()
+				.entrySet()) {
 			i.getValue().initDefaults();
 		}
-		for (Entry<String, Provider<AuthenticationManager>> i : AuthManagers.INSTANCE.getAuthProviders().entrySet()) {
+		for (Entry<String, Provider<? extends AuthenticationManager>> i : AuthManagers.INSTANCE.getAuthProviders()
+				.entrySet()) {
 			i.getValue().initDefaults();
 		}
-		for (Entry<String, Provider<JournalTransformer>> i : JournalTransformers.INSTANCE.getSecureProviders()
+		for (Entry<String, Provider<? extends JournalTransformer>> i : JournalTransformers.INSTANCE.getSecureProviders()
 				.entrySet()) {
 			i.getValue().initDefaults();
 		}

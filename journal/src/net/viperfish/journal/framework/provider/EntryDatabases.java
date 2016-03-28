@@ -16,7 +16,7 @@ import net.viperfish.journal.framework.EntryDatabase;
  */
 public enum EntryDatabases {
 	INSTANCE;
-	private Map<String, Provider<EntryDatabase>> databaseProviders;
+	private Map<String, Provider<? extends EntryDatabase>> databaseProviders;
 	private String defaultDatabaseProvider;
 	private JournalEncryptionWrapper wrapper;
 
@@ -36,12 +36,12 @@ public enum EntryDatabases {
 		wrapper.setDb(db);
 	}
 
-	public void registerEntryDatabaseProvider(Provider<EntryDatabase> p) {
+	public void registerEntryDatabaseProvider(Provider<? extends EntryDatabase> p) {
 		databaseProviders.put(p.getName(), p);
 		p.registerConfig();
 	}
 
-	public Map<String, Provider<EntryDatabase>> getDatabaseProviders() {
+	public Map<String, Provider<? extends EntryDatabase>> getDatabaseProviders() {
 		return databaseProviders;
 	}
 
@@ -63,7 +63,7 @@ public enum EntryDatabases {
 		if (def != null) {
 			result = def;
 		} else {
-			for (Entry<String, Provider<EntryDatabase>> p : databaseProviders.entrySet()) {
+			for (Entry<String, Provider<? extends EntryDatabase>> p : databaseProviders.entrySet()) {
 				EntryDatabase db = p.getValue().newInstance(instanceType);
 				if (db != null) {
 					result = db;
@@ -72,12 +72,11 @@ public enum EntryDatabases {
 			}
 		}
 		initWrapper(result);
-		wrapper.setDb(result);
 		return wrapper;
 	}
 
 	public EntryDatabase newEntryDatabase(String provider, String instanceType) {
-		return databaseProviders.get(provider).getInstance(instanceType);
+		return databaseProviders.get(provider).newInstance(instanceType);
 	}
 
 	public EntryDatabase getEntryDatabase() {
@@ -90,7 +89,7 @@ public enum EntryDatabases {
 		if (def != null) {
 			result = def;
 		} else {
-			for (Entry<String, Provider<EntryDatabase>> p : databaseProviders.entrySet()) {
+			for (Entry<String, Provider<? extends EntryDatabase>> p : databaseProviders.entrySet()) {
 				EntryDatabase db = p.getValue().getInstance(instanceType);
 				if (db != null) {
 					result = db;
@@ -99,7 +98,6 @@ public enum EntryDatabases {
 			}
 		}
 		initWrapper(result);
-		wrapper.setDb(result);
 		return wrapper;
 	}
 
@@ -108,7 +106,7 @@ public enum EntryDatabases {
 	}
 
 	public void dispose() {
-		for (Entry<String, Provider<EntryDatabase>> p : databaseProviders.entrySet()) {
+		for (Entry<String, Provider<? extends EntryDatabase>> p : databaseProviders.entrySet()) {
 			p.getValue().dispose();
 			System.err.println("disposed " + p.getKey());
 		}
@@ -121,7 +119,7 @@ public enum EntryDatabases {
 	}
 
 	public void refreshAll() {
-		for (Entry<String, Provider<EntryDatabase>> p : databaseProviders.entrySet()) {
+		for (Entry<String, Provider<? extends EntryDatabase>> p : databaseProviders.entrySet()) {
 			p.getValue().refresh();
 		}
 	}

@@ -38,9 +38,9 @@ public abstract class OperationWithResult<T> extends InjectedOperation {
 			synchronized (this) {
 				while (true) {
 					try {
-						this.wait();
+						this.wait(10000);
 					} catch (InterruptedException e) {
-						throw new RuntimeException(e);
+						throw new RuntimeException("Operation Time Out");
 					}
 					if (isDone) {
 						break;

@@ -16,7 +16,7 @@ import net.viperfish.journal.framework.JournalTransformer;
  */
 public enum JournalTransformers {
 	INSTANCE;
-	private Map<String, Provider<JournalTransformer>> secureProviders;
+	private Map<String, Provider<? extends JournalTransformer>> secureProviders;
 	private String defaultTransformerProvider;
 
 	private JournalTransformers() {
@@ -24,7 +24,7 @@ public enum JournalTransformers {
 		defaultTransformerProvider = "viperfish";
 	}
 
-	public void registerTransformerProvider(Provider<JournalTransformer> p) {
+	public void registerTransformerProvider(Provider<? extends JournalTransformer> p) {
 		secureProviders.put(p.getName(), p);
 		p.registerConfig();
 	}
@@ -46,7 +46,7 @@ public enum JournalTransformers {
 		if (t != null) {
 			return t;
 		}
-		for (Entry<String, Provider<JournalTransformer>> iter : secureProviders.entrySet()) {
+		for (Entry<String, Provider<? extends JournalTransformer>> iter : secureProviders.entrySet()) {
 			JournalTransformer tmp = iter.getValue().newInstance(instance);
 			if (tmp != null) {
 				return tmp;
@@ -68,7 +68,7 @@ public enum JournalTransformers {
 		if (t != null) {
 			return t;
 		}
-		for (Entry<String, Provider<JournalTransformer>> iter : secureProviders.entrySet()) {
+		for (Entry<String, Provider<? extends JournalTransformer>> iter : secureProviders.entrySet()) {
 			JournalTransformer tmp = iter.getValue().getInstance(instance);
 			if (tmp != null) {
 				return tmp;
@@ -82,7 +82,7 @@ public enum JournalTransformers {
 	}
 
 	public void dispose() {
-		for (Entry<String, Provider<JournalTransformer>> iter : secureProviders.entrySet()) {
+		for (Entry<String, Provider<? extends JournalTransformer>> iter : secureProviders.entrySet()) {
 			iter.getValue().dispose();
 			System.err.println("disposed " + iter.getKey());
 		}
@@ -90,12 +90,12 @@ public enum JournalTransformers {
 		System.err.println("disposed secure providers");
 	}
 
-	public Map<String, Provider<JournalTransformer>> getSecureProviders() {
+	public Map<String, Provider<? extends JournalTransformer>> getSecureProviders() {
 		return secureProviders;
 	}
 
 	public void refreshAll() {
-		for (Entry<String, Provider<JournalTransformer>> iter : secureProviders.entrySet()) {
+		for (Entry<String, Provider<? extends JournalTransformer>> iter : secureProviders.entrySet()) {
 			iter.getValue().refresh();
 		}
 		EntryDatabases.INSTANCE.refreshAdapter();
