@@ -25,6 +25,7 @@ import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.JournalPointer;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.framework.provider.AuthManagers;
@@ -84,7 +85,7 @@ public final class OperationTest {
 		});
 	}
 
-	private boolean isSorted(List<Journal> result) {
+	private boolean isSorted(List<JournalPointer> result) {
 		for (int i = 1; i < result.size(); ++i) {
 			if (result.get(i).compareTo(result.get(i - 1)) < 0) {
 				return false;
@@ -203,10 +204,10 @@ public final class OperationTest {
 		indexer.add(t3);
 		SearchEntryOperation ops = new SearchEntryOperation("test");
 		executeAsyncOperation(ops);
-		Set<Journal> s = ops.getResult();
-		Assert.assertEquals(true, s.contains(t1));
-		Assert.assertEquals(true, s.contains(t2));
-		Assert.assertEquals(false, s.contains(t3));
+		Set<JournalPointer> s = ops.getResult();
+		Assert.assertEquals(true, s.contains(new JournalPointer(t1)));
+		Assert.assertEquals(true, s.contains(new JournalPointer(t2)));
+		Assert.assertEquals(false, s.contains(new JournalPointer(t3)));
 		cleanUp();
 	}
 
@@ -216,7 +217,7 @@ public final class OperationTest {
 		addEntries(100);
 		GetAllOperation getAll = new GetAllOperation();
 		executeAsyncOperation(getAll);
-		List<Journal> result = getAll.getResult();
+		List<JournalPointer> result = getAll.getResult();
 		Assert.assertEquals(true, isSorted(result));
 		Assert.assertEquals(100, result.size());
 		cleanUp();
@@ -357,10 +358,10 @@ public final class OperationTest {
 
 		GetDateRangeOperation range = new GetDateRangeOperation(lowerBound, upperBound);
 		range.execute();
-		Set<Journal> result = range.getResult();
+		Set<JournalPointer> result = range.getResult();
 
-		Assert.assertEquals(true, result.contains(valid));
-		Assert.assertEquals(false, result.contains(invalid));
+		Assert.assertEquals(true, result.contains(new JournalPointer(valid)));
+		Assert.assertEquals(false, result.contains(new JournalPointer(invalid)));
 	}
 
 	@AfterClass

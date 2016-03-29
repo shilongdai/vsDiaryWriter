@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.JournalPointer;
 import net.viperfish.journal.framework.OperationWithResult;
 
 /**
@@ -12,7 +13,7 @@ import net.viperfish.journal.framework.OperationWithResult;
  * @author sdai
  *
  */
-final class SearchEntryOperation extends OperationWithResult<Set<Journal>> {
+final class SearchEntryOperation extends OperationWithResult<Set<JournalPointer>> {
 
 	private String query;
 	private static boolean firstTime;
@@ -28,7 +29,7 @@ final class SearchEntryOperation extends OperationWithResult<Set<Journal>> {
 
 	@Override
 	public void execute() {
-		Set<Journal> searched = new TreeSet<>();
+		Set<JournalPointer> searched = new TreeSet<>();
 		try {
 			if (firstTime) {
 				if (indexer().isMemoryBased()) {
@@ -45,7 +46,7 @@ final class SearchEntryOperation extends OperationWithResult<Set<Journal>> {
 					indexer().delete(id);
 					continue;
 				}
-				searched.add(j);
+				searched.add(new JournalPointer(j));
 			}
 		} finally {
 			setResult(searched);

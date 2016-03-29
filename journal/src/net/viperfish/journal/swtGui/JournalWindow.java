@@ -4,9 +4,8 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -44,6 +43,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.JournalPointer;
 import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationExecutors;
 import net.viperfish.journal.framework.OperationFactory;
@@ -65,10 +65,10 @@ public class JournalWindow {
 
 		public void displayAll() {
 			tableViewer.setInput(null);
-			OperationWithResult<List<Journal>> result = f.getListAllOperation();
+			OperationWithResult<? extends Collection<JournalPointer>> result = f.getListAllOperation();
 			e.submit(result);
 			Date min = null;
-			for (Journal i : result.getResult()) {
+			for (JournalPointer i : result.getResult()) {
 				if (min == null || min.after(i.getDate())) {
 					min = i.getDate();
 				}
@@ -87,9 +87,9 @@ public class JournalWindow {
 			tableViewer.setInput(null);
 			Date lower = TimeUtils.truncDate(datePickerToDate(lowerBound));
 			Date upper = TimeUtils.truncDate(datePickerToDate(upperBoound));
-			OperationWithResult<Set<Journal>> getRange = f.getDateRangeOperation(lower, upper);
+			OperationWithResult<? extends Collection<JournalPointer>> getRange = f.getDateRangeOperation(lower, upper);
 			e.submit(getRange);
-			for (Journal i : getRange.getResult()) {
+			for (JournalPointer i : getRange.getResult()) {
 				tableViewer.add(i);
 			}
 		}
@@ -102,10 +102,10 @@ public class JournalWindow {
 			tableViewer.setInput(null);
 			Date lower = TimeUtils.truncDate(datePickerToDate(lowerBound));
 			Date upper = TimeUtils.truncDate(datePickerToDate(upperBoound));
-			OperationWithResult<Set<Journal>> search = f.getDateRangeSearchOperation(searchText.getText(), lower,
-					upper);
+			OperationWithResult<? extends Collection<JournalPointer>> search = f
+					.getDateRangeSearchOperation(searchText.getText(), lower, upper);
 			e.submit(search);
-			for (Journal i : search.getResult()) {
+			for (JournalPointer i : search.getResult()) {
 				tableViewer.add(i);
 			}
 		}
@@ -190,7 +190,7 @@ public class JournalWindow {
 		display = Display.getDefault();
 		shell = new Shell();
 		shell.setSize(495, 480);
-		shell.setText("vsDiary - 1.2.5");
+		shell.setText("vsDiary - 2.0.0");
 		shell.setLayout(new GridLayout(13, false));
 
 		errorReporter = new ExceptionDisplayer(shell);
@@ -248,8 +248,8 @@ public class JournalWindow {
 		titles.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				Journal j = (Journal) element;
-				return j.getSubject();
+				JournalPointer j = (JournalPointer) element;
+				return j.getTitle();
 			}
 		});
 		final TableViewerColumn dates = new TableViewerColumn(tableViewer, SWT.NONE);
@@ -259,7 +259,7 @@ public class JournalWindow {
 		dates.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				Journal j = (Journal) element;
+				JournalPointer j = (JournalPointer) element;
 				DateFormat df = new SimpleDateFormat("EEE h:mm a MM/dd/yyyy");
 				return df.format(j.getDate());
 			}
@@ -298,7 +298,10 @@ public class JournalWindow {
 				if (selected.isEmpty()) {
 					return;
 				}
-				Journal result = new JournalEditor().open((Journal) selected.getFirstElement());
+				JournalPointer pointer = (JournalPointer) selected.getFirstElement();
+				OperationWithResult<Journal> get = f.getGetEntryOperation(pointer.getId());
+				e.submit(get);
+				Journal result = new JournalEditor().open(get.getResult());
 				if (result == null) {
 					return;
 				}

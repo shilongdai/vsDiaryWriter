@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.JournalPointer;
 import net.viperfish.journal.framework.OperationWithResult;
 
 /**
@@ -13,7 +14,7 @@ import net.viperfish.journal.framework.OperationWithResult;
  * @author sdai
  *
  */
-final class GetAllOperation extends OperationWithResult<List<Journal>> {
+final class GetAllOperation extends OperationWithResult<List<JournalPointer>> {
 
 	GetAllOperation() {
 	}
@@ -21,11 +22,15 @@ final class GetAllOperation extends OperationWithResult<List<Journal>> {
 	@Override
 	public void execute() {
 		List<Journal> all = new LinkedList<>();
+		List<JournalPointer> results = new LinkedList<>();
 		try {
 			all = db().getAll();
-			Collections.sort(all);
+			for (Journal i : all) {
+				results.add(new JournalPointer(i));
+			}
+			Collections.sort(results);
 		} finally {
-			setResult(all);
+			setResult(results);
 		}
 	}
 

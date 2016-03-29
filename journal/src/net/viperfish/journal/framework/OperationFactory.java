@@ -1,9 +1,8 @@
 package net.viperfish.journal.framework;
 
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * the higher level api facade factory for creating an appropriate operation for
@@ -61,7 +60,7 @@ public interface OperationFactory {
 	 * 
 	 * @return the operation with result
 	 */
-	public OperationWithResult<List<Journal>> getListAllOperation();
+	public OperationWithResult<? extends Collection<JournalPointer>> getListAllOperation();
 
 	/**
 	 * get an operation that has a result, a list of Journal that matches a
@@ -71,7 +70,7 @@ public interface OperationFactory {
 	 *            the search query
 	 * @return operation with results
 	 */
-	public OperationWithResult<Set<Journal>> getSearchOperation(String query);
+	public OperationWithResult<? extends Collection<JournalPointer>> getSearchOperation(String query);
 
 	/**
 	 * get an operation that results in getting a Journal
@@ -155,7 +154,8 @@ public interface OperationFactory {
 	 *            the latest possible date
 	 * @return the operation that get date range
 	 */
-	public OperationWithResult<Set<Journal>> getDateRangeOperation(Date lowerBound, Date upperBound);
+	public OperationWithResult<? extends Collection<JournalPointer>> getDateRangeOperation(Date lowerBound,
+			Date upperBound);
 
 	/**
 	 * get an operation that searched a set of entries between the upper and
@@ -169,6 +169,7 @@ public interface OperationFactory {
 	 *            the max date
 	 * @return the operation that searches date range
 	 */
-	public OperationWithResult<Set<Journal>> getDateRangeSearchOperation(String keyword, Date lower, Date upper);
+	public OperationWithResult<? extends Collection<JournalPointer>> getDateRangeSearchOperation(String keyword,
+			Date lower, Date upper);
 
 }

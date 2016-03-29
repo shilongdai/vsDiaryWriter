@@ -1,11 +1,10 @@
 package net.viperfish.journal.operation;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.JournalPointer;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.utils.time.TimeUtils;
 
@@ -15,15 +14,15 @@ import net.viperfish.utils.time.TimeUtils;
  * @author sdai
  *
  */
-final class SearchOperationDateFilter extends OperationWithResult<Set<Journal>> {
+final class SearchOperationDateFilter extends OperationWithResult<Set<JournalPointer>> {
 
 	private SearchEntryOperation ops;
 	private Date upperBound;
 	private Date lowerBound;
 
-	private Set<Journal> filterByDate(Collection<Journal> results) {
-		Set<Journal> filtered = new HashSet<>();
-		for (Journal i : results) {
+	private Set<JournalPointer> filterByDate(Set<JournalPointer> tmp) {
+		Set<JournalPointer> filtered = new HashSet<>();
+		for (JournalPointer i : tmp) {
 			// truncate date to only year month date
 			Date entryDate = TimeUtils.truncDate(i.getDate());
 			// inclusive filter
@@ -48,8 +47,8 @@ final class SearchOperationDateFilter extends OperationWithResult<Set<Journal>> 
 	@Override
 	public void execute() {
 		ops.execute();
-		Set<Journal> tmp = ops.getResult();
-		Set<Journal> result = filterByDate(tmp);
+		Set<JournalPointer> tmp = ops.getResult();
+		Set<JournalPointer> result = filterByDate(tmp);
 		setResult(result);
 	}
 

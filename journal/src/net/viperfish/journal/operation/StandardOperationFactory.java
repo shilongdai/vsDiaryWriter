@@ -1,11 +1,11 @@
 package net.viperfish.journal.operation;
 
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.JournalPointer;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
@@ -43,12 +43,12 @@ final class StandardOperationFactory implements OperationFactory {
 	}
 
 	@Override
-	public OperationWithResult<List<Journal>> getListAllOperation() {
+	public OperationWithResult<? extends Collection<JournalPointer>> getListAllOperation() {
 		return new GetAllOperation();
 	}
 
 	@Override
-	public OperationWithResult<Set<Journal>> getSearchOperation(String query) {
+	public OperationWithResult<? extends Collection<JournalPointer>> getSearchOperation(String query) {
 		return new SearchEntryOperation(query);
 	}
 
@@ -93,12 +93,14 @@ final class StandardOperationFactory implements OperationFactory {
 	}
 
 	@Override
-	public OperationWithResult<Set<Journal>> getDateRangeOperation(Date lowerBound, Date upperBound) {
+	public OperationWithResult<? extends Collection<JournalPointer>> getDateRangeOperation(Date lowerBound,
+			Date upperBound) {
 		return new GetDateRangeOperation(lowerBound, upperBound);
 	}
 
 	@Override
-	public OperationWithResult<Set<Journal>> getDateRangeSearchOperation(String keyword, Date lower, Date upper) {
+	public OperationWithResult<? extends Collection<JournalPointer>> getDateRangeSearchOperation(String keyword,
+			Date lower, Date upper) {
 		return new SearchOperationDateFilter(new SearchEntryOperation(keyword), upper, lower);
 	}
 

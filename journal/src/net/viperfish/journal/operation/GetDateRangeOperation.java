@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.JournalPointer;
 import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.utils.time.TimeUtils;
 
@@ -15,7 +16,7 @@ import net.viperfish.utils.time.TimeUtils;
  * @author sdai
  *
  */
-final class GetDateRangeOperation extends OperationWithResult<Set<Journal>> {
+final class GetDateRangeOperation extends OperationWithResult<Set<JournalPointer>> {
 
 	private Date lowerBound;
 	private Date upperBound;
@@ -29,7 +30,7 @@ final class GetDateRangeOperation extends OperationWithResult<Set<Journal>> {
 	public void execute() {
 		// get all entries
 		List<Journal> all = db().getAll();
-		Set<Journal> result = new TreeSet<>();
+		Set<JournalPointer> result = new TreeSet<>();
 
 		// filter
 		for (Journal i : all) {
@@ -38,13 +39,13 @@ final class GetDateRangeOperation extends OperationWithResult<Set<Journal>> {
 
 			// the filter is inclusive
 			if (theDate.equals(lowerBound) || theDate.equals(upperBound)) {
-				result.add(i);
+				result.add(new JournalPointer(i));
 				continue;
 			}
 
 			// check if out of range
 			if (theDate.after(lowerBound) && theDate.before(upperBound)) {
-				result.add(i);
+				result.add(new JournalPointer(i));
 			}
 		}
 		this.setResult(result);
