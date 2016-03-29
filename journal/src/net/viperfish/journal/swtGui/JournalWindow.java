@@ -190,7 +190,7 @@ public class JournalWindow {
 		display = Display.getDefault();
 		shell = new Shell();
 		shell.setSize(495, 480);
-		shell.setText("vsDiary - 2.0.0");
+		shell.setText("vsDiary Trinity - 2.0.0");
 		shell.setLayout(new GridLayout(13, false));
 
 		errorReporter = new ExceptionDisplayer(shell);
