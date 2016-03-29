@@ -34,7 +34,7 @@ final class DerbyEntryDatabase extends HibernateEntryDatabase {
 			Transaction tr = getSession().beginTransaction();
 			getSession()
 					.createSQLQuery(
-							"create table JOURNAL(Id INTEGER NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1), Subject VARCHAR(32672), Date TIMESTAMP, Content VARCHAR(32672))")
+							"create table JOURNAL(Id INTEGER NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1), Subject VARCHAR(2000), Date TIMESTAMP, Content CLOB(5242880))")
 					.executeUpdate();
 			tr.commit();
 		} catch (GenericJDBCException e) {

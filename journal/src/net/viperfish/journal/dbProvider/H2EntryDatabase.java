@@ -41,7 +41,7 @@ final class H2EntryDatabase extends HibernateEntryDatabase {
 		Transaction tr = getSession().beginTransaction();
 		getSession()
 				.createSQLQuery(
-						"create table if not exists JOURNAL(Id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, Subject TEXT, Date TIMESTAMP, Content TEXT);")
+						"create table if not exists JOURNAL(Id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT, Subject VARCHAR(2000), Date TIMESTAMP, Content CLOB(5242880));")
 				.executeUpdate();
 		tr.commit();
 	}

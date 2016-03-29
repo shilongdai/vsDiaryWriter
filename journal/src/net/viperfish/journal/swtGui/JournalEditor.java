@@ -15,7 +15,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -88,18 +90,27 @@ public class JournalEditor {
 				if (contentModified()) {
 					if (savePressed) {
 						createTarget();
-					} else {
-						boolean confirm = MessageDialog.openConfirm(shell, "Save", "Save before exit?");
-						if (confirm) {
-							createTarget();
-						} else {
-							target = null;
-						}
 					}
 				} else {
 					target = null;
 				}
 
+			}
+		});
+
+		shell.addListener(SWT.CLOSE, new Listener() {
+
+			@Override
+			public void handleEvent(Event arg0) {
+				boolean confirm = MessageDialog.openConfirm(shell, "Save", "Save before exit?");
+				if (confirm) {
+					if (checkSize()) {
+						createTarget();
+					}
+				} else {
+					target = null;
+					shell.dispose();
+				}
 			}
 		});
 
@@ -164,9 +175,10 @@ public class JournalEditor {
 		saveButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				savePressed = true;
-
-				shell.dispose();
+				if (checkSize()) {
+					savePressed = true;
+					shell.dispose();
+				}
 			}
 		});
 		saveButton.setText("Save");
@@ -174,6 +186,18 @@ public class JournalEditor {
 		this.initialTitle = target.getSubject();
 		this.initialContent = target.getContent();
 
+	}
+
+	private boolean checkSize() {
+		if (titleText.getText().length() > 200) {
+			MessageDialog.openError(shell, "Exceeded max size", "Title cannot exeed 200 characters");
+			return false;
+		}
+		if (editor.getText().length() > 5240856) {
+			MessageDialog.openError(shell, "Exceeded max size", "HTML content exceeding 5 Megabytes");
+			return false;
+		}
+		return true;
 	}
 
 }

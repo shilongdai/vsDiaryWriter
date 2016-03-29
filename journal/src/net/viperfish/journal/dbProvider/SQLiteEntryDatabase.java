@@ -26,7 +26,7 @@ final class SQLiteEntryDatabase extends HibernateEntryDatabase {
 		Transaction tr = getSession().beginTransaction();
 		getSession()
 				.createSQLQuery(
-						"create table if not exists JOURNAL(Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, Subject LONGVARCHAR, Date TIMESTAMP, Content LONGVARCHAR);")
+						"create table if not exists JOURNAL(Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, Subject VARCHAR(2000), Date TIMESTAMP, Content CLOB(5242880));")
 				.executeUpdate();
 		tr.commit();
 	}

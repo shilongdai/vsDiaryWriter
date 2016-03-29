@@ -27,7 +27,7 @@ final class HSQLHibernateEntryDatabase extends HibernateEntryDatabase {
 		Transaction tr = getSession().beginTransaction();
 		getSession()
 				.createSQLQuery(
-						"create table if not exists JOURNAL(Id BIGINT NOT NULL PRIMARY KEY IDENTITY, Subject LONGVARCHAR, Date TIMESTAMP, Content LONGVARCHAR);")
+						"create table if not exists JOURNAL(Id BIGINT NOT NULL PRIMARY KEY IDENTITY, Subject VARCHAR(2000), Date TIMESTAMP, Content CLOB(5242880));")
 				.executeUpdate();
 		tr.commit();
 	}
