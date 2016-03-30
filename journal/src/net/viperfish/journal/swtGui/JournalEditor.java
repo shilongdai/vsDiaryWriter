@@ -102,7 +102,6 @@ public class JournalEditor {
 				} else {
 					target = null;
 				}
-
 			}
 		});
 
