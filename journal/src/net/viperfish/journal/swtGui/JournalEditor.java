@@ -15,9 +15,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -90,27 +88,21 @@ public class JournalEditor {
 				if (contentModified()) {
 					if (savePressed) {
 						createTarget();
+					} else {
+						boolean confirm = MessageDialog.openConfirm(shell, "Save", "Save before exit?");
+						if (confirm) {
+							if (checkSize()) {
+								createTarget();
+							}
+						} else {
+							target = null;
+							shell.dispose();
+						}
 					}
 				} else {
 					target = null;
 				}
 
-			}
-		});
-
-		shell.addListener(SWT.CLOSE, new Listener() {
-
-			@Override
-			public void handleEvent(Event arg0) {
-				boolean confirm = MessageDialog.openConfirm(shell, "Save", "Save before exit?");
-				if (confirm) {
-					if (checkSize()) {
-						createTarget();
-					}
-				} else {
-					target = null;
-					shell.dispose();
-				}
 			}
 		});
 

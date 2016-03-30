@@ -175,7 +175,7 @@ public class JournalWindow {
 		}
 		boolean toDelete = MessageDialog.openConfirm(shell, "Confirm", "THIS DELETION CANNOT BE UNDONE. Delete?");
 		if (toDelete) {
-			Journal s = (Journal) selected.getFirstElement();
+			JournalPointer s = (JournalPointer) selected.getFirstElement();
 			e.submit(f.getDeleteOperation(s.getId()));
 			search.searchJournals();
 		}
@@ -190,7 +190,7 @@ public class JournalWindow {
 		display = Display.getDefault();
 		shell = new Shell();
 		shell.setSize(495, 480);
-		shell.setText("vsDiary Trinity - 2.0.0");
+		shell.setText("vsDiary - 2.0.0");
 		shell.setLayout(new GridLayout(13, false));
 
 		errorReporter = new ExceptionDisplayer(shell);
