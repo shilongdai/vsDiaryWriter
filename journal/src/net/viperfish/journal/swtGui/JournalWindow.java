@@ -382,8 +382,6 @@ public class JournalWindow {
 						.getAbsolutePath();
 				if (toExport != null) {
 					JournalWindow.this.e.submit(f.getExportEntriesOperation(toExport));
-					MessageDialog.openInformation(shell, "Export Complete",
-							"All entries have been exported, please store it safely and ensure the integrity of the data");
 				}
 			}
 

@@ -6,7 +6,7 @@ package net.viperfish.journal.framework;
  * @author sdai
  *
  */
-public abstract class OperationExecutor extends Observable<Throwable> {
+public abstract class OperationExecutor extends Observable<Exception> {
 
 	/**
 	 * submit a operation to execute later

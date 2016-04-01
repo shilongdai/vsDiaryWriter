@@ -1,13 +1,12 @@
 package net.viperfish.journal.operation;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.viperfish.journal.framework.InjectedOperation;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.errors.FailToImportEntriesException;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
 import net.viperfish.utils.serialization.JsonGenerator;
@@ -34,8 +33,8 @@ final class ImportEntriesOperation extends InjectedOperation {
 	@Override
 	public void execute() {
 		// load the file
-		String json = importFile.read(StandardCharsets.UTF_16);
 		try {
+			String json = importFile.read(StandardCharsets.UTF_16);
 
 			// de-serialize and add
 			Journal[] result = generator.fromJson(Journal[].class, json);
@@ -43,8 +42,11 @@ final class ImportEntriesOperation extends InjectedOperation {
 				db().addEntry(i);
 				indexer().add(i);
 			}
-		} catch (JsonParseException | JsonMappingException e) {
-			throw new RuntimeException(e);
+		} catch (IOException e) {
+			FailToImportEntriesException f = new FailToImportEntriesException(
+					"Cannot import from:" + importFile.getFile() + " message:" + e.getMessage());
+			f.initCause(e);
+			throw new RuntimeException(f);
 		}
 
 	}

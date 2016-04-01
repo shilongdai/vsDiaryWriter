@@ -1,6 +1,7 @@
 package net.viperfish.journal.operation;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,9 +16,6 @@ import java.util.concurrent.Executors;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.AuthenticationManager;
@@ -250,7 +248,7 @@ public final class OperationTest {
 			IOFile exportFile = new IOFile(new File("test.txt"), new TextIOStreamHandler());
 			String actualOutput = exportFile.read(StandardCharsets.UTF_16);
 			Assert.assertEquals(expectedOutput, actualOutput);
-		} catch (JsonGenerationException | JsonMappingException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		cleanUp();
@@ -385,7 +383,7 @@ public final class OperationTest {
 			String exported = new JsonGenerator().toJson(src);
 			IOFile exportFile = new IOFile(new File("test.txt"), new TextIOStreamHandler());
 			exportFile.write(exported, StandardCharsets.UTF_16);
-		} catch (JsonGenerationException | JsonMappingException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 

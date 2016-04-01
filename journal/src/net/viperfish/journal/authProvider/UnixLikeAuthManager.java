@@ -1,16 +1,18 @@
 package net.viperfish.journal.authProvider;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.Configuration;
+import net.viperfish.journal.framework.errors.FailToLoadCredentialException;
+import net.viperfish.journal.framework.errors.FailToStoreCredentialException;
 import net.viperfish.journal.secureAlgs.BCPCKDF2Generator;
 import net.viperfish.journal.secureAlgs.BlockCiphers;
 import net.viperfish.journal.secureAlgs.PBKDF2KeyGenerator;
@@ -61,8 +63,15 @@ final class UnixLikeAuthManager implements AuthenticationManager {
 	 * encrypted$salt
 	 */
 	public void flushPassword() {
-		String combo = Base64.encodeBase64String(shadowPassword) + "$" + Base64.encodeBase64String(salt);
-		passwdFile.write(combo, StandardCharsets.UTF_8);
+		PasswordFile pFile = new PasswordFile(shadowPassword, salt);
+		try {
+			passwdFile.write(pFile.toString(), StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			FailToStoreCredentialException f = new FailToStoreCredentialException(
+					"Cannot store data to password file:" + e.getMessage());
+			f.initCause(e);
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -93,7 +102,11 @@ final class UnixLikeAuthManager implements AuthenticationManager {
 
 	@Override
 	public void clear() {
-		passwdFile.clear();
+		try {
+			passwdFile.clear();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
@@ -111,15 +124,22 @@ final class UnixLikeAuthManager implements AuthenticationManager {
 
 	@Override
 	public void reload() {
-		String combo = passwdFile.read(StandardCharsets.UTF_8);
-		String[] parts = combo.split("\\$");
-		if (parts.length < 2) {
-			return;
+		String combo;
+		PasswordFile pFile = null;
+		try {
+			combo = passwdFile.read(StandardCharsets.UTF_8);
+			if (combo.length() != 0)
+				pFile = PasswordFile.getPasswordData(combo);
+			else
+				return;
+		} catch (IOException | IllegalArgumentException e) {
+			FailToLoadCredentialException f = new FailToLoadCredentialException(
+					"Cannot load password file:" + e.getMessage());
+			f.initCause(e);
+			throw new RuntimeException(f);
 		}
-		String password = parts[0];
-		String salt = parts[1];
-		shadowPassword = Base64.decodeBase64(password);
-		this.salt = Base64.decodeBase64(salt);
+		this.shadowPassword = pFile.getCredentialInfo();
+		this.salt = pFile.getSalt();
 
 	}
 

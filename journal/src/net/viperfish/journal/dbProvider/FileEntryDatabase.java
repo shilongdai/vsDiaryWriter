@@ -1,16 +1,14 @@
 package net.viperfish.journal.dbProvider;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.errors.FailToSyncEntryException;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.serialization.JsonGenerator;
 
@@ -82,8 +80,11 @@ final class FileEntryDatabase implements EntryDatabase {
 		try {
 			String toWrite = generator.toJson(struct);
 			file.write(toWrite, StandardCharsets.UTF_16);
-		} catch (JsonGenerationException | JsonMappingException e) {
-			throw new RuntimeException(e);
+		} catch (IOException e) {
+			FailToSyncEntryException e1 = new FailToSyncEntryException(
+					"Cannot flush entries to file at:" + file.getFile() + " message:" + e.getMessage());
+			e1.initCause(e);
+			throw new RuntimeException(e1);
 		}
 	}
 
@@ -91,15 +92,18 @@ final class FileEntryDatabase implements EntryDatabase {
 	 * load the data from the file in JSON format
 	 */
 	public synchronized void load() {
-		String buf = file.read(StandardCharsets.UTF_16);
-		if (buf.length() == 0) {
-			return;
-		}
-		JsonGenerator generator = new JsonGenerator();
 		try {
+			String buf = file.read(StandardCharsets.UTF_16);
+			if (buf.length() == 0) {
+				return;
+			}
+			JsonGenerator generator = new JsonGenerator();
 			struct = generator.fromJson(FileMemoryStructure.class, buf);
-		} catch (JsonParseException | JsonMappingException e) {
-			throw new RuntimeException(e);
+		} catch (IOException e) {
+			FailToSyncEntryException f = new FailToSyncEntryException(
+					"Cannot load entries from file:" + file.getFile() + " message:" + e.getMessage());
+			f.initCause(e);
+			throw new RuntimeException(f);
 		}
 	}
 

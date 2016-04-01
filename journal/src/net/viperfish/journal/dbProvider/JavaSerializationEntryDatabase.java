@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.errors.FailToSyncEntryException;
 import net.viperfish.utils.file.CommonFunctions;
 
 /**
@@ -97,6 +98,9 @@ final class JavaSerializationEntryDatabase implements EntryDatabase, Serializabl
 		try {
 			CommonFunctions.initFile(serializedFile);
 		} catch (IOException e1) {
+			FailToSyncEntryException f = new FailToSyncEntryException(
+					"Cannot create file to serialize db:" + e1.getMessage());
+			f.initCause(e1);
 			throw new RuntimeException(e1);
 		}
 		try (ObjectOutputStream out = new ObjectOutputStream(
@@ -105,7 +109,9 @@ final class JavaSerializationEntryDatabase implements EntryDatabase, Serializabl
 			out.writeObject(db);
 			out.flush();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			FailToSyncEntryException f = new FailToSyncEntryException("Cannot serialize database:" + e.getMessage());
+			f.initCause(e);
+			throw new RuntimeException(f);
 		}
 
 	}
@@ -121,6 +127,9 @@ final class JavaSerializationEntryDatabase implements EntryDatabase, Serializabl
 		try {
 			CommonFunctions.initFile(serializedFile);
 		} catch (IOException e1) {
+			FailToSyncEntryException f = new FailToSyncEntryException(
+					"Cannot create file to de-serialize db:" + e1.getMessage());
+			f.initCause(e1);
 			throw new RuntimeException(e1);
 		}
 		try (ObjectInputStream in = new ObjectInputStream(
@@ -129,7 +138,9 @@ final class JavaSerializationEntryDatabase implements EntryDatabase, Serializabl
 		} catch (EOFException e) {
 			return new JavaSerializationEntryDatabase();
 		} catch (IOException | ClassNotFoundException e) {
-			throw new RuntimeException(e);
+			FailToSyncEntryException f = new FailToSyncEntryException("Cannot serialize database:" + e.getMessage());
+			f.initCause(e);
+			throw new RuntimeException(f);
 		}
 
 	}

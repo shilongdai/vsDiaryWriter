@@ -8,6 +8,7 @@ import org.hibernate.Transaction;
 
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.errors.FailToSyncEntryException;
 
 /**
  * an EntryDatabase that uses Hibernate ORM for database
@@ -39,7 +40,10 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 			return j;
 		} catch (RuntimeException e) {
 			tr.rollback();
-			throw e;
+			FailToSyncEntryException f = new FailToSyncEntryException(
+					"Cannot persist entry to database:" + e.getMessage() + " entry:" + j);
+			f.initCause(e);
+			throw new RuntimeException(f);
 		} finally {
 			tr.commit();
 		}
@@ -54,7 +58,9 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 			return deleted;
 		} catch (RuntimeException e) {
 			tr.rollback();
-			throw e;
+			FailToSyncEntryException f = new FailToSyncEntryException(
+					"Cannot delete entry from database:" + e.getMessage() + " id:" + id);
+			throw new RuntimeException(f);
 		} finally {
 			tr.commit();
 		}
@@ -75,7 +81,10 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 			return j;
 		} catch (RuntimeException e) {
 			tr.rollback();
-			throw e;
+			FailToSyncEntryException f = new FailToSyncEntryException(
+					"Cannot update entry in database:" + e.getMessage() + " id:" + id + " entry:" + j);
+			f.initCause(e);
+			throw new RuntimeException(f);
 		} finally {
 			tr.commit();
 		}
@@ -95,7 +104,9 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 			this.getSession().createQuery("DELETE FROM Journal").executeUpdate();
 		} catch (RuntimeException e) {
 			tr.rollback();
-			throw e;
+			FailToSyncEntryException f = new FailToSyncEntryException("Cannot clear all:" + e.getMessage());
+			f.initCause(e);
+			throw new RuntimeException(f);
 		} finally {
 			tr.commit();
 		}

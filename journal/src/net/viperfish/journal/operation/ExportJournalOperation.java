@@ -1,14 +1,13 @@
 package net.viperfish.journal.operation;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import net.viperfish.journal.framework.InjectedOperation;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.errors.FailToExportEntriesException;
 import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
 import net.viperfish.utils.serialization.JsonGenerator;
@@ -47,8 +46,11 @@ final class ExportJournalOperation extends InjectedOperation {
 		try {
 			String result = generator.toJson(toExport);
 			outputTarget.write(result, StandardCharsets.UTF_16);
-		} catch (JsonGenerationException | JsonMappingException e) {
-			throw new RuntimeException(e);
+		} catch (IOException e) {
+			FailToExportEntriesException f = new FailToExportEntriesException(
+					"Cannot export entries to:" + outputTarget + " message:" + e.getMessage());
+			f.initCause(e);
+			throw new RuntimeException(f);
 		}
 	}
 

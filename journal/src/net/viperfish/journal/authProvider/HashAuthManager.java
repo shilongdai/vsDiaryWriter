@@ -1,14 +1,15 @@
 package net.viperfish.journal.authProvider;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import org.apache.commons.codec.binary.Base64;
-
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.Configuration;
+import net.viperfish.journal.framework.errors.FailToLoadCredentialException;
+import net.viperfish.journal.framework.errors.FailToStoreCredentialException;
 import net.viperfish.journal.secureAlgs.BCDigester;
 import net.viperfish.journal.secureAlgs.Digester;
 import net.viperfish.utils.file.IOFile;
@@ -70,19 +71,6 @@ final class HashAuthManager implements AuthenticationManager {
 	}
 
 	/**
-	 * encode the hash and salt into Base64 strings, and combine them so that
-	 * it's hash$salt
-	 * 
-	 * @return
-	 */
-	private String hashAuthFormat() {
-		String hash64 = Base64.encodeBase64String(hash);
-		String salt64 = Base64.encodeBase64String(salt);
-		String result = hash64 + "$" + salt64;
-		return result;
-	}
-
-	/**
 	 * generate a salt of specified length using a secure random number
 	 * generator
 	 * 
@@ -99,10 +87,17 @@ final class HashAuthManager implements AuthenticationManager {
 	 * UTF-8 characters
 	 * 
 	 * @param formatted
-	 *            the formatted hash and salt
+	 *            the password data content to write
 	 */
-	private void writePasswdFile(String formatted) {
-		passwdFile.write(formatted, StandardCharsets.UTF_8);
+	private void writePasswdFile(PasswordFile pFile) {
+		try {
+			passwdFile.write(pFile.toString(), StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			FailToStoreCredentialException fail = new FailToStoreCredentialException(
+					"Failed to write to password file:" + e.getMessage());
+			fail.initCause(e);
+			throw new RuntimeException(fail);
+		}
 	}
 
 	/**
@@ -111,23 +106,29 @@ final class HashAuthManager implements AuthenticationManager {
 	 * 
 	 * @return the combination of hash and salt
 	 */
-	private String readPasswdFile() {
-		return passwdFile.read(StandardCharsets.UTF_8);
+	private PasswordFile readPasswdFile() {
+		try {
+			String combo = passwdFile.read(StandardCharsets.UTF_8);
+			if (combo.length() != 0) {
+				return PasswordFile.getPasswordData(combo);
+			} else {
+				return new PasswordFile(new byte[0], new byte[0]);
+			}
+		} catch (IOException | IllegalArgumentException e) {
+			FailToLoadCredentialException f = new FailToLoadCredentialException(
+					"Cannot read from password file:" + e.getMessage());
+			f.initCause(e);
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
 	 * load the hash and salt from file into memory
 	 */
 	private void loadPasswd() {
-		String formatedPasswd = readPasswdFile();
-		String[] parts = formatedPasswd.split("\\$");
-		if (parts.length < 2) {
-			return;
-		}
-		String hash = parts[0];
-		String salt = parts[1];
-		this.hash = Base64.decodeBase64(hash);
-		this.salt = Base64.decodeBase64(salt);
+		PasswordFile pFile = readPasswdFile();
+		this.hash = pFile.getCredentialInfo();
+		this.salt = pFile.getSalt();
 		ready = true;
 	}
 
@@ -148,7 +149,11 @@ final class HashAuthManager implements AuthenticationManager {
 	 */
 	@Override
 	public void clear() {
-		passwdFile.clear();
+		try {
+			passwdFile.clear();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
 	}
 
@@ -164,8 +169,7 @@ final class HashAuthManager implements AuthenticationManager {
 
 		generateSalt(12);
 		hash = hashWithSalt(bytes, salt, 3000);
-		String formatted = hashAuthFormat();
-		writePasswdFile(formatted);
+		writePasswdFile(new PasswordFile(hash, salt));
 		ready = true;
 	}
 

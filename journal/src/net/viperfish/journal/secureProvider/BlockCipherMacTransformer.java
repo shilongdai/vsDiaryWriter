@@ -1,6 +1,7 @@
 package net.viperfish.journal.secureProvider;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -15,6 +16,9 @@ import org.apache.commons.codec.binary.Base64;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
+import net.viperfish.journal.framework.errors.CipherException;
+import net.viperfish.journal.framework.errors.CompromisedDataException;
+import net.viperfish.journal.framework.errors.FailToSyncCipherDataException;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
 import net.viperfish.journal.secureAlgs.BCDigester;
 import net.viperfish.journal.secureAlgs.BCPCKDF2Generator;
@@ -146,7 +150,8 @@ final class BlockCipherMacTransformer implements JournalTransformer {
 
 		byte[] expectedMac = mac.calculateMac((ivData + "$" + cData).getBytes(StandardCharsets.UTF_16));
 		if (!Arrays.equals(expectedMac, rawMac)) {
-			throw new CompromisedDataException();
+			throw new CompromisedDataException(
+					"Compromised: expected = " + Arrays.toString(expectedMac) + " got = " + Arrays.toString(rawMac));
 		}
 
 		byte[] rIv = Base64.decodeBase64(ivData);
@@ -167,7 +172,14 @@ final class BlockCipherMacTransformer implements JournalTransformer {
 
 	private void writeSalt() {
 		IOFile saltFile = new IOFile(saltStore, new TextIOStreamHandler());
-		saltFile.write(saltForKDF);
+		try {
+			saltFile.write(saltForKDF);
+		} catch (IOException e) {
+			FailToSyncCipherDataException f = new FailToSyncCipherDataException(
+					"Cannot write salt to file:" + e.getMessage());
+			f.initCause(e);
+			throw new RuntimeException(f);
+		}
 	}
 
 	private void loadSalt() {
@@ -176,7 +188,14 @@ final class BlockCipherMacTransformer implements JournalTransformer {
 			return;
 		} else {
 			IOFile saltFile = new IOFile(saltStore, new TextIOStreamHandler());
-			saltForKDF = saltFile.read();
+			try {
+				saltForKDF = saltFile.read();
+			} catch (IOException e) {
+				FailToSyncCipherDataException f = new FailToSyncCipherDataException(
+						"Cannot load salt from file:" + e.getMessage());
+				f.initCause(e);
+				throw new RuntimeException(f);
+			}
 		}
 	}
 
@@ -193,7 +212,9 @@ final class BlockCipherMacTransformer implements JournalTransformer {
 			return result;
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 				| BadPaddingException e) {
-			throw new RuntimeException(e);
+			CipherException c = new CipherException("Cannot encrypt entry:" + e.getMessage());
+			c.initCause(e);
+			throw new RuntimeException(c);
 		}
 	}
 
@@ -210,7 +231,9 @@ final class BlockCipherMacTransformer implements JournalTransformer {
 			return result;
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 				| BadPaddingException | CompromisedDataException e) {
-			throw new RuntimeException(e);
+			CipherException c = new CipherException("cannot decrypt entry:" + e.getMessage());
+			c.initCause(e);
+			throw new RuntimeException(c);
 		}
 	}
 

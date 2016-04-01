@@ -15,6 +15,7 @@ import org.apache.commons.compress.utils.IOUtils;
 
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.errors.FailToSyncEntryException;
 import net.viperfish.utils.file.CommonFunctions;
 import net.viperfish.utils.serialization.ObjectSerializer;
 
@@ -88,6 +89,9 @@ abstract class ArchiveEntryDatabase implements EntryDatabase {
 		try {
 			CommonFunctions.initFile(archiveFile);
 		} catch (IOException e1) {
+			FailToSyncEntryException f = new FailToSyncEntryException(
+					"Cannot create file to write archive:" + e1.getMessage());
+			f.initCause(e1);
 			throw new RuntimeException(e1);
 		}
 		ObjectSerializer<Journal> s = new ObjectSerializer<>(Journal.class);
@@ -102,7 +106,10 @@ abstract class ArchiveEntryDatabase implements EntryDatabase {
 			out.finish();
 			out.flush();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			FailToSyncEntryException f = new FailToSyncEntryException(
+					"Cannot write entries to archive:" + e.getMessage());
+			f.initCause(e);
+			throw new RuntimeException(f);
 		}
 	}
 
@@ -117,6 +124,9 @@ abstract class ArchiveEntryDatabase implements EntryDatabase {
 				return new Journal[0];
 			}
 		} catch (IOException e1) {
+			FailToSyncEntryException f = new FailToSyncEntryException(
+					"Cannot create file to read archive:" + e1.getMessage());
+			f.initCause(e1);
 			throw new RuntimeException(e1);
 		}
 		List<Journal> result = new LinkedList<>();
@@ -130,7 +140,10 @@ abstract class ArchiveEntryDatabase implements EntryDatabase {
 			}
 			return result.toArray(new Journal[0]);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			FailToSyncEntryException f = new FailToSyncEntryException(
+					"Cannot read entries from archive:" + e.getMessage());
+			f.initCause(e);
+			throw new RuntimeException(f);
 		}
 	}
 

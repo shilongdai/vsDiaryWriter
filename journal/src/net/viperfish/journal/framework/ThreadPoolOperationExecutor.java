@@ -26,7 +26,7 @@ final class ThreadPoolOperationExecutor extends OperationExecutor {
 		public void run() {
 			try {
 				o.execute();
-			} catch (Throwable s) {
+			} catch (Exception s) {
 				ThreadPoolOperationExecutor.this.notifyObservers(s);
 			}
 

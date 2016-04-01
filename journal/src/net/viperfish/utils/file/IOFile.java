@@ -30,33 +30,37 @@ public final class IOFile {
 		this.handler = handler;
 	}
 
-	public void write(byte[] data) {
+	public void write(byte[] data) throws IOException {
 		try (DataOutputStream out = handler.getOutputStream(src)) {
 			out.write(data);
 			out.flush();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw e;
 		}
 	}
 
-	public void write(String data, Charset c) {
+	public void write(String data, Charset c) throws IOException {
 		write(data.getBytes(c));
 	}
 
-	public byte[] read() {
+	public byte[] read() throws IOException {
 		try (DataInputStream in = handler.getInputStream(src)) {
 			byte[] result = IOUtils.toByteArray(in);
 			return result;
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw e;
 		}
 	}
 
-	public String read(Charset c) {
+	public String read(Charset c) throws IOException {
 		return new String(read(), c);
 	}
 
-	public void clear() {
+	public void clear() throws IOException {
 		write(new byte[0]);
+	}
+
+	public File getFile() {
+		return this.src;
 	}
 }
