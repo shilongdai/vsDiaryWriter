@@ -18,23 +18,14 @@ public abstract class UserInterface {
 	public abstract void run();
 
 	/**
-	 * will be called when the program first run
-	 * 
-	 * @see UserInterface#setPassword(String)
-	 * @see Configuration
-	 * @see ComponentConfig
-	 */
-	public abstract void setup() throws TerminationControlFlowException;
-
-	/**
 	 * prompt password
 	 * 
 	 * @see UserInterface#authenticate(String)
 	 * @return the valid password
 	 */
-	public abstract String promptPassword() throws TerminationControlFlowException;
+	public abstract ExitStatus promptPassword();
 
-	public abstract void setFirstPassword() throws TerminationControlFlowException;
+	public abstract ExitStatus setFirstPassword();
 
 	/**
 	 * set the authenticator for this interface

@@ -91,7 +91,7 @@ public enum JournalTransformers {
 	}
 
 	public Map<String, Provider<? extends JournalTransformer>> getSecureProviders() {
-		return secureProviders;
+		return this.secureProviders;
 	}
 
 	public void refreshAll() {

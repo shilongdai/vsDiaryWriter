@@ -2,6 +2,7 @@ package net.viperfish.journal.framework;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Concurrent operation executor with a thread pool
@@ -45,6 +46,13 @@ final class ThreadPoolOperationExecutor extends OperationExecutor {
 	@Override
 	public void terminate() {
 		pool.shutdown();
+		try {
+			if (!pool.awaitTermination(1, TimeUnit.MINUTES)) {
+				pool.shutdownNow();
+			}
+		} catch (InterruptedException e) {
+			pool.shutdownNow();
+		}
 
 	}
 

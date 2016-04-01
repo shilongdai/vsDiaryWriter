@@ -31,7 +31,7 @@ public enum Indexers {
 	}
 
 	public Map<String, Provider<? extends Indexer<Journal>>> getIndexerProviders() {
-		return indexerProviders;
+		return this.indexerProviders;
 	}
 
 	public String getDefaultIndexerProvider() {

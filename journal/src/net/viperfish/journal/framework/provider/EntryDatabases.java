@@ -42,7 +42,7 @@ public enum EntryDatabases {
 	}
 
 	public Map<String, Provider<? extends EntryDatabase>> getDatabaseProviders() {
-		return databaseProviders;
+		return this.databaseProviders;
 	}
 
 	public String getDefaultDatabaseProvider() {

@@ -2,9 +2,7 @@ package net.viperfish.journal.swtGui;
 
 import org.eclipse.swt.widgets.Display;
 
-import net.viperfish.journal.framework.ConfigMapping;
-import net.viperfish.journal.framework.Configuration;
-import net.viperfish.journal.ui.TerminationControlFlowException;
+import net.viperfish.journal.ui.ExitStatus;
 import net.viperfish.journal.ui.UserInterface;
 
 public class GraphicalUserInterface extends UserInterface {
@@ -29,29 +27,22 @@ public class GraphicalUserInterface extends UserInterface {
 	}
 
 	@Override
-	public void setup() throws TerminationControlFlowException {
-		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "Hash");
-		Configuration.setProperty(ConfigMapping.DB_COMPONENT, "H2Database");
-		Configuration.setProperty(ConfigMapping.INDEXER_COMPONENT, "LuceneIndexer");
-		Configuration.setProperty(ConfigMapping.TRANSFORMER_COMPONENT, "BlockCipherMAC");
-	}
-
-	@Override
-	public String promptPassword() throws TerminationControlFlowException {
+	public ExitStatus promptPassword() {
 		String result = prompt.open();
 		if (result == null) {
-			throw new TerminationControlFlowException();
+			return ExitStatus.CANCEL;
 		} else {
-			return result;
+			return ExitStatus.OK;
 		}
 	}
 
 	@Override
-	public void setFirstPassword() throws TerminationControlFlowException {
+	public ExitStatus setFirstPassword() {
 		boolean passwordSet = setPassword.open(PasswordOperation.SET);
 		if (!passwordSet) {
-			throw new TerminationControlFlowException();
+			return ExitStatus.CANCEL;
 		}
+		return ExitStatus.OK;
 	}
 
 }

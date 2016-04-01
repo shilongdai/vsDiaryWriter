@@ -37,8 +37,8 @@ public final class Journal implements Comparable<Journal>, Serializable {
 	}
 
 	public Journal(Journal src) {
-		this.date = src.getDate();
-		this.id = src.getId();
+		this.date = new Date(src.getDate().getTime());
+		this.id = new Long(src.getId());
 		this.content = src.getContent();
 		this.subject = src.getSubject();
 	}
@@ -54,11 +54,11 @@ public final class Journal implements Comparable<Journal>, Serializable {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getDate() {
-		return date;
+		return new Date(date.getTime());
 	}
 
 	public void setDate(Date date) {
-		this.date = date;
+		this.date = new Date(date.getTime());
 	}
 
 	@Basic
@@ -77,7 +77,11 @@ public final class Journal implements Comparable<Journal>, Serializable {
 	}
 
 	public void setId(Long id) {
-		this.id = id;
+		if (id == null) {
+			this.id = null;
+			return;
+		}
+		this.id = new Long(id);
 	}
 
 	@Override

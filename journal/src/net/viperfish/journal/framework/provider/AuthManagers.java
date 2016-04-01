@@ -44,7 +44,7 @@ public enum AuthManagers {
 	 * @return all of the providers
 	 */
 	public Map<String, Provider<? extends AuthenticationManager>> getAuthProviders() {
-		return authProviders;
+		return this.authProviders;
 	}
 
 	/**

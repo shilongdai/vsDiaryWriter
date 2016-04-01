@@ -26,7 +26,7 @@ import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.journal.indexProvider.ViperfishIndexerProvider;
 import net.viperfish.journal.secureProvider.ViperfishEncryptionProvider;
 import net.viperfish.journal.swtGui.GraphicalUserInterface;
-import net.viperfish.journal.ui.TerminationControlFlowException;
+import net.viperfish.journal.ui.ExitStatus;
 import net.viperfish.journal.ui.UserInterface;
 import net.viperfish.utils.file.CommonFunctions;
 import net.viperfish.utils.index.Indexer;
@@ -75,10 +75,6 @@ final public class JournalApplication {
 	 * the worker
 	 */
 	public static void cleanUp() {
-		// submit a final operation to make sure everything is complete
-		WaitUntillCompleteOperation waiter = new WaitUntillCompleteOperation();
-		OperationExecutors.getExecutor().submit(waiter);
-		waiter.getResult();
 		OperationExecutors.dispose();
 		System.err.println("worker terminated");
 		EntryDatabases.INSTANCE.dispose();
@@ -163,6 +159,10 @@ final public class JournalApplication {
 				.entrySet()) {
 			i.getValue().initDefaults();
 		}
+		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "Hash");
+		Configuration.setProperty(ConfigMapping.DB_COMPONENT, "H2Database");
+		Configuration.setProperty(ConfigMapping.INDEXER_COMPONENT, "LuceneIndexer");
+		Configuration.setProperty(ConfigMapping.TRANSFORMER_COMPONENT, "BlockCipherMAC");
 	}
 
 	public static void main(String[] args) {
@@ -194,30 +194,25 @@ final public class JournalApplication {
 			// run the setup if the application is first started
 			if (Configuration.getString(ConfigMapping.SET_UP) == null) {
 				try {
+					ExitStatus e;
 					defaultPreferences();
-					ui.setup();
-					ui.setFirstPassword();
+					e = ui.setFirstPassword();
+					if (e == ExitStatus.CANCEL) {
+						revert();
+						return;
+					}
 					Configuration.setProperty(ConfigMapping.SET_UP, false);
 					Configuration.save();
 				} catch (ConfigurationException e) {
 					revert();
 					System.err.println("could not save configuration, terminating");
 					return;
-				} catch (TerminationControlFlowException e) {
-					revert();
-					System.err.println("exiting");
-					return;
 				}
 			}
-
-			// login
-			try {
-				ui.promptPassword();
-			} catch (TerminationControlFlowException e) {
-				System.err.println("exiting");
+			ExitStatus e = ui.promptPassword();
+			if (e == ExitStatus.CANCEL) {
 				return;
 			}
-
 			// start the main portion of the application
 			ui.run();
 		} finally {
