@@ -25,7 +25,7 @@ final class HMac extends BCMacDigester {
 
 	@Override
 	protected int getKeySize() {
-		return 32;
+		return 512;
 	}
 
 	@Override

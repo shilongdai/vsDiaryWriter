@@ -64,4 +64,5 @@ public interface PBKDF2KeyGenerator {
 	 */
 	public byte[] generate(String password, int length);
 
+	public int getDigestSize();
 }

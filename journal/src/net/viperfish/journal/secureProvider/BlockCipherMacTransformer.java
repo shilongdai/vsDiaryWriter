@@ -2,6 +2,7 @@ package net.viperfish.journal.secureProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -20,9 +21,7 @@ import net.viperfish.journal.framework.errors.CipherException;
 import net.viperfish.journal.framework.errors.CompromisedDataException;
 import net.viperfish.journal.framework.errors.FailToSyncCipherDataException;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
-import net.viperfish.journal.secureAlgs.BCDigester;
 import net.viperfish.journal.secureAlgs.BCPCKDF2Generator;
-import net.viperfish.journal.secureAlgs.Digester;
 import net.viperfish.journal.secureAlgs.Encryptor;
 import net.viperfish.journal.secureAlgs.MacDigester;
 import net.viperfish.journal.secureAlgs.Macs;
@@ -57,7 +56,7 @@ final class BlockCipherMacTransformer implements JournalTransformer {
 	private byte[] saltForKDF;
 	private SecureRandom rand;
 	private Encryptor enc;
-	private Digester dig;
+	private MacDigester expander;
 	private MacDigester mac;
 	private PBKDF2KeyGenerator keyGenerator;
 	private Compressor compress;
@@ -243,7 +242,8 @@ final class BlockCipherMacTransformer implements JournalTransformer {
 	private void initAlgorithms() {
 		// get the objects for blockcipher, mac, and digest
 		enc = new BCBlockCipherEncryptor();
-		dig = new BCDigester();
+		expander = Macs.getMac("HMAC");
+		expander.setMode("SHA512");
 		// get the type of mac
 		String macMethod = Configuration.getString(MAC_TYPE);
 		mac = Macs.getMac(macMethod);
@@ -258,8 +258,6 @@ final class BlockCipherMacTransformer implements JournalTransformer {
 		mode += "/";
 		mode += Configuration.getString(ENCRYPTION_PADDING);
 		enc.setMode(mode);
-
-		dig.setMode("SHA512");
 
 		// try to get a compressor, no compression if compressor not found
 		try {
@@ -279,8 +277,47 @@ final class BlockCipherMacTransformer implements JournalTransformer {
 		loadSalt();
 		keyGenerator = new BCPCKDF2Generator();
 		keyGenerator.setDigest(Configuration.getString(KDF_HASH));
-		keyGenerator.setIteration(3000);
+		keyGenerator.setIteration(64000);
 		keyGenerator.setSalt(saltForKDF);
+	}
+
+	/**
+	 * generates a sub key from a master key
+	 * 
+	 * This method generates a sub key from a master key with schema based on
+	 * the HKDF standard.
+	 * 
+	 * @param masterKey
+	 *            the master key
+	 * @param previous
+	 *            the previous generated key
+	 * @param info
+	 *            additional informations
+	 * @param octet
+	 *            an additional byte to append, starting on 0x01
+	 * @param length
+	 *            the length of key to generate in byte
+	 * @return the generated sub key
+	 */
+	private byte[] expandMasterKey(byte[] masterKey, byte[] previous, byte[] info, int octet, int length) {
+		ByteBuffer converter = ByteBuffer.allocate(4);
+		converter.putInt(octet);
+		byte[] octetData = converter.array();
+
+		byte[] result = new byte[length];
+		int currentLength = 0;
+		expander.setKey(masterKey);
+		byte[] data = new byte[previous.length + info.length + octetData.length];
+		System.arraycopy(previous, 0, data, 0, previous.length);
+		System.arraycopy(info, 0, data, previous.length, info.length);
+		System.arraycopy(octetData, 0, data, 0, octetData.length);
+		while (currentLength != length) {
+			byte[] temp = expander.calculateMac(data);
+			int willAdd = (length - currentLength) > temp.length ? temp.length : length - currentLength;
+			System.arraycopy(temp, 0, result, currentLength, willAdd);
+			currentLength += willAdd;
+		}
+		return result;
 	}
 
 	BlockCipherMacTransformer(File salt) {
@@ -294,11 +331,13 @@ final class BlockCipherMacTransformer implements JournalTransformer {
 	 */
 	@Override
 	public void setPassword(String string) {
-		this.key = keyGenerator.generate(string, enc.getKeySize());
-		// the mac key is derived from the result of the KDF function via a
-		// digest
-		mac.setKey(this.keyGenerator.generate(Base64.encodeBase64String(dig.digest(this.key)), mac.getKeyLength()));
-		enc.setKey(key);
+		this.key = keyGenerator.generate(string, keyGenerator.getDigestSize());
+		byte[] encKey = expandMasterKey(key, new byte[0], "Encryption Key".getBytes(StandardCharsets.UTF_16), 0x01,
+				enc.getKeySize() / 8);
+		byte[] macKey = expandMasterKey(key, encKey, "Mac Key".getBytes(StandardCharsets.UTF_16), 0x02,
+				mac.getKeyLength() / 8);
+		enc.setKey(encKey);
+		mac.setKey(macKey);
 		macIV = new byte[mac.getIvLength()];
 		// set mac IV to 0 based on experts
 		Arrays.fill(macIV, (byte) 0);
