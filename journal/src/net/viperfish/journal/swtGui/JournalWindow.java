@@ -190,7 +190,7 @@ public class JournalWindow {
 		display = Display.getDefault();
 		shell = new Shell();
 		shell.setSize(495, 480);
-		shell.setText("vsDiary - 2.1.0");
+		shell.setText("vsDiary - 3.0.0");
 		shell.setLayout(new GridLayout(13, false));
 
 		errorReporter = new ExceptionDisplayer(shell);
@@ -414,7 +414,8 @@ public class JournalWindow {
 					return;
 				}
 				JournalWindow.this.e.submit(f.getImportEntriesOperation(selected));
-				search.searchJournals();
+				search.displayAll();
+				searchText.setText("");
 			}
 
 		});
