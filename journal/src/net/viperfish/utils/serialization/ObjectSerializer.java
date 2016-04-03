@@ -8,9 +8,9 @@ import java.io.ObjectOutputStream;
 
 public final class ObjectSerializer<T> {
 
-	private Class<? extends T> caster;
+	private Class<T> caster;
 
-	public ObjectSerializer(Class<? extends T> c) {
+	public ObjectSerializer(Class<T> c) {
 		this.caster = c;
 	}
 

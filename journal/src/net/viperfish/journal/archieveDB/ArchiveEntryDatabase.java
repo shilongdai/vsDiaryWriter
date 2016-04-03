@@ -22,7 +22,11 @@ import net.viperfish.utils.serialization.ObjectSerializer;
 /**
  * an archive entry database that uses Apache common compression archive formats
  * to store entries. Sub classes should implement a specific format of an
- * archive.
+ * archive for read and write.
+ * 
+ * <p>
+ * This class is NOT thread safe
+ * </p>
  * 
  * @author sdai
  *
@@ -30,69 +34,96 @@ import net.viperfish.utils.serialization.ObjectSerializer;
 abstract class ArchiveEntryDatabase implements EntryDatabase {
 
 	/**
-	 * this should return an Apache common compress archive output stream ready
-	 * to write. Used to write entries into archive. Should match with the
-	 * {@link ArchiveEntryDatabase#getArchiveIn(File)}
+	 * returns an {@link ArchiveOutputStream} for write.
+	 * 
+	 * This method returns an {@link ArchiveOutputStream} ready to write. This
+	 * stream will be closed after every
+	 * {@link ArchiveEntryDatabase#write(Journal[])}. It must match with
+	 * {@link ArchiveEntryDatabase#getArchiveIn(File)} and
+	 * {@link ArchiveEntryDatabase#newEntry(String, int)}.
+	 * 
+	 * In this implementation, the {@link ArchiveEntryDatabase#write(Journal[])}
+	 * function uses this method to flush all entries into an archive.
 	 * 
 	 * @param f
-	 *            the archive file
-	 * @return the archive output stream ready to write
+	 *            the archive file. It is already created.
+	 * @return the {@link ArchiveOutputStream} ready to write
 	 * @throws IOException
-	 *             if failed to create archive output stream
+	 *             if cannot create the {@link ArchiveOutputStream}
 	 */
 	protected abstract ArchiveOutputStream getArchiveOut(File f) throws IOException;
 
 	/**
-	 * this should return an Apache common compress archive ready to read. Used
-	 * to read entries from archive. It should match with the
-	 * {@link ArchiveEntryDatabase#getArchiveOut(File)}
+	 * returns an {@link ArchiveInputStream} ready to read
+	 * 
+	 * This method returns an {@link ArchiveInputStream} ready to read. This
+	 * stream will be closed after every {@link ArchiveEntryDatabase#read()}. It
+	 * must match with the {@link ArchiveEntryDatabase#getArchiveOut(File)} and
+	 * {@link ArchiveEntryDatabase#newEntry(String, int)}.
+	 * 
+	 * In this implementation, the {@link ArchiveEntryDatabase#read()} method
+	 * uses this stream to read all entries from an archive.
 	 * 
 	 * @param f
-	 *            the archive file
-	 * @return the archive input stream ready to read
+	 *            the archive file to read from
+	 * @return the {@link ArchiveInputStream} ready to read
 	 * @throws IOException
-	 *             if failed to create an archive input stream
+	 *             if cannot create the {@link ArchiveInputStream}
 	 */
 	protected abstract ArchiveInputStream getArchiveIn(File f) throws IOException;
 
 	/**
-	 * this should create an Apache common compress archive entry ready to be
-	 * used. The entry format should match with the
-	 * {@link ArchiveEntryDatabase#getArchiveIn(File)} and the
-	 * {@link ArchiveEntryDatabase#getArchiveOut(File)}
+	 * create a new {@link ArchiveEntry}
+	 * 
+	 * This method creates a new {@link ArchiveEntry} for reading and writing to
+	 * individual entries. It must match with the
+	 * {@link ArchiveEntryDatabase#getArchiveIn(File)} and
+	 * {@link ArchiveEntryDatabase#getArchiveOut(File)}.
+	 * 
+	 * In this implementation, {@link ArchiveEntryDatabase#write(Journal[])}
+	 * uses this to create {@link ArchiveEntry}.
 	 * 
 	 * @param name
-	 *            the name of the entry
+	 *            the name of the archive entry
 	 * @param length
-	 *            the number of bytes
-	 * @return the archive entry ready to be used
+	 *            the amount of byte will be written
+	 * @return the new {@link ArchiveEntry} for I/O
 	 */
 	protected abstract ArchiveEntry newEntry(String name, int length);
 
 	/**
-	 * get the specified archive file
+	 * get the archive file
 	 * 
-	 * @return the archive file
+	 * This method returns the archive file that the
+	 * {@link ArchiveEntryDatabase} writes to and reads from.
+	 * 
+	 * @return the archive file. Matches with the file passed to
+	 *         {@link ArchiveEntryDatabase#getArchiveIn(File)} and
+	 *         {@link ArchiveEntryDatabase#getArchiveOut(File)}
 	 */
 	protected File getArchiveFile() {
 		return archiveFile;
 	}
 
 	/**
-	 * write entries into the archive file. The archive entry would then contain
-	 * the serialized {@link Journal} Object. Overwrites existing entries.
+	 * writes journals to archive file.
+	 * 
+	 * This method writes a list of journals to the archive file. It overwrites
+	 * existing archive entries. The list of {@link Journal} are serialized.
 	 * 
 	 * @param j
-	 *            the journals to write
+	 *            the list of journals
+	 * @throws FailToSyncEntryException
+	 *             if cannot write to the archive file
 	 */
-	private void write(Journal[] j) {
+	private void write(Journal[] j) throws FailToSyncEntryException {
 		try {
 			CommonFunctions.initFile(archiveFile);
 		} catch (IOException e1) {
 			FailToSyncEntryException f = new FailToSyncEntryException(
 					"Cannot create file to write archive:" + e1.getMessage());
 			f.initCause(e1);
-			throw new RuntimeException(e1);
+			throw f;
 		}
 		ObjectSerializer<Journal> s = new ObjectSerializer<>(Journal.class);
 		try (ArchiveOutputStream out = getArchiveOut(archiveFile)) {
@@ -109,16 +140,19 @@ abstract class ArchiveEntryDatabase implements EntryDatabase {
 			FailToSyncEntryException f = new FailToSyncEntryException(
 					"Cannot write entries to archive:" + e.getMessage());
 			f.initCause(e);
-			throw new RuntimeException(f);
+			throw f;
 		}
 	}
 
 	/**
-	 * read all entries from an archive
+	 * reads all entries from an archive
 	 * 
-	 * @return the entries
+	 * This method reads all entries from the archive file, and de-serialize it
+	 * to {@link Journal}
+	 * 
+	 * @return entries read
 	 */
-	private Journal[] read() {
+	private Journal[] read() throws FailToSyncEntryException {
 		try {
 			if (CommonFunctions.initFile(archiveFile)) {
 				return new Journal[0];
@@ -127,7 +161,7 @@ abstract class ArchiveEntryDatabase implements EntryDatabase {
 			FailToSyncEntryException f = new FailToSyncEntryException(
 					"Cannot create file to read archive:" + e1.getMessage());
 			f.initCause(e1);
-			throw new RuntimeException(e1);
+			throw f;
 		}
 		List<Journal> result = new LinkedList<>();
 		ObjectSerializer<Journal> s = new ObjectSerializer<>(Journal.class);
@@ -143,7 +177,7 @@ abstract class ArchiveEntryDatabase implements EntryDatabase {
 			FailToSyncEntryException f = new FailToSyncEntryException(
 					"Cannot read entries from archive:" + e.getMessage());
 			f.initCause(e);
-			throw new RuntimeException(f);
+			throw f;
 		}
 	}
 
@@ -152,6 +186,15 @@ abstract class ArchiveEntryDatabase implements EntryDatabase {
 	private final File archiveFile;
 	private boolean isLoaded;
 
+	/**
+	 * creates an {@link ArchiveEntryDatabase} at the given location
+	 * 
+	 * This constructor creates an {@link ArchiveEntryDatabase} that is based on
+	 * the file given.
+	 * 
+	 * @param archiveFile
+	 *            the archive file to I/O
+	 */
 	public ArchiveEntryDatabase(File archiveFile) {
 		buffer = new TreeMap<>();
 		currentId = 0;
@@ -203,26 +246,47 @@ abstract class ArchiveEntryDatabase implements EntryDatabase {
 
 	/**
 	 * write all entries in memory to the archive
+	 * 
+	 * This method flushes all {@link Journal} to the archive file specified in
+	 * {@link ArchiveEntryDatabase#ArchiveEntryDatabase(File)}
 	 */
 	public void flush() {
-		write(getAll().toArray(new Journal[0]));
+		try {
+			write(getAll().toArray(new Journal[0]));
+		} catch (FailToSyncEntryException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
 	 * load all entries from an archive into memory
+	 * 
+	 * This method loads all {@link Journal}s in the archive file specified in
+	 * {@link ArchiveEntryDatabase#ArchiveEntryDatabase(File)} into memory.
 	 */
 	public void load() {
+
 		if (isLoaded) {
 			return;
 		}
-		isLoaded = true;
+
+		Journal[] result = new Journal[0];
+		// portion of possible failure
+		try {
+			result = read();
+		} catch (FailToSyncEntryException e) {
+			throw new RuntimeException(e);
+		}
+
 		long max = 0;
-		for (Journal i : read()) {
+		for (Journal i : result) {
 			buffer.put(i.getId(), i);
 			if (i.getId() > max) {
 				max = i.getId();
 			}
 		}
+
+		isLoaded = true;
 		this.currentId = max + 1;
 	}
 

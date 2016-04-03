@@ -17,6 +17,27 @@ import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.utils.file.CommonFunctions;
 
+/**
+ * The provider providing a type of {@link EntryDatabase} stored in archive
+ * format
+ * 
+ * This class is a {@link Provider} providing implementations of archive
+ * {@link EntryDatabase}. The default implementation is ArArchive. All
+ * {@link EntryDatabase} provided will store data in directory <i>./data</i> if
+ * <i>system.portable = true</i> in the {@link Configuration}. Otherwise, it
+ * will store data in <i>{user.home}/.vsDiary/data</i>. This provider will
+ * periodically flushes all used {@link EntryDatabase} with a {@link Timer}. It
+ * also caches {@link EntryDatabase} when the instance is requested.
+ * 
+ * This provider does not have any configuration.
+ * 
+ * <p>
+ * This class is NOT thread safe
+ * </p>
+ * 
+ * @author sdai
+ *
+ */
 public final class ViperfishArchiveDBProvider implements Provider<EntryDatabase> {
 
 	private final Map<String, Class<? extends ArchiveEntryDatabase>> dbs;
@@ -27,6 +48,13 @@ public final class ViperfishArchiveDBProvider implements Provider<EntryDatabase>
 	private Timer t;
 	private boolean isUsed;
 
+	/**
+	 * creates an {@link ViperfishArchiveDBProvider}
+	 * 
+	 * This constructor creates an {@link ViperfishArchiveDBProvider} and
+	 * creates the data directory. It will start a background {@link Timer} for
+	 * periodically flushing used {@link EntryDatabase}
+	 */
 	public ViperfishArchiveDBProvider() {
 		dbs = new HashMap<>();
 		concretes = new HashMap<>();
@@ -46,6 +74,9 @@ public final class ViperfishArchiveDBProvider implements Provider<EntryDatabase>
 		t = new Timer();
 	}
 
+	/**
+	 * adds available archives
+	 */
 	private void addArchives() {
 		dbs.put("ArArchive", ArArchiveEntryDatabase.class);
 		dbs.put("CpioArchive", CpioArchiveEntryDatabase.class);
@@ -53,6 +84,9 @@ public final class ViperfishArchiveDBProvider implements Provider<EntryDatabase>
 		dbs.put("ZipArchive", ZipArchiveEntryDatabase.class);
 	}
 
+	/**
+	 * flush all {@link EntryDatabase} created
+	 */
 	private void flushAll() {
 		for (Entry<String, ArchiveEntryDatabase> i : concretes.entrySet()) {
 			i.getValue().flush();

@@ -32,7 +32,11 @@ import net.viperfish.utils.file.CommonFunctions;
 import net.viperfish.utils.index.Indexer;
 
 /**
- * the Main class of the application, contains all the components
+ * the Main class of the application, contains all the components.
+ * 
+ * <p>
+ * This class is designed to run on single thread only
+ * </p>
  * 
  * @author sdai
  * 
@@ -45,6 +49,11 @@ final public class JournalApplication {
 	public JournalApplication() {
 	}
 
+	/**
+	 * load all providers.
+	 * 
+	 * This method loads all provider available.
+	 */
 	public static void initModules() {
 
 		// prepare to load modules
@@ -71,8 +80,10 @@ final public class JournalApplication {
 	}
 
 	/**
-	 * This cleans up all the resources, disposes all providers, and terminate
-	 * the worker
+	 * clean up opened resources
+	 * 
+	 * This method terminates the worker, and disposes all providers.
+	 * 
 	 */
 	public static void cleanUp() {
 		OperationExecutors.dispose();
@@ -85,7 +96,10 @@ final public class JournalApplication {
 	}
 
 	/**
-	 * clear all for testing purposes and if configuration was aborted
+	 * deletes all resources
+	 * 
+	 * This method removes all resources used by all providers. It also remove
+	 * all configurations
 	 */
 	public static void revert() {
 		for (Entry<String, Provider<? extends EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders()
@@ -108,11 +122,14 @@ final public class JournalApplication {
 			i.getValue().delete();
 		}
 		Configuration.delete();
-		CommonFunctions.delete(modules);
 	}
 
 	/**
-	 * set the default providers to viperfish, the built-in provider
+	 * set default providers
+	 * 
+	 * This method sets default providers to <i>viperfish</i>, the built in
+	 * provider, if no default providers are specified. Otherwise, it uses the
+	 * ones configured.
 	 */
 	public static void defaultProviders() {
 		if (!Configuration.containsKey(ConfigMapping.AUTH_PROVIDER)) {
@@ -131,8 +148,10 @@ final public class JournalApplication {
 	}
 
 	/**
-	 * synchronize the configuration of defualt providers with the actual
-	 * provider managers
+	 * set built-in provider in configuration
+	 * 
+	 * This method sets default providers to <i>viperfish</i> in the
+	 * configuration
 	 */
 	private static void setDefaultProviders() {
 		AuthManagers.INSTANCE.setDefaultAuthProvider(Configuration.getString(ConfigMapping.AUTH_PROVIDER));
@@ -142,6 +161,12 @@ final public class JournalApplication {
 				.setDefaultTransformerProvider(Configuration.getString(ConfigMapping.TRANSFORMER_PROVIDER));
 	}
 
+	/**
+	 * set all configuration to default
+	 * 
+	 * This method sets all configuration of all loaded providers to its default
+	 * configuration
+	 */
 	private static void defaultPreferences() {
 		for (Entry<String, Provider<? extends EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders()
 				.entrySet()) {

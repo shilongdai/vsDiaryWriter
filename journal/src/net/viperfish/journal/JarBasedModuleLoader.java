@@ -22,8 +22,39 @@ import net.viperfish.journal.framework.provider.JournalTransformers;
 import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.utils.index.Indexer;
 
+/**
+ * a module loader that loads providers from jar files
+ * 
+ * This class loads provider from jar files in a specified directory. The
+ * manifest of the jar file must contain a provider-class and a provider-type
+ * attribute. The provider-class attribute should be the full name of the meta
+ * provider in the jar file. The provider-type can be
+ * <ul>
+ * <li><i>database</i>: if the provider provides {@link EntryDatabase}</li>
+ * <i>indexer</i>: if the provider provides {@link Indexer}
+ * <li><i>transformer</i>: if the provider provides {@link JournalTransformer}
+ * <li><i>auth</i>: if the provider provides {@link AuthenticationManager}
+ * <li>
+ * </ul>
+ * If the jar file fails to load or contains invalid information, it will be
+ * skipped.
+ *
+ * 
+ * @author sdai
+ *
+ */
 final class JarBasedModuleLoader implements ModuleLoader {
 
+	/**
+	 * checks if the class being tested can be created and used.
+	 * 
+	 * This method tests whether a class is a concrete public class that can be
+	 * successfully created and used by this application
+	 * 
+	 * @param toTest
+	 *            the class to test
+	 * @return true if usable, false if unsable
+	 */
 	private boolean isUsable(Class<?> toTest) {
 		if (Modifier.isAbstract(toTest.getModifiers())) {
 			return false;
