@@ -9,4 +9,4 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 
-java -jar $SOURCE/full-journal-2.1.0.jar;
+java -jar $DIR/full-journal-2.1.0.jar;
