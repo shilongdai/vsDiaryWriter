@@ -87,7 +87,12 @@ public class ExceptionDisplayer implements Observer<Exception> {
 			@Override
 			public void run() {
 				try {
-					throw e.getCause();
+					Throwable t = e.getCause();
+					if (t != null) {
+						throw e.getCause();
+					} else {
+						throw e;
+					}
 				} catch (CompromisedDataException e1) {
 					MessageDialog.openWarning(null, "Security Compromise", "Your entries are corrupted or compromised");
 					logger.log(Level.SEVERE, e1.getMessage(), e1);

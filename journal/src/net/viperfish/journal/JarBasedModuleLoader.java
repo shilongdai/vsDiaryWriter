@@ -78,7 +78,7 @@ final class JarBasedModuleLoader implements ModuleLoader {
 			try (JarFile jarFile = new JarFile(i)) {
 				Manifest manifest = jarFile.getManifest();
 				String provider = manifest.getMainAttributes().getValue("provider-class");
-				String type = manifest.getMainAttributes().getValue("provider-type:");
+				String type = manifest.getMainAttributes().getValue("provider-type");
 				if (provider == null || type == null) {
 					continue;
 				}

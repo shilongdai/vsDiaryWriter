@@ -38,7 +38,7 @@ public final class Journal implements Comparable<Journal>, Serializable {
 
 	public Journal(Journal src) {
 		this.date = new Date(src.getDate().getTime());
-		this.id = new Long(src.getId());
+		this.id = src.getId();
 		this.content = src.getContent();
 		this.subject = src.getSubject();
 	}
