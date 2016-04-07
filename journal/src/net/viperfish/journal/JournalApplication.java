@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import org.apache.commons.configuration.ConfigurationException;
 import org.eclipse.jface.preference.PreferenceNode;
 
-import net.viperfish.journal.archieveDB.ViperfishArchiveDBProvider;
 import net.viperfish.journal.authProvider.ViperfishAuthProvider;
 import net.viperfish.journal.dbProvider.ViperfishEntryDatabaseProvider;
 import net.viperfish.journal.framework.AuthenticationManager;
@@ -71,7 +70,6 @@ final public class JournalApplication {
 		// register the providers
 		AuthManagers.INSTANCE.registerAuthProvider(new ViperfishAuthProvider());
 		EntryDatabases.INSTANCE.registerEntryDatabaseProvider(new ViperfishEntryDatabaseProvider());
-		EntryDatabases.INSTANCE.registerEntryDatabaseProvider(new ViperfishArchiveDBProvider());
 		Indexers.INSTANCE.registerIndexerProvider(new ViperfishIndexerProvider());
 		JournalTransformers.INSTANCE.registerTransformerProvider(new ViperfishEncryptionProvider());
 
