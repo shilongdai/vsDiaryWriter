@@ -37,9 +37,46 @@ final class ChangeConfigurationOperation extends InjectedOperation {
 		auth().clear();
 	}
 
+	private Map<String, String> backUpConfig(Map<String, String> newConfig) {
+		Map<String, String> old = new HashMap<>();
+		for (Entry<String, String> i : newConfig.entrySet()) {
+			old.put(i.getKey(), Configuration.getString(i.getKey()));
+		}
+		return old;
+	}
+
+	private void revert(List<Journal> all, String password, Map<String, String> old) {
+		// reverts configuration
+		for (Entry<String, String> i : old.entrySet()) {
+			Configuration.setProperty(i.getKey(), i.getValue());
+		}
+
+		// refresh all providers to reflect changes in configuration
+		EntryDatabases.INSTANCE.refreshAll();
+		Indexers.INSTANCE.refreshAll();
+		AuthManagers.INSTANCE.refreshAll();
+		JournalTransformers.INSTANCE.refreshAll();
+		// re-initialize components
+		this.refresh();
+
+		// clear new components
+		resetUnits();
+		// set the password on the new Auth manager
+		auth().setPassword(password);
+
+		// re-add all entries to reflect changes in the encryption
+		// configuration, entry database, and indexer
+		for (Journal i : all) {
+			i.setId(null);
+			db().addEntry(i);
+			indexer().add(i);
+		}
+	}
+
 	@Override
 	public void execute() {
-		System.err.println("performing expensive apply configuration");
+
+		Map<String, String> old = backUpConfig(config);
 
 		// actually load all units
 		this.refresh();
@@ -50,42 +87,49 @@ final class ChangeConfigurationOperation extends InjectedOperation {
 		// save the password in memory
 		String password = auth().getPassword();
 
-		// clear all entries
-		resetUnits();
-
-		// updates configuration
-		for (Entry<String, String> i : config.entrySet()) {
-			Configuration.setProperty(i.getKey(), i.getValue());
-		}
-
-		// refresh all providers to reflect changes in configuration
-		EntryDatabases.INSTANCE.refreshAll();
-		Indexers.INSTANCE.refreshAll();
-		AuthManagers.INSTANCE.refreshAll();
-		JournalTransformers.INSTANCE.refreshAll();
-
-		// re-initialize components
-		this.refresh();
-
-		// clear new components
-		resetUnits();
-
-		// set the password on the new Auth manager
-		auth().setPassword(password);
-
-		// re-add all entries to reflect changes in the encryption
-		// configuration, entry database, and indexer
-		for (Journal i : result) {
-			i.setId(null);
-			db().addEntry(i);
-			indexer().add(i);
-		}
-
-		// save the configuration
 		try {
-			Configuration.save();
-		} catch (ConfigurationException e) {
-			throw new RuntimeException(e);
+
+			// clear all entries
+			resetUnits();
+
+			// updates configuration
+			for (Entry<String, String> i : config.entrySet()) {
+				Configuration.setProperty(i.getKey(), i.getValue());
+			}
+
+			// refresh all providers to reflect changes in configuration
+			EntryDatabases.INSTANCE.refreshAll();
+			Indexers.INSTANCE.refreshAll();
+			AuthManagers.INSTANCE.refreshAll();
+			JournalTransformers.INSTANCE.refreshAll();
+
+			// re-initialize components
+			this.refresh();
+
+			// clear new components
+			resetUnits();
+
+			// set the password on the new Auth manager
+			auth().setPassword(password);
+
+			// re-add all entries to reflect changes in the encryption
+			// configuration, entry database, and indexer
+			for (Journal i : result) {
+				i.setId(null);
+				db().addEntry(i);
+				indexer().add(i);
+			}
+		} catch (RuntimeException e1) {
+			revert(result, password, old);
+			throw e1;
+		} finally {
+
+			// save the configuration
+			try {
+				Configuration.save();
+			} catch (ConfigurationException e) {
+				throw new RuntimeException(e);
+			}
 		}
 
 	}
