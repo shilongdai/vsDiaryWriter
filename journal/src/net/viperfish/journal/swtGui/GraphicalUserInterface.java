@@ -38,7 +38,7 @@ public class GraphicalUserInterface extends UserInterface {
 
 	@Override
 	public ExitStatus setFirstPassword() {
-		boolean passwordSet = setPassword.open(PasswordOperation.SET);
+		boolean passwordSet = setPassword.open();
 		if (!passwordSet) {
 			return ExitStatus.CANCEL;
 		}

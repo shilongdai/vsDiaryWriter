@@ -10,6 +10,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.InjectedOperation;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.errors.ChangeConfigurationFailException;
 import net.viperfish.journal.framework.provider.AuthManagers;
 import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.journal.framework.provider.Indexers;
@@ -121,14 +122,18 @@ final class ChangeConfigurationOperation extends InjectedOperation {
 			}
 		} catch (RuntimeException e1) {
 			revert(result, password, old);
-			throw e1;
+			ChangeConfigurationFailException cf = new ChangeConfigurationFailException(
+					"Failed to change components from:" + old + " to:" + config + "message:" + e1.getMessage(), e1);
+			throw new RuntimeException(cf);
 		} finally {
 
 			// save the configuration
 			try {
 				Configuration.save();
 			} catch (ConfigurationException e) {
-				throw new RuntimeException(e);
+				ChangeConfigurationFailException cf = new ChangeConfigurationFailException(
+						"Failed to save configuration, change not persistent.", e);
+				throw new RuntimeException(cf);
 			}
 		}
 

@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.viperfish.journal.framework.Observer;
+import net.viperfish.journal.framework.errors.ChangeConfigurationFailException;
 import net.viperfish.journal.framework.errors.CipherException;
 import net.viperfish.journal.framework.errors.CompromisedDataException;
 import net.viperfish.journal.framework.errors.FailToExportEntriesException;
@@ -120,6 +121,10 @@ public class ExceptionDisplayer implements Observer<Exception> {
 					logger.log(Level.WARNING, e1.getMessage(), e1);
 				} catch (FailToExportEntriesException e1) {
 					MessageDialog.openError(null, "Cannot Export", "Cannot export entries");
+					logger.log(Level.WARNING, e1.getMessage(), e1);
+				} catch (ChangeConfigurationFailException e1) {
+					MessageDialog.openError(null, "Change Failed",
+							"Failed to change configuration. We have reverted your change. Please check the condition of the modules");
 					logger.log(Level.WARNING, e1.getMessage(), e1);
 				} catch (Throwable e1) {
 					errorDialogWithStackTrace("Exception Occured", e1);

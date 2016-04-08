@@ -495,8 +495,8 @@ public class JournalWindow {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				super.widgetSelected(arg0);
-				SetPasswordPrompt prompt = new SetPasswordPrompt();
-				prompt.open(PasswordOperation.CHANGE);
+				ChangePasswordPrompt prompt = new ChangePasswordPrompt();
+				prompt.open();
 			}
 
 		});
