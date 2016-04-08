@@ -15,7 +15,8 @@ import net.viperfish.utils.file.CommonFunctions;
 public final class ViperfishEncryptionProvider implements Provider<JournalTransformer> {
 
 	private File secureDir;
-	private BlockCipherMacTransformer buffer;
+	private BlockCipherMacTransformer bm;
+	private StreamCipherTransformer sc;
 
 	public ViperfishEncryptionProvider() {
 		if (Configuration.containsKey(ConfigMapping.PORTABLE) && Configuration.getBoolean(ConfigMapping.PORTABLE)) {
@@ -32,8 +33,7 @@ public final class ViperfishEncryptionProvider implements Provider<JournalTransf
 	@Override
 	public JournalTransformer newInstance() {
 		try {
-			buffer = new BlockCipherMacTransformer(new File(secureDir.getCanonicalPath() + "/salt"));
-			return buffer;
+			return new BlockCipherMacTransformer(new File(secureDir.getCanonicalPath() + "/salt"));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -41,16 +41,19 @@ public final class ViperfishEncryptionProvider implements Provider<JournalTransf
 
 	@Override
 	public JournalTransformer getInstance() {
-		if (buffer == null) {
-			newInstance();
+		if (bm == null) {
+			bm = new BlockCipherMacTransformer(new File(secureDir.getAbsolutePath() + "/salt"));
 		}
-		return buffer;
+		return bm;
 	}
 
 	@Override
 	public JournalTransformer newInstance(String instance) {
 		if (instance.equals("BlockCipherMAC")) {
 			return newInstance();
+		}
+		if (instance.equals("StreamCipher")) {
+			return new StreamCipherTransformer();
 		}
 		return null;
 	}
@@ -59,6 +62,12 @@ public final class ViperfishEncryptionProvider implements Provider<JournalTransf
 	public JournalTransformer getInstance(String instance) {
 		if (instance.equals("BlockCipherMAC")) {
 			return getInstance();
+		}
+		if (instance.equals("StreamCipher")) {
+			if (sc == null) {
+				sc = new StreamCipherTransformer();
+			}
+			return sc;
 		}
 		return null;
 	}
@@ -98,7 +107,8 @@ public final class ViperfishEncryptionProvider implements Provider<JournalTransf
 
 	@Override
 	public void refresh() {
-		buffer = null;
+		bm = null;
+		sc = null;
 
 	}
 

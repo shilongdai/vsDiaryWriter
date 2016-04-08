@@ -22,7 +22,7 @@ import net.viperfish.journal.framework.errors.CompromisedDataException;
 import net.viperfish.journal.framework.errors.FailToSyncCipherDataException;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
 import net.viperfish.journal.secureAlgs.BCPCKDF2Generator;
-import net.viperfish.journal.secureAlgs.Encryptor;
+import net.viperfish.journal.secureAlgs.BlockCipherEncryptor;
 import net.viperfish.journal.secureAlgs.MacDigester;
 import net.viperfish.journal.secureAlgs.Macs;
 import net.viperfish.journal.secureAlgs.PBKDF2KeyGenerator;
@@ -55,7 +55,7 @@ final class BlockCipherMacTransformer implements JournalTransformer {
 	private byte[] macIV;
 	private byte[] saltForKDF;
 	private SecureRandom rand;
-	private Encryptor enc;
+	private BlockCipherEncryptor enc;
 	private MacDigester expander;
 	private MacDigester mac;
 	private PBKDF2KeyGenerator keyGenerator;

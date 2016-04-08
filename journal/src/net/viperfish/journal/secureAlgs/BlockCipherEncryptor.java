@@ -12,7 +12,7 @@ import javax.crypto.IllegalBlockSizeException;
  * @author sdai
  *
  */
-public abstract class Encryptor {
+public abstract class BlockCipherEncryptor {
 
 	private String mode;
 
