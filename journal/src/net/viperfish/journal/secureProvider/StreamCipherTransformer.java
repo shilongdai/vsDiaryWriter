@@ -1,48 +1,40 @@
 package net.viperfish.journal.secureProvider;
 
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.security.SecureRandom;
 
 import org.apache.commons.codec.binary.Base64;
 
-import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.framework.JournalTransformer;
-import net.viperfish.journal.secureAlgs.BCPCKDF2Generator;
+import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.secureAlgs.MacDigester;
 import net.viperfish.journal.secureAlgs.Macs;
-import net.viperfish.journal.secureAlgs.PBKDF2KeyGenerator;
 import net.viperfish.journal.streamCipher.StreamCipherEncryptor;
 import net.viperfish.journal.streamCipher.StreamCipherEncryptors;
 
-final class StreamCipherTransformer implements JournalTransformer {
+final class StreamCipherTransformer extends CompressMacTransformer {
 
-	private StreamCipherEncryptor enc;
+	public static final String ALG_NAME = "net.viperfish.secure.streamCipher";
+
 	private byte[] masterKey;
-	private PBKDF2KeyGenerator generator;
 	private MacDigester macGen;
+	private SecureRandom rand;
+	private String algName;
 
-	StreamCipherTransformer() {
-		enc = StreamCipherEncryptors.INSTANCE.getEncryptor("HC256");
-		generator = new BCPCKDF2Generator();
-		generator.setDigest("SHA256");
-		generator.setIteration(64000);
-		generator.setSalt(new byte[] { 44, 45, 23, 64, 98, 36, 74, 53 });
+	StreamCipherTransformer(File salt) {
+		super(salt);
+		rand = new SecureRandom();
+		algName = Configuration.getString(ALG_NAME);
 		macGen = Macs.getMac("HMAC");
 		macGen.setMode("SHA512");
 	}
 
-	private byte[] generateSubKey(Journal feed, int length) {
+	private byte[] generateSubKey(byte[] feed, int length) {
 		byte[] subKey = new byte[length];
 		macGen.setKey(masterKey);
 
-		String date = feed.getDate().toString();
-
-		String combo = date;
-
-		byte[] macContent = combo.getBytes(StandardCharsets.UTF_16);
-
 		int currentLength = 0;
 		while (currentLength != length) {
-			byte[] temp = macGen.calculateMac(macContent);
+			byte[] temp = macGen.calculateMac(feed);
 			int willAdd = (length - currentLength) > temp.length ? temp.length : length - currentLength;
 			System.arraycopy(temp, 0, subKey, currentLength, willAdd);
 			currentLength += willAdd;
@@ -52,54 +44,58 @@ final class StreamCipherTransformer implements JournalTransformer {
 	}
 
 	@Override
-	public Journal encryptJournal(Journal j) {
-		int keysize = StreamCipherEncryptors.INSTANCE.getKeySize("HC256");
-		int ivSize = StreamCipherEncryptors.INSTANCE.getIVSize("HC256");
-		keysize /= 8;
-		ivSize /= 8;
-		byte[] combo = generateSubKey(j, ivSize + keysize);
-		byte[] key = new byte[keysize];
-		System.arraycopy(combo, 0, key, 0, keysize);
-		byte[] iv = new byte[ivSize];
-		System.arraycopy(combo, keysize, iv, 0, ivSize);
-
-		byte[] encryptedSubject = enc.encrypt(j.getSubject().getBytes(StandardCharsets.UTF_16), key, iv);
-		byte[] encryptedContent = enc.encrypt(j.getContent().getBytes(StandardCharsets.UTF_16), key, iv);
-
-		Journal result = new Journal(j);
-		result.setSubject(Base64.encodeBase64String(encryptedSubject));
-		result.setContent(Base64.encodeBase64String(encryptedContent));
-		return result;
-	}
-
-	@Override
-	public Journal decryptJournal(Journal j) {
-		int keysize = StreamCipherEncryptors.INSTANCE.getKeySize("HC256");
-		int ivSize = StreamCipherEncryptors.INSTANCE.getIVSize("HC256");
-
-		keysize /= 8;
-		ivSize /= 8;
-		byte[] combo = generateSubKey(j, ivSize + keysize);
-		byte[] key = new byte[keysize];
-		System.arraycopy(combo, 0, key, 0, keysize);
-		byte[] iv = new byte[ivSize];
-		System.arraycopy(combo, keysize, iv, 0, ivSize);
-
-		byte[] cipheredSubject = Base64.decodeBase64(j.getSubject());
-		byte[] cipheredContent = Base64.decodeBase64(j.getContent());
-
-		String subject = new String(enc.decrypt(cipheredSubject, key, iv), StandardCharsets.UTF_16);
-		String content = new String(enc.decrypt(cipheredContent, key, iv), StandardCharsets.UTF_16);
-
-		Journal result = new Journal(j);
-		result.setSubject(subject);
-		result.setContent(content);
-		return result;
-	}
-
-	@Override
 	public void setPassword(String pass) {
-		masterKey = generator.generate(pass, generator.getDigestSize());
+		masterKey = this.generateKey(pass);
+		byte[] macKey = generateSubKey("Mac Key".getBytes(), getMacKeySize() / 8);
+		this.initMac(macKey);
+	}
+
+	@Override
+	protected String encryptData(byte[] bytes) {
+		byte[] randomSource = new byte[16];
+		rand.nextBytes(randomSource);
+
+		int keysize = StreamCipherEncryptors.INSTANCE.getKeySize(algName) / 8;
+		int ivsize = StreamCipherEncryptors.INSTANCE.getIVSize(algName) / 8;
+
+		byte[] keyCombo = generateSubKey(randomSource, keysize + ivsize);
+		byte[] key = new byte[keysize];
+		byte[] iv = new byte[ivsize];
+
+		System.arraycopy(keyCombo, 0, key, 0, keysize);
+		System.arraycopy(keyCombo, keysize, iv, 0, ivsize);
+
+		StreamCipherEncryptor enc = StreamCipherEncryptors.INSTANCE.getEncryptor(algName);
+
+		byte[] ecrypted = enc.encrypt(bytes, key, iv);
+
+		String randString = Base64.encodeBase64String(randomSource);
+		String encryptedString = Base64.encodeBase64String(ecrypted);
+		return randString + "&" + encryptedString;
+	}
+
+	@Override
+	protected byte[] decryptData(String cData) {
+		String[] segments = cData.split("&");
+		if (segments.length != 2) {
+			throw new IllegalArgumentException("Expected 2 segments, got:" + segments.length);
+		}
+
+		byte[] randomSource = Base64.decodeBase64(segments[0]);
+		byte[] ciphered = Base64.decodeBase64(segments[1]);
+
+		int keysize = StreamCipherEncryptors.INSTANCE.getKeySize(algName) / 8;
+		int ivsize = StreamCipherEncryptors.INSTANCE.getIVSize(algName) / 8;
+
+		byte[] keyCombo = generateSubKey(randomSource, keysize + ivsize);
+		byte[] key = new byte[keysize];
+		byte[] iv = new byte[ivsize];
+		System.arraycopy(keyCombo, 0, key, 0, keysize);
+		System.arraycopy(keyCombo, keysize, iv, 0, ivsize);
+
+		StreamCipherEncryptor enc = StreamCipherEncryptors.INSTANCE.getEncryptor(algName);
+
+		return enc.decrypt(ciphered, key, iv);
 	}
 
 }

@@ -9,14 +9,13 @@ import net.viperfish.journal.framework.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
 import net.viperfish.journal.operation.StoreConfigurationBufferOperation;
 
-public final class BlockCipherMacPreference extends PreferencePage {
+public final class CompressMacPreference extends PreferencePage {
 
 	private SecurityConfigComposite com;
 
-	public BlockCipherMacPreference() {
-		super("Block Cipher MAC Encryption");
-		this.setDescription(
-				"Configures the settings for Encryption using a block cipher, mac, and a compression algorithm");
+	public CompressMacPreference() {
+		super("Encryption");
+		this.setDescription("Configures the settings for Encryption using a mac and a compression algorithm");
 	}
 
 	@Override

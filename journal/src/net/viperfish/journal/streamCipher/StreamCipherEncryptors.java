@@ -25,7 +25,7 @@ import net.viperfish.utils.TypeCache;
 public enum StreamCipherEncryptors {
 	INSTANCE;
 
-	private final static int RC4_KEYSIZE = 2048;
+	private final static int RC4_KEYSIZE = 512;
 	private final static int HC128_KEYSIZE = 128;
 	private final static int HC256_KEYSIZE = 256;
 	private final static int ChaCha_KEYSIZE = 256;
@@ -41,6 +41,9 @@ public enum StreamCipherEncryptors {
 	private final static int XSalsa20_IV = 192;
 	private final static int Grainv1_IV = 64;
 	private final static int Grain128_IV = 96;
+	private final static int HC256_IV = 256;
+	private final static int HC128_IV = 128;
+	private final static int VMPC_IV = 512;
 
 	private TypeCache streamCipherCache;
 	private Map<String, Class<? extends StreamCipher>> ciphers;
@@ -89,14 +92,21 @@ public enum StreamCipherEncryptors {
 		ivs.put("XSalsa20", XSalsa20_IV);
 		ivs.put("Grainv1", Grainv1_IV);
 		ivs.put("Grain128", Grain128_IV);
-		ivs.put("HC256", 256);
-		ivs.put("HC128", 128);
+		ivs.put("HC256", HC256_IV);
+		ivs.put("HC128", HC128_IV);
+		ivs.put("VMPC", VMPC_IV);
 	}
 
 	public StreamCipherEncryptor getEncryptor(String cipher) {
 		try {
 			StreamCipher resultCipher = this.streamCipherCache.getObject(ciphers.get(cipher), new Object[0]);
-			return new BCStreamCipherEncryptor(resultCipher);
+			switch (cipher) {
+			case "ISACC":
+			case "RC4": {
+				return new BCKeyStreamCipherEncryptor(resultCipher);
+			}
+			}
+			return new BCIVStreamCipherEncryptor(resultCipher);
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);

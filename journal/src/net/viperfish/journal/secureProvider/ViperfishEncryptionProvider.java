@@ -53,7 +53,7 @@ public final class ViperfishEncryptionProvider implements Provider<JournalTransf
 			return newInstance();
 		}
 		if (instance.equals("StreamCipher")) {
-			return new StreamCipherTransformer();
+			return new StreamCipherTransformer(new File(secureDir, "salt"));
 		}
 		return null;
 	}
@@ -65,7 +65,7 @@ public final class ViperfishEncryptionProvider implements Provider<JournalTransf
 		}
 		if (instance.equals("StreamCipher")) {
 			if (sc == null) {
-				sc = new StreamCipherTransformer();
+				sc = new StreamCipherTransformer(new File(secureDir, "salt"));
 			}
 			return sc;
 		}
@@ -126,8 +126,11 @@ public final class ViperfishEncryptionProvider implements Provider<JournalTransf
 
 	@Override
 	public void registerConfig() {
-		PreferenceNode encryption = new PreferenceNode("blockCipherMac", "Encryption", null,
-				BlockCipherMacPreference.class.getCanonicalName());
+		PreferenceNode encryption = new PreferenceNode("compressMac", "Encryption", null,
+				CompressMacPreference.class.getCanonicalName());
+		PreferenceNode blockCipher = new PreferenceNode("blockcipher", "Block Cipher", null,
+				BlockCipherPreferencePage.class.getCanonicalName());
+		encryption.add(blockCipher);
 		PreferenceGUIManager.addToRoot(encryption);
 	}
 

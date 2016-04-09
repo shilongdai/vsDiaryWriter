@@ -23,7 +23,7 @@ import org.bouncycastle.crypto.engines.GOST28147Engine;
 import org.bouncycastle.crypto.engines.IDEAEngine;
 import org.bouncycastle.crypto.engines.NoekeonEngine;
 import org.bouncycastle.crypto.engines.RC2Engine;
-import org.bouncycastle.crypto.engines.RC564Engine;
+import org.bouncycastle.crypto.engines.RC532Engine;
 import org.bouncycastle.crypto.engines.RC6Engine;
 import org.bouncycastle.crypto.engines.SEEDEngine;
 import org.bouncycastle.crypto.engines.SM4Engine;
@@ -35,8 +35,6 @@ import org.bouncycastle.crypto.engines.TwofishEngine;
 import org.bouncycastle.crypto.engines.XTEAEngine;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.modes.CFBBlockCipher;
-import org.bouncycastle.crypto.modes.GCFBBlockCipher;
-import org.bouncycastle.crypto.modes.GOFBBlockCipher;
 import org.bouncycastle.crypto.modes.OFBBlockCipher;
 import org.bouncycastle.crypto.modes.SICBlockCipher;
 import org.bouncycastle.crypto.paddings.BlockCipherPadding;
@@ -72,6 +70,7 @@ public final class BlockCiphers {
 	private static int NOEKEON_KEY_SIZE = 128;
 	private static int RC5_KEYSIZE = 128;
 	private static int RC6_KEY_SIZE = 256;
+	private static int RC2_KEY_SIZE = 512;
 	private static int SEED_KEY_SIZE = 128;
 	private static int SHACAL2_KEY_SIZE = 512;
 	private static int SERPENT_KEY_SIZE = 256;
@@ -110,7 +109,7 @@ public final class BlockCiphers {
 		blockCipherEngines.put("IDEA", IDEAEngine.class);
 		blockCipherEngines.put("Noekeon", NoekeonEngine.class);
 		blockCipherEngines.put("RC2", RC2Engine.class);
-		blockCipherEngines.put("RC5", RC564Engine.class);
+		blockCipherEngines.put("RC5", RC532Engine.class);
 		blockCipherEngines.put("RC6", RC6Engine.class);
 		blockCipherEngines.put("SEED", SEEDEngine.class);
 		blockCipherEngines.put("Serpent", SerpentEngine.class);
@@ -125,8 +124,6 @@ public final class BlockCiphers {
 	private static void initBlockCipherModes() {
 		blockCipherMode.put("CBC", CBCBlockCipher.class);
 		blockCipherMode.put("CFB", CFBBlockCipher.class);
-		blockCipherMode.put("GCFB", GCFBBlockCipher.class);
-		blockCipherMode.put("GOFB", GOFBBlockCipher.class);
 		blockCipherMode.put("OFB", OFBBlockCipher.class);
 		blockCipherMode.put("CTR", SICBlockCipher.class);
 	}
@@ -211,6 +208,9 @@ public final class BlockCiphers {
 		}
 		if (algorithm.equalsIgnoreCase("SM4")) {
 			return SM4_KEY_SIZE;
+		}
+		if (algorithm.equalsIgnoreCase("RC2")) {
+			return RC2_KEY_SIZE;
 		}
 		if (algorithm.matches("\\w+(\\W|\\S)?\\d+")) {
 			Matcher num = Pattern.compile("\\d+").matcher(algorithm);
