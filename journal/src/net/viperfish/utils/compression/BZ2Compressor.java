@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
+import org.apache.commons.compress.compressors.CompressorException;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
 
 /**
  * compressor with BZip 2 algorithm
@@ -18,13 +18,13 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream
 final class BZ2Compressor extends Compressor {
 
 	@Override
-	protected OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException {
-		return new BZip2CompressorOutputStream(out);
+	protected OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException, CompressorException {
+		return getFactory().createCompressorOutputStream(CompressorStreamFactory.BZIP2, out);
 	}
 
 	@Override
-	protected InputStream createInputStream(ByteArrayInputStream in) throws IOException {
-		return new BZip2CompressorInputStream(in);
+	protected InputStream createInputStream(ByteArrayInputStream in) throws IOException, CompressorException {
+		return getFactory().createCompressorInputStream(CompressorStreamFactory.BZIP2, in);
 	}
 
 }

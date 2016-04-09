@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.compress.compressors.deflate.DeflateCompressorInputStream;
-import org.apache.commons.compress.compressors.deflate.DeflateCompressorOutputStream;
+import org.apache.commons.compress.compressors.CompressorException;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
 
 /**
  * compressor with DEFLATE algorithm
@@ -18,13 +18,13 @@ import org.apache.commons.compress.compressors.deflate.DeflateCompressorOutputSt
 final class DEFLATECompressor extends Compressor {
 
 	@Override
-	protected OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException {
-		return new DeflateCompressorOutputStream(out);
+	protected OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException, CompressorException {
+		return getFactory().createCompressorOutputStream(CompressorStreamFactory.DEFLATE, out);
 	}
 
 	@Override
-	protected InputStream createInputStream(ByteArrayInputStream in) throws IOException {
-		return new DeflateCompressorInputStream(in);
+	protected InputStream createInputStream(ByteArrayInputStream in) throws IOException, CompressorException {
+		return getFactory().createCompressorInputStream(CompressorStreamFactory.DEFLATE, in);
 	}
 
 }

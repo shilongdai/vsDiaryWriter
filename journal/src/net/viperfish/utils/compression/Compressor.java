@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.compress.compressors.CompressorException;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.compress.utils.IOUtils;
 
 /**
@@ -16,8 +18,14 @@ import org.apache.commons.compress.utils.IOUtils;
  */
 public abstract class Compressor {
 
-	Compressor() {
+	private CompressorStreamFactory fact;
 
+	Compressor() {
+		fact = new CompressorStreamFactory();
+	}
+
+	protected CompressorStreamFactory getFactory() {
+		return fact;
 	}
 
 	/**
@@ -27,8 +35,10 @@ public abstract class Compressor {
 	 *            the byte array to store compressed data
 	 * @return the usable compression output stream
 	 * @throws IOException
+	 * @throws CompressorException
 	 */
-	protected abstract OutputStream createOutputStream(ByteArrayOutputStream out) throws IOException;
+	protected abstract OutputStream createOutputStream(ByteArrayOutputStream out)
+			throws IOException, CompressorException;
 
 	/**
 	 * create a compression input stream used to depress date
@@ -37,8 +47,9 @@ public abstract class Compressor {
 	 *            the byte array to read from
 	 * @return the usable compression input stream
 	 * @throws IOException
+	 * @throws CompressorException
 	 */
-	protected abstract InputStream createInputStream(ByteArrayInputStream in) throws IOException;
+	protected abstract InputStream createInputStream(ByteArrayInputStream in) throws IOException, CompressorException;
 
 	/**
 	 * compress data with a compression algorithm
@@ -55,7 +66,7 @@ public abstract class Compressor {
 			compressor.flush();
 			compressor.close();
 			return out.toByteArray();
-		} catch (IOException e) {
+		} catch (IOException | CompressorException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -71,7 +82,7 @@ public abstract class Compressor {
 		ByteArrayInputStream in = new ByteArrayInputStream(data);
 		try (InputStream depressor = createInputStream(in)) {
 			return IOUtils.toByteArray(depressor);
-		} catch (IOException e) {
+		} catch (IOException | CompressorException e) {
 			throw new RuntimeException(e);
 		}
 	}
