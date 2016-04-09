@@ -74,7 +74,7 @@ public final class ViperfishEncryptionProvider implements Provider<JournalTransf
 
 	@Override
 	public String[] getSupported() {
-		return new String[] { "BlockCipherMAC" };
+		return new String[] { "BlockCipherMAC", "StreamCipher" };
 	}
 
 	@Override
@@ -130,7 +130,10 @@ public final class ViperfishEncryptionProvider implements Provider<JournalTransf
 				CompressMacPreference.class.getCanonicalName());
 		PreferenceNode blockCipher = new PreferenceNode("blockcipher", "Block Cipher", null,
 				BlockCipherPreferencePage.class.getCanonicalName());
+		PreferenceNode streamCipher = new PreferenceNode("streamcipher", "Stream Cipher", null,
+				StreamCipherPreferencePage.class.getCanonicalName());
 		encryption.add(blockCipher);
+		encryption.add(streamCipher);
 		PreferenceGUIManager.addToRoot(encryption);
 	}
 

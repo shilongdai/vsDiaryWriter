@@ -192,29 +192,45 @@
 					<finalName>full-${artifactId}-${version}</finalName>
 				</configuration>
 			</plugin>
-			
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jarsigner-plugin</artifactId>
-                <version>1.2</version>
-                <executions>
-                    <execution>
-                        <id>sign</id>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <keystore>${project.basedir}/keystore/keystore.jks</keystore>
-                    <alias>viperfish</alias>
-                    <storepass>Mj2000629@DvpNt</storepass>
-                    <keypass>Mj2000629@DvpNt</keypass>
-                    <archive>target/full-${artifactId}-${version}.jar</archive>
-                    <tsa>http://timestamp.digicert.com</tsa>
-                </configuration>
-            </plugin>
-			
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>sign</id>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<keystore>${project.basedir}/keystore/keystore.jks</keystore>
+					<alias>viperfish</alias>
+					<storepass>Mj2000629@DvpNt</storepass>
+					<keypass>Mj2000629@DvpNt</keypass>
+					<archive>target/full-${artifactId}-${version}.jar</archive>
+					<tsa>http://timestamp.digicert.com</tsa>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<executions>
+					<execution>
+						<id>default-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+
 		</plugins>
 
 	</build>

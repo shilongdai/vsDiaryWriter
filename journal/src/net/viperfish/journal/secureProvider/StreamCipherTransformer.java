@@ -38,6 +38,7 @@ final class StreamCipherTransformer extends CompressMacTransformer {
 			int willAdd = (length - currentLength) > temp.length ? temp.length : length - currentLength;
 			System.arraycopy(temp, 0, subKey, currentLength, willAdd);
 			currentLength += willAdd;
+			feed = temp;
 		}
 		return subKey;
 

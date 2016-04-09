@@ -87,6 +87,7 @@ final class BlockCipherMacTransformer extends CompressMacTransformer {
 			int willAdd = (length - currentLength) > temp.length ? temp.length : length - currentLength;
 			System.arraycopy(temp, 0, result, currentLength, willAdd);
 			currentLength += willAdd;
+			data = temp;
 		}
 		return result;
 	}
