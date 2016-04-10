@@ -79,7 +79,7 @@ public class JournalEditor {
 	 */
 	private void createContents() {
 		shell = new Shell();
-		shell.setImage(SWTResourceManager.getImage(JournalEditor.class, "/resources/logo.ico"));
+		shell.setImage(SWTResourceManager.getImage(JournalEditor.class, "/logo.ico"));
 		shell.setSize(1000, 800);
 		shell.setText("Journal Editor");
 		shell.setLayout(new GridLayout(2, false));

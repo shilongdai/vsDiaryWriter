@@ -145,8 +145,13 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>src/net/viperfish</testSourceDirectory>
+		<sourceDirectory>${project.basedir}/src</sourceDirectory>
+		<testSourceDirectory>${project.basedir}/src/net/viperfish</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -159,6 +164,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
 				<configuration>
 					<archive>
 						<manifest>
@@ -170,6 +176,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.4.3</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -189,7 +196,7 @@
 							</excludes>
 						</filter>
 					</filters>
-					<finalName>full-${artifactId}-${version}</finalName>
+					<finalName>full-${project.artifactId}-${project.version}</finalName>
 				</configuration>
 			</plugin>
 
@@ -210,7 +217,7 @@
 					<alias>viperfish</alias>
 					<storepass>Mj2000629@DvpNt</storepass>
 					<keypass>Mj2000629@DvpNt</keypass>
-					<archive>target/full-${artifactId}-${version}.jar</archive>
+					<archive>target/full-${project.artifactId}-${project.version}.jar</archive>
 					<tsa>http://timestamp.digicert.com</tsa>
 				</configuration>
 			</plugin>

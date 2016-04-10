@@ -36,7 +36,7 @@ abstract class UpdatePasswordPrompt {
 	public boolean open() {
 		Display display = Display.getDefault();
 		final Shell shell = new Shell(SWT.SYSTEM_MODAL | SWT.TITLE | SWT.BORDER);
-		shell.setImage(SWTResourceManager.getImage(UpdatePasswordPrompt.class, "/resources/logo.ico"));
+		shell.setImage(SWTResourceManager.getImage(UpdatePasswordPrompt.class, "/logo.ico"));
 		shell.setSize(500, 250);
 		shell.setText("Set Password");
 		shell.setLayout(new GridLayout(2, false));

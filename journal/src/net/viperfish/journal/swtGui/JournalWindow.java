@@ -190,7 +190,7 @@ public class JournalWindow {
 	public void open() {
 		display = Display.getDefault();
 		shell = new Shell();
-		shell.setImage(SWTResourceManager.getImage(JournalWindow.class, "/resources/logo.ico"));
+		shell.setImage(SWTResourceManager.getImage(JournalWindow.class, "/logo.ico"));
 		shell.setSize(495, 480);
 		shell.setText("vsDiary - 3.1.1");
 		shell.setLayout(new GridLayout(13, false));
