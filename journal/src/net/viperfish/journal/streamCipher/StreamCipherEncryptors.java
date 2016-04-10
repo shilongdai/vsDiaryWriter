@@ -103,10 +103,10 @@ public enum StreamCipherEncryptors {
 			switch (cipher) {
 			case "ISACC":
 			case "RC4": {
-				return new BCKeyStreamCipherEncryptor(resultCipher);
+				return new BCKeyStreamCipherEncryptor(resultCipher, new KeyParamCoverter());
 			}
 			}
-			return new BCIVStreamCipherEncryptor(resultCipher);
+			return new BCKeyStreamCipherEncryptor(resultCipher, new IVKeyParameterConverter());
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);

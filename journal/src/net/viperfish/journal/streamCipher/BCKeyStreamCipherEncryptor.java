@@ -1,14 +1,15 @@
 package net.viperfish.journal.streamCipher;
 
 import org.bouncycastle.crypto.StreamCipher;
-import org.bouncycastle.crypto.params.KeyParameter;
 
 public class BCKeyStreamCipherEncryptor implements StreamCipherEncryptor {
 
 	private StreamCipher engine;
+	private KeyConverter con;
 
-	BCKeyStreamCipherEncryptor(StreamCipher engine) {
+	BCKeyStreamCipherEncryptor(StreamCipher engine, KeyConverter converter) {
 		this.engine = engine;
+		this.con = converter;
 	}
 
 	private byte[] process(byte[] data, StreamCipher engine) {
@@ -22,13 +23,13 @@ public class BCKeyStreamCipherEncryptor implements StreamCipherEncryptor {
 
 	@Override
 	public byte[] encrypt(byte[] data, byte[] key, byte[] iv) {
-		engine.init(true, new KeyParameter(key));
+		engine.init(true, con.convertToParam(key, iv));
 		return process(data, engine);
 	}
 
 	@Override
 	public byte[] decrypt(byte[] data, byte[] key, byte[] iv) {
-		engine.init(false, new KeyParameter(key));
+		engine.init(false, con.convertToParam(key, iv));
 		return process(data, engine);
 	}
 
