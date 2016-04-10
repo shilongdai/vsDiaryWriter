@@ -9,8 +9,6 @@ import java.security.InvalidKeyException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 
-import org.apache.commons.codec.binary.Base64;
-
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
 import net.viperfish.journal.secureAlgs.BlockCipherEncryptor;
@@ -111,10 +109,8 @@ final class BlockCipherMacTransformer extends CompressMacTransformer {
 		try {
 			byte[] cipher = enc.encrypt(bytes);
 			byte[] iv = enc.getIv();
-			String ivString = Base64.encodeBase64String(iv);
-			String cipherString = Base64.encodeBase64String(cipher);
-			cipherString = ivString + "&" + cipherString;
-			return cipherString;
+			ByteParameterPair pair = new ByteParameterPair(cipher, iv);
+			return pair.toString();
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 				| BadPaddingException e) {
 			throw new RuntimeException(e);
@@ -124,16 +120,9 @@ final class BlockCipherMacTransformer extends CompressMacTransformer {
 	@Override
 	protected byte[] decryptData(String data) {
 		try {
-			String[] seg = data.split("&");
-			if (seg.length != 2) {
-				throw new IllegalArgumentException(
-						"Data contains unexpected segment number. Expected 2, got:" + seg.length);
-			}
-			byte[] iv = Base64.decodeBase64(seg[0]);
-			byte[] cipher = Base64.decodeBase64(seg[1]);
-
-			enc.setIv(iv);
-			return enc.decrypt(cipher);
+			ByteParameterPair pair = ByteParameterPair.valueOf(data);
+			enc.setIv(pair.getSecond());
+			return enc.decrypt(pair.getFirst());
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 				| BadPaddingException e) {
 			throw new RuntimeException(e);

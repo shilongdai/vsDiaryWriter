@@ -4,7 +4,7 @@ import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
-public class IVKeyParameterConverter implements KeyConverter {
+final class IVKeyParameterConverter implements KeyConverter {
 
 	@Override
 	public CipherParameters convertToParam(byte[] key, byte[] iv) {
