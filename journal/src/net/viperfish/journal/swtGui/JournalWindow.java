@@ -378,6 +378,9 @@ public class JournalWindow {
 				exportSelector.setOverwrite(true);
 				exportSelector.setText("Enter a location to export");
 				exportSelector.open();
+				if (exportSelector.getFileName() == null || exportSelector.getFileName().length() == 0) {
+					return;
+				}
 				String toExport = new File(exportSelector.getFilterPath(), exportSelector.getFileName())
 						.getAbsolutePath();
 				if (toExport != null) {
@@ -409,8 +412,11 @@ public class JournalWindow {
 				FileDialog selecter = new FileDialog(shell);
 				selecter.setText("Select the file to import");
 				selecter.open();
+				if (selecter.getFileName() == null || selecter.getFileName().length() == 0) {
+					return;
+				}
 				String selected = new File(selecter.getFilterPath(), selecter.getFileName()).getAbsolutePath();
-				if (selected == null) {
+				if (selected == null || selected.length() == 0) {
 					return;
 				}
 				JournalWindow.this.e.submit(f.getImportEntriesOperation(selected));
