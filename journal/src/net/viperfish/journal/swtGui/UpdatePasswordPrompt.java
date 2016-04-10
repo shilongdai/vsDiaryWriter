@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 abstract class UpdatePasswordPrompt {
 	private Text newPassword;
@@ -35,6 +36,7 @@ abstract class UpdatePasswordPrompt {
 	public boolean open() {
 		Display display = Display.getDefault();
 		final Shell shell = new Shell(SWT.SYSTEM_MODAL | SWT.TITLE | SWT.BORDER);
+		shell.setImage(SWTResourceManager.getImage(UpdatePasswordPrompt.class, "/resources/logo.ico"));
 		shell.setSize(500, 250);
 		shell.setText("Set Password");
 		shell.setLayout(new GridLayout(2, false));

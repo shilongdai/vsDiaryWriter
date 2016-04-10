@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalPointer;
@@ -189,6 +190,7 @@ public class JournalWindow {
 	public void open() {
 		display = Display.getDefault();
 		shell = new Shell();
+		shell.setImage(SWTResourceManager.getImage(JournalWindow.class, "/resources/logo.ico"));
 		shell.setSize(495, 480);
 		shell.setText("vsDiary - 3.1.0");
 		shell.setLayout(new GridLayout(13, false));

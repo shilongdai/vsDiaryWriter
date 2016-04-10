@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.swtGui.richTextEditor.RichTextEditor;
@@ -78,6 +79,7 @@ public class JournalEditor {
 	 */
 	private void createContents() {
 		shell = new Shell();
+		shell.setImage(SWTResourceManager.getImage(JournalEditor.class, "/resources/logo.ico"));
 		shell.setSize(1000, 800);
 		shell.setText("Journal Editor");
 		shell.setLayout(new GridLayout(2, false));

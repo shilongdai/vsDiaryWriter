@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.provider.AuthManagers;
@@ -50,6 +51,7 @@ public class LoginPrompt {
 	 */
 	protected void createContents() {
 		shell = new Shell(SWT.SYSTEM_MODAL | SWT.TITLE | SWT.BORDER);
+		shell.setImage(SWTResourceManager.getImage(LoginPrompt.class, "/resources/logo.ico"));
 		shell.setSize(522, 154);
 		shell.setText("Welcome, User");
 		shell.setLayout(new GridLayout(2, false));
