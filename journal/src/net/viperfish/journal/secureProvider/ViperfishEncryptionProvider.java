@@ -121,6 +121,7 @@ public final class ViperfishEncryptionProvider implements Provider<JournalTransf
 		Configuration.setProperty(BlockCipherMacTransformer.KDF_HASH, "SHA256");
 		Configuration.setProperty(BlockCipherMacTransformer.MAC_ALGORITHM, "SHA256");
 		Configuration.setProperty(BlockCipherMacTransformer.MAC_TYPE, "HMAC");
+		Configuration.setProperty(StreamCipherTransformer.ALG_NAME, "ChaCha");
 
 	}
 
