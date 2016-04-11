@@ -22,6 +22,9 @@ final class StreamCipherTransformer extends CompressMacTransformer {
 		super(salt);
 		rand = new SecureRandom();
 		algName = Configuration.getString(ALG_NAME);
+		if (algName == null) {
+			algName = "ChaCha";
+		}
 		macGen = Macs.getMac("HMAC");
 		macGen.setMode("SHA512");
 	}
