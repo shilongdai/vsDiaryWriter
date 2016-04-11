@@ -9,8 +9,8 @@ final class ByteParameterPair {
 	private final byte[] second;
 
 	ByteParameterPair(byte[] first, byte[] second) {
-		this.first = first.clone();
-		this.second = second.clone();
+		this.first = Arrays.copyOf(first, first.length);
+		this.second = Arrays.copyOf(second, second.length);
 	}
 
 	public byte[] getFirst() {

@@ -16,7 +16,16 @@ import net.viperfish.utils.file.IOFile;
 import net.viperfish.utils.file.TextIOStreamHandler;
 
 /**
- * an authenticator that uses hashing algorithms to verify a password
+ * an authenticator that uses hashing algorithms to verify a password. It uses
+ * an hashing algorithm specified by the user. Currently, the password is
+ * combined with a salt and hashed together for 30,000 rounds. The salt would
+ * then be stored with the hashed password in the format of {@link PasswordFile}
+ * .
+ * 
+ * <p>
+ * This class is NOT thread safe
+ * </p>
+ * 
  * 
  * @author sdai
  *
@@ -110,7 +119,7 @@ final class HashAuthManager implements AuthenticationManager {
 		try {
 			String combo = passwdFile.read(StandardCharsets.UTF_8);
 			if (combo.length() != 0) {
-				return PasswordFile.getPasswordData(combo);
+				return PasswordFile.valueOf(combo);
 			} else {
 				return new PasswordFile(new byte[0], new byte[0]);
 			}
@@ -132,6 +141,14 @@ final class HashAuthManager implements AuthenticationManager {
 		ready = true;
 	}
 
+	/**
+	 * constructs a {@link HashAuthManager} with the directory of the password
+	 * file
+	 * 
+	 * 
+	 * @param dataDir
+	 *            the directory of the password file
+	 */
 	public HashAuthManager(File dataDir) {
 		dig = new BCDigester();
 		dig.setMode(Configuration.getString(HASH_ALG));
@@ -140,16 +157,24 @@ final class HashAuthManager implements AuthenticationManager {
 		passwdFile = new IOFile(new File(dataDir.getPath() + "/passwd"), new TextIOStreamHandler());
 	}
 
-	public byte[] getSalt() {
-		return salt;
-	}
-
 	/**
 	 * empty the password file
+	 * 
+	 * This method clears the password file and resets all internal data to
+	 * initial condition. It an exception occurs, it would be wrapped in a
+	 * {@link RuntimeException} and thrown. If this method fails, all internal
+	 * data would be cleared but the password file would be intact.
+	 * 
+	 * @throws IOException
+	 *             if failed to clear the password file
 	 */
 	@Override
 	public void clear() {
 		try {
+			this.hash = null;
+			this.password = null;
+			this.ready = false;
+			this.salt = null;
 			passwdFile.clear();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -158,9 +183,21 @@ final class HashAuthManager implements AuthenticationManager {
 	}
 
 	/**
-	 * generate a 12 byte salt, and hash the password(UTF-16) with the salt for
-	 * 3000 round, format the hash and salt, then write the formatted result to
-	 * the passwd file
+	 * sets the password
+	 * 
+	 * This method sets the plain text password, generates a salt, hashes the
+	 * password with the salt for 30,000 rounds then stores it in the password
+	 * file in the format of {@link PasswordFile}. If an error occurs, this
+	 * object would be unusable until a call to this method or
+	 * {@link HashAuthManager#reload()}(if password already set before without
+	 * being cleared) succeeds. If an exception occurs, it would be wrapped by a
+	 * {@link RuntimeException} and thrown.
+	 * 
+	 * @throws FailToStoreCredentialException
+	 *             if failed to flush the credentials to password file
+	 * 
+	 * @param pass
+	 *            the plain text password
 	 */
 	@Override
 	public void setPassword(String pass) {
@@ -168,17 +205,24 @@ final class HashAuthManager implements AuthenticationManager {
 		byte[] bytes = pass.getBytes(StandardCharsets.UTF_16);
 
 		generateSalt(12);
-		hash = hashWithSalt(bytes, salt, 3000);
+		hash = hashWithSalt(bytes, salt, 30000);
 		writePasswdFile(new PasswordFile(hash, salt));
 		ready = true;
 	}
 
-	public byte[] getHash() {
-		return hash;
-	}
-
 	/**
 	 * reload the hash and salt from the file
+	 * 
+	 * This method reloads the hash and salt stored in the format of
+	 * {@link PasswordFile} from the password file. It would leave the object in
+	 * a state ready to verify if the password file contains valid data. If an
+	 * error occurs, this object would not be in an usable state until a call to
+	 * {@link HashAuthManager#reload()} or
+	 * {@link HashAuthManager#setPassword(String)} succeeds. If an exception
+	 * occurs, it would be wrapped in a {@link RuntimeException} and thrown.
+	 * 
+	 * @throws FailToLoadCredentialException
+	 *             if failed to read the credentials from file or it is invalid
 	 */
 	@Override
 	public void reload() {
@@ -188,10 +232,18 @@ final class HashAuthManager implements AuthenticationManager {
 	}
 
 	/**
-	 * calculate the hash, and compare it with the hash stored in the password
-	 * file
+	 * verifies if a password is valid
 	 * 
-	 * @see HashAuthManager#setPassword(String)
+	 * This method verifies whether a provided password is valid against a
+	 * password previously set. A password must be set before either during
+	 * runtime or stored in the file, or undefined behavior can happen. If an
+	 * exception happens, it would be wrapped by a {@link RuntimeException} and
+	 * thrown.
+	 * 
+	 * @throws FailToLoadCredentialException
+	 *             if cannot load password information from the password file
+	 * 
+	 * @return true if password valid, false otherwise
 	 */
 	@Override
 	public boolean verify(String pass) {
@@ -200,7 +252,7 @@ final class HashAuthManager implements AuthenticationManager {
 		}
 		byte[] bytes = pass.getBytes(StandardCharsets.UTF_16);
 
-		byte[] providedHash = hashWithSalt(bytes, salt, 3000);
+		byte[] providedHash = hashWithSalt(bytes, salt, 30000);
 
 		if (Arrays.equals(providedHash, hash)) {
 			this.password = pass;
@@ -210,6 +262,16 @@ final class HashAuthManager implements AuthenticationManager {
 		}
 	}
 
+	/**
+	 * gets the plain text password
+	 * 
+	 * This method returns the plain text password set before. A call to
+	 * {@link HashAuthManager#setPassword(String)} or a valid password to
+	 * {@link HashAuthManager#verify(String)} must be called before this is
+	 * usable. Otherwise, it will return null.
+	 * 
+	 * @return the plain text password or null
+	 */
 	@Override
 	public String getPassword() {
 		return password;

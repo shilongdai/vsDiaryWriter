@@ -1,5 +1,6 @@
 package net.viperfish.journal.authProvider;
 
+import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -11,6 +12,13 @@ import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.operation.OperationFactories;
 import net.viperfish.journal.operation.StoreConfigurationBufferOperation;
 
+/**
+ * Configuration GUI component passed to {@link PreferenceNode} to configure
+ * hashing algorithm.
+ * 
+ * @author sdai
+ *
+ */
 public final class HashAuthPreferencePage extends PreferencePage {
 
 	private HashAuthConfigComposite com;

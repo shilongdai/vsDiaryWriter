@@ -1,5 +1,6 @@
 package net.viperfish.journal;
 
+import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -9,6 +10,17 @@ import net.viperfish.journal.framework.OperationExecutors;
 import net.viperfish.journal.operation.OperationFactories;
 import net.viperfish.journal.operation.StoreConfigurationBufferOperation;
 
+/**
+ * A class for configuring component selections. This class would be submitted
+ * to a {@link PreferenceNode} for configuration purposes.
+ * 
+ * <p>
+ * This is NOT thread safe
+ * </p>
+ * 
+ * @author sdai
+ *
+ */
 public final class SystemPreferencePage extends PreferencePage {
 
 	private SystemSetupComposite com;
