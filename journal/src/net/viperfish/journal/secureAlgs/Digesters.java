@@ -26,6 +26,7 @@ import org.bouncycastle.crypto.digests.SHA3Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.digests.SHAKEDigest;
 import org.bouncycastle.crypto.digests.SM3Digest;
+import org.bouncycastle.crypto.digests.SkeinDigest;
 import org.bouncycastle.crypto.digests.TigerDigest;
 import org.bouncycastle.crypto.digests.WhirlpoolDigest;
 
@@ -61,9 +62,16 @@ public final class Digesters {
 		digesters.put("SHA224", SHA224Digest.class);
 		digesters.put("SHA256", SHA256Digest.class);
 		digesters.put("SHA384", SHA384Digest.class);
-		digesters.put("SHA3", SHA3Digest.class);
+		digesters.put("SHA3-512", SHA3Digest.class);
+		digesters.put("SHA3-256", SHA3Digest.class);
+		digesters.put("SHA3-224", SHA3Digest.class);
+		digesters.put("SHA3-384", SHA3Digest.class);
 		digesters.put("SHA512", SHA512Digest.class);
-		digesters.put("SHAKE", SHAKEDigest.class);
+		digesters.put("SHAKE-128", SHAKEDigest.class);
+		digesters.put("SHAKE-256", SHAKEDigest.class);
+		digesters.put("Skein256", SkeinDigest.class);
+		digesters.put("Skein512", SkeinDigest.class);
+		digesters.put("Skein1024", SkeinDigest.class);
 		digesters.put("SM3", SM3Digest.class);
 		digesters.put("Tiger", TigerDigest.class);
 		digesters.put("Whirlpool", WhirlpoolDigest.class);
@@ -73,7 +81,47 @@ public final class Digesters {
 		try {
 			Digest result = digestCache.get(digestName);
 			if (result == null) {
-				result = digesters.get(digestName).newInstance();
+				switch (digestName) {
+				case "SHA3-512": {
+					result = new SHA3Digest(512);
+					break;
+				}
+				case "SHA3-256": {
+					result = new SHA3Digest(256);
+					break;
+				}
+				case "SHA3-224": {
+					result = new SHA3Digest(224);
+					break;
+				}
+				case "SHA3-384": {
+					result = new SHA3Digest(384);
+					break;
+				}
+				case "SHAKE-128": {
+					result = new SHAKEDigest(128);
+					break;
+				}
+				case "SHAKE-256": {
+					result = new SHAKEDigest(256);
+					break;
+				}
+				case "Skein256": {
+					result = new SkeinDigest(SkeinDigest.SKEIN_256, 256);
+					break;
+				}
+				case "Skein512": {
+					result = new SkeinDigest(SkeinDigest.SKEIN_512, 512);
+					break;
+				}
+				case "Skein1024": {
+					result = new SkeinDigest(SkeinDigest.SKEIN_1024, 1024);
+					break;
+				}
+				default: {
+					result = digesters.get(digestName).newInstance();
+				}
+				}
 				digestCache.put(digestName, result);
 			}
 			result.reset();

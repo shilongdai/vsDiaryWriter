@@ -59,7 +59,7 @@ final class UnixLikeAuthManager implements AuthenticationManager {
 		ecbCipher.init(true, new KeyParameter(key));
 		byte[] result = new byte[ecbCipher.getBlockSize()];
 		ecbCipher.processBlock(salt, 0, result, 0);
-		for (int i = 0; i < 30000; ++i) {
+		for (int i = 0; i < 300000; ++i) {
 			ecbCipher.processBlock(result, 0, result, 0);
 		}
 		return result;

@@ -186,7 +186,7 @@ final class HashAuthManager implements AuthenticationManager {
 	 * sets the password
 	 * 
 	 * This method sets the plain text password, generates a salt, hashes the
-	 * password with the salt for 30,000 rounds then stores it in the password
+	 * password with the salt for 300,000 rounds then stores it in the password
 	 * file in the format of {@link PasswordFile}. If an error occurs, this
 	 * object would be unusable until a call to this method or
 	 * {@link HashAuthManager#reload()}(if password already set before without
@@ -205,7 +205,7 @@ final class HashAuthManager implements AuthenticationManager {
 		byte[] bytes = pass.getBytes(StandardCharsets.UTF_16);
 
 		generateSalt(12);
-		hash = hashWithSalt(bytes, salt, 30000);
+		hash = hashWithSalt(bytes, salt, 300000);
 		writePasswdFile(new PasswordFile(hash, salt));
 		ready = true;
 	}
@@ -252,7 +252,7 @@ final class HashAuthManager implements AuthenticationManager {
 		}
 		byte[] bytes = pass.getBytes(StandardCharsets.UTF_16);
 
-		byte[] providedHash = hashWithSalt(bytes, salt, 30000);
+		byte[] providedHash = hashWithSalt(bytes, salt, 300000);
 
 		if (Arrays.equals(providedHash, hash)) {
 			this.password = pass;

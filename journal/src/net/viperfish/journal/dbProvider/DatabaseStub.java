@@ -11,7 +11,11 @@ import net.viperfish.journal.framework.Journal;
 
 /**
  * an in-memory EntryDatabase that is based on a map for persistent, should be
- * used for testing only
+ * used for testing only.
+ * 
+ * <p>
+ * This is NOT thread safe
+ * </p>
  * 
  * @author sdai
  *
