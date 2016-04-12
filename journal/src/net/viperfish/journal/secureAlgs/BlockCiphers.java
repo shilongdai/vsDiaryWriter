@@ -31,6 +31,7 @@ import org.bouncycastle.crypto.engines.SerpentEngine;
 import org.bouncycastle.crypto.engines.Shacal2Engine;
 import org.bouncycastle.crypto.engines.SkipjackEngine;
 import org.bouncycastle.crypto.engines.TEAEngine;
+import org.bouncycastle.crypto.engines.ThreefishEngine;
 import org.bouncycastle.crypto.engines.TwofishEngine;
 import org.bouncycastle.crypto.engines.XTEAEngine;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
@@ -57,28 +58,29 @@ public final class BlockCiphers {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static int DES_KEY_SIZE = 64;
-	private static int AES_KEY_SIZE = 256;
-	private static int DESEDE_KEY_SIZE = 192;
-	private static int CAST5_KEY_SIZE = 128;
-	private static int CAST6_KEY_SIZE = 256;
-	private static int DEFAULT = 256;
-	private static int BLOWFISH_KEY_SIZE = 448;
-	private static int CAMELLIA_KEY_SIZE = 256;
-	private static int GOST28147_KEY_SIZE = 256;
-	private static int IDEA_KEY_SIZE = 128;
-	private static int NOEKEON_KEY_SIZE = 128;
-	private static int RC5_KEYSIZE = 128;
-	private static int RC6_KEY_SIZE = 256;
-	private static int RC2_KEY_SIZE = 512;
-	private static int SEED_KEY_SIZE = 128;
-	private static int SHACAL2_KEY_SIZE = 512;
-	private static int SERPENT_KEY_SIZE = 256;
-	private static int SKIPJACK_KEY_SIZE = 128;
-	private static int TEA_KEY_SIZE = 128;
-	private static int TWOFISH_KEY_SIZE = 256;
-	private static int XTEA_KEY_SIZE = 128;
-	private static int SM4_KEY_SIZE = 128;
+	private static final int DES_KEY_SIZE = 64;
+	private static final int AES_KEY_SIZE = 256;
+	private static final int DESEDE_KEY_SIZE = 192;
+	private static final int CAST5_KEY_SIZE = 128;
+	private static final int CAST6_KEY_SIZE = 256;
+	private static final int DEFAULT = 256;
+	private static final int BLOWFISH_KEY_SIZE = 448;
+	private static final int CAMELLIA_KEY_SIZE = 256;
+	private static final int GOST28147_KEY_SIZE = 256;
+	private static final int IDEA_KEY_SIZE = 128;
+	private static final int NOEKEON_KEY_SIZE = 128;
+	private static final int RC5_KEYSIZE = 128;
+	private static final int RC6_KEY_SIZE = 256;
+	private static final int RC2_KEY_SIZE = 512;
+	private static final int SEED_KEY_SIZE = 128;
+	private static final int SHACAL2_KEY_SIZE = 512;
+	private static final int SERPENT_KEY_SIZE = 256;
+	private static final int SKIPJACK_KEY_SIZE = 128;
+	private static final int TEA_KEY_SIZE = 128;
+	private static final int TWOFISH_KEY_SIZE = 256;
+	private static final int XTEA_KEY_SIZE = 128;
+	private static final int SM4_KEY_SIZE = 128;
+	private static final int THREEFISH_KEY_SIZE = 512;
 
 	private static Map<String, Class<? extends BlockCipher>> blockCipherEngines;
 	private static Map<String, Class<? extends BlockCipher>> blockCipherMode;
@@ -119,6 +121,7 @@ public final class BlockCiphers {
 		blockCipherEngines.put("TEA", TEAEngine.class);
 		blockCipherEngines.put("Twofish", TwofishEngine.class);
 		blockCipherEngines.put("XTEA", XTEAEngine.class);
+		blockCipherEngines.put("Threefish", ThreefishEngine.class);
 	}
 
 	private static void initBlockCipherModes() {
@@ -212,6 +215,9 @@ public final class BlockCiphers {
 		if (algorithm.equalsIgnoreCase("RC2")) {
 			return RC2_KEY_SIZE;
 		}
+		if (algorithm.equalsIgnoreCase("Threefish")) {
+			return THREEFISH_KEY_SIZE;
+		}
 		if (algorithm.matches("\\w+(\\W|\\S)?\\d+")) {
 			Matcher num = Pattern.compile("\\d+").matcher(algorithm);
 			while (num.find()) {
@@ -232,7 +238,11 @@ public final class BlockCiphers {
 		try {
 			BlockCipher result = blockCipherCache.get(alg);
 			if (result == null) {
-				result = blockCipherEngines.get(alg).newInstance();
+				if (alg.equalsIgnoreCase("Threefish")) {
+					result = new ThreefishEngine(ThreefishEngine.BLOCKSIZE_512);
+				} else {
+					result = blockCipherEngines.get(alg).newInstance();
+				}
 				blockCipherCache.put(alg, result);
 			}
 			result.reset();

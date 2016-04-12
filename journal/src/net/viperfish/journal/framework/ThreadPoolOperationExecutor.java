@@ -47,7 +47,7 @@ final class ThreadPoolOperationExecutor extends OperationExecutor {
 	public void terminate() {
 		pool.shutdown();
 		try {
-			if (!pool.awaitTermination(1, TimeUnit.MINUTES)) {
+			if (!pool.awaitTermination(10, TimeUnit.MINUTES)) {
 				pool.shutdownNow();
 			}
 		} catch (InterruptedException e) {
