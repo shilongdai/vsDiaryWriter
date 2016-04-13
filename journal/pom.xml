@@ -143,6 +143,11 @@
 			<artifactId>derby</artifactId>
 			<version>10.12.1.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.nebula</groupId>
+			<artifactId>widgets.pagination</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<sourceDirectory>${project.basedir}/src</sourceDirectory>

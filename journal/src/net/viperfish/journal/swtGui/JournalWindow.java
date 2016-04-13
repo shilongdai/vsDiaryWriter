@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -17,6 +19,10 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.window.Window;
+import org.eclipse.nebula.widgets.pagination.collections.PageResultContentProvider;
+import org.eclipse.nebula.widgets.pagination.collections.PageResultLoaderList;
+import org.eclipse.nebula.widgets.pagination.renderers.navigation.ResultAndNavigationPageLinksRendererFactory;
+import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -29,7 +35,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -64,17 +69,24 @@ public class JournalWindow {
 			return cal.getTime();
 		}
 
+		private void setPagination(Collection<JournalPointer> data) {
+			pgTable.setPageLoader(new PageResultLoaderList<>(new LinkedList<>(data)));
+			pgTable.refreshPage(true);
+		}
+
 		public void displayAll() {
 			tableViewer.setInput(null);
 			OperationWithResult<? extends Collection<JournalPointer>> result = f.getListAllOperation();
 			e.submit(result);
 			Date min = null;
+			List<JournalPointer> resultList = new LinkedList<>();
 			for (JournalPointer i : result.getResult()) {
 				if (min == null || min.after(i.getDate())) {
 					min = i.getDate();
 				}
-				tableViewer.add(i);
+				resultList.add(i);
 			}
+			setPagination(resultList);
 			Calendar cal = Calendar.getInstance();
 			if (min != null) {
 				cal.setTime(min);
@@ -90,9 +102,7 @@ public class JournalWindow {
 			Date upper = TimeUtils.truncDate(datePickerToDate(upperBoound));
 			OperationWithResult<? extends Collection<JournalPointer>> getRange = f.getDateRangeOperation(lower, upper);
 			e.submit(getRange);
-			for (JournalPointer i : getRange.getResult()) {
-				tableViewer.add(i);
-			}
+			setPagination(getRange.getResult());
 		}
 
 		public void searchJournals() {
@@ -106,9 +116,7 @@ public class JournalWindow {
 			OperationWithResult<? extends Collection<JournalPointer>> search = f
 					.getDateRangeSearchOperation(searchText.getText(), lower, upper);
 			e.submit(search);
-			for (JournalPointer i : search.getResult()) {
-				tableViewer.add(i);
-			}
+			setPagination(search.getResult());
 		}
 
 		private class SearchSelectionAdapter extends SelectionAdapter {
@@ -141,7 +149,6 @@ public class JournalWindow {
 	private Text searchText;
 	private Display display;
 	private Shell shell;
-	private Button searchButton;
 	private ToolBar operationBar;
 	private ToolItem newJournal;
 	private ToolItem deleteJournal;
@@ -154,6 +161,7 @@ public class JournalWindow {
 	private Label recentLabel;
 	private DateTime lowerBound;
 	private DateTime upperBoound;
+	private PageableTable pgTable;
 
 	public JournalWindow() {
 		e = OperationExecutors.getExecutor();
@@ -193,20 +201,17 @@ public class JournalWindow {
 		shell.setImage(SWTResourceManager.getImage(JournalWindow.class, "/logo.ico"));
 		shell.setSize(495, 480);
 		shell.setText("vsDiary - 4.0.0");
-		shell.setLayout(new GridLayout(13, false));
+		shell.setLayout(new GridLayout(8, false));
 
 		errorReporter = new ExceptionDisplayer(shell);
 
 		e.addObserver(errorReporter);
 
 		searchText = new Text(shell, SWT.BORDER);
-		searchText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 12, 1));
-
-		searchButton = new Button(shell, SWT.NONE);
-		searchButton.setText("Search");
+		searchText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 8, 1));
 
 		operationBar = new ToolBar(shell, SWT.FLAT | SWT.RIGHT);
-		operationBar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 13, 1));
+		operationBar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 8, 1));
 
 		newJournal = new ToolItem(operationBar, SWT.NONE);
 		newJournal.setText("New");
@@ -225,54 +230,10 @@ public class JournalWindow {
 
 		upperBoound = new DateTime(shell, SWT.DROP_DOWN);
 
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-
-		tableViewer = new TableViewer(shell, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		searchResults = tableViewer.getTable();
-		GridData gd_searchResults = new GridData(SWT.FILL, SWT.FILL, true, true, 13, 1);
-		gd_searchResults.widthHint = 368;
-		searchResults.setLayoutData(gd_searchResults);
-		tableViewer.setContentProvider(new ArrayContentProvider());
-		searchResults.setHeaderVisible(true);
-		searchResults.setLinesVisible(true);
-		final TableViewerColumn titles = new TableViewerColumn(tableViewer, SWT.NONE);
-		titles.getColumn().setWidth(200);
-		titles.getColumn().setText("Title");
-		titles.getColumn().setResizable(true);
-		titles.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				JournalPointer j = (JournalPointer) element;
-				return j.getTitle();
-			}
-		});
-		final TableViewerColumn dates = new TableViewerColumn(tableViewer, SWT.NONE);
-		dates.getColumn().setWidth(200);
-		dates.getColumn().setResizable(true);
-		dates.getColumn().setText("Date");
-		dates.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				JournalPointer j = (JournalPointer) element;
-				DateFormat df = new SimpleDateFormat("EEE h:mm a MM/dd/yyyy");
-				return df.format(j.getDate());
-			}
-		});
-
 		search = new SearchJournal();
 
 		lowerBound.addSelectionListener(search.createSelectAdapter());
 		upperBoound.addSelectionListener(search.createSelectAdapter());
-
-		searchButton.addSelectionListener(search.createSelectAdapter());
 		searchText.addModifyListener(search.createModifyAdapter());
 		newJournal.addSelectionListener(new SelectionAdapter() {
 
@@ -291,62 +252,6 @@ public class JournalWindow {
 			}
 
 		});
-
-		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent arg0) {
-				StructuredSelection selected = (StructuredSelection) arg0.getSelection();
-				if (selected.isEmpty()) {
-					return;
-				}
-				JournalPointer pointer = (JournalPointer) selected.getFirstElement();
-				OperationWithResult<Journal> get = f.getGetEntryOperation(pointer.getId());
-				e.submit(get);
-				Journal result = new JournalEditor().open(get.getResult());
-				if (result == null) {
-					return;
-				}
-				e.submit(f.getEditContentOperation(result.getId(), result.getContent()));
-				e.submit(f.getEditSubjectOperation(result.getId(), result.getSubject()));
-				search.searchJournals();
-			}
-		});
-
-		shell.addControlListener(new ControlAdapter() {
-
-			@Override
-			public void controlResized(ControlEvent arg0) {
-				// TODO Auto-generated method stub
-				super.controlResized(arg0);
-				Rectangle area = shell.getClientArea();
-				Point preferredSize = searchResults.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				int width = area.width - searchResults.getBorderWidth() * 2;
-				if (preferredSize.y > area.height + searchResults.getHeaderHeight()) {
-					// Subtract the scrollbar width from the total column width
-					// if a vertical scrollbar will be required
-					Point vBarSize = searchResults.getVerticalBar().getSize();
-					width -= vBarSize.x;
-				}
-				Point oldSize = searchResults.getSize();
-				if (oldSize.x > area.width) {
-					// table is getting smaller so make the columns
-					// smaller first and then resize the table to
-					// match the client area width
-					titles.getColumn().setWidth(width / 2);
-					dates.getColumn().setWidth(width - titles.getColumn().getWidth() - 10);
-				} else {
-					// table is getting bigger so make the table
-					// bigger first and then make the columns wider
-					// to match the client area width
-					titles.getColumn().setWidth(width / 2);
-					dates.getColumn().setWidth(width - titles.getColumn().getWidth() - 10);
-				}
-			}
-
-		});
-
-		shell.setDefaultButton(searchButton);
 
 		Menu mainMenu = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(mainMenu);
@@ -517,6 +422,68 @@ public class JournalWindow {
 
 		MenuItem aboutMenu = new MenuItem(menu_2, SWT.NONE);
 		aboutMenu.setText("About");
+		new Label(shell, SWT.NONE);
+		new Label(shell, SWT.NONE);
+		new Label(shell, SWT.NONE);
+		new Label(shell, SWT.NONE);
+
+		pgTable = new PageableTable(shell, SWT.NONE, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, 10,
+				PageResultContentProvider.getInstance(), null,
+				ResultAndNavigationPageLinksRendererFactory.getFactory());
+		GridData gd_pgTable = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd_pgTable.horizontalSpan = 8;
+		pgTable.setLayoutData(gd_pgTable);
+
+		tableViewer = pgTable.getViewer();
+		searchResults = tableViewer.getTable();
+		searchResults.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tableViewer.setContentProvider(new ArrayContentProvider());
+		searchResults.setHeaderVisible(true);
+		searchResults.setLinesVisible(true);
+		final TableViewerColumn titles = new TableViewerColumn(tableViewer, SWT.NONE);
+		titles.getColumn().setWidth(200);
+		titles.getColumn().setText("Title");
+		titles.getColumn().setResizable(true);
+		titles.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				JournalPointer j = (JournalPointer) element;
+				return j.getTitle();
+			}
+		});
+		final TableViewerColumn dates = new TableViewerColumn(tableViewer, SWT.NONE);
+		dates.getColumn().setWidth(200);
+		dates.getColumn().setResizable(true);
+		dates.getColumn().setText("Date");
+		dates.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				JournalPointer j = (JournalPointer) element;
+				DateFormat df = new SimpleDateFormat("EEE h:mm a MM/dd/yyyy");
+				return df.format(j.getDate());
+			}
+		});
+
+		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+
+			@Override
+			public void doubleClick(DoubleClickEvent arg0) {
+				StructuredSelection selected = (StructuredSelection) arg0.getSelection();
+				if (selected.isEmpty()) {
+					return;
+				}
+				JournalPointer pointer = (JournalPointer) selected.getFirstElement();
+				OperationWithResult<Journal> get = f.getGetEntryOperation(pointer.getId());
+				e.submit(get);
+				Journal result = new JournalEditor().open(get.getResult());
+				if (result == null) {
+					return;
+				}
+				e.submit(f.getEditContentOperation(result.getId(), result.getContent()));
+				e.submit(f.getEditSubjectOperation(result.getId(), result.getSubject()));
+				search.searchJournals();
+			}
+		});
 		aboutMenu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -524,6 +491,39 @@ public class JournalWindow {
 				super.widgetSelected(e);
 				MessageDialog.openInformation(shell, "About",
 						"This is an application to write secure and authenticated diary digitally");
+			}
+
+		});
+
+		shell.addControlListener(new ControlAdapter() {
+
+			@Override
+			public void controlResized(ControlEvent arg0) {
+				// TODO Auto-generated method stub
+				super.controlResized(arg0);
+				Rectangle area = shell.getClientArea();
+				Point preferredSize = searchResults.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				int width = area.width - searchResults.getBorderWidth() * 2;
+				if (preferredSize.y > area.height + searchResults.getHeaderHeight()) {
+					// Subtract the scrollbar width from the total column width
+					// if a vertical scrollbar will be required
+					Point vBarSize = searchResults.getVerticalBar().getSize();
+					width -= vBarSize.x;
+				}
+				Point oldSize = searchResults.getSize();
+				if (oldSize.x > area.width) {
+					// table is getting smaller so make the columns
+					// smaller first and then resize the table to
+					// match the client area width
+					titles.getColumn().setWidth(width / 2);
+					dates.getColumn().setWidth(width - titles.getColumn().getWidth() - 25);
+				} else {
+					// table is getting bigger so make the table
+					// bigger first and then make the columns wider
+					// to match the client area width
+					titles.getColumn().setWidth(width / 2);
+					dates.getColumn().setWidth(width - titles.getColumn().getWidth() - 25);
+				}
 			}
 
 		});
