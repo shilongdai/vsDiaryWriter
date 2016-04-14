@@ -54,7 +54,7 @@ public final class OperationTest {
 		Configuration.setProperty("viperfish.secure.mac.type", "HMAC");
 		Configuration.setProperty("viperfish.secure.kdf.algorithm", "SHA256");
 		Configuration.setProperty(ConfigMapping.AUTH_PROVIDER, "viperfish");
-		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "Hash");
+		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "BCrypt");
 		Configuration.setProperty(ConfigMapping.DB_PROVIDER, "viperfish");
 		Configuration.setProperty(ConfigMapping.DB_COMPONENT, "MemoryHashMap");
 		Configuration.setProperty(ConfigMapping.INDEX_PROVIDER, "viperfish");
@@ -62,7 +62,6 @@ public final class OperationTest {
 		Configuration.setProperty(ConfigMapping.TRANSFORMER_PROVIDER, "viperfish");
 		Configuration.setProperty(ConfigMapping.TRANSFORMER_COMPONENT, "BlockCipherMAC");
 		Configuration.setProperty("viperfish.secure.compression.algorithm", "GZ");
-		Configuration.setProperty("viperfish.auth.hash", "SHA256");
 	}
 
 	public OperationTest() {

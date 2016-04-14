@@ -1,6 +1,7 @@
 package net.viperfish.journal.authProvider;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -9,18 +10,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.jface.preference.PreferenceNode;
-
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
-import net.viperfish.journal.framework.provider.PreferenceGUIManager;
 import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.utils.file.CommonFunctions;
 
 public final class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 
 	private File dataDir;
+	private File passwdFile;
 	private Map<String, Class<? extends AuthenticationManager>> authters;
 	private Map<String, AuthenticationManager> cache;
 	private String defaultInstance;
@@ -35,15 +34,20 @@ public final class ViperfishAuthProvider implements Provider<AuthenticationManag
 			dataDir = new File(vDiaryDir, "secure");
 		}
 		CommonFunctions.initDir(dataDir);
-
+		passwdFile = new File(dataDir, "passwd");
+		try {
+			CommonFunctions.initFile(passwdFile);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		authters = new HashMap<>();
 		cache = new HashMap<>();
 		initServices();
 	}
 
 	private void initServices() {
-		authters.put("Hash", HashAuthManager.class);
-		authters.put("Unix-Style", UnixLikeAuthManager.class);
+		authters.put("BCrypt", OpenBSDBCryptAuthManager.class);
+		authters.put("SCrypt", SCryptAuthManager.class);
 	}
 
 	@Override
@@ -64,7 +68,7 @@ public final class ViperfishAuthProvider implements Provider<AuthenticationManag
 		}
 		try {
 			Constructor<? extends AuthenticationManager> ctor = c.getConstructor(File.class);
-			AuthenticationManager result = ctor.newInstance(dataDir);
+			AuthenticationManager result = ctor.newInstance(passwdFile);
 			result.reload();
 			return result;
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
@@ -85,7 +89,7 @@ public final class ViperfishAuthProvider implements Provider<AuthenticationManag
 		}
 		try {
 			Constructor<? extends AuthenticationManager> ctor = c.getConstructor(File.class);
-			AuthenticationManager result = ctor.newInstance(dataDir);
+			AuthenticationManager result = ctor.newInstance(passwdFile);
 			result.reload();
 			cache.put(instance, result);
 			return result;
@@ -138,20 +142,11 @@ public final class ViperfishAuthProvider implements Provider<AuthenticationManag
 
 	@Override
 	public void initDefaults() {
-		Configuration.setProperty(HashAuthManager.HASH_ALG, "SHA256");
-		Configuration.setProperty(UnixLikeAuthManager.ENCRYPTION_ALG, "DESede");
-		Configuration.setProperty(UnixLikeAuthManager.KDF_HASH, "SHA256");
 
 	}
 
 	@Override
 	public void registerConfig() {
-		PreferenceNode hash = new PreferenceNode("hashAuth", "Hash Authentication", null,
-				HashAuthPreferencePage.class.getCanonicalName());
-		PreferenceNode unix = new PreferenceNode("unixLikeAuth", "Unix Like Authentication", null,
-				UnixLikeAuthPreferencePage.class.getCanonicalName());
-		PreferenceGUIManager.addToRoot(hash);
-		PreferenceGUIManager.addToRoot(unix);
 	}
 
 }

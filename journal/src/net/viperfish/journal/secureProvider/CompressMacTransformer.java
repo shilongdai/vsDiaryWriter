@@ -236,11 +236,11 @@ abstract class CompressMacTransformer implements JournalTransformer {
 	 */
 	private void initKDF() {
 		rand = new SecureRandom();
-		saltForKDF = new byte[10];
+		saltForKDF = new byte[8];
 		loadSalt();
 		keyGenerator = new BCPCKDF2Generator();
 		keyGenerator.setDigest(Configuration.getString(KDF_HASH));
-		keyGenerator.setIteration(64000);
+		keyGenerator.setIteration(256000);
 		keyGenerator.setSalt(saltForKDF);
 	}
 

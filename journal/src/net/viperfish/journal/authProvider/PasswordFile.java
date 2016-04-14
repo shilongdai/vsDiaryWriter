@@ -89,14 +89,14 @@ final class PasswordFile {
 	 * gets the encoded string representation of this class
 	 * 
 	 * This method encodes the internal data into base64 string in the format of
-	 * base64(credential)$base64(salt).
+	 * base64(credential)&base64(salt).
 	 * 
-	 * @return the encoded string in the form of credential$salt
+	 * @return the encoded string in the form of credential&salt
 	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(Base64.encodeBase64String(credentialInfo)).append('$').append(Base64.encodeBase64String(salt));
+		sb.append(Base64.encodeBase64String(credentialInfo)).append('&').append(Base64.encodeBase64String(salt));
 		return sb.toString();
 	}
 
@@ -104,19 +104,19 @@ final class PasswordFile {
 	 * creates a new {@link PasswordFile} from a string representation.
 	 * 
 	 * This method converts a string in the format of
-	 * base64(credentialInfo)$base64(salt) into a {@link PasswordFile}.
+	 * base64(credentialInfo)&base64(salt) into a {@link PasswordFile}.
 	 * 
 	 * @throws IllegalArgumentException
-	 *             if the format of the string is not credential$salt
+	 *             if the format of the string is not credential&salt
 	 * 
 	 * @param passwordContent
 	 *            the string representation
 	 * @return the created {@link PasswordFile}
 	 */
 	static PasswordFile valueOf(String passwordContent) {
-		String[] content = passwordContent.split("\\$");
+		String[] content = passwordContent.split("&");
 		if (content.length != 2) {
-			throw new IllegalArgumentException("Password file must be in format of credential$salt");
+			throw new IllegalArgumentException("Password file must be in format of credential&salt");
 		}
 
 		byte[] credential = Base64.decodeBase64(content[0]);

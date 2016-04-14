@@ -182,7 +182,7 @@ final public class JournalApplication {
 				.entrySet()) {
 			i.getValue().initDefaults();
 		}
-		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "Hash");
+		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "BCrypt");
 		Configuration.setProperty(ConfigMapping.DB_COMPONENT, "H2Database");
 		Configuration.setProperty(ConfigMapping.INDEXER_COMPONENT, "LuceneIndexer");
 		Configuration.setProperty(ConfigMapping.TRANSFORMER_COMPONENT, "BlockCipherMAC");
