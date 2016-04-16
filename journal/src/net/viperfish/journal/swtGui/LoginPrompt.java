@@ -1,5 +1,8 @@
 package net.viperfish.journal.swtGui;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -10,21 +13,22 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import net.viperfish.journal.framework.AuthenticationManager;
-import net.viperfish.journal.framework.provider.AuthManagers;
+import net.viperfish.journal.framework.OperationExecutors;
 
 public class LoginPrompt {
 
 	protected Shell shell;
 	private Text text;
-	private AuthenticationManager auth;
 	private String password;
+	private Display display;
 
 	public LoginPrompt() {
+
 	}
 
 	/**
@@ -33,8 +37,8 @@ public class LoginPrompt {
 	 * @wbp.parser.entryPoint
 	 */
 	public String open() {
-		this.auth = AuthManagers.INSTANCE.getAuthManager();
-		Display display = Display.getDefault();
+
+		display = Display.getDefault();
 		createContents();
 		shell.open();
 		shell.layout();
@@ -54,45 +58,24 @@ public class LoginPrompt {
 		shell.setImage(SWTResourceManager.getImage(LoginPrompt.class, "/logo.ico"));
 		shell.setSize(522, 154);
 		shell.setText("Welcome, User");
-		shell.setLayout(new GridLayout(2, false));
+		shell.setLayout(new GridLayout(4, false));
 
 		Label lblNewLabel = new Label(shell, SWT.NONE);
 		lblNewLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblNewLabel.setText("Password");
 
 		text = new Text(shell, SWT.BORDER | SWT.PASSWORD);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		new Label(shell, SWT.NONE);
 
-		final Label lblNewLabel_1 = new Label(shell, SWT.NONE);
-		lblNewLabel_1.setText("Password mismatch");
-		lblNewLabel_1.setVisible(false);
+		final Label hashPasswordLabel = new Label(shell, SWT.NONE);
+		hashPasswordLabel.setText("Hashing Password:");
 
-		text.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
-				lblNewLabel_1.setVisible(false);
-			}
-		});
+		final ProgressBar hashBar = new ProgressBar(shell, SWT.INDETERMINATE | SWT.SMOOTH);
+		hashBar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true, 2, 1));
 
 		Button btnNewButton = new Button(shell, SWT.NONE);
 		btnNewButton.setText("Enter");
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				String toTest = text.getText();
-				boolean correct = auth.verify(toTest);
-				if (correct) {
-					password = text.getText();
-					shell.dispose();
-				} else {
-					lblNewLabel_1.setVisible(true);
-				}
-			}
-
-		});
 
 		Button btnNewButton_1 = new Button(shell, SWT.NONE);
 		btnNewButton_1.setText("Quit");
@@ -106,6 +89,72 @@ public class LoginPrompt {
 
 		});
 		shell.setDefaultButton(btnNewButton);
+
+		final Label lblNewLabel_1 = new Label(shell, SWT.NONE);
+		lblNewLabel_1.setText("Password mismatch");
+		lblNewLabel_1.setVisible(false);
+		new Label(shell, SWT.NONE);
+
+		btnNewButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				display.asyncExec(new Runnable() {
+
+					@Override
+					public void run() {
+						hashBar.setVisible(true);
+						hashPasswordLabel.setVisible(true);
+					}
+				});
+				final String toTest = text.getText();
+
+				final ExecutorService exc = Executors.newSingleThreadExecutor();
+				exc.execute(new Runnable() {
+
+					@Override
+					public void run() {
+						VerifyPasswordOperation vp = new VerifyPasswordOperation(toTest);
+						OperationExecutors.getExecutor().submit(vp);
+						boolean correct = vp.getResult();
+						if (correct) {
+							display.asyncExec(new Runnable() {
+
+								@Override
+								public void run() {
+									password = text.getText();
+									shell.dispose();
+									exc.shutdown();
+								}
+							});
+						} else {
+							display.asyncExec(new Runnable() {
+
+								@Override
+								public void run() {
+									lblNewLabel_1.setVisible(true);
+								}
+							});
+						}
+					}
+				});
+			}
+
+		});
+
+		text.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				lblNewLabel_1.setVisible(false);
+				hashBar.setVisible(false);
+				hashPasswordLabel.setVisible(false);
+			}
+		});
+
+		hashBar.setVisible(false);
+		hashPasswordLabel.setVisible(false);
+
 	}
 
 }
