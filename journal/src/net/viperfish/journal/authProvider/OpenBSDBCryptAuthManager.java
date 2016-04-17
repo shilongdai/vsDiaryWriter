@@ -38,7 +38,7 @@ final class OpenBSDBCryptAuthManager implements AuthenticationManager {
 	public synchronized void setPassword(String pass) {
 		byte[] salt = new byte[16];
 		rand.nextBytes(salt);
-		current = OpenBSDBCrypt.generate(pass.toCharArray(), salt, 15);
+		current = OpenBSDBCrypt.generate(pass.toCharArray(), salt, 16);
 		try {
 			passwdFile.write(current, StandardCharsets.US_ASCII);
 		} catch (IOException e) {
