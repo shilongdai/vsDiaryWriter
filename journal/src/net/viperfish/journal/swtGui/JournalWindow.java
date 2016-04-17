@@ -200,7 +200,7 @@ public class JournalWindow {
 		shell = new Shell();
 		shell.setImage(SWTResourceManager.getImage(JournalWindow.class, "/logo.ico"));
 		shell.setSize(495, 480);
-		shell.setText("vsDiary - 4.0.0");
+		shell.setText("vsDiary - 4.1.0");
 		shell.setLayout(new GridLayout(8, false));
 
 		errorReporter = new ExceptionDisplayer(shell);

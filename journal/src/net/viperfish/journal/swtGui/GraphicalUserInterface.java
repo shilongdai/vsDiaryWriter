@@ -15,7 +15,7 @@ public class GraphicalUserInterface extends UserInterface {
 
 	public GraphicalUserInterface() {
 		Display.setAppName("VSDiaryWriter");
-		Display.setAppVersion("4.0.0");
+		Display.setAppVersion("4.1.0");
 		setPassword = new SetPasswordPrompt();
 		w = new JournalWindow();
 		prompt = new LoginPrompt();
