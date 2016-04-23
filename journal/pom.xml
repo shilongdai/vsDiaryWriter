@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>journal</groupId>
 	<artifactId>journal</artifactId>
-	<version>4.1.0</version>
+	<version>4.1.1</version>
 	<name>The Viperfish Journal</name>
 	<description>A application for writing journals</description>
 	<licenses>
