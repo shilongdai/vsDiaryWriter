@@ -6,8 +6,8 @@ import net.viperfish.journal.framework.provider.Indexers;
 import net.viperfish.utils.index.Indexer;
 
 /**
- * this operation contains an EntryDatabase, an Indexer, and an Authentication
- * Manager ready to be used
+ * An {@link Operation} containing an EntryDatabase, an Indexer, and an
+ * Authentication Manager ready to be used
  * 
  * @author sdai
  *

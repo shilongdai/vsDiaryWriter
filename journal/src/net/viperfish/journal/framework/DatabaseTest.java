@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import net.viperfish.journal.framework.errors.FailToSyncEntryException;
 import net.viperfish.utils.file.CommonFunctions;
 
 public abstract class DatabaseTest {
@@ -31,7 +32,7 @@ public abstract class DatabaseTest {
 	}
 
 	@Test
-	public void testAdd() {
+	public void testAdd() throws FailToSyncEntryException {
 		cleanUp();
 		Journal j = new Journal();
 		j.setSubject("test");
@@ -44,7 +45,7 @@ public abstract class DatabaseTest {
 	}
 
 	@Test
-	public void testDelete() {
+	public void testDelete() throws FailToSyncEntryException {
 		cleanUp();
 		Journal j = new Journal();
 		j.setContent("test");
@@ -58,7 +59,7 @@ public abstract class DatabaseTest {
 	}
 
 	@Test
-	public void testGet() {
+	public void testGet() throws FailToSyncEntryException {
 		cleanUp();
 		Journal j = new Journal();
 		j.setContent("test");
@@ -71,7 +72,7 @@ public abstract class DatabaseTest {
 	}
 
 	@Test
-	public void testEdit() {
+	public void testEdit() throws FailToSyncEntryException {
 		Journal j = new Journal();
 		j.setContent("test 1");
 		j.setDate(new Date());
@@ -85,7 +86,7 @@ public abstract class DatabaseTest {
 	}
 
 	@Test
-	public void testGetAll() {
+	public void testGetAll() throws FailToSyncEntryException {
 		Journal j = new Journal();
 		j.setContent("1");
 		j.setSubject("1");
@@ -104,7 +105,7 @@ public abstract class DatabaseTest {
 	}
 
 	@Test
-	public void testClear() {
+	public void testClear() throws FailToSyncEntryException {
 		db.clear();
 		for (int k = 0; k < 100; ++k) {
 			Journal i = new Journal();
@@ -122,7 +123,11 @@ public abstract class DatabaseTest {
 	}
 
 	public void cleanUp() {
-		db.clear();
+		try {
+			db.clear();
+		} catch (FailToSyncEntryException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@AfterClass

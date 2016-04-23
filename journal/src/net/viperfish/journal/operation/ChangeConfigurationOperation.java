@@ -1,5 +1,6 @@
 package net.viperfish.journal.operation;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,11 @@ import org.apache.commons.configuration.ConfigurationException;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.InjectedOperation;
 import net.viperfish.journal.framework.Journal;
+import net.viperfish.journal.framework.errors.CannotClearPasswordException;
 import net.viperfish.journal.framework.errors.ChangeConfigurationFailException;
+import net.viperfish.journal.framework.errors.FailToStoreCredentialException;
+import net.viperfish.journal.framework.errors.FailToSyncEntryException;
+import net.viperfish.journal.framework.errors.OperationErrorException;
 import net.viperfish.journal.framework.provider.AuthManagers;
 import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.journal.framework.provider.Indexers;
@@ -32,7 +37,7 @@ final class ChangeConfigurationOperation extends InjectedOperation {
 		this.config.putAll(config);
 	}
 
-	private void resetUnits() {
+	private void resetUnits() throws CannotClearPasswordException, FailToSyncEntryException {
 		db().clear();
 		indexer().clear();
 		auth().clear();
@@ -46,7 +51,8 @@ final class ChangeConfigurationOperation extends InjectedOperation {
 		return old;
 	}
 
-	private void revert(List<Journal> all, String password, Map<String, String> old) {
+	private void revert(List<Journal> all, String password, Map<String, String> old)
+			throws FailToStoreCredentialException, CannotClearPasswordException, FailToSyncEntryException {
 		// reverts configuration
 		for (Entry<String, String> i : old.entrySet()) {
 			Configuration.setProperty(i.getKey(), i.getValue());
@@ -120,10 +126,24 @@ final class ChangeConfigurationOperation extends InjectedOperation {
 				db().addEntry(i);
 				indexer().add(i);
 			}
-		} catch (RuntimeException e1) {
-			revert(result, password, old);
+		} catch (Exception e1) {
 			ChangeConfigurationFailException cf = new ChangeConfigurationFailException(
 					"Failed to change components from:" + old + " to:" + config + "message:" + e1.getMessage(), e1);
+			try {
+				revert(result, password, old);
+			} catch (Exception e) {
+				File userHome = new File(System.getProperty("user.home"));
+				File export = new File(userHome, "export.txt");
+				OperationErrorException fr = new OperationErrorException(
+						"Failed to revert changes, application not in usable status, please clear all data files. Exporting all entries to "
+								+ export.getAbsolutePath());
+				fr.initCause(cf);
+
+				ExportJournalOperation dump = new ExportJournalOperation(export.getAbsolutePath());
+				dump.execute();
+				throw fr;
+			}
+
 			throw new RuntimeException(cf);
 		} finally {
 

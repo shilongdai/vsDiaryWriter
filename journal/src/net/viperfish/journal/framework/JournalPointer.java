@@ -2,6 +2,19 @@ package net.viperfish.journal.framework;
 
 import java.util.Date;
 
+/**
+ * An immutable pointer to a {@link Journal}
+ * 
+ * This class is a pointer to a journal. It is created so that when journals get
+ * large, this can be used in place of the journal. It contains the ID of the
+ * actual journal so when content is needed, the actual journal can be
+ * retrieved.
+ * 
+ * This class <b>IS</b> thread safe
+ * 
+ * @author sdai
+ *
+ */
 public final class JournalPointer implements Comparable<JournalPointer> {
 	private String title;
 	private Date date;

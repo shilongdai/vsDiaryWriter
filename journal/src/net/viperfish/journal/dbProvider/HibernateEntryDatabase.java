@@ -32,7 +32,7 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 	}
 
 	@Override
-	public Journal addEntry(Journal j) {
+	public Journal addEntry(Journal j) throws FailToSyncEntryException {
 		Transaction tr = this.getSession().beginTransaction();
 		try {
 			this.getSession().persist(j);
@@ -43,14 +43,14 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 			FailToSyncEntryException f = new FailToSyncEntryException(
 					"Cannot persist entry to database:" + e.getMessage() + " entry:" + j);
 			f.initCause(e);
-			throw new RuntimeException(f);
+			throw f;
 		} finally {
 			tr.commit();
 		}
 	}
 
 	@Override
-	public Journal removeEntry(Long id) {
+	public Journal removeEntry(Long id) throws FailToSyncEntryException {
 		Transaction tr = this.getSession().beginTransaction();
 		try {
 			Journal deleted = getEntry(id);
@@ -60,7 +60,7 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 			tr.rollback();
 			FailToSyncEntryException f = new FailToSyncEntryException(
 					"Cannot delete entry from database:" + e.getMessage() + " id:" + id);
-			throw new RuntimeException(f);
+			throw f;
 		} finally {
 			tr.commit();
 		}
@@ -73,7 +73,7 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 	}
 
 	@Override
-	public Journal updateEntry(Long id, Journal j) {
+	public Journal updateEntry(Long id, Journal j) throws FailToSyncEntryException {
 		Transaction tr = this.getSession().beginTransaction();
 		try {
 			j.setId(id);
@@ -84,7 +84,7 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 			FailToSyncEntryException f = new FailToSyncEntryException(
 					"Cannot update entry in database:" + e.getMessage() + " id:" + id + " entry:" + j);
 			f.initCause(e);
-			throw new RuntimeException(f);
+			throw f;
 		} finally {
 			tr.commit();
 		}
@@ -98,7 +98,7 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 	}
 
 	@Override
-	public void clear() {
+	public void clear() throws FailToSyncEntryException {
 		Transaction tr = this.getSession().beginTransaction();
 		try {
 			this.getSession().createQuery("DELETE FROM Journal").executeUpdate();
@@ -107,7 +107,7 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 			tr.rollback();
 			FailToSyncEntryException f = new FailToSyncEntryException("Cannot clear all:" + e.getMessage());
 			f.initCause(e);
-			throw new RuntimeException(f);
+			throw f;
 		} finally {
 			tr.commit();
 		}

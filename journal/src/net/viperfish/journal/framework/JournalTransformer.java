@@ -1,7 +1,10 @@
 package net.viperfish.journal.framework;
 
+import net.viperfish.journal.framework.errors.CipherException;
+import net.viperfish.journal.framework.errors.CompromisedDataException;
+
 /**
- * a cipher that will secure journals
+ * A encryptor that encrypts journals
  * 
  * @author sdai
  *
@@ -9,22 +12,36 @@ package net.viperfish.journal.framework;
 public interface JournalTransformer {
 
 	/**
-	 * encrypt a journal, leaving the original unmodified
+	 * encrypts a journal
+	 * 
+	 * This method encrypts the given journal, and returns the copied encrypted
+	 * version. The original version is not modified.
 	 * 
 	 * @param j
 	 *            the journal to encrypt
 	 * @return the new encrypted journal
+	 * 
+	 * @throws CipherException
+	 *             if error when encrypting
 	 */
-	public Journal encryptJournal(Journal j);
+	public Journal encryptJournal(Journal j) throws CipherException;
 
 	/**
-	 * decrypt a journal, leaving the original unmodified
+	 * decrypt a journal
+	 * 
+	 * This method returns a copy of the original that is decrypted.
 	 * 
 	 * @param j
 	 *            the journal to decrypt
 	 * @return the new decrypted journal
+	 * 
+	 * @throws CipherException
+	 *             if error during decryption
+	 * 
+	 * @throws CompromisedDataException
+	 *             if the journal data is compromised
 	 */
-	public Journal decryptJournal(Journal j);
+	public Journal decryptJournal(Journal j) throws CipherException, CompromisedDataException;
 
 	/**
 	 * set the password

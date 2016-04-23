@@ -10,6 +10,8 @@ import org.junit.Test;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
+import net.viperfish.journal.framework.errors.CipherException;
+import net.viperfish.journal.framework.errors.CompromisedDataException;
 import net.viperfish.journal.secureAlgs.BlockCiphers;
 import net.viperfish.journal.secureAlgs.Digesters;
 import net.viperfish.utils.file.CommonFunctions;
@@ -44,11 +46,17 @@ public abstract class CompressMacTest {
 		Journal j = new Journal();
 		j.setSubject("test get");
 		j.setContent("test get content");
-		Journal result = wrapper.encryptJournal(j);
-		result = wrapper.decryptJournal(result);
-		String plainContent = result.getContent();
-		Assert.assertEquals("test get content", plainContent);
-		Assert.assertEquals("test get", result.getSubject());
+
+		try {
+			Journal result = wrapper.encryptJournal(j);
+			result = wrapper.decryptJournal(result);
+			String plainContent = result.getContent();
+			Assert.assertEquals("test get content", plainContent);
+			Assert.assertEquals("test get", result.getSubject());
+		} catch (CipherException | CompromisedDataException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	@Test

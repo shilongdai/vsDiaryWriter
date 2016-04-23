@@ -3,6 +3,8 @@ package net.viperfish.journal.framework;
 /**
  * a Operation with a result
  * 
+ * This class is thread safe
+ * 
  * @author sdai
  *
  * @param <T>
@@ -22,14 +24,18 @@ public abstract class OperationWithResult<T> extends InjectedOperation {
 	/**
 	 * check whether this has finished executing
 	 * 
-	 * @return if complete
+	 * @return is complete
 	 */
 	public synchronized boolean isDone() {
 		return isDone;
 	}
 
 	/**
-	 * get the result, will block if the operation is not executed
+	 * get the result
+	 * 
+	 * This method gets the result of the operation. It blocks until the result
+	 * is available. It will block for no more 1 minute. If exceeds one minute,
+	 * it is interrupted and a {@link RuntimeException} is thrown.
 	 * 
 	 * @return the result of the operation
 	 */
@@ -38,7 +44,7 @@ public abstract class OperationWithResult<T> extends InjectedOperation {
 			synchronized (this) {
 				while (true) {
 					try {
-						this.wait(10000);
+						this.wait(60000);
 					} catch (InterruptedException e) {
 						throw new RuntimeException("Operation Time Out");
 					}

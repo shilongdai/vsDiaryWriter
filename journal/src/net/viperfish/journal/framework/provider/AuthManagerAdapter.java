@@ -3,6 +3,9 @@ package net.viperfish.journal.framework.provider;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.Observable;
 import net.viperfish.journal.framework.Observer;
+import net.viperfish.journal.framework.errors.CannotClearPasswordException;
+import net.viperfish.journal.framework.errors.FailToLoadCredentialException;
+import net.viperfish.journal.framework.errors.FailToStoreCredentialException;
 
 /**
  * An adapter to a regular AuthenticationManager that pushes data to subscriber
@@ -23,19 +26,19 @@ final class AuthManagerAdapter extends Observable<String> implements Authenticat
 	}
 
 	@Override
-	public void clear() {
+	public void clear() throws CannotClearPasswordException {
 		mger.clear();
 	}
 
 	@Override
-	public void setPassword(String pass) {
+	public void setPassword(String pass) throws FailToStoreCredentialException {
 		mger.setPassword(pass);
 		this.notifyObservers(pass);
 	}
 
 	@Override
-	public void reload() {
-		mger.reload();
+	public void load() throws FailToLoadCredentialException {
+		mger.load();
 	}
 
 	@Override

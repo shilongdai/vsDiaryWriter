@@ -2,8 +2,12 @@ package net.viperfish.journal.framework;
 
 import java.util.List;
 
+import net.viperfish.journal.framework.errors.FailToSyncEntryException;
+
 /**
- * the interface that handles persistence for the application
+ * A persistence object that stored {@link Journal}s.
+ * 
+ * This class <b>DOES NOT</b> have to be thread safe.
  * 
  * @author sdai
  *
@@ -11,13 +15,18 @@ import java.util.List;
 public interface EntryDatabase {
 
 	/**
-	 * stores a journal, and fills in the id
+	 * stores a {@link Journal}
+	 * 
+	 * This method stores a {@link Journal} and fills in its id.
 	 * 
 	 * @param j
 	 *            the journal to store
 	 * @return the stored journal, with id filled
+	 * 
+	 * @throws FailToSyncEntryException
+	 *             if cannot sync the new entry with the storage
 	 */
-	Journal addEntry(Journal j);
+	Journal addEntry(Journal j) throws FailToSyncEntryException;
 
 	/**
 	 * removes a journal
@@ -25,8 +34,11 @@ public interface EntryDatabase {
 	 * @param id
 	 *            the id of the journal to remove
 	 * @return the removed journal, or null if not found
+	 * 
+	 * @throws FailToSyncEntryException
+	 *             if cannot remove the entry from the storage
 	 */
-	Journal removeEntry(Long id);
+	Journal removeEntry(Long id) throws FailToSyncEntryException;
 
 	/**
 	 * gets a journal
@@ -40,13 +52,18 @@ public interface EntryDatabase {
 	/**
 	 * updates a journal
 	 * 
+	 * This method updates the journal that has the given id.
+	 * 
 	 * @param id
 	 *            the id of the journal to update
 	 * @param j
 	 *            the new version of the journal
 	 * @return the updated journal
+	 * 
+	 * @throws FailToSyncEntryException
+	 *             if cannot update the entry in the storage
 	 */
-	Journal updateEntry(Long id, Journal j);
+	Journal updateEntry(Long id, Journal j) throws FailToSyncEntryException;
 
 	/**
 	 * get all journals
@@ -57,7 +74,10 @@ public interface EntryDatabase {
 
 	/**
 	 * clear all journals
+	 * 
+	 * @throws FailToSyncEntryException
+	 *             if cannot clear entries
 	 */
-	void clear();
+	void clear() throws FailToSyncEntryException;
 
 }

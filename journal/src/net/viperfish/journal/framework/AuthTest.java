@@ -7,6 +7,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import net.viperfish.journal.framework.errors.CannotClearPasswordException;
+import net.viperfish.journal.framework.errors.FailToLoadCredentialException;
+import net.viperfish.journal.framework.errors.FailToStoreCredentialException;
 import net.viperfish.utils.file.CommonFunctions;
 
 public abstract class AuthTest {
@@ -27,11 +30,12 @@ public abstract class AuthTest {
 	protected abstract AuthenticationManager getAuth(File dataDir);
 
 	@Test
-	public void testVerify() {
+	public void testVerify()
+			throws CannotClearPasswordException, FailToStoreCredentialException, FailToLoadCredentialException {
 		auth.clear();
 		auth.setPassword("password");
 		auth = getAuth(dataDir);
-		auth.reload();
+		auth.load();
 		Assert.assertEquals(true, auth.verify("password"));
 		auth.clear();
 	}

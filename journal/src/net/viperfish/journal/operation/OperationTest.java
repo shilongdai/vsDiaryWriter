@@ -26,6 +26,8 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalPointer;
 import net.viperfish.journal.framework.Operation;
 import net.viperfish.journal.framework.OperationWithResult;
+import net.viperfish.journal.framework.errors.FailToStoreCredentialException;
+import net.viperfish.journal.framework.errors.FailToSyncEntryException;
 import net.viperfish.journal.framework.provider.AuthManagers;
 import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.journal.framework.provider.Indexers;
@@ -110,7 +112,7 @@ public final class OperationTest {
 	}
 
 	@Test
-	public void testDeleteEntryOperation() {
+	public void testDeleteEntryOperation() throws FailToSyncEntryException {
 		cleanUp();
 		Journal toAdd = new Journal();
 		toAdd.setContent("test");
@@ -129,7 +131,7 @@ public final class OperationTest {
 	}
 
 	@Test
-	public void testEditSubjectOperation() {
+	public void testEditSubjectOperation() throws FailToSyncEntryException {
 		cleanUp();
 		Journal test = new Journal();
 		test.setSubject("unedited");
@@ -144,7 +146,7 @@ public final class OperationTest {
 	}
 
 	@Test
-	public void testEditContentOperation() {
+	public void testEditContentOperation() throws FailToSyncEntryException {
 		cleanUp();
 		Journal test = new Journal();
 		test.setSubject("test");
@@ -159,7 +161,7 @@ public final class OperationTest {
 	}
 
 	@Test
-	public void testGetEntryOperation() {
+	public void testGetEntryOperation() throws FailToSyncEntryException {
 		cleanUp();
 		Journal test = new Journal();
 		test.setContent("test");
@@ -179,7 +181,7 @@ public final class OperationTest {
 	}
 
 	@Test
-	public void testSearchEntryOperation() {
+	public void testSearchEntryOperation() throws FailToSyncEntryException {
 		cleanUp();
 		Journal t1 = new Journal();
 		t1.setContent("test 1");
@@ -209,7 +211,7 @@ public final class OperationTest {
 	}
 
 	@Test
-	public void testGetAllOperation() {
+	public void testGetAllOperation() throws FailToSyncEntryException {
 		cleanUp();
 		addEntries(100);
 		GetAllOperation getAll = new GetAllOperation();
@@ -221,7 +223,7 @@ public final class OperationTest {
 	}
 
 	@Test
-	public void testClearOperation() {
+	public void testClearOperation() throws FailToSyncEntryException {
 		cleanUp();
 		List<Long> ids = addEntries(10);
 		ClearEntriesOperation c = new ClearEntriesOperation();
@@ -234,7 +236,7 @@ public final class OperationTest {
 	}
 
 	@Test
-	public void testExportOperation() {
+	public void testExportOperation() throws FailToSyncEntryException {
 		cleanUp();
 		addEntries(20, "toExport");
 		List<Journal> all = db.getAll();
@@ -254,7 +256,7 @@ public final class OperationTest {
 	}
 
 	@Test
-	public void testImportOperation() {
+	public void testImportOperation() throws FailToSyncEntryException {
 		cleanUp();
 		addEntries(20, "testImport");
 		exportJournals(db.getAll());
@@ -271,7 +273,7 @@ public final class OperationTest {
 	}
 
 	@Test
-	public void testChangePassword() {
+	public void testChangePassword() throws FailToSyncEntryException {
 		cleanUp();
 		addEntries(20, "testPassword");
 		new ChangePasswordOperation("newPass").execute();
@@ -308,7 +310,7 @@ public final class OperationTest {
 	}
 
 	@Test
-	public void testChangeConfig() {
+	public void testChangeConfig() throws FailToSyncEntryException {
 		cleanUp();
 		Map<String, String> testConfig = new HashMap<>();
 		addEntries(10);
@@ -329,7 +331,7 @@ public final class OperationTest {
 	}
 
 	@Test
-	public void testGetDateRange() {
+	public void testGetDateRange() throws FailToSyncEntryException {
 		cleanUp();
 		Calendar cal = Calendar.getInstance();
 		cal.set(1990, 0, 1);
@@ -371,10 +373,14 @@ public final class OperationTest {
 	}
 
 	public void cleanUp() {
-		mger.clear();
-		db.clear();
-		indexer.clear();
-		mger.setPassword("test");
+		try {
+			mger.clear();
+			db.clear();
+			indexer.clear();
+			mger.setPassword("test");
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void exportJournals(List<Journal> src) {
@@ -388,11 +394,11 @@ public final class OperationTest {
 
 	}
 
-	private List<Long> addEntries(int howMany) {
+	private List<Long> addEntries(int howMany) throws FailToSyncEntryException {
 		return addEntries(howMany, "test");
 	}
 
-	private List<Long> addEntries(int howMany, String allContent) {
+	private List<Long> addEntries(int howMany, String allContent) throws FailToSyncEntryException {
 		List<Long> resultList = new LinkedList<>();
 		for (int i = 0; i < howMany; ++i) {
 			Journal j = new Journal();
@@ -406,7 +412,11 @@ public final class OperationTest {
 
 	private void initComponents() {
 		mger = AuthManagers.INSTANCE.getAuthManager();
-		mger.setPassword("test");
+		try {
+			mger.setPassword("test");
+		} catch (FailToStoreCredentialException e) {
+			throw new RuntimeException(e);
+		}
 		db = EntryDatabases.INSTANCE.getEntryDatabase();
 		indexer = Indexers.INSTANCE.getIndexer();
 	}

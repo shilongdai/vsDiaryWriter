@@ -11,7 +11,7 @@ import org.apache.commons.codec.binary.Base64;
  * parsing a string with 2 base64 encoded segments.
  * 
  * <p>
- * This class is NOT thread safe
+ * This class is thread safe
  * </p>
  * 
  * @author sdai

@@ -1,6 +1,8 @@
 package net.viperfish.journal.operation;
 
 import net.viperfish.journal.framework.InjectedOperation;
+import net.viperfish.journal.framework.errors.FailToStoreCredentialException;
+import net.viperfish.journal.framework.errors.OperationErrorException;
 
 /**
  * set the password (For the first time)
@@ -18,7 +20,12 @@ final class SetPasswordOperation extends InjectedOperation {
 
 	@Override
 	public void execute() {
-		auth().setPassword(password);
+		try {
+			auth().setPassword(password);
+		} catch (FailToStoreCredentialException e) {
+			OperationErrorException err = new OperationErrorException("Cannot set password:" + e.getMessage());
+			throw err;
+		}
 
 	}
 

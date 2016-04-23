@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
+import net.viperfish.journal.framework.errors.FailToLoadCredentialException;
 import net.viperfish.journal.framework.provider.Provider;
 import net.viperfish.utils.file.CommonFunctions;
 
@@ -69,10 +70,10 @@ public final class ViperfishAuthProvider implements Provider<AuthenticationManag
 		try {
 			Constructor<? extends AuthenticationManager> ctor = c.getConstructor(File.class);
 			AuthenticationManager result = ctor.newInstance(passwdFile);
-			result.reload();
+			result.load();
 			return result;
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException e) {
+				| IllegalArgumentException | InvocationTargetException | FailToLoadCredentialException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -90,11 +91,11 @@ public final class ViperfishAuthProvider implements Provider<AuthenticationManag
 		try {
 			Constructor<? extends AuthenticationManager> ctor = c.getConstructor(File.class);
 			AuthenticationManager result = ctor.newInstance(passwdFile);
-			result.reload();
+			result.load();
 			cache.put(instance, result);
 			return result;
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException e) {
+				| IllegalArgumentException | InvocationTargetException | FailToLoadCredentialException e) {
 			throw new RuntimeException(e);
 		}
 	}
