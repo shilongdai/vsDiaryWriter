@@ -24,6 +24,7 @@ public final class JournalPointer implements Comparable<JournalPointer> {
 		this.title = new String(j.getSubject());
 		this.date = new Date(j.getDate().getTime());
 		this.id = new Long(j.getId());
+
 	}
 
 	public String getTitle() {

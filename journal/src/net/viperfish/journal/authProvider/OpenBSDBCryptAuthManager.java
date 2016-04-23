@@ -99,6 +99,7 @@ final class OpenBSDBCryptAuthManager implements AuthenticationManager {
 			FailToStoreCredentialException fc = new FailToStoreCredentialException(
 					"Cannot store the hashed password:" + e.getMessage());
 			fc.initCause(e);
+			current = null;
 			throw fc;
 		}
 		this.password = pass;
@@ -147,9 +148,9 @@ final class OpenBSDBCryptAuthManager implements AuthenticationManager {
 	 * 
 	 * This method verifies a password input. It can only be called after a
 	 * successful {@link OpenBSDBCryptAuthManager#setPassword(String)} or a
-	 * {@link OpenBSDBCryptAuthManager#load()} with valid password file. If
-	 * the password is valid, the plain text password will be stored, which can
-	 * be accessed by {@link OpenBSDBCryptAuthManager#getPassword()}.
+	 * {@link OpenBSDBCryptAuthManager#load()} with valid password file. If the
+	 * password is valid, the plain text password will be stored, which can be
+	 * accessed by {@link OpenBSDBCryptAuthManager#getPassword()}.
 	 * 
 	 * @param pass
 	 *            the password to verify

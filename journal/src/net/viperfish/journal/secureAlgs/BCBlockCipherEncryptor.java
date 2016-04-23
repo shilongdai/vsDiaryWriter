@@ -1,7 +1,5 @@
 package net.viperfish.journal.secureAlgs;
 
-import java.security.SecureRandom;
-
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -18,28 +16,74 @@ import net.viperfish.journal.framework.errors.CipherException;
  * @author sdai
  *
  */
-public final class BCBlockCipherEncryptor extends BlockCipherEncryptor {
+final class BCBlockCipherEncryptor implements BlockCipherEncryptor {
 
-	private byte[] key;
-	private byte[] iv;
-	private SecureRandom rand;
+	private int keySize;
+	private int blockSize;
+	private PaddedBufferedBlockCipher cipher;
 
-	public BCBlockCipherEncryptor() {
-		rand = new SecureRandom();
+	public final static class BCBlockCipherBuilder {
+		private int keySize;
+		private int blockSize;
+		private BlockCipher cipher;
+		private BlockCipherPadding padding;
+
+		public int getKeySize() {
+			return keySize;
+		}
+
+		public BCBlockCipherBuilder setKeySize(int keySize) {
+			this.keySize = keySize;
+			return this;
+		}
+
+		public int getBlockSize() {
+			return blockSize;
+		}
+
+		public BCBlockCipherBuilder setBlockSize(int blockSize) {
+			this.blockSize = blockSize;
+			return this;
+		}
+
+		public BlockCipher getCipher() {
+			return cipher;
+		}
+
+		public BCBlockCipherBuilder setCipher(BlockCipher cipher) {
+			this.cipher = cipher;
+			return this;
+		}
+
+		public BlockCipherPadding getPadding() {
+			return padding;
+		}
+
+		public BCBlockCipherBuilder setPadding(BlockCipherPadding padding) {
+			this.padding = padding;
+			return this;
+		}
+
+		public BCBlockCipherEncryptor build() {
+			BCBlockCipherEncryptor result = new BCBlockCipherEncryptor();
+			result.blockSize = this.blockSize;
+			result.keySize = this.keySize;
+			result.cipher = new PaddedBufferedBlockCipher(cipher, padding);
+
+			if (result.blockSize == 0) {
+				throw new IllegalArgumentException("Block size must not be 0");
+			}
+			if (result.keySize == 0) {
+				throw new IllegalArgumentException("Key size must not be 0");
+			}
+
+			return result;
+		}
+
 	}
 
-	/**
-	 * creates the object that can encrypt
-	 * 
-	 * @return
-	 */
-	private PaddedBufferedBlockCipher initCipherSuite() {
-		String[] parts = getMode().split("/");
-		BlockCipher engine = BlockCiphers.getBlockCipherEngine(parts[0]);
-		BlockCipher modedEngine = BlockCiphers.wrapBlockCipherMode(engine, parts[1]);
-		BlockCipherPadding padding = BlockCiphers.getBlockCipherPadding(parts[2]);
-		PaddedBufferedBlockCipher result = new PaddedBufferedBlockCipher(modedEngine, padding);
-		return result;
+	private BCBlockCipherEncryptor() {
+
 	}
 
 	/**
@@ -70,33 +114,10 @@ public final class BCBlockCipherEncryptor extends BlockCipherEncryptor {
 	}
 
 	@Override
-	public byte[] getKey() {
-		return key;
-	}
-
-	@Override
-	public void setKey(byte[] key) {
-		this.key = key;
-	}
-
-	@Override
-	public byte[] getIv() {
-		return iv;
-	}
-
-	@Override
-	public void setIv(byte[] iv) {
-		this.iv = iv;
-	}
-
-	@Override
-	public byte[] encrypt(byte[] text) throws CipherException {
-		PaddedBufferedBlockCipher encryptor = initCipherSuite();
-		iv = new byte[encryptor.getBlockSize()];
-		rand.nextBytes(iv);
-		encryptor.init(true, new ParametersWithIV(new KeyParameter(key), iv));
+	public byte[] encrypt(byte[] text, byte[] key, byte[] iv) throws CipherException {
+		cipher.init(true, new ParametersWithIV(new KeyParameter(key), iv));
 		try {
-			return transformData(encryptor, text);
+			return transformData(cipher, text);
 		} catch (DataLengthException | IllegalStateException | InvalidCipherTextException e) {
 			CipherException ce = new CipherException("Cannot encrypt:" + e.getMessage());
 			ce.initCause(e);
@@ -105,16 +126,25 @@ public final class BCBlockCipherEncryptor extends BlockCipherEncryptor {
 	}
 
 	@Override
-	public byte[] decrypt(byte[] cipher) throws CipherException {
-		PaddedBufferedBlockCipher decryptor = initCipherSuite();
-		decryptor.init(false, new ParametersWithIV(new KeyParameter(key), iv));
+	public byte[] decrypt(byte[] cipher, byte[] key, byte[] iv) throws CipherException {
+		this.cipher.init(false, new ParametersWithIV(new KeyParameter(key), iv));
 		try {
-			return transformData(decryptor, cipher);
+			return transformData(this.cipher, cipher);
 		} catch (DataLengthException | IllegalStateException | InvalidCipherTextException e) {
 			CipherException ce = new CipherException("Cannot decrypt:" + e.getMessage());
 			ce.initCause(e);
 			throw ce;
 		}
+	}
+
+	@Override
+	public int getKeySize() {
+		return keySize;
+	}
+
+	@Override
+	public int getBlockSize() {
+		return blockSize;
 	}
 
 }

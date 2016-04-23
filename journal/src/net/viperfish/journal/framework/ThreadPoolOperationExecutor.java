@@ -40,6 +40,9 @@ final class ThreadPoolOperationExecutor extends OperationExecutor {
 
 	@Override
 	public void submit(Operation o) {
+		if (o == null) {
+			throw new NullPointerException("Operation cannot be null");
+		}
 		pool.submit(new OperationRunner(o));
 	}
 

@@ -17,6 +17,7 @@ final class ClearEntriesOperation extends InjectedOperation {
 
 	@Override
 	public void execute() {
+		indexer().clear();
 		try {
 			db().clear();
 		} catch (FailToSyncEntryException e) {
@@ -24,8 +25,6 @@ final class ClearEntriesOperation extends InjectedOperation {
 			fail.initCause(e);
 			throw fail;
 		}
-
-		indexer().clear();
 	}
 
 }

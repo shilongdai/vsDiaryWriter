@@ -25,6 +25,9 @@ public abstract class Observable<P> {
 	 *            the observer to add
 	 */
 	public void addObserver(Observer<P> o) {
+		if (o == null) {
+			throw new NullPointerException("Observer cannot be null");
+		}
 		observers.add(o);
 	}
 

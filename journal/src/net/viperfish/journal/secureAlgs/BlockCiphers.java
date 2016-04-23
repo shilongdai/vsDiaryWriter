@@ -46,6 +46,8 @@ import org.bouncycastle.crypto.paddings.TBCPadding;
 import org.bouncycastle.crypto.paddings.X923Padding;
 import org.bouncycastle.crypto.paddings.ZeroBytePadding;
 
+import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor.BCBlockCipherBuilder;
+
 /**
  * utils for blockcipher
  * 
@@ -234,7 +236,7 @@ public final class BlockCiphers {
 	 *            the name of the algorithm
 	 * @return the engine
 	 */
-	public static BlockCipher getBlockCipherEngine(String alg) {
+	static BlockCipher getBlockCipherEngine(String alg) {
 		try {
 			BlockCipher result = blockCipherCache.get(alg);
 			if (result == null) {
@@ -262,7 +264,7 @@ public final class BlockCiphers {
 	 *            the name of the mode
 	 * @return the wrapped instance
 	 */
-	public static BlockCipher wrapBlockCipherMode(BlockCipher engine, String mode) {
+	static BlockCipher wrapBlockCipherMode(BlockCipher engine, String mode) {
 		String comboName = engine.getAlgorithmName() + "/" + mode;
 		BlockCipher result = blockCipherCache.get(comboName);
 		if (result == null) {
@@ -301,7 +303,7 @@ public final class BlockCiphers {
 	 *            the name of the padding
 	 * @return the padding
 	 */
-	public static BlockCipherPadding getBlockCipherPadding(String paddingName) {
+	static BlockCipherPadding getBlockCipherPadding(String paddingName) {
 		BlockCipherPadding padding = paddingCache.get(paddingName);
 		try {
 			if (padding == null) {
@@ -370,6 +372,17 @@ public final class BlockCiphers {
 			}
 		}
 		return result;
+	}
+
+	public static BlockCipherEncryptor getEncryptor(String cipher, String mode, String padding) {
+		BlockCipher engine = getBlockCipherEngine(cipher);
+		BlockCipher modeEngine = wrapBlockCipherMode(engine, mode);
+		BlockCipherPadding pad = getBlockCipherPadding(padding);
+
+		BCBlockCipherBuilder builder = new BCBlockCipherBuilder();
+		builder.setBlockSize(engine.getBlockSize()).setKeySize(getKeySize(cipher)).setCipher(modeEngine)
+				.setPadding(pad);
+		return builder.build();
 	}
 
 }

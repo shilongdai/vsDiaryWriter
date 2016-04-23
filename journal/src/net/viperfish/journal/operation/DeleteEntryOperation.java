@@ -19,6 +19,7 @@ final class DeleteEntryOperation extends InjectedOperation {
 
 	@Override
 	public void execute() {
+		indexer().delete(id);
 		try {
 			db().removeEntry(id);
 		} catch (FailToSyncEntryException e) {
@@ -27,7 +28,6 @@ final class DeleteEntryOperation extends InjectedOperation {
 			fail.initCause(e);
 			throw fail;
 		}
-		indexer().delete(id);
 	}
 
 }

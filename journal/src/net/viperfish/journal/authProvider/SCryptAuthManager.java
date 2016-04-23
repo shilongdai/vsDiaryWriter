@@ -95,6 +95,8 @@ final class SCryptAuthManager implements AuthenticationManager {
 			FailToStoreCredentialException fs = new FailToStoreCredentialException(
 					"Cannot store password to passwd file:" + e.getMessage());
 			fs.initCause(e);
+			passCont = null;
+
 			throw new RuntimeException(fs);
 		}
 		this.password = pass;
