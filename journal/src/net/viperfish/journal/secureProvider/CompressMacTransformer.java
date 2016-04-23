@@ -46,20 +46,9 @@ abstract class CompressMacTransformer implements JournalTransformer {
 	private PBKDF2KeyGenerator keyGenerator;
 	private Compressor compress;
 
-	/**
-	 * encrypt raw data into format
-	 * 
-	 * @param bytes
-	 *            the data to encrypt
-	 * @return the encrypted data in the format of iv$cipher in Base64
-	 * @throws InvalidKeyException
-	 * @throws InvalidAlgorithmParameterException
-	 * @throws IllegalBlockSizeException
-	 * @throws BadPaddingException
-	 */
-	protected abstract String encryptData(byte[] bytes);
+	protected abstract String encryptData(byte[] bytes) throws CipherException;
 
-	protected abstract byte[] decryptData(String cData);
+	protected abstract byte[] decryptData(String cData) throws CipherException;
 
 	/**
 	 * calculat a mac of the data and encode it into Base64
@@ -85,8 +74,7 @@ abstract class CompressMacTransformer implements JournalTransformer {
 	 * @throws IllegalBlockSizeException
 	 * @throws BadPaddingException
 	 */
-	private String encrypt_format(String data) throws InvalidKeyException, InvalidAlgorithmParameterException,
-			IllegalBlockSizeException, BadPaddingException {
+	private String encrypt_format(String data) throws CipherException {
 		byte[] bytes = data.getBytes(StandardCharsets.UTF_16);
 		// encrypt
 		String cipherString;
@@ -115,8 +103,7 @@ abstract class CompressMacTransformer implements JournalTransformer {
 	 * @throws CompromisedDataException
 	 *             the stored Mac does not match the calculated Mac
 	 */
-	private String decrypt_format(String data) throws InvalidKeyException, InvalidAlgorithmParameterException,
-			IllegalBlockSizeException, BadPaddingException, CompromisedDataException {
+	private String decrypt_format(String data) throws CipherException, CompromisedDataException {
 		String[] parts = data.split("\\$");
 		String cData = parts[0];
 		String macString = parts[1];
@@ -172,41 +159,27 @@ abstract class CompressMacTransformer implements JournalTransformer {
 	}
 
 	@Override
-	public Journal encryptJournal(Journal j) {
-		try {
-			String encrytSubject = encrypt_format(j.getSubject());
-			String encryptContent = encrypt_format(j.getContent());
-			Journal result = new Journal();
-			result.setSubject(encrytSubject);
-			result.setContent(encryptContent);
-			result.setDate(j.getDate());
-			result.setId(j.getId());
-			return result;
-		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
-				| BadPaddingException e) {
-			CipherException c = new CipherException("Cannot encrypt entry:" + e.getMessage());
-			c.initCause(e);
-			throw new RuntimeException(c);
-		}
+	public Journal encryptJournal(Journal j) throws CipherException {
+		String encrytSubject = encrypt_format(j.getSubject());
+		String encryptContent = encrypt_format(j.getContent());
+		Journal result = new Journal();
+		result.setSubject(encrytSubject);
+		result.setContent(encryptContent);
+		result.setDate(j.getDate());
+		result.setId(j.getId());
+		return result;
 	}
 
 	@Override
-	public Journal decryptJournal(Journal j) {
-		try {
-			String decSubject = decrypt_format(j.getSubject());
-			String decContent = decrypt_format(j.getContent());
-			Journal result = new Journal();
-			result.setSubject(decSubject);
-			result.setContent(decContent);
-			result.setDate(j.getDate());
-			result.setId(j.getId());
-			return result;
-		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
-				| BadPaddingException | CompromisedDataException e) {
-			CipherException c = new CipherException("cannot decrypt entry:" + e.getMessage());
-			c.initCause(e);
-			throw new RuntimeException(c);
-		}
+	public Journal decryptJournal(Journal j) throws CipherException, CompromisedDataException {
+		String decSubject = decrypt_format(j.getSubject());
+		String decContent = decrypt_format(j.getContent());
+		Journal result = new Journal();
+		result.setSubject(decSubject);
+		result.setContent(decContent);
+		result.setDate(j.getDate());
+		result.setId(j.getId());
+		return result;
 	}
 
 	/**

@@ -1,10 +1,6 @@
 package net.viperfish.journal.secureAlgs;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
+import net.viperfish.journal.framework.errors.CipherException;
 
 /**
  * a cipher calculator
@@ -72,13 +68,8 @@ public abstract class BlockCipherEncryptor {
 	 * @param text
 	 *            the text to encrypt
 	 * @return the ciphered text
-	 * @throws InvalidKeyException
-	 * @throws InvalidAlgorithmParameterException
-	 * @throws IllegalBlockSizeException
-	 * @throws BadPaddingException
 	 */
-	public abstract byte[] encrypt(byte[] text) throws InvalidKeyException, InvalidAlgorithmParameterException,
-			IllegalBlockSizeException, BadPaddingException;
+	public abstract byte[] encrypt(byte[] text) throws CipherException;
 
 	/**
 	 * decrypt text using a key and an IV. The key is mandatory, but the IV can
@@ -87,13 +78,8 @@ public abstract class BlockCipherEncryptor {
 	 * @param cipher
 	 *            the cipher to decrypt
 	 * @return the plain text
-	 * @throws InvalidKeyException
-	 * @throws InvalidAlgorithmParameterException
-	 * @throws IllegalBlockSizeException
-	 * @throws BadPaddingException
 	 */
-	public abstract byte[] decrypt(byte[] cipher) throws InvalidKeyException, InvalidAlgorithmParameterException,
-			IllegalBlockSizeException, BadPaddingException;
+	public abstract byte[] decrypt(byte[] cipher) throws CipherException;
 
 	/**
 	 * gets the key size of the current mode

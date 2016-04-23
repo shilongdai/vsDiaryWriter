@@ -3,13 +3,9 @@ package net.viperfish.journal.secureProvider;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 
 import net.viperfish.journal.framework.Configuration;
+import net.viperfish.journal.framework.errors.CipherException;
 import net.viperfish.journal.secureAlgs.BCBlockCipherEncryptor;
 import net.viperfish.journal.secureAlgs.BlockCipherEncryptor;
 import net.viperfish.journal.secureAlgs.MacDigester;
@@ -105,28 +101,18 @@ final class BlockCipherMacTransformer extends CompressMacTransformer {
 	}
 
 	@Override
-	protected String encryptData(byte[] bytes) {
-		try {
-			byte[] cipher = enc.encrypt(bytes);
-			byte[] iv = enc.getIv();
-			ByteParameterPair pair = new ByteParameterPair(cipher, iv);
-			return pair.toString();
-		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
-				| BadPaddingException e) {
-			throw new RuntimeException(e);
-		}
+	protected String encryptData(byte[] bytes) throws CipherException {
+		byte[] cipher = enc.encrypt(bytes);
+		byte[] iv = enc.getIv();
+		ByteParameterPair pair = new ByteParameterPair(cipher, iv);
+		return pair.toString();
 	}
 
 	@Override
-	protected byte[] decryptData(String data) {
-		try {
-			ByteParameterPair pair = ByteParameterPair.valueOf(data);
-			enc.setIv(pair.getSecond());
-			return enc.decrypt(pair.getFirst());
-		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
-				| BadPaddingException e) {
-			throw new RuntimeException(e);
-		}
+	protected byte[] decryptData(String data) throws CipherException {
+		ByteParameterPair pair = ByteParameterPair.valueOf(data);
+		enc.setIv(pair.getSecond());
+		return enc.decrypt(pair.getFirst());
 	}
 
 }

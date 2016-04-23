@@ -1,11 +1,6 @@
 package net.viperfish.journal.secureAlgs;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.SecureRandom;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.DataLengthException;
@@ -14,6 +9,8 @@ import org.bouncycastle.crypto.paddings.BlockCipherPadding;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
+
+import net.viperfish.journal.framework.errors.CipherException;
 
 /**
  * an encryptor based on Bouncy Castle's crypto API
@@ -93,8 +90,7 @@ public final class BCBlockCipherEncryptor extends BlockCipherEncryptor {
 	}
 
 	@Override
-	public byte[] encrypt(byte[] text) throws InvalidKeyException, InvalidAlgorithmParameterException,
-			IllegalBlockSizeException, BadPaddingException {
+	public byte[] encrypt(byte[] text) throws CipherException {
 		PaddedBufferedBlockCipher encryptor = initCipherSuite();
 		iv = new byte[encryptor.getBlockSize()];
 		rand.nextBytes(iv);
@@ -102,19 +98,22 @@ public final class BCBlockCipherEncryptor extends BlockCipherEncryptor {
 		try {
 			return transformData(encryptor, text);
 		} catch (DataLengthException | IllegalStateException | InvalidCipherTextException e) {
-			throw new RuntimeException(e);
+			CipherException ce = new CipherException("Cannot encrypt:" + e.getMessage());
+			ce.initCause(e);
+			throw ce;
 		}
 	}
 
 	@Override
-	public byte[] decrypt(byte[] cipher) throws InvalidKeyException, InvalidAlgorithmParameterException,
-			IllegalBlockSizeException, BadPaddingException {
+	public byte[] decrypt(byte[] cipher) throws CipherException {
 		PaddedBufferedBlockCipher decryptor = initCipherSuite();
 		decryptor.init(false, new ParametersWithIV(new KeyParameter(key), iv));
 		try {
 			return transformData(decryptor, cipher);
 		} catch (DataLengthException | IllegalStateException | InvalidCipherTextException e) {
-			throw new RuntimeException(e);
+			CipherException ce = new CipherException("Cannot decrypt:" + e.getMessage());
+			ce.initCause(e);
+			throw ce;
 		}
 	}
 
