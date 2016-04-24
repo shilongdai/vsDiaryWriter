@@ -8,5 +8,5 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 
-java -jar -XstartOnFirstThread $DIR/full-journal-4.1.1.jar;
+java -jar -XstartOnFirstThread $DIR/full-journal-4.2.1.jar;
 
