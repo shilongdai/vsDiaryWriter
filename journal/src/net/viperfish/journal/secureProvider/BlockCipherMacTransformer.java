@@ -11,6 +11,7 @@ import net.viperfish.journal.secureAlgs.BlockCipherEncryptor;
 import net.viperfish.journal.secureAlgs.BlockCiphers;
 import net.viperfish.journal.secureAlgs.MacDigester;
 import net.viperfish.journal.secureAlgs.Macs;
+import net.viperfish.utils.ByteParameterPair;
 
 /**
  * a journal transformer that uses a compression, a block cipher, and a mac

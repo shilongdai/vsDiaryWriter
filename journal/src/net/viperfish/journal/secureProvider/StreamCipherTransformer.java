@@ -8,6 +8,7 @@ import net.viperfish.journal.secureAlgs.MacDigester;
 import net.viperfish.journal.secureAlgs.Macs;
 import net.viperfish.journal.streamCipher.StreamCipherEncryptor;
 import net.viperfish.journal.streamCipher.StreamCipherEncryptors;
+import net.viperfish.utils.ByteParameterPair;
 
 final class StreamCipherTransformer extends CompressMacTransformer {
 

@@ -1,14 +1,14 @@
-package net.viperfish.journal.secureProvider;
+package net.viperfish.utils;
 
 import java.util.Arrays;
 
 import org.apache.commons.codec.binary.Base64;
 
-final class ByteParameterPair {
+public final class ByteParameterPair {
 	private final byte[] first;
 	private final byte[] second;
 
-	ByteParameterPair(byte[] first, byte[] second) {
+	public ByteParameterPair(byte[] first, byte[] second) {
 		this.first = Arrays.copyOf(first, first.length);
 		this.second = Arrays.copyOf(second, second.length);
 	}
@@ -53,7 +53,7 @@ final class ByteParameterPair {
 		return firstString + "&" + secondString;
 	}
 
-	static ByteParameterPair valueOf(String data) {
+	public static ByteParameterPair valueOf(String data) {
 		String[] pair = data.split("&");
 		if (pair.length != 2) {
 			throw new IllegalArgumentException(

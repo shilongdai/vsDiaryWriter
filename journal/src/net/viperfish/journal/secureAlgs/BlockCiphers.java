@@ -87,15 +87,13 @@ public final class BlockCiphers {
 	private static Map<String, Class<? extends BlockCipher>> blockCipherEngines;
 	private static Map<String, Class<? extends BlockCipher>> blockCipherMode;
 	private static Map<String, Class<? extends BlockCipherPadding>> blockCipherPadding;
-	private static Map<String, BlockCipher> blockCipherCache;
-	private static Map<String, BlockCipherPadding> paddingCache;
+	private static Map<String, BlockCipherEncryptor> cache;
 
 	static {
 		blockCipherEngines = new TreeMap<String, Class<? extends BlockCipher>>(String.CASE_INSENSITIVE_ORDER);
 		blockCipherMode = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 		blockCipherPadding = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-		blockCipherCache = new HashMap<>();
-		paddingCache = new HashMap<>();
+		cache = new HashMap<>();
 		initBlockCipherEngines();
 		initBlockCipherModes();
 		initBlockCipherPaddings();
@@ -236,20 +234,18 @@ public final class BlockCiphers {
 	 *            the name of the algorithm
 	 * @return the engine
 	 */
-	static BlockCipher getBlockCipherEngine(String alg) {
+	public static BlockCipher getBlockCipherEngine(String alg) {
 		try {
-			BlockCipher result = blockCipherCache.get(alg);
-			if (result == null) {
-				if (alg.equalsIgnoreCase("Threefish")) {
-					result = new ThreefishEngine(ThreefishEngine.BLOCKSIZE_512);
-				} else {
-					result = blockCipherEngines.get(alg).newInstance();
-				}
-				blockCipherCache.put(alg, result);
+			BlockCipher result = null;
+			if (alg.equalsIgnoreCase("Threefish")) {
+				result = new ThreefishEngine(ThreefishEngine.BLOCKSIZE_512);
+			} else {
+				result = blockCipherEngines.get(alg).newInstance();
 			}
-			result.reset();
 			return result;
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (InstantiationException |
+
+				IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -265,34 +261,29 @@ public final class BlockCiphers {
 	 * @return the wrapped instance
 	 */
 	static BlockCipher wrapBlockCipherMode(BlockCipher engine, String mode) {
-		String comboName = engine.getAlgorithmName() + "/" + mode;
-		BlockCipher result = blockCipherCache.get(comboName);
-		if (result == null) {
-			try {
-				Class<? extends BlockCipher> modeClass = blockCipherMode.get(mode);
-				Constructor<?>[] modeCtors = modeClass.getConstructors();
-				Constructor<? extends BlockCipher> modeCtor;
-				if (modeCtors[0].getParameterTypes().length == 1) {
-					modeCtor = modeClass.getConstructor(BlockCipher.class);
-				} else {
-					modeCtor = modeClass.getConstructor(BlockCipher.class, int.class);
-				}
-
-				BlockCipher modedEngine;
-				if (modeCtor.getParameterTypes().length == 1) {
-					modedEngine = modeCtor.newInstance(engine);
-				} else {
-					modedEngine = modeCtor.newInstance(engine, engine.getBlockSize() * 8);
-				}
-				result = modedEngine;
-				blockCipherCache.put(comboName, result);
-			} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
-					| IllegalArgumentException | InvocationTargetException e) {
-				e.fillInStackTrace();
-				throw new RuntimeException(e);
+		BlockCipher result = null;
+		try {
+			Class<? extends BlockCipher> modeClass = blockCipherMode.get(mode);
+			Constructor<?>[] modeCtors = modeClass.getConstructors();
+			Constructor<? extends BlockCipher> modeCtor;
+			if (modeCtors[0].getParameterTypes().length == 1) {
+				modeCtor = modeClass.getConstructor(BlockCipher.class);
+			} else {
+				modeCtor = modeClass.getConstructor(BlockCipher.class, int.class);
 			}
+
+			BlockCipher modedEngine;
+			if (modeCtor.getParameterTypes().length == 1) {
+				modedEngine = modeCtor.newInstance(engine);
+			} else {
+				modedEngine = modeCtor.newInstance(engine, engine.getBlockSize() * 8);
+			}
+			result = modedEngine;
+		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
+				| IllegalArgumentException | InvocationTargetException e) {
+			e.fillInStackTrace();
+			throw new RuntimeException(e);
 		}
-		result.reset();
 		return result;
 	}
 
@@ -304,12 +295,9 @@ public final class BlockCiphers {
 	 * @return the padding
 	 */
 	static BlockCipherPadding getBlockCipherPadding(String paddingName) {
-		BlockCipherPadding padding = paddingCache.get(paddingName);
+		BlockCipherPadding padding = null;
 		try {
-			if (padding == null) {
-				padding = blockCipherPadding.get(paddingName).newInstance();
-				paddingCache.put(paddingName, padding);
-			}
+			padding = blockCipherPadding.get(paddingName).newInstance();
 			return padding;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
@@ -375,14 +363,25 @@ public final class BlockCiphers {
 	}
 
 	public static BlockCipherEncryptor getEncryptor(String cipher, String mode, String padding) {
-		BlockCipher engine = getBlockCipherEngine(cipher);
-		BlockCipher modeEngine = wrapBlockCipherMode(engine, mode);
-		BlockCipherPadding pad = getBlockCipherPadding(padding);
 
-		BCBlockCipherBuilder builder = new BCBlockCipherBuilder();
-		builder.setBlockSize(engine.getBlockSize()).setKeySize(getKeySize(cipher)).setCipher(modeEngine)
-				.setPadding(pad);
-		return builder.build();
+		StringBuilder sb = new StringBuilder();
+		sb.append(cipher).append("/").append(mode).append("/").append(padding);
+		String type = sb.toString();
+
+		BlockCipherEncryptor bc = cache.get(type);
+		if (bc == null) {
+
+			BlockCipher engine = getBlockCipherEngine(cipher);
+			BlockCipher modeEngine = wrapBlockCipherMode(engine, mode);
+			BlockCipherPadding pad = getBlockCipherPadding(padding);
+
+			BCBlockCipherBuilder builder = new BCBlockCipherBuilder();
+			builder.setBlockSize(engine.getBlockSize()).setKeySize(getKeySize(cipher)).setCipher(modeEngine)
+					.setPadding(pad);
+			bc = builder.build();
+			cache.put(type, bc);
+		}
+		return bc;
 	}
 
 }
