@@ -1,16 +1,16 @@
-package net.viperfish.journal.operation;
+package net.viperfish.journal.framework;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import net.viperfish.journal.framework.Operation;
+import net.viperfish.journal.operation.OperationFactories;
 
 public final class StoreConfigurationBufferOperation implements Operation {
 
 	private static Map<String, String> globalBuffer;
 
 	public static Operation applyOperation() {
-		Operation result = new ChangeConfigurationOperation(globalBuffer);
+		Operation result = OperationFactories.getOperationFactory().getChangeConfigOperaion(globalBuffer);
 		globalBuffer.clear();
 		return result;
 	}

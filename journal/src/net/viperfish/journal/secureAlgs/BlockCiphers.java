@@ -88,15 +88,29 @@ public final class BlockCiphers {
 	private static Map<String, Class<? extends BlockCipher>> blockCipherMode;
 	private static Map<String, Class<? extends BlockCipherPadding>> blockCipherPadding;
 	private static Map<String, BlockCipherEncryptor> cache;
+	private static Set<String> gcmCiphers;
 
 	static {
 		blockCipherEngines = new TreeMap<String, Class<? extends BlockCipher>>(String.CASE_INSENSITIVE_ORDER);
 		blockCipherMode = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 		blockCipherPadding = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 		cache = new HashMap<>();
+		gcmCiphers = new TreeSet<>();
 		initBlockCipherEngines();
 		initBlockCipherModes();
 		initBlockCipherPaddings();
+		initGCMCiphers();
+	}
+
+	private static void initGCMCiphers() {
+		gcmCiphers.add("AES");
+		gcmCiphers.add("Camellia");
+		gcmCiphers.add("CAST6");
+		gcmCiphers.add("Noekeon");
+		gcmCiphers.add("RC6");
+		gcmCiphers.add("SEED");
+		gcmCiphers.add("Serpent");
+		gcmCiphers.add("Twofish");
 	}
 
 	private static void initBlockCipherEngines() {
@@ -349,17 +363,7 @@ public final class BlockCiphers {
 	 * @return names of algorithm usable with GMAC
 	 */
 	public static Set<String> getGmacAlgorithms() {
-		Set<String> result = new TreeSet<>();
-		for (Entry<String, Class<? extends BlockCipher>> iter : blockCipherEngines.entrySet()) {
-			try {
-				if (iter.getValue().newInstance().getBlockSize() == 16) {
-					result.add(iter.getKey());
-				}
-			} catch (InstantiationException | IllegalAccessException e) {
-				continue;
-			}
-		}
-		return result;
+		return new TreeSet<>(gcmCiphers);
 	}
 
 	public static BlockCipherEncryptor getEncryptor(String cipher, String mode, String padding) {

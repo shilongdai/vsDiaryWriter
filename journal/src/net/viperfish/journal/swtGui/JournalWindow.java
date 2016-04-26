@@ -54,9 +54,9 @@ import net.viperfish.journal.framework.OperationExecutor;
 import net.viperfish.journal.framework.OperationExecutors;
 import net.viperfish.journal.framework.OperationFactory;
 import net.viperfish.journal.framework.OperationWithResult;
+import net.viperfish.journal.framework.StoreConfigurationBufferOperation;
 import net.viperfish.journal.framework.provider.PreferenceGUIManager;
 import net.viperfish.journal.operation.OperationFactories;
-import net.viperfish.journal.operation.StoreConfigurationBufferOperation;
 import net.viperfish.utils.time.TimeUtils;
 
 public class JournalWindow {
@@ -200,7 +200,7 @@ public class JournalWindow {
 		shell = new Shell();
 		shell.setImage(SWTResourceManager.getImage(JournalWindow.class, "/logo.ico"));
 		shell.setSize(495, 480);
-		shell.setText("vsDiary - 4.2.1");
+		shell.setText("vsDiary - 4.2.2");
 		shell.setLayout(new GridLayout(8, false));
 
 		errorReporter = new ExceptionDisplayer(shell);

@@ -6,8 +6,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import net.viperfish.journal.framework.OperationExecutors;
+import net.viperfish.journal.framework.StoreConfigurationBufferOperation;
 import net.viperfish.journal.operation.OperationFactories;
-import net.viperfish.journal.operation.StoreConfigurationBufferOperation;
 
 public final class BlockCipherPreferencePage extends PreferencePage {
 
