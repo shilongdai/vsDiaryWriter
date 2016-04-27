@@ -117,9 +117,7 @@ public class LoginPrompt {
 					public void run() {
 						VerifyPasswordOperation vp = new VerifyPasswordOperation(toTest);
 						OperationExecutors.getExecutor().submit(vp);
-						System.out.println("vp submitted");
 						boolean correct = vp.getResult();
-						System.out.println("result found");
 						if (correct) {
 							display.asyncExec(new Runnable() {
 
