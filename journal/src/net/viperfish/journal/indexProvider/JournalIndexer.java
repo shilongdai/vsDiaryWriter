@@ -22,8 +22,8 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.jsoup.Jsoup;
 
+import net.viperfish.framework.index.LuceneIndexer;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.utils.index.LuceneIndexer;
 
 /**
  * the built in indexer that uses Apache Lucene indexer for indexing

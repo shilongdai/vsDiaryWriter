@@ -8,15 +8,15 @@ import java.security.SecureRandom;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
 import org.bouncycastle.crypto.params.HKDFParameters;
 
+import net.viperfish.framework.ByteParameterPair;
+import net.viperfish.framework.file.IOFile;
+import net.viperfish.framework.file.TextIOStreamHandler;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.errors.CipherException;
 import net.viperfish.journal.framework.errors.FailToSyncCipherDataException;
 import net.viperfish.journal.secureAlgs.BlockCipherEncryptor;
 import net.viperfish.journal.secureAlgs.BlockCiphers;
 import net.viperfish.journal.secureAlgs.Digesters;
-import net.viperfish.utils.ByteParameterPair;
-import net.viperfish.utils.file.IOFile;
-import net.viperfish.utils.file.TextIOStreamHandler;
 
 /**
  * a journal transformer that uses a compression, a block cipher, and a mac

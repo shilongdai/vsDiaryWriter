@@ -7,6 +7,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
+import net.viperfish.framework.file.CommonFunctions;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
@@ -15,7 +16,6 @@ import net.viperfish.journal.framework.errors.CompromisedDataException;
 import net.viperfish.journal.framework.errors.FailToSyncCipherDataException;
 import net.viperfish.journal.secureAlgs.BlockCiphers;
 import net.viperfish.journal.secureAlgs.Digesters;
-import net.viperfish.utils.file.CommonFunctions;
 
 public abstract class CompressMacTest {
 	private static File testDir;

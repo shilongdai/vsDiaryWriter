@@ -26,6 +26,7 @@ public class LoginPrompt {
 	private Text text;
 	private String password;
 	private Display display;
+	private final ExecutorService exc = Executors.newCachedThreadPool();
 
 	public LoginPrompt() {
 
@@ -47,6 +48,7 @@ public class LoginPrompt {
 				display.sleep();
 			}
 		}
+		exc.shutdown();
 		return password;
 	}
 
@@ -109,14 +111,15 @@ public class LoginPrompt {
 				});
 				final String toTest = text.getText();
 
-				final ExecutorService exc = Executors.newSingleThreadExecutor();
 				exc.execute(new Runnable() {
 
 					@Override
 					public void run() {
 						VerifyPasswordOperation vp = new VerifyPasswordOperation(toTest);
 						OperationExecutors.getExecutor().submit(vp);
+						System.out.println("vp submitted");
 						boolean correct = vp.getResult();
+						System.out.println("result found");
 						if (correct) {
 							display.asyncExec(new Runnable() {
 
@@ -124,7 +127,6 @@ public class LoginPrompt {
 								public void run() {
 									password = text.getText();
 									shell.dispose();
-									exc.shutdown();
 								}
 							});
 						} else {
@@ -133,6 +135,8 @@ public class LoginPrompt {
 								@Override
 								public void run() {
 									lblNewLabel_1.setVisible(true);
+									hashBar.setVisible(false);
+									hashPasswordLabel.setVisible(false);
 								}
 							});
 						}

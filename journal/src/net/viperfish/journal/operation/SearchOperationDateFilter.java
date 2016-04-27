@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.viperfish.framework.time.TimeUtils;
 import net.viperfish.journal.framework.JournalPointer;
 import net.viperfish.journal.framework.OperationWithResult;
-import net.viperfish.utils.time.TimeUtils;
 
 /**
  * filters the result from a search operation with date range

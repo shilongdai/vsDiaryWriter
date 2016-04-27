@@ -20,7 +20,7 @@ import org.bouncycastle.crypto.engines.Salsa20Engine;
 import org.bouncycastle.crypto.engines.VMPCEngine;
 import org.bouncycastle.crypto.engines.XSalsa20Engine;
 
-import net.viperfish.utils.TypeCache;
+import net.viperfish.framework.TypeCache;
 
 public enum StreamCipherEncryptors {
 	INSTANCE;

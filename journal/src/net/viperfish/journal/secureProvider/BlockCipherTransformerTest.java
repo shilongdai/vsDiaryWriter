@@ -3,11 +3,11 @@ package net.viperfish.journal.secureProvider;
 import java.io.File;
 import java.io.IOException;
 
+import net.viperfish.framework.file.CommonFunctions;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.secureAlgs.BlockCiphers;
 import net.viperfish.journal.secureAlgs.Digesters;
-import net.viperfish.utils.file.CommonFunctions;
 
 public final class BlockCipherTransformerTest extends CompressMacTest {
 	private static File testDir;

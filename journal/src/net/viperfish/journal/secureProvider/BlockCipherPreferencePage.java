@@ -31,11 +31,15 @@ public final class BlockCipherPreferencePage extends PreferencePage {
 
 	@Override
 	public boolean performOk() {
-		boolean isValid = com.validate();
-		if (isValid) {
-			OperationExecutors.getExecutor().submit(new StoreConfigurationBufferOperation(com.save()));
+		if (com != null) {
+			boolean isValid = com.validate();
+			if (isValid) {
+				OperationExecutors.getExecutor().submit(new StoreConfigurationBufferOperation(com.save()));
+			}
+			return isValid;
+		} else {
+			return true;
 		}
-		return isValid;
 	}
 
 	@Override

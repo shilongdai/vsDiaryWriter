@@ -1,9 +1,9 @@
 package net.viperfish.journal.framework;
 
+import net.viperfish.framework.index.Indexer;
 import net.viperfish.journal.framework.provider.AuthManagers;
 import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.journal.framework.provider.Indexers;
-import net.viperfish.utils.index.Indexer;
 
 /**
  * An {@link Operation} containing an EntryDatabase, an Indexer, and an

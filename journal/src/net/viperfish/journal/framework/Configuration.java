@@ -18,7 +18,7 @@ import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.ReloadingStrategy;
 
-import net.viperfish.utils.file.CommonFunctions;
+import net.viperfish.framework.file.CommonFunctions;
 
 /**
  * a static wrapper class around the Apache common configuration class

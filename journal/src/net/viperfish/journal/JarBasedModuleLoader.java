@@ -10,6 +10,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import net.viperfish.framework.index.Indexer;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
@@ -20,7 +21,6 @@ import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.journal.framework.provider.Indexers;
 import net.viperfish.journal.framework.provider.JournalTransformers;
 import net.viperfish.journal.framework.provider.Provider;
-import net.viperfish.utils.index.Indexer;
 
 /**
  * a module loader that loads providers from jar files

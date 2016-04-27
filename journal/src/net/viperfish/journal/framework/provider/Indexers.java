@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.viperfish.framework.index.Indexer;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.utils.index.Indexer;
 
 /**
  * a provider manager for indexers

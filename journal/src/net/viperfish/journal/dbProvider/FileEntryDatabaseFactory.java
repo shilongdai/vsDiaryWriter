@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.viperfish.framework.file.IOFile;
 import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.utils.file.IOFile;
 
 /**
  * factory for creating EntryDatabase stored as flat file

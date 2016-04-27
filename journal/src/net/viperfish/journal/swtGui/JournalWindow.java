@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import net.viperfish.framework.time.TimeUtils;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalPointer;
 import net.viperfish.journal.framework.OperationExecutor;
@@ -57,7 +58,6 @@ import net.viperfish.journal.framework.OperationWithResult;
 import net.viperfish.journal.framework.StoreConfigurationBufferOperation;
 import net.viperfish.journal.framework.provider.PreferenceGUIManager;
 import net.viperfish.journal.operation.OperationFactories;
-import net.viperfish.utils.time.TimeUtils;
 
 public class JournalWindow {
 

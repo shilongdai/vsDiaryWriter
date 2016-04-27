@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import net.viperfish.framework.index.Indexer;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
@@ -25,7 +26,6 @@ import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.journal.framework.provider.Indexers;
 import net.viperfish.journal.framework.provider.JournalTransformers;
 import net.viperfish.journal.framework.provider.Provider;
-import net.viperfish.utils.index.Indexer;
 
 final class SystemSetupComposite extends Composite {
 

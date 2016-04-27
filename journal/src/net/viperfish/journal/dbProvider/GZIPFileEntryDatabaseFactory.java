@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import net.viperfish.utils.file.GZIPIOStreamHandler;
-import net.viperfish.utils.file.IOFile;
+import net.viperfish.framework.file.GZIPIOStreamHandler;
+import net.viperfish.framework.file.IOFile;
 
 /**
  * a FileEntryDatabaseFactory that create a GZip compressed file for data

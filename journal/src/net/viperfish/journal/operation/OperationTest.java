@@ -17,6 +17,11 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
+import net.viperfish.framework.file.CommonFunctions;
+import net.viperfish.framework.file.IOFile;
+import net.viperfish.framework.file.TextIOStreamHandler;
+import net.viperfish.framework.index.Indexer;
+import net.viperfish.framework.serialization.JsonGenerator;
 import net.viperfish.journal.JournalApplication;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
@@ -32,11 +37,6 @@ import net.viperfish.journal.framework.provider.AuthManagers;
 import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.journal.framework.provider.Indexers;
 import net.viperfish.journal.framework.provider.JournalEncryptionWrapper;
-import net.viperfish.utils.file.CommonFunctions;
-import net.viperfish.utils.file.IOFile;
-import net.viperfish.utils.file.TextIOStreamHandler;
-import net.viperfish.utils.index.Indexer;
-import net.viperfish.utils.serialization.JsonGenerator;
 
 public final class OperationTest {
 

@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import net.viperfish.framework.time.TimeUtils;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalPointer;
 import net.viperfish.journal.framework.OperationWithResult;
-import net.viperfish.utils.time.TimeUtils;
 
 /**
  * gets all entries within a range of dates

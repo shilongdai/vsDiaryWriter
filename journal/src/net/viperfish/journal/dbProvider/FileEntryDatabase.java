@@ -6,11 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import net.viperfish.framework.file.IOFile;
+import net.viperfish.framework.serialization.JsonGenerator;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.errors.FailToSyncEntryException;
-import net.viperfish.utils.file.IOFile;
-import net.viperfish.utils.serialization.JsonGenerator;
 
 /**
  * an EntryDatabase that is based on a file for persistent, does not flush until

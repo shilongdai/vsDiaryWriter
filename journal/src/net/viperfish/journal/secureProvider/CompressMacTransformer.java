@@ -14,6 +14,12 @@ import javax.crypto.IllegalBlockSizeException;
 
 import org.apache.commons.codec.binary.Base64;
 
+import net.viperfish.framework.compression.Compressor;
+import net.viperfish.framework.compression.Compressors;
+import net.viperfish.framework.compression.FailToInitCompressionException;
+import net.viperfish.framework.compression.NullCompressor;
+import net.viperfish.framework.file.IOFile;
+import net.viperfish.framework.file.TextIOStreamHandler;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
@@ -24,12 +30,6 @@ import net.viperfish.journal.secureAlgs.BCPCKDF2Generator;
 import net.viperfish.journal.secureAlgs.MacDigester;
 import net.viperfish.journal.secureAlgs.Macs;
 import net.viperfish.journal.secureAlgs.PBKDF2KeyGenerator;
-import net.viperfish.utils.compression.Compressor;
-import net.viperfish.utils.compression.Compressors;
-import net.viperfish.utils.compression.FailToInitCompressionException;
-import net.viperfish.utils.compression.NullCompressor;
-import net.viperfish.utils.file.IOFile;
-import net.viperfish.utils.file.TextIOStreamHandler;
 
 abstract class CompressMacTransformer implements JournalTransformer {
 
@@ -172,7 +172,7 @@ abstract class CompressMacTransformer implements JournalTransformer {
 
 	@Override
 	public Journal encryptJournal(Journal j) throws CipherException {
-		ByteBuffer dateBuffer = ByteBuffer.allocate(Long.BYTES);
+		ByteBuffer dateBuffer = ByteBuffer.allocate(8);
 		dateBuffer.putLong(j.getDate().getTime());
 
 		String encrytSubject = encrypt_format(j.getSubject(), new byte[0]);
@@ -189,7 +189,7 @@ abstract class CompressMacTransformer implements JournalTransformer {
 	public Journal decryptJournal(Journal j) throws CipherException, CompromisedDataException {
 		String decSubject = decrypt_format(j.getSubject(), new byte[0]);
 		String decContent = decrypt_format(j.getContent(),
-				ByteBuffer.allocate(Long.BYTES).putLong(j.getDate().getTime()).array());
+				ByteBuffer.allocate(8).putLong(j.getDate().getTime()).array());
 		Journal result = new Journal();
 		result.setSubject(decSubject);
 		result.setContent(decContent);

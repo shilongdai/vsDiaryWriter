@@ -3,14 +3,16 @@ package net.viperfish.journal.secureProvider;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 
+import net.viperfish.framework.file.CommonFunctions;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.JournalTransformer;
+import net.viperfish.journal.framework.provider.ConfigurationGUISetup;
 import net.viperfish.journal.framework.provider.PreferenceGUIManager;
 import net.viperfish.journal.framework.provider.Provider;
-import net.viperfish.utils.file.CommonFunctions;
 
 public final class ViperfishEncryptionProvider implements Provider<JournalTransformer> {
 
@@ -127,15 +129,23 @@ public final class ViperfishEncryptionProvider implements Provider<JournalTransf
 
 	@Override
 	public void registerConfig() {
-		PreferenceNode encryption = new PreferenceNode("compressMac", "Encryption", null,
-				CompressMacPreference.class.getCanonicalName());
-		PreferenceNode blockCipher = new PreferenceNode("blockcipher", "Block Cipher", null,
-				BlockCipherPreferencePage.class.getCanonicalName());
-		PreferenceNode streamCipher = new PreferenceNode("streamcipher", "Stream Cipher", null,
-				StreamCipherPreferencePage.class.getCanonicalName());
-		encryption.add(blockCipher);
-		encryption.add(streamCipher);
-		PreferenceGUIManager.addToRoot(encryption);
+		ConfigurationGUISetup setup = new ConfigurationGUISetup() {
+
+			@Override
+			public void proccess(PreferenceManager mger) {
+				PreferenceNode encryption = new PreferenceNode("compressMac", "Encryption", null,
+						CompressMacPreference.class.getCanonicalName());
+				PreferenceNode blockCipher = new PreferenceNode("blockcipher", "Block Cipher", null,
+						BlockCipherPreferencePage.class.getCanonicalName());
+				PreferenceNode streamCipher = new PreferenceNode("streamcipher", "Stream Cipher", null,
+						StreamCipherPreferencePage.class.getCanonicalName());
+				encryption.add(blockCipher);
+				encryption.add(streamCipher);
+				mger.addToRoot(encryption);
+			}
+		};
+
+		PreferenceGUIManager.add(setup);
 	}
 
 }

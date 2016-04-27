@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.viperfish.framework.file.CommonFunctions;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.provider.Provider;
-import net.viperfish.utils.file.CommonFunctions;
 
 public final class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
 

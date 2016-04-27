@@ -6,10 +6,10 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import net.viperfish.framework.file.CommonFunctions;
 import net.viperfish.journal.framework.DatabaseTest;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.utils.file.CommonFunctions;
 
 public class SerializationDBTest extends DatabaseTest {
 

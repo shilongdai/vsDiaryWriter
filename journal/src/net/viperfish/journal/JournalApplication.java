@@ -4,8 +4,11 @@ import java.io.File;
 import java.util.Map.Entry;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 
+import net.viperfish.framework.file.CommonFunctions;
+import net.viperfish.framework.index.Indexer;
 import net.viperfish.journal.authProvider.ViperfishAuthProvider;
 import net.viperfish.journal.dbProvider.ViperfishEntryDatabaseProvider;
 import net.viperfish.journal.framework.AuthenticationManager;
@@ -17,6 +20,7 @@ import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.ModuleLoader;
 import net.viperfish.journal.framework.OperationExecutors;
 import net.viperfish.journal.framework.provider.AuthManagers;
+import net.viperfish.journal.framework.provider.ConfigurationGUISetup;
 import net.viperfish.journal.framework.provider.EntryDatabases;
 import net.viperfish.journal.framework.provider.Indexers;
 import net.viperfish.journal.framework.provider.JournalTransformers;
@@ -27,8 +31,6 @@ import net.viperfish.journal.secureProvider.ViperfishEncryptionProvider;
 import net.viperfish.journal.swtGui.GraphicalUserInterface;
 import net.viperfish.journal.ui.ExitStatus;
 import net.viperfish.journal.ui.UserInterface;
-import net.viperfish.utils.file.CommonFunctions;
-import net.viperfish.utils.index.Indexer;
 
 /**
  * the Main class of the application, contains all the components.
@@ -63,9 +65,17 @@ final public class JournalApplication {
 
 		// put system configuration first
 
-		PreferenceNode system = new PreferenceNode("system", "System", null,
-				SystemPreferencePage.class.getCanonicalName());
-		PreferenceGUIManager.addToRoot(system);
+		ConfigurationGUISetup setup = new ConfigurationGUISetup() {
+
+			@Override
+			public void proccess(PreferenceManager mger) {
+				PreferenceNode system = new PreferenceNode("system", "System", null,
+						SystemPreferencePage.class.getCanonicalName());
+				mger.addToRoot(system);
+			}
+		};
+
+		PreferenceGUIManager.add(setup);
 
 		// register the providers
 		AuthManagers.INSTANCE.registerAuthProvider(new ViperfishAuthProvider());

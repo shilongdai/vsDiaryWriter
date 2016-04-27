@@ -8,11 +8,11 @@ import java.util.Arrays;
 
 import org.bouncycastle.crypto.generators.SCrypt;
 
+import net.viperfish.framework.file.IOFile;
+import net.viperfish.framework.file.TextIOStreamHandler;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.errors.FailToLoadCredentialException;
 import net.viperfish.journal.framework.errors.FailToStoreCredentialException;
-import net.viperfish.utils.file.IOFile;
-import net.viperfish.utils.file.TextIOStreamHandler;
 
 /**
  * An {@link AuthenticationManager} using SCrypt to hash password.

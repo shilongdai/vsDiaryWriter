@@ -12,10 +12,10 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import net.viperfish.framework.compression.Compressors;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.secureAlgs.BlockCiphers;
 import net.viperfish.journal.secureAlgs.Digesters;
-import net.viperfish.utils.compression.Compressors;
 
 final class SecurityConfigComposite extends Composite {
 	private Combo macTypeSelector;

@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.viperfish.framework.file.CommonFunctions;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.errors.FailToSyncEntryException;
-import net.viperfish.utils.file.CommonFunctions;
 
 /**
  * An EntryDatabase that stores Journal in memory but serialize itself with Java

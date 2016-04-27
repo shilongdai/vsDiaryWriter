@@ -2,8 +2,8 @@ package net.viperfish.journal.dbProvider;
 
 import java.io.File;
 
-import net.viperfish.utils.file.IOFile;
-import net.viperfish.utils.file.TextIOStreamHandler;
+import net.viperfish.framework.file.IOFile;
+import net.viperfish.framework.file.TextIOStreamHandler;
 
 /**
  * creates Text File based EntryDatabase

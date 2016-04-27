@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.viperfish.framework.file.CommonFunctions;
 import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.errors.FailToLoadCredentialException;
 import net.viperfish.journal.framework.provider.Provider;
-import net.viperfish.utils.file.CommonFunctions;
 
 public final class ViperfishAuthProvider implements Provider<AuthenticationManager> {
 

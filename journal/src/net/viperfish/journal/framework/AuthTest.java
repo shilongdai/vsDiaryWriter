@@ -7,10 +7,10 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import net.viperfish.framework.file.CommonFunctions;
 import net.viperfish.journal.framework.errors.CannotClearPasswordException;
 import net.viperfish.journal.framework.errors.FailToLoadCredentialException;
 import net.viperfish.journal.framework.errors.FailToStoreCredentialException;
-import net.viperfish.utils.file.CommonFunctions;
 
 public abstract class AuthTest {
 

@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import net.viperfish.framework.file.IOFile;
+import net.viperfish.framework.file.TextIOStreamHandler;
+import net.viperfish.framework.serialization.JsonGenerator;
 import net.viperfish.journal.framework.InjectedOperation;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.errors.FailToImportEntriesException;
-import net.viperfish.utils.file.IOFile;
-import net.viperfish.utils.file.TextIOStreamHandler;
-import net.viperfish.utils.serialization.JsonGenerator;
 
 /**
  * Operation to import entries from a text file containing enties in JSON

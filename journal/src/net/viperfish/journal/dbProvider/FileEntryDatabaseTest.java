@@ -5,13 +5,13 @@ import java.io.File;
 import org.junit.Assert;
 import org.junit.Test;
 
+import net.viperfish.framework.file.CommonFunctions;
+import net.viperfish.framework.file.GZIPIOStreamHandler;
+import net.viperfish.framework.file.IOFile;
+import net.viperfish.framework.file.TextIOStreamHandler;
 import net.viperfish.journal.framework.DatabaseTest;
 import net.viperfish.journal.framework.EntryDatabase;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.utils.file.CommonFunctions;
-import net.viperfish.utils.file.GZIPIOStreamHandler;
-import net.viperfish.utils.file.IOFile;
-import net.viperfish.utils.file.TextIOStreamHandler;
 
 public final class FileEntryDatabaseTest extends DatabaseTest {
 

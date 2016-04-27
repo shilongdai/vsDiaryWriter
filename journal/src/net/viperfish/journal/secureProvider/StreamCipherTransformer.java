@@ -3,12 +3,12 @@ package net.viperfish.journal.secureProvider;
 import java.io.File;
 import java.security.SecureRandom;
 
+import net.viperfish.framework.ByteParameterPair;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.secureAlgs.MacDigester;
 import net.viperfish.journal.secureAlgs.Macs;
 import net.viperfish.journal.streamCipher.StreamCipherEncryptor;
 import net.viperfish.journal.streamCipher.StreamCipherEncryptors;
-import net.viperfish.utils.ByteParameterPair;
 
 final class StreamCipherTransformer extends CompressMacTransformer {
 

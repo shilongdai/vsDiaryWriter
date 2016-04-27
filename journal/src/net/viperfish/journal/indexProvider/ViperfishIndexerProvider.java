@@ -1,8 +1,8 @@
 package net.viperfish.journal.indexProvider;
 
+import net.viperfish.framework.index.Indexer;
 import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.provider.Provider;
-import net.viperfish.utils.index.Indexer;
 
 /**
  * provides implementation of indexer this one provides an Apache Lucene indexer
