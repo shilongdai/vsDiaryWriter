@@ -60,6 +60,7 @@ public final class BlockCipherTransformerTest extends CompressMacTest {
 		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, "AES");
 		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_MODE, "CFB");
 		Configuration.setProperty(BlockCipherMacTransformer.ENCRYPTION_PADDING, "PKCS7PADDING");
+		Configuration.setProperty(BlockCipherMacTransformer.HKDF_ALGORITHM, "SHA256");
 
 	}
 

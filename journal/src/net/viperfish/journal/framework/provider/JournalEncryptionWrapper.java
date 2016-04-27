@@ -9,6 +9,7 @@ import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.Observer;
 import net.viperfish.journal.framework.errors.CipherException;
 import net.viperfish.journal.framework.errors.CompromisedDataException;
+import net.viperfish.journal.framework.errors.FailToSyncCipherDataException;
 import net.viperfish.journal.framework.errors.FailToSyncEntryException;
 
 /**
@@ -108,7 +109,11 @@ public final class JournalEncryptionWrapper implements EntryDatabase, Observer<S
 
 	@Override
 	public void beNotified(String data) {
-		this.encryptor.setPassword(data);
+		try {
+			this.encryptor.setPassword(data);
+		} catch (FailToSyncCipherDataException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

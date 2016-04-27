@@ -1,6 +1,5 @@
 package net.viperfish.journal.secureAlgs;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -39,11 +38,9 @@ import org.bouncycastle.crypto.digests.WhirlpoolDigest;
 public final class Digesters {
 
 	private static Map<String, Class<? extends Digest>> digesters;
-	private static Map<String, Digest> digestCache;
 
 	static {
 		digesters = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-		digestCache = new HashMap<>();
 		initDigesters();
 	}
 
@@ -79,52 +76,48 @@ public final class Digesters {
 
 	public static Digest getDigester(String digestName) {
 		try {
-			Digest result = digestCache.get(digestName);
-			if (result == null) {
-				switch (digestName) {
-				case "SHA3-512": {
-					result = new SHA3Digest(512);
-					break;
-				}
-				case "SHA3-256": {
-					result = new SHA3Digest(256);
-					break;
-				}
-				case "SHA3-224": {
-					result = new SHA3Digest(224);
-					break;
-				}
-				case "SHA3-384": {
-					result = new SHA3Digest(384);
-					break;
-				}
-				case "SHAKE-128": {
-					result = new SHAKEDigest(128);
-					break;
-				}
-				case "SHAKE-256": {
-					result = new SHAKEDigest(256);
-					break;
-				}
-				case "Skein256": {
-					result = new SkeinDigest(SkeinDigest.SKEIN_256, 256);
-					break;
-				}
-				case "Skein512": {
-					result = new SkeinDigest(SkeinDigest.SKEIN_512, 512);
-					break;
-				}
-				case "Skein1024": {
-					result = new SkeinDigest(SkeinDigest.SKEIN_1024, 1024);
-					break;
-				}
-				default: {
-					result = digesters.get(digestName).newInstance();
-				}
-				}
-				digestCache.put(digestName, result);
+			Digest result = null;
+			switch (digestName) {
+			case "SHA3-512": {
+				result = new SHA3Digest(512);
+				break;
 			}
-			result.reset();
+			case "SHA3-256": {
+				result = new SHA3Digest(256);
+				break;
+			}
+			case "SHA3-224": {
+				result = new SHA3Digest(224);
+				break;
+			}
+			case "SHA3-384": {
+				result = new SHA3Digest(384);
+				break;
+			}
+			case "SHAKE-128": {
+				result = new SHAKEDigest(128);
+				break;
+			}
+			case "SHAKE-256": {
+				result = new SHAKEDigest(256);
+				break;
+			}
+			case "Skein256": {
+				result = new SkeinDigest(SkeinDigest.SKEIN_256, 256);
+				break;
+			}
+			case "Skein512": {
+				result = new SkeinDigest(SkeinDigest.SKEIN_512, 512);
+				break;
+			}
+			case "Skein1024": {
+				result = new SkeinDigest(SkeinDigest.SKEIN_1024, 1024);
+				break;
+			}
+			default: {
+				result = digesters.get(digestName).newInstance();
+			}
+			}
 			return result;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);

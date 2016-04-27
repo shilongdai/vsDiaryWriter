@@ -12,6 +12,7 @@ import net.viperfish.journal.framework.Journal;
 import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.errors.CipherException;
 import net.viperfish.journal.framework.errors.CompromisedDataException;
+import net.viperfish.journal.framework.errors.FailToSyncCipherDataException;
 import net.viperfish.journal.secureAlgs.BlockCiphers;
 import net.viperfish.journal.secureAlgs.Digesters;
 import net.viperfish.utils.file.CommonFunctions;
@@ -42,7 +43,11 @@ public abstract class CompressMacTest {
 			System.err.println("cannot load salt");
 			throw new RuntimeException(e);
 		}
-		wrapper.setPassword("password");
+		try {
+			wrapper.setPassword("password");
+		} catch (FailToSyncCipherDataException e1) {
+			throw new RuntimeException(e1);
+		}
 		Journal j = new Journal();
 		j.setSubject("test get");
 		j.setContent("test get content");

@@ -2,6 +2,7 @@ package net.viperfish.journal.secureProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -74,7 +75,7 @@ abstract class CompressMacTransformer implements JournalTransformer {
 	 * @throws IllegalBlockSizeException
 	 * @throws BadPaddingException
 	 */
-	private String encrypt_format(String data) throws CipherException {
+	private String encrypt_format(String data, byte[] additional) throws CipherException {
 		byte[] bytes = data.getBytes(StandardCharsets.UTF_16);
 		// encrypt
 		String cipherString;
@@ -82,7 +83,13 @@ abstract class CompressMacTransformer implements JournalTransformer {
 		cipherString = encryptData(bytes);
 
 		// generate mac
-		String macString = macData(cipherString.getBytes(StandardCharsets.UTF_16));
+		byte[] cipherBytes = cipherString.getBytes(StandardCharsets.US_ASCII);
+		byte[] toMac = new byte[cipherBytes.length + additional.length];
+
+		System.arraycopy(cipherBytes, 0, toMac, 0, cipherBytes.length);
+		System.arraycopy(additional, 0, toMac, cipherBytes.length, additional.length);
+
+		String macString = macData(toMac);
 		cipherString += "$";
 
 		cipherString += macString;
@@ -103,7 +110,7 @@ abstract class CompressMacTransformer implements JournalTransformer {
 	 * @throws CompromisedDataException
 	 *             the stored Mac does not match the calculated Mac
 	 */
-	private String decrypt_format(String data) throws CipherException, CompromisedDataException {
+	private String decrypt_format(String data, byte[] additional) throws CipherException, CompromisedDataException {
 		String[] parts = data.split("\\$");
 		String cData = parts[0];
 		String macString = parts[1];
@@ -111,7 +118,12 @@ abstract class CompressMacTransformer implements JournalTransformer {
 		// verify checksum
 		byte[] rawMac = Base64.decodeBase64(macString);
 
-		byte[] expectedMac = mac.calculateMac(cData.getBytes(StandardCharsets.UTF_16));
+		byte[] cDataBytes = cData.getBytes(StandardCharsets.US_ASCII);
+		byte[] macedData = new byte[cDataBytes.length + additional.length];
+		System.arraycopy(cDataBytes, 0, macedData, 0, cDataBytes.length);
+		System.arraycopy(additional, 0, macedData, cDataBytes.length, additional.length);
+
+		byte[] expectedMac = mac.calculateMac(macedData);
 		if (!Arrays.equals(expectedMac, rawMac)) {
 			throw new CompromisedDataException(
 					"Compromised: expected = " + Arrays.toString(expectedMac) + " got = " + Arrays.toString(rawMac));
@@ -160,8 +172,11 @@ abstract class CompressMacTransformer implements JournalTransformer {
 
 	@Override
 	public Journal encryptJournal(Journal j) throws CipherException {
-		String encrytSubject = encrypt_format(j.getSubject());
-		String encryptContent = encrypt_format(j.getContent());
+		ByteBuffer dateBuffer = ByteBuffer.allocate(Long.BYTES);
+		dateBuffer.putLong(j.getDate().getTime());
+
+		String encrytSubject = encrypt_format(j.getSubject(), new byte[0]);
+		String encryptContent = encrypt_format(j.getContent(), dateBuffer.array());
 		Journal result = new Journal();
 		result.setSubject(encrytSubject);
 		result.setContent(encryptContent);
@@ -172,8 +187,9 @@ abstract class CompressMacTransformer implements JournalTransformer {
 
 	@Override
 	public Journal decryptJournal(Journal j) throws CipherException, CompromisedDataException {
-		String decSubject = decrypt_format(j.getSubject());
-		String decContent = decrypt_format(j.getContent());
+		String decSubject = decrypt_format(j.getSubject(), new byte[0]);
+		String decContent = decrypt_format(j.getContent(),
+				ByteBuffer.allocate(Long.BYTES).putLong(j.getDate().getTime()).array());
 		Journal result = new Journal();
 		result.setSubject(decSubject);
 		result.setContent(decContent);

@@ -2,6 +2,7 @@ package net.viperfish.journal.framework;
 
 import net.viperfish.journal.framework.errors.CipherException;
 import net.viperfish.journal.framework.errors.CompromisedDataException;
+import net.viperfish.journal.framework.errors.FailToSyncCipherDataException;
 
 /**
  * A encryptor that encrypts journals
@@ -48,7 +49,8 @@ public interface JournalTransformer {
 	 * 
 	 * @param pass
 	 *            the password
+	 * @throws FailToSyncCipherDataException
 	 */
-	public void setPassword(String pass);
+	public void setPassword(String pass) throws FailToSyncCipherDataException;
 
 }

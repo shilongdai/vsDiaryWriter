@@ -14,12 +14,14 @@ import org.eclipse.swt.widgets.Label;
 
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.secureAlgs.BlockCiphers;
+import net.viperfish.journal.secureAlgs.Digesters;
 
 final class BlockCipherConfigComposite extends Composite {
 	private Combo encAlgSelector;
 	private Combo encModeSelector;
 	private Combo encPadSelector;
-	private Label errorLabel;
+	private Label hkdfLabel;
+	private Combo hkdfSelector;
 
 	private class ValidateModifyListener implements ModifyListener {
 
@@ -62,11 +64,14 @@ final class BlockCipherConfigComposite extends Composite {
 
 		encPadSelector = new Combo(this, SWT.READ_ONLY);
 		encPadSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		encPadSelector.addModifyListener(new ValidateModifyListener());
 
-		errorLabel = new Label(this, SWT.NONE);
-		errorLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		errorLabel.setText("");
+		hkdfLabel = new Label(this, SWT.NONE);
+		hkdfLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		hkdfLabel.setText("HKDF Algorithm");
+
+		hkdfSelector = new Combo(this, SWT.READ_ONLY);
+		hkdfSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		encPadSelector.addModifyListener(new ValidateModifyListener());
 		fillIn();
 
 	}
@@ -76,6 +81,7 @@ final class BlockCipherConfigComposite extends Composite {
 		result.put(BlockCipherMacTransformer.ENCRYPTION_ALG_NAME, encAlgSelector.getText());
 		result.put(BlockCipherMacTransformer.ENCRYPTION_MODE, encModeSelector.getText());
 		result.put(BlockCipherMacTransformer.ENCRYPTION_PADDING, encPadSelector.getText());
+		result.put(BlockCipherMacTransformer.HKDF_ALGORITHM, hkdfSelector.getText());
 		return result;
 
 	}
@@ -112,22 +118,19 @@ final class BlockCipherConfigComposite extends Composite {
 			encAlgSelector.setText("AES");
 		}
 
+		String hkdfAlgorithm = Configuration.getString(BlockCipherMacTransformer.HKDF_ALGORITHM);
+		for (String i : Digesters.getSupportedDigest()) {
+			hkdfSelector.add(i);
+		}
+		if (hkdfAlgorithm != null) {
+			hkdfSelector.setText(hkdfAlgorithm);
+		} else {
+			hkdfSelector.setText("SHA256");
+		}
+
 	}
 
 	public boolean validate() {
-		if (encAlgSelector.getText().length() == 0) {
-			errorLabel.setText("You must select an encryption algorithm");
-			return false;
-		}
-		if (encModeSelector.getText().length() == 0) {
-			errorLabel.setText("You must select an encryption mode");
-			return false;
-		}
-		if (encPadSelector.getText().length() == 0) {
-			errorLabel.setText("You must select an encryption padding");
-			return false;
-		}
-		errorLabel.setText("");
 		return true;
 	}
 
@@ -135,6 +138,7 @@ final class BlockCipherConfigComposite extends Composite {
 		encPadSelector.setText("PKCS7Padding");
 		encModeSelector.setText("CFB");
 		encAlgSelector.setText("AES");
+		hkdfSelector.setText("SHA256");
 	}
 
 	@Override
