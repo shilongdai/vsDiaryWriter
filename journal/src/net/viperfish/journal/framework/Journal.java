@@ -12,6 +12,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import net.viperfish.framework.serialization.DateDeserializer;
+import net.viperfish.framework.serialization.DateSerializer;
+
 /**
  * the data model of a journal entry
  * 
@@ -52,11 +58,13 @@ public final class Journal implements Comparable<Journal>, Serializable {
 		this.subject = subject;
 	}
 
+	@JsonSerialize(using = DateSerializer.class)
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getDate() {
 		return new Date(date.getTime());
 	}
 
+	@JsonDeserialize(using = DateDeserializer.class)
 	public void setDate(Date date) {
 		this.date = new Date(date.getTime());
 	}

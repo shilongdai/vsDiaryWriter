@@ -68,6 +68,7 @@ public final class ViperfishEncryptionProvider implements Provider<JournalTransf
 		if (instance.equals("StreamCipher")) {
 			if (sc == null) {
 				sc = new StreamCipherTransformer(new File(secureDir, "salt"));
+				sc.loadSalt();
 			}
 			return sc;
 		}

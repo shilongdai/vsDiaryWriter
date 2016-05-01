@@ -2,7 +2,6 @@ package net.viperfish.framework.serialization;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.text.DateFormat;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -16,7 +15,7 @@ public final class JsonGenerator {
 	public JsonGenerator() {
 		objectMapper = new ObjectMapper();
 		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-		objectMapper.setDateFormat(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL));
+
 	}
 
 	public String toJson(Object o) throws JsonGenerationException, JsonMappingException {
