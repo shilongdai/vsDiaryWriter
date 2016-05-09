@@ -490,7 +490,7 @@ public class JournalWindow {
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
 				MessageDialog.openInformation(shell, "About",
-						"This is an application to write secure and authenticated diary digitally");
+						"This is an application to write secure and authenticated diary digitally. It is dedicated to Abigail Nunez.");
 			}
 
 		});
