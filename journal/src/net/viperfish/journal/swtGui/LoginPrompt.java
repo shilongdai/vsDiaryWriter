@@ -1,5 +1,6 @@
 package net.viperfish.journal.swtGui;
 
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,9 +28,10 @@ public class LoginPrompt {
 	private String password;
 	private Display display;
 	private final ExecutorService exc = Executors.newCachedThreadPool();
+	private ResourceBundle messages;
 
 	public LoginPrompt() {
-
+		messages = I18NUtils.INSTANCE.getBundle();
 	}
 
 	/**
@@ -59,28 +61,28 @@ public class LoginPrompt {
 		shell = new Shell(SWT.SYSTEM_MODAL | SWT.TITLE | SWT.BORDER);
 		shell.setImage(SWTResourceManager.getImage(LoginPrompt.class, "/logo.ico"));
 		shell.setSize(522, 154);
-		shell.setText("Welcome, User");
+		shell.setText(messages.getString("login.welcome"));
 		shell.setLayout(new GridLayout(4, false));
 
 		Label lblNewLabel = new Label(shell, SWT.NONE);
 		lblNewLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblNewLabel.setText("Password");
+		lblNewLabel.setText(messages.getString("login.passwordLabel"));
 
 		text = new Text(shell, SWT.BORDER | SWT.PASSWORD);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		new Label(shell, SWT.NONE);
 
 		final Label hashPasswordLabel = new Label(shell, SWT.NONE);
-		hashPasswordLabel.setText("Hashing Password:");
+		hashPasswordLabel.setText(messages.getString("login.inProgressLabel"));
 
 		final ProgressBar hashBar = new ProgressBar(shell, SWT.INDETERMINATE | SWT.SMOOTH);
 		hashBar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true, 2, 1));
 
 		Button btnNewButton = new Button(shell, SWT.NONE);
-		btnNewButton.setText("Enter");
+		btnNewButton.setText(messages.getString("login.enter"));
 
 		Button btnNewButton_1 = new Button(shell, SWT.NONE);
-		btnNewButton_1.setText("Quit");
+		btnNewButton_1.setText(messages.getString("login.quit"));
 		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -93,7 +95,7 @@ public class LoginPrompt {
 		shell.setDefaultButton(btnNewButton);
 
 		final Label lblNewLabel_1 = new Label(shell, SWT.NONE);
-		lblNewLabel_1.setText("Password mismatch");
+		lblNewLabel_1.setText(messages.getString("login.fail"));
 		lblNewLabel_1.setVisible(false);
 		new Label(shell, SWT.NONE);
 

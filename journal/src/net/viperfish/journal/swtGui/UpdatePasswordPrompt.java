@@ -1,5 +1,7 @@
 package net.viperfish.journal.swtGui;
 
+import java.util.ResourceBundle;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -18,10 +20,12 @@ abstract class UpdatePasswordPrompt {
 	private Text newPassword;
 	private Text retypePassword;
 	private boolean result;
+	private ResourceBundle messages;
 
 	protected abstract void doUpdate(String password);
 
 	public UpdatePasswordPrompt() {
+		messages = I18NUtils.INSTANCE.getBundle();
 	}
 
 	private boolean canSavePassword() {
@@ -38,14 +42,14 @@ abstract class UpdatePasswordPrompt {
 		final Shell shell = new Shell(SWT.SYSTEM_MODAL | SWT.TITLE | SWT.BORDER);
 		shell.setImage(SWTResourceManager.getImage(UpdatePasswordPrompt.class, "/logo.ico"));
 		shell.setSize(500, 250);
-		shell.setText("Set Password");
+		shell.setText(messages.getString("setPassword.title"));
 		shell.setLayout(new GridLayout(2, false));
 		new Label(shell, SWT.NONE);
 		new Label(shell, SWT.NONE);
 
 		Label newPassLabel = new Label(shell, SWT.NONE);
 		newPassLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		newPassLabel.setText("New Password");
+		newPassLabel.setText(messages.getString("setPassword.newLabel"));
 
 		newPassword = new Text(shell, SWT.PASSWORD | SWT.BORDER);
 		newPassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -54,18 +58,18 @@ abstract class UpdatePasswordPrompt {
 
 		Label retypeLabel = new Label(shell, SWT.NONE);
 		retypeLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		retypeLabel.setText("Retype");
+		retypeLabel.setText(messages.getString("setPassword.retypeLabel"));
 
 		retypePassword = new Text(shell, SWT.PASSWORD | SWT.BORDER);
 		retypePassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(shell, SWT.NONE);
 
 		final Label passwordMismatch = new Label(shell, SWT.NONE);
-		passwordMismatch.setText("Password Mismatch");
+		passwordMismatch.setText(messages.getString("setPassword.mismatch"));
 		passwordMismatch.setVisible(false);
 
 		Button cancelButton = new Button(shell, SWT.NONE);
-		cancelButton.setText("Cancel");
+		cancelButton.setText(messages.getString("setPassword.cancel"));
 
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 
@@ -78,7 +82,7 @@ abstract class UpdatePasswordPrompt {
 		});
 
 		final Button done = new Button(shell, SWT.NONE);
-		done.setText("Done");
+		done.setText(messages.getString("setPassword.done"));
 
 		done.addSelectionListener(new SelectionAdapter() {
 
