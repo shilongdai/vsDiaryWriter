@@ -2,6 +2,7 @@ package net.viperfish.journal.swtGui;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,10 +37,12 @@ public class JournalEditor {
 	private boolean savePressed;
 	private Timer dateUpdater;
 	private Label titleLabel;
+	private ResourceBundle messages;
 
 	public JournalEditor() {
 		savePressed = false;
 		dateUpdater = new Timer("dateUpdater");
+		messages = I18NUtils.INSTANCE.getBundle();
 	}
 
 	/**
@@ -91,7 +94,8 @@ public class JournalEditor {
 					if (savePressed) {
 						createTarget();
 					} else {
-						boolean confirm = MessageDialog.openConfirm(shell, "Save", "Save before exit?");
+						boolean confirm = MessageDialog.openConfirm(shell, messages.getString("action.save"),
+								messages.getString("save.warning"));
 						if (confirm) {
 							if (checkSize()) {
 								createTarget();
@@ -134,10 +138,10 @@ public class JournalEditor {
 
 		titleLabel = new Label(shell, SWT.NONE);
 		titleLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		titleLabel.setText("Title:");
+		titleLabel.setText(messages.getString("label.title"));
 
 		titleText = new Text(shell, SWT.BORDER);
-		titleText.setMessage("Title of your entry");
+		titleText.setMessage(messages.getString("label.titlePlaceholder"));
 		GridData gd_titleText = new GridData(SWT.LEFT, SWT.TOP, true, false);
 		gd_titleText.widthHint = 670;
 		gd_titleText.horizontalAlignment = GridData.FILL;

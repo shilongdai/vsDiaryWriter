@@ -362,8 +362,8 @@ public class JournalWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
-				boolean toClear = MessageDialog.openConfirm(shell, "Confirm",
-						"THIS ACTION CANNOT BE UNDONE. Clear All?");
+				boolean toClear = MessageDialog.openConfirm(shell, messages.getString("warning.confirm"),
+						messages.getString("warning.clear"));
 				if (toClear) {
 					JournalWindow.this.e.submit(f.getClearEntriesOperation());
 					search.searchJournals();
@@ -458,7 +458,7 @@ public class JournalWindow {
 		final TableViewerColumn dates = new TableViewerColumn(tableViewer, SWT.NONE);
 		dates.getColumn().setWidth(200);
 		dates.getColumn().setResizable(true);
-		dates.getColumn().setText("Date");
+		dates.getColumn().setText(messages.getString("table.date"));
 		dates.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -493,7 +493,7 @@ public class JournalWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
-				MessageDialog.openInformation(shell, "About",
+				MessageDialog.openInformation(shell, messages.getString("menu.about"),
 						"This is an application to write secure and authenticated diary digitally. It is dedicated to Abigail Nunez.");
 			}
 
