@@ -17,4 +17,6 @@ public final class ConfigMapping {
 	public static final String TRANSFORMER_COMPONENT = "providers.transformerComponent";
 	public static final String SET_UP = "system.firstRun";
 	public static final String PORTABLE = "system.portable";
+	public static final String LANG = "system.locale";
+	public static final String REGION = "system.region";
 }

@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -162,10 +163,12 @@ public class JournalWindow {
 	private DateTime lowerBound;
 	private DateTime upperBoound;
 	private PageableTable pgTable;
+	private ResourceBundle messages;
 
 	public JournalWindow() {
 		e = OperationExecutors.getExecutor();
 		f = OperationFactories.getOperationFactory();
+		messages = I18NUtils.INSTANCE.getBundle();
 	}
 
 	private void newJournal() {
@@ -182,7 +185,8 @@ public class JournalWindow {
 		if (selected.isEmpty()) {
 			return;
 		}
-		boolean toDelete = MessageDialog.openConfirm(shell, "Confirm", "THIS DELETION CANNOT BE UNDONE. Delete?");
+		boolean toDelete = MessageDialog.openConfirm(shell, messages.getString("warning.confirm"),
+				messages.getString("warning.delete"));
 		if (toDelete) {
 			JournalPointer s = (JournalPointer) selected.getFirstElement();
 			e.submit(f.getDeleteOperation(s.getId()));
@@ -214,19 +218,19 @@ public class JournalWindow {
 		operationBar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 8, 1));
 
 		newJournal = new ToolItem(operationBar, SWT.NONE);
-		newJournal.setText("New");
+		newJournal.setText(messages.getString("action.add"));
 
 		deleteJournal = new ToolItem(operationBar, SWT.NONE);
-		deleteJournal.setText("Delete");
+		deleteJournal.setText(messages.getString("action.delete"));
 
 		recentLabel = new Label(shell, SWT.NONE);
 		recentLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		recentLabel.setText("Entries:");
+		recentLabel.setText(messages.getString("label.dateRange"));
 
 		lowerBound = new DateTime(shell, SWT.DROP_DOWN);
 
 		Label lblTo = new Label(shell, SWT.NONE);
-		lblTo.setText("To");
+		lblTo.setText(messages.getString("label.dateRangeTo"));
 
 		upperBoound = new DateTime(shell, SWT.DROP_DOWN);
 
@@ -257,13 +261,13 @@ public class JournalWindow {
 		shell.setMenuBar(mainMenu);
 
 		MenuItem fileMenu = new MenuItem(mainMenu, SWT.CASCADE);
-		fileMenu.setText("File");
+		fileMenu.setText(messages.getString("menu.file"));
 
 		Menu menu = new Menu(fileMenu);
 		fileMenu.setMenu(menu);
 
 		MenuItem newEntryMenu = new MenuItem(menu, SWT.NONE);
-		newEntryMenu.setText("New Entry");
+		newEntryMenu.setText(messages.getString("menu.new"));
 		newEntryMenu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -275,7 +279,7 @@ public class JournalWindow {
 		});
 
 		MenuItem exportMenu = new MenuItem(menu, SWT.NONE);
-		exportMenu.setText("Export");
+		exportMenu.setText(messages.getString("menu.export"));
 		exportMenu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -298,10 +302,10 @@ public class JournalWindow {
 		});
 
 		MenuItem mntmImport = new MenuItem(menu, SWT.NONE);
-		mntmImport.setText("Import");
+		mntmImport.setText(messages.getString("menu.import"));
 
 		MenuItem exit = new MenuItem(menu, SWT.NONE);
-		exit.setText("Exit");
+		exit.setText(messages.getString("menu.exit"));
 		exit.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -334,13 +338,13 @@ public class JournalWindow {
 		});
 
 		MenuItem editMenu = new MenuItem(mainMenu, SWT.CASCADE);
-		editMenu.setText("Edit");
+		editMenu.setText(messages.getString("menu.edit"));
 
 		Menu menu_1 = new Menu(editMenu);
 		editMenu.setMenu(menu_1);
 
 		MenuItem deleteEntryMenu = new MenuItem(menu_1, SWT.NONE);
-		deleteEntryMenu.setText("Delete Entry");
+		deleteEntryMenu.setText(messages.getString("menu.delete"));
 		deleteEntryMenu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -352,7 +356,7 @@ public class JournalWindow {
 		});
 
 		MenuItem clearEntrieMenu = new MenuItem(menu_1, SWT.NONE);
-		clearEntrieMenu.setText("Clear All");
+		clearEntrieMenu.setText(messages.getString("menu.clear"));
 		clearEntrieMenu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -369,7 +373,7 @@ public class JournalWindow {
 		});
 
 		MenuItem showAllMenu = new MenuItem(menu_1, SWT.NONE);
-		showAllMenu.setText("Show All");
+		showAllMenu.setText(messages.getString("menu.showAll"));
 		showAllMenu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -380,13 +384,13 @@ public class JournalWindow {
 		});
 
 		MenuItem preferenceMenu = new MenuItem(mainMenu, SWT.CASCADE);
-		preferenceMenu.setText("Settings");
+		preferenceMenu.setText(messages.getString("menu.settings"));
 
 		Menu settingMenu = new Menu(preferenceMenu);
 		preferenceMenu.setMenu(settingMenu);
 
 		MenuItem changeConfigMenu = new MenuItem(settingMenu, SWT.NONE);
-		changeConfigMenu.setText("Configuration");
+		changeConfigMenu.setText(messages.getString("menu.config"));
 		changeConfigMenu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -402,7 +406,7 @@ public class JournalWindow {
 		});
 
 		MenuItem passwordMenu = new MenuItem(settingMenu, SWT.NONE);
-		passwordMenu.setText("Password");
+		passwordMenu.setText(messages.getString("menu.passwd"));
 		passwordMenu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -415,13 +419,13 @@ public class JournalWindow {
 		});
 
 		MenuItem helpMenu = new MenuItem(mainMenu, SWT.CASCADE);
-		helpMenu.setText("Help");
+		helpMenu.setText(messages.getString("menu.help"));
 
 		Menu menu_2 = new Menu(helpMenu);
 		helpMenu.setMenu(menu_2);
 
 		MenuItem aboutMenu = new MenuItem(menu_2, SWT.NONE);
-		aboutMenu.setText("About");
+		aboutMenu.setText(messages.getString("menu.help"));
 		new Label(shell, SWT.NONE);
 		new Label(shell, SWT.NONE);
 		new Label(shell, SWT.NONE);
@@ -442,7 +446,7 @@ public class JournalWindow {
 		searchResults.setLinesVisible(true);
 		final TableViewerColumn titles = new TableViewerColumn(tableViewer, SWT.NONE);
 		titles.getColumn().setWidth(200);
-		titles.getColumn().setText("Title");
+		titles.getColumn().setText(messages.getString("table.title"));
 		titles.getColumn().setResizable(true);
 		titles.setLabelProvider(new ColumnLabelProvider() {
 			@Override

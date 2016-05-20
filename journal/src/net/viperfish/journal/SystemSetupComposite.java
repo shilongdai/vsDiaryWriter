@@ -33,6 +33,8 @@ final class SystemSetupComposite extends Composite {
 	private Combo indexerSelector;
 	private Combo authSelector;
 	private Combo transformerSelector;
+	private Combo langSelector;
+	private Combo regionSelector;
 
 	/**
 	 * Create the composite.
@@ -80,10 +82,27 @@ final class SystemSetupComposite extends Composite {
 
 		transformerSelector = new Combo(this, SWT.READ_ONLY);
 		transformerSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(this, SWT.NONE);
+
+		Label langLabel = new Label(this, SWT.NONE);
+		langLabel.setText("Language");
+		new Label(this, SWT.NONE);
+
+		langSelector = new Combo(this, SWT.NONE);
+		langSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(this, SWT.NONE);
+
+		Label regionLabel = new Label(this, SWT.NONE);
+		regionLabel.setText("Region");
+		new Label(this, SWT.NONE);
+
+		regionSelector = new Combo(this, SWT.NONE);
+		regionSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		fillIndexerSelector();
 		fillInTransformer();
 		fillInAuth();
 		fillDataStorageSelector();
+		fillInLocale();
 
 		fillInConfigValues();
 
@@ -123,6 +142,12 @@ final class SystemSetupComposite extends Composite {
 		}
 	}
 
+	private void fillInLocale() {
+		langSelector.add("en");
+
+		regionSelector.add("US");
+	}
+
 	private void fillInTransformer() {
 		Set<String> buf = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 		for (Entry<String, Provider<? extends JournalTransformer>> i : JournalTransformers.INSTANCE.getSecureProviders()
@@ -159,6 +184,20 @@ final class SystemSetupComposite extends Composite {
 		} else {
 			transformerSelector.setText("BlockCipherMAC");
 		}
+
+		String lang = Configuration.getString(ConfigMapping.LANG);
+		if (lang != null) {
+			langSelector.setText(lang);
+		} else {
+			langSelector.setText("en");
+		}
+
+		String region = Configuration.getString(ConfigMapping.REGION);
+		if (region != null) {
+			regionSelector.setText(region);
+		} else {
+			regionSelector.setText("US");
+		}
 	}
 
 	public Map<String, String> save() {
@@ -167,6 +206,8 @@ final class SystemSetupComposite extends Composite {
 		configuration.put(ConfigMapping.INDEXER_COMPONENT, indexerSelector.getText());
 		configuration.put(ConfigMapping.AUTH_COMPONENT, authSelector.getText());
 		configuration.put(ConfigMapping.TRANSFORMER_COMPONENT, transformerSelector.getText());
+		configuration.put(ConfigMapping.LANG, langSelector.getText());
+		configuration.put(ConfigMapping.REGION, regionSelector.getText());
 		return configuration;
 	}
 
@@ -175,6 +216,8 @@ final class SystemSetupComposite extends Composite {
 		indexerSelector.setText("LuceneIndexer");
 		authSelector.setText("Hash");
 		transformerSelector.setText("BlockCipherMAC");
+		regionSelector.setText("US");
+		langSelector.setText("en");
 	}
 
 	@Override
