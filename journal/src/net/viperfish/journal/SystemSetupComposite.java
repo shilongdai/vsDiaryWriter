@@ -88,7 +88,7 @@ final class SystemSetupComposite extends Composite {
 		langLabel.setText("Language");
 		new Label(this, SWT.NONE);
 
-		langSelector = new Combo(this, SWT.NONE);
+		langSelector = new Combo(this, SWT.READ_ONLY);
 		langSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(this, SWT.NONE);
 
@@ -96,7 +96,7 @@ final class SystemSetupComposite extends Composite {
 		regionLabel.setText("Region");
 		new Label(this, SWT.NONE);
 
-		regionSelector = new Combo(this, SWT.NONE);
+		regionSelector = new Combo(this, SWT.READ_ONLY);
 		regionSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		fillIndexerSelector();
 		fillInTransformer();
