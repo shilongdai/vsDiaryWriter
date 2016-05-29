@@ -2,7 +2,6 @@ package net.viperfish.journal.swtGui;
 
 import java.io.File;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -463,7 +462,7 @@ public class JournalWindow {
 			@Override
 			public String getText(Object element) {
 				JournalPointer j = (JournalPointer) element;
-				DateFormat df = new SimpleDateFormat("EEE h:mm a MM/dd/yyyy");
+				DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
 				return df.format(j.getDate());
 			}
 		});
