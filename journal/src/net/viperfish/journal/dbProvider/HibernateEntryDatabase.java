@@ -99,19 +99,9 @@ abstract class HibernateEntryDatabase implements EntryDatabase {
 
 	@Override
 	public void clear() throws FailToSyncEntryException {
-		Transaction tr = this.getSession().beginTransaction();
-		try {
-			this.getSession().createQuery("DELETE FROM Journal").executeUpdate();
-			this.getSession().flush();
-		} catch (RuntimeException e) {
-			tr.rollback();
-			FailToSyncEntryException f = new FailToSyncEntryException("Cannot clear all:" + e.getMessage());
-			f.initCause(e);
-			throw f;
-		} finally {
-			tr.commit();
+		for (Journal i : this.getAll()) {
+			this.removeEntry(i.getId());
 		}
-		return;
 	}
 
 }
