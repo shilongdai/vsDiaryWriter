@@ -16,7 +16,7 @@ import net.viperfish.journal.framework.EntryDatabase;
  */
 public enum EntryDatabases {
 	INSTANCE;
-	private Map<String, Provider<? extends EntryDatabase>> databaseProviders;
+	private Map<String, DatabaseProvider> databaseProviders;
 	private String defaultDatabaseProvider;
 	private JournalEncryptionWrapper wrapper;
 
@@ -36,12 +36,12 @@ public enum EntryDatabases {
 		wrapper.setDb(db);
 	}
 
-	public void registerEntryDatabaseProvider(Provider<? extends EntryDatabase> p) {
+	public void registerEntryDatabaseProvider(DatabaseProvider p) {
 		databaseProviders.put(p.getName(), p);
 		p.registerConfig();
 	}
 
-	public Map<String, Provider<? extends EntryDatabase>> getDatabaseProviders() {
+	public Map<String, DatabaseProvider> getDatabaseProviders() {
 		return this.databaseProviders;
 	}
 
@@ -63,7 +63,7 @@ public enum EntryDatabases {
 		if (def != null) {
 			result = def;
 		} else {
-			for (Entry<String, Provider<? extends EntryDatabase>> p : databaseProviders.entrySet()) {
+			for (Entry<String, DatabaseProvider> p : databaseProviders.entrySet()) {
 				EntryDatabase db = p.getValue().newInstance(instanceType);
 				if (db != null) {
 					result = db;
@@ -89,7 +89,7 @@ public enum EntryDatabases {
 		if (def != null) {
 			result = def;
 		} else {
-			for (Entry<String, Provider<? extends EntryDatabase>> p : databaseProviders.entrySet()) {
+			for (Entry<String, DatabaseProvider> p : databaseProviders.entrySet()) {
 				EntryDatabase db = p.getValue().getInstance(instanceType);
 				if (db != null) {
 					result = db;
@@ -106,7 +106,7 @@ public enum EntryDatabases {
 	}
 
 	public void dispose() {
-		for (Entry<String, Provider<? extends EntryDatabase>> p : databaseProviders.entrySet()) {
+		for (Entry<String, DatabaseProvider> p : databaseProviders.entrySet()) {
 			p.getValue().dispose();
 			System.err.println("disposed " + p.getKey());
 		}
@@ -119,7 +119,7 @@ public enum EntryDatabases {
 	}
 
 	public void refreshAll() {
-		for (Entry<String, Provider<? extends EntryDatabase>> p : databaseProviders.entrySet()) {
+		for (Entry<String, DatabaseProvider> p : databaseProviders.entrySet()) {
 			p.getValue().refresh();
 		}
 	}

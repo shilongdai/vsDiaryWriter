@@ -15,9 +15,9 @@ import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.errors.FailToLoadCredentialException;
-import net.viperfish.journal.framework.provider.Provider;
+import net.viperfish.journal.framework.provider.AuthProvider;
 
-public final class ViperfishAuthProvider implements Provider<AuthenticationManager> {
+public final class ViperfishAuthProvider implements AuthProvider {
 
 	private File dataDir;
 	private File passwdFile;

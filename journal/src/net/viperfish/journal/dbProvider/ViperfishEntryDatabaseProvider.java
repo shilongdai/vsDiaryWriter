@@ -11,9 +11,9 @@ import net.viperfish.framework.file.CommonFunctions;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.journal.framework.provider.Provider;
+import net.viperfish.journal.framework.provider.DatabaseProvider;
 
-public final class ViperfishEntryDatabaseProvider implements Provider<EntryDatabase> {
+public final class ViperfishEntryDatabaseProvider implements DatabaseProvider {
 
 	private Map<String, DataSourceFactory> mapping;
 	private File dataDir;

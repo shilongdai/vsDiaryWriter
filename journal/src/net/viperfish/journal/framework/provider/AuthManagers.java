@@ -17,7 +17,7 @@ import net.viperfish.journal.framework.Observer;
  */
 public enum AuthManagers {
 	INSTANCE;
-	private Map<String, Provider<? extends AuthenticationManager>> authProviders;
+	private Map<String, AuthProvider> authProviders;
 	private String defaultAuthProvider;
 	private AuthManagerAdapter adapter;
 
@@ -33,7 +33,7 @@ public enum AuthManagers {
 	 * @param p
 	 *            the provider to register
 	 */
-	public void registerAuthProvider(Provider<? extends AuthenticationManager> p) {
+	public void registerAuthProvider(AuthProvider p) {
 		authProviders.put(p.getName(), p);
 		p.registerConfig();
 	}
@@ -43,7 +43,7 @@ public enum AuthManagers {
 	 * 
 	 * @return all of the providers
 	 */
-	public Map<String, Provider<? extends AuthenticationManager>> getAuthProviders() {
+	public Map<String, AuthProvider> getAuthProviders() {
 		return this.authProviders;
 	}
 
@@ -88,7 +88,7 @@ public enum AuthManagers {
 			adapter.setMger(am);
 			return adapter;
 		}
-		for (Entry<String, Provider<? extends AuthenticationManager>> i : authProviders.entrySet()) {
+		for (Entry<String, AuthProvider> i : authProviders.entrySet()) {
 			AuthenticationManager result = i.getValue().newInstance(instance);
 			if (result != null) {
 				adapter.setMger(result);
@@ -134,7 +134,7 @@ public enum AuthManagers {
 			adapter.setMger(am);
 			return adapter;
 		}
-		for (Entry<String, Provider<? extends AuthenticationManager>> i : authProviders.entrySet()) {
+		for (Entry<String, AuthProvider> i : authProviders.entrySet()) {
 			AuthenticationManager result = i.getValue().getInstance(instance);
 			if (result != null) {
 				adapter.setMger(result);
@@ -161,7 +161,7 @@ public enum AuthManagers {
 	 * clean up
 	 */
 	public void dispose() {
-		for (Entry<String, Provider<? extends AuthenticationManager>> i : authProviders.entrySet()) {
+		for (Entry<String, AuthProvider> i : authProviders.entrySet()) {
 			i.getValue().dispose();
 			System.err.println("disposed " + i.getKey());
 		}
@@ -189,7 +189,7 @@ public enum AuthManagers {
 	 * refresh all providers
 	 */
 	public void refreshAll() {
-		for (Entry<String, Provider<? extends AuthenticationManager>> i : authProviders.entrySet()) {
+		for (Entry<String, AuthProvider> i : authProviders.entrySet()) {
 			i.getValue().refresh();
 		}
 		adapter = new AuthManagerAdapter();

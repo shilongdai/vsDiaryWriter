@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>journal</groupId>
 	<artifactId>journal</artifactId>
-	<version>5.1.0</version>
+	<version>1.0.0</version>
 	<name>The Viperfish Journal</name>
 	<description>A application for writing journals</description>
 	<licenses>
@@ -147,6 +147,11 @@
 			<groupId>org.eclipse.nebula</groupId>
 			<artifactId>widgets.pagination</artifactId>
 			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>ro.fortsoft.pf4j</groupId>
+			<artifactId>pf4j</artifactId>
+			<version>0.13.1</version>
 		</dependency>
 	</dependencies>
 	<build>

@@ -2,7 +2,7 @@ package net.viperfish.journal.indexProvider;
 
 import net.viperfish.framework.index.Indexer;
 import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.framework.provider.Provider;
+import net.viperfish.journal.framework.provider.IndexerProvider;
 
 /**
  * provides implementation of indexer this one provides an Apache Lucene indexer
@@ -10,7 +10,7 @@ import net.viperfish.journal.framework.provider.Provider;
  * @author sdai
  *
  */
-public final class ViperfishIndexerProvider implements Provider<Indexer<Journal>> {
+public final class ViperfishIndexerProvider implements IndexerProvider {
 
 	private JournalIndexer indexer;
 

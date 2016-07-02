@@ -8,24 +8,22 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 
 import net.viperfish.framework.file.CommonFunctions;
-import net.viperfish.framework.index.Indexer;
 import net.viperfish.journal.authProvider.ViperfishAuthProvider;
 import net.viperfish.journal.dbProvider.ViperfishEntryDatabaseProvider;
-import net.viperfish.journal.framework.AuthenticationManager;
 import net.viperfish.journal.framework.ConfigMapping;
 import net.viperfish.journal.framework.Configuration;
-import net.viperfish.journal.framework.EntryDatabase;
-import net.viperfish.journal.framework.Journal;
-import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.ModuleLoader;
 import net.viperfish.journal.framework.OperationExecutors;
 import net.viperfish.journal.framework.provider.AuthManagers;
+import net.viperfish.journal.framework.provider.AuthProvider;
 import net.viperfish.journal.framework.provider.ConfigurationGUISetup;
+import net.viperfish.journal.framework.provider.DatabaseProvider;
 import net.viperfish.journal.framework.provider.EntryDatabases;
+import net.viperfish.journal.framework.provider.IndexerProvider;
 import net.viperfish.journal.framework.provider.Indexers;
 import net.viperfish.journal.framework.provider.JournalTransformers;
 import net.viperfish.journal.framework.provider.PreferenceGUIManager;
-import net.viperfish.journal.framework.provider.Provider;
+import net.viperfish.journal.framework.provider.TransformerProvider;
 import net.viperfish.journal.indexProvider.ViperfishIndexerProvider;
 import net.viperfish.journal.secureProvider.ViperfishEncryptionProvider;
 import net.viperfish.journal.swtGui.GraphicalUserInterface;
@@ -61,7 +59,7 @@ final public class JournalApplication {
 
 		modules = new File("modules");
 		CommonFunctions.initDir(modules);
-		m = new JarBasedModuleLoader();
+		m = new PF4JModuleLoader();
 
 		// put system configuration first
 
@@ -110,23 +108,19 @@ final public class JournalApplication {
 	 * all configurations
 	 */
 	public static void revert() {
-		for (Entry<String, Provider<? extends EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders()
-				.entrySet()) {
+		for (Entry<String, DatabaseProvider> i : EntryDatabases.INSTANCE.getDatabaseProviders().entrySet()) {
 			i.getValue().delete();
 		}
 
-		for (Entry<String, Provider<? extends Indexer<Journal>>> i : Indexers.INSTANCE.getIndexerProviders()
-				.entrySet()) {
+		for (Entry<String, IndexerProvider> i : Indexers.INSTANCE.getIndexerProviders().entrySet()) {
 			i.getValue().delete();
 		}
 
-		for (Entry<String, Provider<? extends JournalTransformer>> i : JournalTransformers.INSTANCE.getSecureProviders()
-				.entrySet()) {
+		for (Entry<String, TransformerProvider> i : JournalTransformers.INSTANCE.getSecureProviders().entrySet()) {
 			i.getValue().delete();
 		}
 
-		for (Entry<String, Provider<? extends AuthenticationManager>> i : AuthManagers.INSTANCE.getAuthProviders()
-				.entrySet()) {
+		for (Entry<String, AuthProvider> i : AuthManagers.INSTANCE.getAuthProviders().entrySet()) {
 			i.getValue().delete();
 		}
 		Configuration.delete();
@@ -176,20 +170,16 @@ final public class JournalApplication {
 	 * configuration
 	 */
 	private static void defaultPreferences() {
-		for (Entry<String, Provider<? extends EntryDatabase>> i : EntryDatabases.INSTANCE.getDatabaseProviders()
-				.entrySet()) {
+		for (Entry<String, DatabaseProvider> i : EntryDatabases.INSTANCE.getDatabaseProviders().entrySet()) {
 			i.getValue().initDefaults();
 		}
-		for (Entry<String, Provider<? extends Indexer<Journal>>> i : Indexers.INSTANCE.getIndexerProviders()
-				.entrySet()) {
+		for (Entry<String, IndexerProvider> i : Indexers.INSTANCE.getIndexerProviders().entrySet()) {
 			i.getValue().initDefaults();
 		}
-		for (Entry<String, Provider<? extends AuthenticationManager>> i : AuthManagers.INSTANCE.getAuthProviders()
-				.entrySet()) {
+		for (Entry<String, AuthProvider> i : AuthManagers.INSTANCE.getAuthProviders().entrySet()) {
 			i.getValue().initDefaults();
 		}
-		for (Entry<String, Provider<? extends JournalTransformer>> i : JournalTransformers.INSTANCE.getSecureProviders()
-				.entrySet()) {
+		for (Entry<String, TransformerProvider> i : JournalTransformers.INSTANCE.getSecureProviders().entrySet()) {
 			i.getValue().initDefaults();
 		}
 		Configuration.setProperty(ConfigMapping.AUTH_COMPONENT, "BCrypt");

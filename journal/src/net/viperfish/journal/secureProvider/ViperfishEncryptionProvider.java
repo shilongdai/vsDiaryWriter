@@ -12,9 +12,9 @@ import net.viperfish.journal.framework.Configuration;
 import net.viperfish.journal.framework.JournalTransformer;
 import net.viperfish.journal.framework.provider.ConfigurationGUISetup;
 import net.viperfish.journal.framework.provider.PreferenceGUIManager;
-import net.viperfish.journal.framework.provider.Provider;
+import net.viperfish.journal.framework.provider.TransformerProvider;
 
-public final class ViperfishEncryptionProvider implements Provider<JournalTransformer> {
+public final class ViperfishEncryptionProvider implements TransformerProvider {
 
 	private File secureDir;
 	private BlockCipherMacTransformer bm;

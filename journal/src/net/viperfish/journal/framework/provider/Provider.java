@@ -8,7 +8,7 @@ package net.viperfish.journal.framework.provider;
  * @param <T>
  *            the type of service
  */
-public interface Provider<T> {
+interface Provider<T> {
 	/**
 	 * set the default type of the instance to create/get if
 	 * {@link Provider#newInstance()} or {@link Provider#getInstance()} is
