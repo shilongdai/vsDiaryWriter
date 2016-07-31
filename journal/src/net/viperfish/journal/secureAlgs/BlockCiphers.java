@@ -83,6 +83,7 @@ public final class BlockCiphers {
 	private static final int XTEA_KEY_SIZE = 128;
 	private static final int SM4_KEY_SIZE = 128;
 	private static final int THREEFISH_KEY_SIZE = 512;
+	private static final int MARS_KEYSIZE = 256;
 
 	private static Map<String, Class<? extends BlockCipher>> blockCipherEngines;
 	private static Map<String, Class<? extends BlockCipher>> blockCipherMode;
@@ -111,9 +112,11 @@ public final class BlockCiphers {
 		gcmCiphers.add("SEED");
 		gcmCiphers.add("Serpent");
 		gcmCiphers.add("Twofish");
+		gcmCiphers.add("MARS");
 	}
 
 	private static void initBlockCipherEngines() {
+		blockCipherEngines.put("MARS", MarsEngine.class);
 		blockCipherEngines.put("AES", AESEngine.class);
 		blockCipherEngines.put("Blowfish", BlowfishEngine.class);
 		blockCipherEngines.put("Camellia", CamelliaEngine.class);
@@ -231,6 +234,9 @@ public final class BlockCiphers {
 		}
 		if (algorithm.equalsIgnoreCase("Threefish")) {
 			return THREEFISH_KEY_SIZE;
+		}
+		if (algorithm.equalsIgnoreCase("MARS")) {
+			return MARS_KEYSIZE;
 		}
 		if (algorithm.matches("\\w+(\\W|\\S)?\\d+")) {
 			Matcher num = Pattern.compile("\\d+").matcher(algorithm);
