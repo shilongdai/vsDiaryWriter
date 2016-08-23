@@ -58,7 +58,6 @@ public final class MarsEngine implements BlockCipher {
 
 	@Override
 	public void reset() {
-		this.key = null;
 
 	}
 
