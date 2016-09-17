@@ -1,4 +1,5 @@
 # vsDiaryWriter
+## IMPORTANT, THE WIKI AND THIS IS OUT OF DATE. WILL UPDATE SOON.
 ## Overview:
 The VSDiayWriter is a diary writer that supports search indexing, encryption, authentication, and HTML editing. The application is designed modularly and supports multiple types of components that users can freely choose from.
 
