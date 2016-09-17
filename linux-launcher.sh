@@ -8,4 +8,4 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 cd $DIR;
-java -jar full-journal-6.0.0.jar;
+java -jar full-journal2-1.0.0-alpha1.jar;
