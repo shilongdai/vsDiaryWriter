@@ -23,6 +23,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<version>1.0.1.Final</version>
+		</dependency>
+		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>1.8.3</version>
@@ -184,7 +189,7 @@
 	</dependencies>
 	<build>
 		<sourceDirectory>${project.basedir}/src</sourceDirectory>
-		<testSourceDirectory>${project.basedir}/src/net/viperfish</testSourceDirectory>
+		<testSourceDirectory>${project.basedir}/test/net/viperfish</testSourceDirectory>
 		<resources>
 			<resource>
 				<directory>${project.basedir}/src/main/resources</directory>

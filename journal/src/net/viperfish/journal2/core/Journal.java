@@ -23,8 +23,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table
@@ -35,10 +34,10 @@ public class Journal implements Serializable {
 	 */
 	private static final long serialVersionUID = -5731874363027283666L;
 	@NotNull
-	@Length(max = 200)
+	@Size(max = 200)
 	private String subject;
 	@NotNull
-	@Length(max = 5240856)
+	@Size(max = 5240856)
 	private String content;
 	private Long id;
 	private Date timestamp;

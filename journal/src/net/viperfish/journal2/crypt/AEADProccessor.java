@@ -110,10 +110,24 @@ class AEADProccessor implements Processor {
 
 			@Override
 			public void generate(Map<String, CryptoInfo> target, Configuration config) {
+				String algorithm;
+				String mode;
+
+				if (config.containsKey(CONFIG_ENCRYPTION_ALGORITHM)) {
+					algorithm = config.getString(CONFIG_ENCRYPTION_ALGORITHM);
+				} else {
+					algorithm = "AES";
+				}
+				if (config.containsKey(CONFIG_ENCRYPTION_MODE)) {
+					mode = config.getString(CONFIG_ENCRYPTION_MODE);
+				} else {
+					mode = "GCM";
+				}
+
 				SecureRandom rand = new SecureRandom();
 				CryptoInfo info = new CryptoInfo();
-				info.setAlgorithm(config.getString(CONFIG_ENCRYPTION_ALGORITHM));
-				info.setMode(config.getString(CONFIG_ENCRYPTION_MODE));
+				info.setAlgorithm(algorithm);
+				info.setMode(mode);
 
 				byte[] key = new byte[config.containsKey(CONFIG_ENCRYPTION_KEYLENGTH)
 						? config.getInt(CONFIG_ENCRYPTION_KEYLENGTH) / 8

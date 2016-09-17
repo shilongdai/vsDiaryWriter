@@ -70,7 +70,13 @@ class CompressionProccessor implements Processor {
 
 			@Override
 			public void generate(Map<String, CryptoInfo> target, Configuration config) {
-				String compressionAlg = config.getString(CONFIG_COMPRESSION);
+				String algorithm;
+				if (config.containsKey(CONFIG_COMPRESSION)) {
+					algorithm = config.getString(CONFIG_COMPRESSION);
+				} else {
+					algorithm = "GZ";
+				}
+				String compressionAlg = config.getString(algorithm);
 				CryptoInfo info = new CryptoInfo();
 				info.setAlgorithm(compressionAlg);
 				target.put(CRYPTOINFO_MAPPING_KEY, info);

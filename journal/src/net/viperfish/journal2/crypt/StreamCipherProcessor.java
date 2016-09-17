@@ -85,15 +85,30 @@ class StreamCipherProcessor implements Processor {
 
 			@Override
 			public void generate(Map<String, CryptoInfo> target, Configuration config) {
+				String algorithm;
+				int keyLength;
+
+				if (config.containsKey(CIPHER_ALGORITHM)) {
+					algorithm = config.getString(CIPHER_ALGORITHM);
+				} else {
+					algorithm = "XSalsa20";
+				}
+
+				if (config.containsKey(CIPHER_KEYLENGTH)) {
+					keyLength = config.getInt(CIPHER_KEYLENGTH);
+				} else {
+					keyLength = StreamCipherEncryptors.INSTANCE.getKeySize("XSalsa20");
+				}
+
 				CryptoInfo info = new CryptoInfo();
 				SecureRandom rand = new SecureRandom();
-				byte[] key = new byte[config.getInt(CIPHER_KEYLENGTH) / 8];
-				byte[] iv = new byte[StreamCipherEncryptors.INSTANCE.getIVSize(config.getString(CIPHER_ALGORITHM)) / 8];
+				byte[] key = new byte[keyLength / 8];
+				byte[] iv = new byte[StreamCipherEncryptors.INSTANCE.getIVSize(config.getString(algorithm)) / 8];
 				rand.nextBytes(key);
 				rand.nextBytes(iv);
 				info.setKey(key);
 				info.setNounce(iv);
-				info.setAlgorithm(config.getString(CIPHER_ALGORITHM));
+				info.setAlgorithm(algorithm);
 				target.put(CONFIG_MAPPING, info);
 			}
 		};

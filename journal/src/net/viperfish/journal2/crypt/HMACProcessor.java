@@ -93,10 +93,22 @@ class HMACProcessor implements Processor {
 			@Override
 			public void generate(Map<String, CryptoInfo> target, Configuration config) {
 				CryptoInfo info = new CryptoInfo();
-				info.setAlgorithm(config.getString(MAC_ALGORITHM));
+				String alg;
+				if (config.containsKey(MAC_ALGORITHM)) {
+					alg = config.getString(MAC_ALGORITHM);
+				} else {
+					alg = "SHA256";
+				}
+				int macSize;
+				if (config.containsKey(MAC_SIZE)) {
+					macSize = config.getInt(MAC_SIZE);
+				} else {
+					macSize = 32;
+				}
+				info.setAlgorithm(alg);
 				info.setMode("HMAC");
 				SecureRandom rand = new SecureRandom();
-				byte[] key = new byte[config.getInt(MAC_SIZE)];
+				byte[] key = new byte[macSize];
 				rand.nextBytes(key);
 				info.setKey(key);
 				target.put("hmac", info);
