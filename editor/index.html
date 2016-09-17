@@ -1,0 +1,45 @@
+<html>
+<head>
+<link href=./editor.css rel="stylesheet" type="text/css">
+<script src="jquery.min.js"></script>
+<script src="ckeditor.js"></script>
+<script type="text/javascript">
+	var loaded = false;
+
+	/*
+	 * Returns the content of tinyMCE. 
+	 */
+	function getContent() {
+		return CKEDITOR.instances.content.getData();
+	};
+
+	/*
+	 * Sets the content of tinyMCE.
+	 */
+	function setContent(text) {
+		// tinyMCE completly loaded
+		if (loaded) {
+			CKEDITOR.instances.content.setData(text);
+			// not loaded yet
+		} else {
+			$("#content").html(text);
+		}
+	};
+</script>
+</head>
+
+<body>
+	<textarea id="content" name="content"></textarea>
+	<script>
+		CKEDITOR.config.scayt_autoStartup = true;
+		CKEDITOR.replace('content', {
+			on : {
+				'instanceReady' : function(evt) {
+					evt.editor.execCommand('maximize');
+					loaded = true;
+				}
+			}
+		});
+	</script>
+</body>
+</html>
