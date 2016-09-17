@@ -183,7 +183,13 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<testSourceDirectory>${project.basedir}/src/main/java/net/viperfish</testSourceDirectory>
+		<sourceDirectory>${project.basedir}/src</sourceDirectory>
+		<testSourceDirectory>${project.basedir}/src/net/viperfish</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+			</resource>
+		</resources>
 		<finalName>journal</finalName>
 		<plugins>
 			<plugin>
