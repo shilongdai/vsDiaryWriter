@@ -76,9 +76,8 @@ class CompressionProccessor implements Processor {
 				} else {
 					algorithm = "GZ";
 				}
-				String compressionAlg = config.getString(algorithm);
 				CryptoInfo info = new CryptoInfo();
-				info.setAlgorithm(compressionAlg);
+				info.setAlgorithm(algorithm);
 				target.put(CRYPTOINFO_MAPPING_KEY, info);
 			}
 		};
