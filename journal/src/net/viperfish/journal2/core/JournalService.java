@@ -15,4 +15,6 @@ public interface JournalService extends CRUDService<Journal, Long> {
 	public Collection<Journal> searchWithinRange(Date lower, Date upper, String keyword) throws ExecutionException;
 
 	public void reCrypt(String password) throws FailToStoreCredentialException;
+
+	public void reCrypt();
 }

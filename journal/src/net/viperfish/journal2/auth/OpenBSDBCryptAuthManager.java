@@ -61,7 +61,7 @@ public class OpenBSDBCryptAuthManager implements net.viperfish.journal2.core.Aut
 	 * 
 	 */
 	@Override
-	public synchronized void clear() throws CannotClearPasswordException {
+	public void clear() throws CannotClearPasswordException {
 		try {
 			Files.write(passwdFile, new byte[0], StandardOpenOption.WRITE, StandardOpenOption.CREATE,
 					StandardOpenOption.TRUNCATE_EXISTING);
@@ -93,7 +93,7 @@ public class OpenBSDBCryptAuthManager implements net.viperfish.journal2.core.Aut
 	 *             if failed to write the hashed password to the password file
 	 */
 	@Override
-	public synchronized void setPassword(String pass) throws FailToStoreCredentialException {
+	public void setPassword(String pass) throws FailToStoreCredentialException {
 		byte[] salt = new byte[16];
 		rand.nextBytes(salt);
 		current = OpenBSDBCrypt.generate(pass.toCharArray(), salt, 16);
@@ -123,7 +123,7 @@ public class OpenBSDBCryptAuthManager implements net.viperfish.journal2.core.Aut
 	 *             if failed to read hash from password file
 	 */
 	@Override
-	public synchronized void load() throws FailToLoadCredentialException {
+	public void load() throws FailToLoadCredentialException {
 		try {
 			current = new String(Files.readAllBytes(passwdFile), StandardCharsets.US_ASCII);
 		} catch (IOException e) {
@@ -145,7 +145,7 @@ public class OpenBSDBCryptAuthManager implements net.viperfish.journal2.core.Aut
 	 * @return the valid user password if conditions met, otherwise null
 	 */
 	@Override
-	public synchronized String getPassword() {
+	public String getPassword() {
 		return password;
 	}
 
@@ -166,7 +166,7 @@ public class OpenBSDBCryptAuthManager implements net.viperfish.journal2.core.Aut
 	 *             if no hash is in the buffer
 	 */
 	@Override
-	public synchronized boolean verify(String pass) {
+	public boolean verify(String pass) {
 		boolean result = OpenBSDBCrypt.checkPassword(current, pass.toCharArray());
 		if (result) {
 			this.password = pass;

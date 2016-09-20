@@ -367,6 +367,17 @@ public class JournalWindow {
 		Menu settingMenu = new Menu(preferenceMenu);
 		preferenceMenu.setMenu(settingMenu);
 
+		MenuItem reCryptMenuItem = new MenuItem(settingMenu, SWT.NONE);
+		reCryptMenuItem.setText(messageSource.getMessage("label.recrypt", null, defaultLocale));
+		reCryptMenuItem.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				journalService.reCrypt();
+			}
+
+		});
+
 		MenuItem passwordMenu = new MenuItem(settingMenu, SWT.NONE);
 		passwordMenu.setText(messageSource.getMessage("label.changePasswd", null, defaultLocale));
 		passwordMenu.addSelectionListener(new SelectionAdapter() {

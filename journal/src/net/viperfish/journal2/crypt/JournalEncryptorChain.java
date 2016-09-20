@@ -184,7 +184,7 @@ public class JournalEncryptorChain implements JournalEncryptor {
 	}
 
 	@Override
-	public synchronized Journal encryptJournal(Journal j) {
+	public Journal encryptJournal(Journal j) {
 		j = proccess(j);
 
 		Map<String, CryptoInfo> infos = j.getInfoMapping();
@@ -197,7 +197,7 @@ public class JournalEncryptorChain implements JournalEncryptor {
 	}
 
 	@Override
-	public synchronized Journal decryptJournal(Journal j) {
+	public Journal decryptJournal(Journal j) {
 		Map<String, CryptoInfo> infos = j.getInfoMapping();
 		for (Entry<String, CryptoInfo> e : infos.entrySet()) {
 
@@ -218,7 +218,7 @@ public class JournalEncryptorChain implements JournalEncryptor {
 	}
 
 	@Override
-	public synchronized void setPassword(String password) {
+	public void setPassword(String password) {
 		try {
 			loadSalt();
 		} catch (IOException e) {
@@ -230,11 +230,11 @@ public class JournalEncryptorChain implements JournalEncryptor {
 				new SHA3Digest(256));
 	}
 
-	public synchronized void addProccessor(Processor p) {
+	public void addProccessor(Processor p) {
 		this.processors.put(p.getId(), p);
 	}
 
-	public synchronized void clear() throws IOException {
+	public void clear() throws IOException {
 		this.processors.clear();
 		Files.deleteIfExists(saltFile);
 	}
