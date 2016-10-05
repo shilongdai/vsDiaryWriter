@@ -5,8 +5,8 @@
             <PatternLayout
                     pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        <RollingFile name="journal" fileName="./journal.log"
-                     filePattern="/opt/propertyManager/propertyManager-%d{MM-dd-yyyy}-%i.log">
+        <RollingFile name="journal" fileName="journal.log"
+                     filePattern="journal-%d{MM-dd-yyyy}-%i.log">
             <PatternLayout>
                 <pattern>%d{HH:mm:ss.SSS} [%t] %X{id} %X{username} %-5level %c{36} %l: %msg%n</pattern>
             </PatternLayout>
