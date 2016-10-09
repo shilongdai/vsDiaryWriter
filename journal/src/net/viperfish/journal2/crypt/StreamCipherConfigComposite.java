@@ -14,7 +14,6 @@ import org.springframework.context.MessageSource;
 public class StreamCipherConfigComposite extends Composite {
 
 	private Configuration config;
-	private MessageSource i18n;
 	private Combo algorithmCombo;
 
 	/**
@@ -26,7 +25,6 @@ public class StreamCipherConfigComposite extends Composite {
 	public StreamCipherConfigComposite(Composite parent, int style, Configuration config, MessageSource i18n) {
 		super(parent, style);
 		this.config = config;
-		this.i18n = i18n;
 		setLayout(new GridLayout(2, false));
 		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
@@ -41,7 +39,7 @@ public class StreamCipherConfigComposite extends Composite {
 		for (String i : StreamCipherEncryptors.INSTANCE.getSupported()) {
 			algorithmCombo.add(i);
 		}
-		algorithmCombo.setText(config.getString(StreamCipherProcessor.CIPHER_ALGORITHM));
+		algorithmCombo.setText(config.containsKey(StreamCipherProcessor.CIPHER_ALGORITHM) ? config.getString(StreamCipherProcessor.CIPHER_ALGORITHM) : "XSalsa20");
 	}
 
 	@Override

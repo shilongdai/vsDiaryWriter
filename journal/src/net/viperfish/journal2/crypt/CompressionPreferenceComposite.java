@@ -17,8 +17,6 @@ public class CompressionPreferenceComposite extends Composite {
 
 	private Combo compressionSelector;
 	private Configuration config;
-	private MessageSource i18n;
-
 	/**
 	 * Create the composite.
 	 * 
@@ -28,7 +26,6 @@ public class CompressionPreferenceComposite extends Composite {
 	public CompressionPreferenceComposite(Composite parent, int style, Configuration config, MessageSource i18n) {
 		super(parent, style);
 		this.config = config;
-		this.i18n = i18n;
 		setLayout(new GridLayout(3, false));
 		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
@@ -44,7 +41,7 @@ public class CompressionPreferenceComposite extends Composite {
 		for (String i : Compressors.getCompressors()) {
 			compressionSelector.add(i);
 		}
-		compressionSelector.setText(config.getString(CompressionProccessor.CONFIG_COMPRESSION));
+		compressionSelector.setText(config.containsKey(CompressionProccessor.CONFIG_COMPRESSION) ? config.getString(CompressionProccessor.CONFIG_COMPRESSION) : "XZ");
 	}
 
 	@Override

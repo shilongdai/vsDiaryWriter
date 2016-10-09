@@ -158,7 +158,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.swt</groupId>
-			<artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+			<artifactId>org.eclipse.swt.gtk.freebsd.x86_64</artifactId>
 			<version>4.5.2</version>
 		</dependency>
 		<dependency>

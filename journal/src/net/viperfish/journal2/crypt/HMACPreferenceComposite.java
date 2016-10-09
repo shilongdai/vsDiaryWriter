@@ -16,7 +16,6 @@ public class HMACPreferenceComposite extends Composite {
 
 	private Combo hashCombo;
 	private Spinner keySizeSpinner;
-	private MessageSource i18n;
 	private Configuration config;
 
 	/**
@@ -34,7 +33,6 @@ public class HMACPreferenceComposite extends Composite {
 		new Label(this, SWT.NONE);
 
 		this.config = config;
-		this.i18n = i18n;
 		Label hashAlgorithmLabel = new Label(this, SWT.NONE);
 		hashAlgorithmLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		hashAlgorithmLabel.setText(i18n.getMessage("config.hmac.hash", null, Locale.getDefault()));
