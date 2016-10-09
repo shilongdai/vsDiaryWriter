@@ -195,7 +195,7 @@
 	</dependencies>
 	<build>
 		<sourceDirectory>${project.basedir}/src</sourceDirectory>
-		<testSourceDirectory>${project.basedir}/test/net/viperfish</testSourceDirectory>
+		<testSourceDirectory>${project.basedir}/test</testSourceDirectory>
 		<resources>
 			<resource>
 				<directory>${project.basedir}/src/main/resources</directory>
@@ -208,8 +208,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
