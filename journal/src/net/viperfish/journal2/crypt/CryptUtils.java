@@ -1,5 +1,8 @@
 package net.viperfish.journal2.crypt;
 
+import java.nio.ByteBuffer;
+import java.security.SecureRandom;
+
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.Digest;
@@ -86,6 +89,18 @@ public enum CryptUtils {
 		int length = mac.doFinal(buffer, 0);
 		byte[] result = new byte[length];
 		System.arraycopy(buffer, 0, result, 0, length);
+		return result;
+	}
+
+	public byte[] generateNonce(int length) {
+		long systemTime = System.currentTimeMillis();
+		byte[] timeBuffer = ByteBuffer.allocate(Long.BYTES).putLong(systemTime).array();
+		SecureRandom rand = new SecureRandom();
+		byte[] randBuffer = new byte[length - Long.BYTES];
+		rand.nextBytes(randBuffer);
+		byte[] result = new byte[length];
+		System.arraycopy(timeBuffer, 0, result, 0, Long.BYTES);
+		System.arraycopy(randBuffer, 0, result, Byte.SIZE, randBuffer.length);
 		return result;
 	}
 }

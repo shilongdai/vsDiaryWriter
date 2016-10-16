@@ -103,7 +103,8 @@ class StreamCipherProcessor implements Processor {
 				CryptoInfo info = new CryptoInfo();
 				SecureRandom rand = new SecureRandom();
 				byte[] key = new byte[keyLength / 8];
-				byte[] iv = new byte[StreamCipherEncryptors.INSTANCE.getIVSize(config.getString(algorithm)) / 8];
+				byte[] iv = CryptUtils.INSTANCE
+						.generateNonce(StreamCipherEncryptors.INSTANCE.getIVSize(config.getString(algorithm)) / 8);
 				rand.nextBytes(key);
 				rand.nextBytes(iv);
 				info.setKey(key);

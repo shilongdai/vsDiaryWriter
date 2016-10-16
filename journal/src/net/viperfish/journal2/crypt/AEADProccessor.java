@@ -112,7 +112,6 @@ class AEADProccessor implements Processor {
 			public void generate(Map<String, CryptoInfo> target, Configuration config) {
 				String algorithm;
 				String mode;
-
 				if (config.containsKey(CONFIG_ENCRYPTION_ALGORITHM)) {
 					algorithm = config.getString(CONFIG_ENCRYPTION_ALGORITHM);
 				} else {
@@ -133,11 +132,11 @@ class AEADProccessor implements Processor {
 						? config.getInt(CONFIG_ENCRYPTION_KEYLENGTH) / 8
 						: BlockCiphers.getKeySize(config.getString(CONFIG_ENCRYPTION_ALGORITHM)) / 8];
 				rand.nextBytes(key);
-				byte[] nounce = new byte[BlockCiphers.getNounceSize(config.getString(CONFIG_ENCRYPTION_MODE))];
-				rand.nextBytes(nounce);
+				byte[] iv = CryptUtils.INSTANCE
+						.generateNonce(BlockCiphers.getNounceSize(config.getString(CONFIG_ENCRYPTION_MODE)));
 
 				info.setKey(key);
-				info.setNounce(nounce);
+				info.setNounce(iv);
 
 				target.put(CRYPTOINFO_MAPPING, info);
 			}
