@@ -23,9 +23,9 @@
 
 	<dependencies>
 		<dependency>
-    			<groupId>org.hibernate.javax.persistence</groupId>
-    			<artifactId>hibernate-jpa-2.1-api</artifactId>
-    			<version>1.0.0.Final</version>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.1-api</artifactId>
+			<version>1.0.0.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
@@ -66,8 +66,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.core</groupId>
-			<artifactId>command</artifactId>
-			<version>3.7.0.v20150422-0725</version>
+			<artifactId>commands</artifactId>
+			<version>3.8.0.v20160316-1921</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -158,24 +158,24 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.swt</groupId>
-			<artifactId>org.eclipse.swt.gtk.freebsd.x86_64</artifactId>
-			<version>4.5.2</version>
+			<artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+			<version>4.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>
 			<artifactId>jface</artifactId>
-			<version>3.11.1.v20160128-1644</version>
+			<version>3.12.0.v20160518-1929</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.equinox</groupId>
 			<artifactId>common</artifactId>
-			<version>3.7.0.v20150402-1709</version>
+			<version>3.8.0.v20160509-1230</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.nebula</groupId>
 			<artifactId>pagination</artifactId>
-			<version>1.0.0.201608050127</version>
+			<version>1.0.0.201609281642</version>
 		</dependency>
 		<dependency>
 			<groupId>org.tukaani</groupId>
