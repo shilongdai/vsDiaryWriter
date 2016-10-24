@@ -95,6 +95,10 @@ public enum CryptUtils {
 	public byte[] generateNonce(int length) {
 		long systemTime = System.currentTimeMillis();
 		byte[] timeBuffer = ByteBuffer.allocate(Long.BYTES).putLong(systemTime).array();
+		if (timeBuffer.length >= length) {
+			byte[] partialTime = new byte[length];
+			System.arraycopy(timeBuffer, 0, partialTime, 0, length);
+		}
 		SecureRandom rand = new SecureRandom();
 		byte[] randBuffer = new byte[length - Long.BYTES];
 		rand.nextBytes(randBuffer);
