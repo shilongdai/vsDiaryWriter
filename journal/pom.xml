@@ -175,7 +175,7 @@
 		<dependency>
 			<groupId>org.eclipse.nebula</groupId>
 			<artifactId>pagination</artifactId>
-			<version>1.0.0.201609281642</version>
+			<version>1.0.0.201702021852</version>
 		</dependency>
 		<dependency>
 			<groupId>org.tukaani</groupId>
