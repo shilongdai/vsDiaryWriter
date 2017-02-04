@@ -28,11 +28,12 @@ import org.springframework.util.Base64Utils;
 import net.viperfish.journal2.core.CryptoInfo;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalEncryptor;
+import net.viperfish.journal2.core.Observer;
 import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
-public class JournalEncryptorChain implements JournalEncryptor {
+public class JournalEncryptorChain implements JournalEncryptor, Observer<String> {
 
 	public static final String CONFIG_KEY_ENCRYPTION_ALGORITHM = "crypt.keyEncryption.algorithm";
 
@@ -237,6 +238,11 @@ public class JournalEncryptorChain implements JournalEncryptor {
 	public void clear() throws IOException {
 		this.processors.clear();
 		Files.deleteIfExists(saltFile);
+	}
+
+	@Override
+	public void beNotified(String data) {
+		this.setPassword(data);
 	}
 
 }

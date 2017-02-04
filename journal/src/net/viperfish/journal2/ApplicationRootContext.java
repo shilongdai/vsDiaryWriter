@@ -187,10 +187,11 @@ public class ApplicationRootContext implements AsyncConfigurer {
 
 	@Bean
 	public AuthenticationManager authManager() throws ConfigurationException, IOException {
-		OpenBSDBCryptAuthManager auth = new OpenBSDBCryptAuthManager(Paths.get("passwd"), this.journalEncryptorChain());
+		OpenBSDBCryptAuthManager auth = new OpenBSDBCryptAuthManager(Paths.get("passwd"));
 		if (auth.isSetup()) {
 			auth.load();
 		}
+		auth.addObserver(this.journalEncryptorChain());
 		return auth;
 	}
 

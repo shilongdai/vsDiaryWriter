@@ -10,7 +10,7 @@ import java.security.SecureRandom;
 import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
 
 import net.viperfish.journal2.core.AuthenticationManager;
-import net.viperfish.journal2.crypt.JournalEncryptorChain;
+import net.viperfish.journal2.core.Observable;
 import net.viperfish.journal2.error.CannotClearPasswordException;
 import net.viperfish.journal2.error.FailToLoadCredentialException;
 import net.viperfish.journal2.error.FailToStoreCredentialException;
@@ -28,13 +28,13 @@ import net.viperfish.journal2.error.FailToStoreCredentialException;
  *
  */
 
-public class OpenBSDBCryptAuthManager implements net.viperfish.journal2.core.AuthenticationManager {
+public class OpenBSDBCryptAuthManager extends Observable<String>
+		implements net.viperfish.journal2.core.AuthenticationManager {
 
 	private Path passwdFile;
 	private SecureRandom rand;
 	private String current;
 	private String password;
-	private JournalEncryptorChain chain;
 
 	/**
 	 * creates an {@link OpenBSDBCryptAuthManager} given the location of the
@@ -43,10 +43,9 @@ public class OpenBSDBCryptAuthManager implements net.viperfish.journal2.core.Aut
 	 * @param passwdFile
 	 *            the file to store password informations in
 	 */
-	public OpenBSDBCryptAuthManager(Path passwdFile, JournalEncryptorChain chain) {
+	public OpenBSDBCryptAuthManager(Path passwdFile) {
 		this.passwdFile = passwdFile;
 		rand = new SecureRandom();
-		this.chain = chain;
 	}
 
 	/**
@@ -108,7 +107,7 @@ public class OpenBSDBCryptAuthManager implements net.viperfish.journal2.core.Aut
 			throw fc;
 		}
 		this.password = pass;
-		chain.setPassword(password);
+		this.notifyObservers(password);
 	}
 
 	/**
@@ -170,7 +169,7 @@ public class OpenBSDBCryptAuthManager implements net.viperfish.journal2.core.Aut
 		boolean result = OpenBSDBCrypt.checkPassword(current, pass.toCharArray());
 		if (result) {
 			this.password = pass;
-			chain.setPassword(password);
+			this.notifyObservers(password);
 		}
 		return result;
 	}
