@@ -9,30 +9,33 @@ import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalEncryptor;
 import net.viperfish.journal2.core.JournalIndexer;
 import net.viperfish.journal2.core.TransactionWithResult;
+import net.viperfish.journal2.crypt.TextIndexFieldEncryptor;
 
 final class SearchTransaction extends TransactionWithResult<List<Journal>> {
-
-	private JournalIndexer indexer;
-	private JournalEncryptor enc;
-	private CrudRepository<Journal, Long> db;
-	private String keyword;
-
-	SearchTransaction(JournalIndexer indexer, JournalEncryptor enc, CrudRepository<Journal, Long> db, String keyword) {
-		super();
-		this.indexer = indexer;
-		this.enc = enc;
-		this.db = db;
-		this.keyword = keyword;
-	}
-
-	@Override
-	public void execute() {
-		Iterable<Long> ids = indexer.search(keyword);
-		List<Journal> result = new LinkedList<>();
-		for (Journal j : db.findAll(ids)) {
-			result.add(enc.decryptJournal(j));
-		}
-		this.setResult(result);
-	}
-
+    
+    private JournalIndexer indexer;
+    private JournalEncryptor enc;
+    private CrudRepository<Journal, Long> db;
+    private String keyword;
+    private TextIndexFieldEncryptor indexCrypt;
+    
+    SearchTransaction(JournalIndexer indexer, JournalEncryptor enc, CrudRepository<Journal, Long> db, TextIndexFieldEncryptor indexCrypt, String keyword) {
+        super();
+        this.indexer = indexer;
+        this.enc = enc;
+        this.db = db;
+        this.keyword = keyword;
+        this.indexCrypt = indexCrypt;
+    }
+    
+    @Override
+    public void execute() {
+        Iterable<Long> ids = indexer.search(indexCrypt.cryptStringWords(keyword));
+        List<Journal> result = new LinkedList<>();
+        for (Journal j : db.findAll(ids)) {
+            result.add(enc.decryptJournal(j));
+        }
+        this.setResult(result);
+    }
+    
 }

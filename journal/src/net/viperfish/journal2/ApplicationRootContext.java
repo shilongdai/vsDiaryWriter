@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
@@ -49,6 +50,7 @@ import net.viperfish.journal2.core.AuthenticationManager;
 import net.viperfish.journal2.core.JournalIndexer;
 import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.crypt.JournalEncryptorChain;
+import net.viperfish.journal2.crypt.TextIndexFieldEncryptor;
 import net.viperfish.journal2.index.JournalLuceneIndexer;
 import net.viperfish.journal2.swtGui.GraphicalUserInterface;
 
@@ -56,172 +58,183 @@ import net.viperfish.journal2.swtGui.GraphicalUserInterface;
 @EnableAsync(proxyTargetClass = true, order = 1)
 @EnableTransactionManagement(proxyTargetClass = true, order = Ordered.LOWEST_PRECEDENCE)
 @EnableJpaRepositories(basePackages = {
-		"net.viperfish.journal2.core" }, entityManagerFactoryRef = "entityManagerFactoryBean", transactionManagerRef = "jpaTransactionManager")
+    "net.viperfish.journal2.core"}, entityManagerFactoryRef = "entityManagerFactoryBean", transactionManagerRef = "jpaTransactionManager")
 @ComponentScan(basePackages = "net.viperfish.journal2")
 public class ApplicationRootContext implements AsyncConfigurer {
 
-	@Autowired
-	private List<Processor> processors;
+    @Autowired
+    private List<Processor> processors;
 
-	private Logger log = LogManager.getLogger();
+    private Logger log = LogManager.getLogger();
 
-	@Bean
-	public ThreadPoolTaskScheduler taskScheduler() {
-		int level = 2;
-		log.info("Creating thread pool with " + level + " threads");
-		ThreadPoolTaskScheduler exec = new ThreadPoolTaskScheduler();
-		exec.setPoolSize(level);
-		exec.setThreadNamePrefix("transaction");
-		exec.setAwaitTerminationSeconds(60);
-		exec.setWaitForTasksToCompleteOnShutdown(true);
-		exec.setRejectedExecutionHandler(new RejectedExecutionHandler() {
+    @Bean
+    public ThreadPoolTaskScheduler taskScheduler() {
+        int level = 2;
+        log.info("Creating thread pool with " + level + " threads");
+        ThreadPoolTaskScheduler exec = new ThreadPoolTaskScheduler();
+        exec.setPoolSize(level);
+        exec.setThreadNamePrefix("transaction");
+        exec.setAwaitTerminationSeconds(60);
+        exec.setWaitForTasksToCompleteOnShutdown(true);
+        exec.setRejectedExecutionHandler(new RejectedExecutionHandler() {
 
-			@Override
-			public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-				StringBuilder errorBuilder = new StringBuilder("Task Rejected");
-				log.error(errorBuilder.toString());
-			}
-		});
-		return exec;
-	}
+            @Override
+            public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+                StringBuilder errorBuilder = new StringBuilder("Task Rejected");
+                log.error(errorBuilder.toString());
+            }
+        });
+        return exec;
+    }
 
-	@Bean
-	public LocalValidatorFactoryBean localValidatorFactoryBean() throws ClassNotFoundException {
-		LocalValidatorFactoryBean result = new LocalValidatorFactoryBean();
-		result.setProviderClass(Class.forName("org.hibernate.validator.HibernateValidator"));
-		result.setValidationMessageSource(this.messageSource());
-		return result;
-	}
+    @Bean
+    public LocalValidatorFactoryBean localValidatorFactoryBean() throws ClassNotFoundException {
+        LocalValidatorFactoryBean result = new LocalValidatorFactoryBean();
+        result.setProviderClass(Class.forName("org.hibernate.validator.HibernateValidator"));
+        result.setValidationMessageSource(this.messageSource());
+        return result;
+    }
 
-	@Bean
-	public MethodValidationPostProcessor methodValidationPostProcessor() throws ClassNotFoundException {
-		MethodValidationPostProcessor processor = new MethodValidationPostProcessor();
-		processor.setValidator(this.localValidatorFactoryBean());
-		return processor;
-	}
+    @Bean
+    public MethodValidationPostProcessor methodValidationPostProcessor() throws ClassNotFoundException {
+        MethodValidationPostProcessor processor = new MethodValidationPostProcessor();
+        processor.setValidator(this.localValidatorFactoryBean());
+        return processor;
+    }
 
-	@Override
-	public Executor getAsyncExecutor() {
-		Executor exec = this.taskScheduler();
-		log.info(exec + " ready for use");
-		return exec;
-	}
+    @Override
+    public Executor getAsyncExecutor() {
+        Executor exec = this.taskScheduler();
+        log.info(exec + " ready for use");
+        return exec;
+    }
 
-	@Override
-	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-		return new AsyncUncaughtExceptionHandler() {
+    @Override
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        return new AsyncUncaughtExceptionHandler() {
 
-			@Override
-			public void handleUncaughtException(Throwable ex, Method method, Object... params) {
-				StringBuilder errorBuilder = new StringBuilder("Async execution error on method:")
-						.append(method.toString()).append(" with parameters:").append(Arrays.toString(params));
-				log.error(errorBuilder.toString());
-			}
-		};
-	}
+            @Override
+            public void handleUncaughtException(Throwable ex, Method method, Object... params) {
+                StringBuilder errorBuilder = new StringBuilder("Async execution error on method:")
+                        .append(method.toString()).append(" with parameters:").append(Arrays.toString(params));
+                log.error(errorBuilder.toString());
+            }
+        };
+    }
 
-	@Bean
-	public MessageSource messageSource() {
-		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		messageSource.setCacheSeconds(-1);
-		messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
-		messageSource.setBasenames("file:./i18n/messages", "file:./i18n/errors");
-		return messageSource;
-	}
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setCacheSeconds(-1);
+        messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
+        messageSource.setBasenames("file:./i18n/messages", "file:./i18n/errors");
+        return messageSource;
+    }
 
-	@Bean
-	public DataSource journalDataSource() {
-		BasicDataSource datasource = new BasicDataSource();
-		datasource.setUsername("journal");
-		datasource.setPassword("journal");
-		datasource.setDriverClassName("org.h2.Driver");
-		datasource.setUrl("jdbc:h2:./data");
-		datasource.setMaxIdle(3);
-		datasource.setMaxWaitMillis(5000);
-		datasource.setRemoveAbandonedOnBorrow(true);
-		datasource.setRemoveAbandonedOnBorrow(true);
-		datasource.setRemoveAbandonedTimeout(20);
-		datasource.setLogAbandoned(true);
-		datasource.setValidationQuery("select 1");
-		datasource.setMinEvictableIdleTimeMillis(3600000);
-		datasource.setTimeBetweenEvictionRunsMillis(1800000);
-		datasource.setNumTestsPerEvictionRun(10);
-		datasource.setTestOnBorrow(true);
-		datasource.setTestOnReturn(false);
-		datasource.addConnectionProperty("useUnicode", "yes");
-		datasource.addConnectionProperty("characterEncoding", "utf8");
-		return datasource;
-	}
+    @Bean
+    public DataSource journalDataSource() {
+        BasicDataSource datasource = new BasicDataSource();
+        datasource.setUsername("journal");
+        datasource.setPassword("journal");
+        datasource.setDriverClassName("org.h2.Driver");
+        datasource.setUrl("jdbc:h2:./data");
+        datasource.setMaxIdle(3);
+        datasource.setMaxWaitMillis(5000);
+        datasource.setRemoveAbandonedOnBorrow(true);
+        datasource.setRemoveAbandonedOnBorrow(true);
+        datasource.setRemoveAbandonedTimeout(20);
+        datasource.setLogAbandoned(true);
+        datasource.setValidationQuery("select 1");
+        datasource.setMinEvictableIdleTimeMillis(3600000);
+        datasource.setTimeBetweenEvictionRunsMillis(1800000);
+        datasource.setNumTestsPerEvictionRun(10);
+        datasource.setTestOnBorrow(true);
+        datasource.setTestOnReturn(false);
+        datasource.addConnectionProperty("useUnicode", "yes");
+        datasource.addConnectionProperty("characterEncoding", "utf8");
+        return datasource;
+    }
 
-	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean() {
-		Map<String, Object> properties = new Hashtable<>();
-		properties.put("javax.persistence.schema-generation.database.action", "none");
-		properties.put("hibernate.connection.characterEncoding", "utf8");
-		properties.put("hibernate.connection.useUnicode", "true");
-		properties.put("hibernate.connection.charSet", "utf8");
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean() {
+        Map<String, Object> properties = new Hashtable<>();
+        properties.put("javax.persistence.schema-generation.database.action", "none");
+        properties.put("hibernate.connection.characterEncoding", "utf8");
+        properties.put("hibernate.connection.useUnicode", "true");
+        properties.put("hibernate.connection.charSet", "utf8");
 
-		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
-		adapter.setDatabasePlatform("org.hibernate.dialect.MySQL5InnoDBDialect");
+        HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+        adapter.setDatabasePlatform("org.hibernate.dialect.MySQL5InnoDBDialect");
 
-		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-		factory.setJpaVendorAdapter(adapter);
-		factory.setDataSource(this.journalDataSource());
-		factory.setPackagesToScan("net.viperfish.journal2");
-		factory.setSharedCacheMode(SharedCacheMode.ENABLE_SELECTIVE);
-		factory.setValidationMode(ValidationMode.NONE);
-		factory.setJpaPropertyMap(properties);
-		return factory;
-	}
+        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+        factory.setJpaVendorAdapter(adapter);
+        factory.setDataSource(this.journalDataSource());
+        factory.setPackagesToScan("net.viperfish.journal2");
+        factory.setSharedCacheMode(SharedCacheMode.ENABLE_SELECTIVE);
+        factory.setValidationMode(ValidationMode.NONE);
+        factory.setJpaPropertyMap(properties);
+        return factory;
+    }
 
-	@Bean
-	public JournalEncryptorChain journalEncryptorChain() throws ConfigurationException, IOException {
-		JournalEncryptorChain enc = new JournalEncryptorChain(Paths.get("kdfSalt"));
-		enc.setConfig(this.configuration());
-		for (Processor p : processors) {
-			this.log.info("loaded:" + p.getId());
-			enc.addProccessor(p);
-		}
-		return enc;
-	}
+    @Bean
+    public JournalEncryptorChain journalEncryptorChain() throws ConfigurationException, IOException {
+        JournalEncryptorChain enc = new JournalEncryptorChain(Paths.get("kdfSalt"));
+        enc.setConfig(this.configuration());
+        for (Processor p : processors) {
+            this.log.info("loaded:" + p.getId());
+            enc.addProccessor(p);
+        }
+        return enc;
+    }
 
-	@Bean
-	public AuthenticationManager authManager() throws ConfigurationException, IOException {
-		OpenBSDBCryptAuthManager auth = new OpenBSDBCryptAuthManager(Paths.get("passwd"));
-		if (auth.isSetup()) {
-			auth.load();
-		}
-		auth.addObserver(this.journalEncryptorChain());
-		return auth;
-	}
+    @Bean
+    public AuthenticationManager authManager() throws ConfigurationException, IOException {
+        OpenBSDBCryptAuthManager auth = new OpenBSDBCryptAuthManager(Paths.get("passwd"));
+        if (auth.isSetup()) {
+            auth.load();
+        }
+        auth.addObserver(this.journalEncryptorChain());
+        return auth;
+    }
 
-	@Bean
-	public PlatformTransactionManager jpaTransactionManager() {
-		return new JpaTransactionManager(this.entityManagerFactoryBean().getObject());
-	}
+    @Bean
+    public PlatformTransactionManager jpaTransactionManager() {
+        return new JpaTransactionManager(this.entityManagerFactoryBean().getObject());
+    }
 
-	@Bean
-	public GraphicalUserInterface ui() {
-		return new GraphicalUserInterface();
-	}
+    @Bean
+    public GraphicalUserInterface ui() {
+        return new GraphicalUserInterface();
+    }
 
-	@Bean
-	public JournalIndexer journalIndexer() {
-		JournalLuceneIndexer indexer = new JournalLuceneIndexer();
-		return indexer;
-	}
+    @Bean
+    public JournalIndexer journalIndexer() throws IOException {
+        Path p = Paths.get("index");
+        if(!p.toFile().exists()) {
+            Files.createDirectory(p, PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------")));
+        }
+        JournalLuceneIndexer indexer = new JournalLuceneIndexer(p);
+        return indexer;
+    }
 
-	@Bean
-	public FileConfiguration configuration() throws IOException, ConfigurationException {
-		Path configFile = Paths.get("config");
-		if (!configFile.toFile().exists()) {
-			Files.createFile(configFile);
-		}
-		PropertiesConfiguration config = new PropertiesConfiguration();
-		config.setFileName(configFile.toString());
-		config.setAutoSave(true);
-		config.load();
-		return config;
-	}
+    @Bean
+    public FileConfiguration configuration() throws IOException, ConfigurationException {
+        Path configFile = Paths.get("config");
+        if (!configFile.toFile().exists()) {
+            Files.createFile(configFile);
+        }
+        PropertiesConfiguration config = new PropertiesConfiguration();
+        config.setFileName(configFile.toString());
+        config.setAutoSave(true);
+        config.load();
+        return config;
+    }
+
+    @Bean
+    public TextIndexFieldEncryptor indexEncryptor() throws IOException, ConfigurationException {
+        TextIndexFieldEncryptor crypt = new TextIndexFieldEncryptor(this.configuration());
+        this.journalEncryptorChain().addObserver(crypt);
+        return crypt;
+    }
 
 }

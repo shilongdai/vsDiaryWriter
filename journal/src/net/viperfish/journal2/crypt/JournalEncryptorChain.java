@@ -28,12 +28,13 @@ import org.springframework.util.Base64Utils;
 import net.viperfish.journal2.core.CryptoInfo;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalEncryptor;
+import net.viperfish.journal2.core.Observable;
 import net.viperfish.journal2.core.Observer;
 import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
-public class JournalEncryptorChain implements JournalEncryptor, Observer<String> {
+public class JournalEncryptorChain extends Observable<byte[]> implements JournalEncryptor, Observer<String> {
 
 	public static final String CONFIG_KEY_ENCRYPTION_ALGORITHM = "crypt.keyEncryption.algorithm";
 
@@ -229,6 +230,7 @@ public class JournalEncryptorChain implements JournalEncryptor, Observer<String>
 				config.containsKey(CONFIG_KEY_ENCRYPTION_KEYLENGTH) ? config.getInt(CONFIG_KEY_ENCRYPTION_KEYLENGTH)
 						: BlockCiphers.getKeySize(config.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM)),
 				new SHA3Digest(256));
+                this.notifyObservers(masterkey);
 	}
 
 	public void addProccessor(Processor p) {
