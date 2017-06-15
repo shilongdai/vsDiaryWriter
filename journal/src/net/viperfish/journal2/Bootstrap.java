@@ -16,6 +16,7 @@ public class Bootstrap {
 	public static void main(String... arguments) {
 		ThreadContext.put("id", UUID.randomUUID().toString());
 		ThreadContext.put("username", "journalUser");
+		@SuppressWarnings("resource")
 		AnnotationConfigApplicationContext rootContext = new AnnotationConfigApplicationContext(
 				ApplicationRootContext.class);
 		rootContext.start();

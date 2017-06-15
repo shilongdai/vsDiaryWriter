@@ -45,18 +45,14 @@ public class TextIndexFieldEncryptor implements Observer<byte[]> {
     }
 
     private byte[] initKey() throws NoSuchAlgorithmException, DataLengthException, IllegalStateException, InvalidCipherTextException {
-        String alg = config.getString(INDEX_ENCRYPTION_ALGORITHM);
-        if (alg == null) {
-            alg = "AES";
-        }
+        String alg = config.getString(INDEX_ENCRYPTION_ALGORITHM, "AES");
         cipher = BlockCiphers.getBlockCipherEngine(alg);
         if (cipher == null) {
             throw new NoSuchAlgorithmException(alg);
         }
         String encodedEncryptedKey = config.getString(INDEX_ENCRYPTION_KEY);
         if (encodedEncryptedKey != null) {
-            byte[] encryptedKey = null;
-            encryptedKey = Base64Utils.decodeFromUrlSafeString(config.getString(INDEX_ENCRYPTION_KEY));
+            byte[] encryptedKey = Base64Utils.decodeFromUrlSafeString(config.getString(INDEX_ENCRYPTION_KEY));
             return CryptUtils.INSTANCE.ecbDecrypt(encryptedKey, masterKey, cipher);
         } else {
             int keySize = config.getInt(INDEX_ENCRYPTION_KEYSIZE, BlockCiphers.getKeySize(alg));

@@ -25,8 +25,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.jsoup.Jsoup;
-
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalIndexer;
 import org.apache.lucene.store.FSDirectory;
