@@ -8,11 +8,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
 
 import net.viperfish.journal2.core.CopiablePreferencePage;
 
-@Component
 class HMACPreferencePage extends CopiablePreferencePage {
 
 	private MessageSource i18n;

@@ -25,18 +25,9 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.1-api', version:'1.0.0.Final'
     compile group: 'org.jsoup', name: 'jsoup', version:'1.8.3'
-    compile group: 'org.springframework', name: 'spring-oxm', version:'4.2.6.RELEASE'
-    compile group: 'org.hibernate', name: 'hibernate-validator-annotation-processor', version:'5.2.4.Final'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version:'2.6'
-    compile group: 'org.springframework', name: 'spring-orm', version:'4.2.6.RELEASE'
     compile group: 'org.eclipse.core', name: 'commands', version:'3.8.0.v20160316-1921'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-jcl', version:'2.6'
-    compile group: 'javax.validation', name: 'validation-api', version:'1.1.0.Final'
     compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.4'
-    compile group: 'org.springframework.data', name: 'spring-data-jpa', version:'1.10.1.RELEASE'
-    compile group: 'javax.transaction', name: 'jta', version:'1.1'
     compile group: 'org.apache.lucene', name: 'lucene-queryparser', version:'5.2.1'
     compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version:'1.53'
     compile group: 'org.apache.commons', name: 'commons-dbcp2', version:'2.1.1'
@@ -51,14 +42,9 @@ dependencies {
     compile group: 'commons-codec', name: 'commons-codec', version:'1.10'
     runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version:'2.6'
     runtime group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version:'2.6'
-    runtime(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.6.Final') {
-exclude(module: 'hibernate-jpa-2.1-api')
-    }
-    runtime(group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.6.Final') {
-exclude(module: 'javassist')
-    }
-    runtime group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.4.Final'
     runtime group: 'com.h2database', name: 'h2', version:'1.4.192'
+    compile group: 'com.j256.ormlite', name: 'ormlite-core', version:'5.0'
+    compile group: 'com.j256.ormlite', name: 'ormlite-jdbc', version:'5.0'
     testCompile group: 'junit', name: 'junit', version:'4.12'
 }
 

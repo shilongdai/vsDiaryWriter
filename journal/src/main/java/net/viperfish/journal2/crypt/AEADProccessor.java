@@ -11,7 +11,6 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.modes.AEADBlockCipher;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
-import org.springframework.stereotype.Component;
 
 import net.viperfish.journal2.core.CryptoInfo;
 import net.viperfish.journal2.core.CryptoInfoGenerator;
@@ -19,7 +18,6 @@ import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
-@Component
 class AEADProccessor implements Processor {
 
 	private static final String CRYPTOINFO_MAPPING = "aeadProcessor";

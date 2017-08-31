@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.configuration.Configuration;
-import org.springframework.stereotype.Component;
 
 import net.viperfish.framework.compression.Compressor;
 import net.viperfish.framework.compression.Compressors;
@@ -16,7 +15,6 @@ import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
-@Component
 class CompressionProccessor implements Processor {
 
 	public static final String CONFIG_COMPRESSION = "compressor.algorithm";

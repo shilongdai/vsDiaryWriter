@@ -1,29 +1,48 @@
 package net.viperfish.journal2.core;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.stereotype.Service;
-
-@Service("asyncTransactionExecutor")
 class AsyncTransactionExecutor implements TransactionExecutor {
 
+	private ExecutorService thread;
+
 	public AsyncTransactionExecutor() {
-		// TODO Auto-generated constructor stub
+		thread = Executors.newSingleThreadExecutor();
 	}
 
-	@Async
 	@Override
-	public void run(Transaction trans) {
-		trans.execute();
+	public void run(final Transaction trans) {
+		thread.submit(new Runnable() {
+
+			@Override
+			public void run() {
+				trans.execute();
+			}
+		});
 	}
 
-	@Async
 	@Override
-	public <T> Future<T> call(TransactionWithResult<T> trans) {
-		trans.execute();
-		return new AsyncResult<T>(trans.getResult());
+	public <T> Future<T> call(final TransactionWithResult<T> trans) {
+		return thread.submit(new Callable<T>() {
+
+			@Override
+			public T call() throws Exception {
+				trans.execute();
+				return trans.getResult();
+			}
+		});
+	}
+
+	@Override
+	public void close() throws Exception {
+		thread.shutdown();
+		if (!thread.awaitTermination(5, TimeUnit.SECONDS)) {
+			thread.shutdownNow();
+		}
 	}
 
 }

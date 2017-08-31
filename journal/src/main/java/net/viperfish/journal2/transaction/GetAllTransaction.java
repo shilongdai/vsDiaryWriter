@@ -4,8 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
-
+import net.viperfish.journal2.core.CrudRepository;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalEncryptor;
 import net.viperfish.journal2.core.TransactionWithResult;

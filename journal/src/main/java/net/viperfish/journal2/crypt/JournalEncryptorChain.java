@@ -8,22 +8,17 @@ import java.nio.file.StandardOpenOption;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.configuration.Configuration;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.digests.SHA3Digest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.util.Base64Utils;
 
 import net.viperfish.journal2.core.CryptoInfo;
 import net.viperfish.journal2.core.Journal;
@@ -48,22 +43,8 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 		this.saltFile = salt;
 		this.salt = new byte[0];
 		lastEngine = new String();
-		logger = LogManager.getLogger();
 	}
 
-	public Configuration getConfig() {
-		return config;
-	}
-
-	@Autowired
-	public void setConfig(Configuration config) {
-		this.config = config;
-	}
-
-	@Autowired
-	private MessageSource i18n;
-
-	private Logger logger;
 	private Configuration config;
 	private SecureRandom rand;
 	private Map<String, Processor> processors;
@@ -118,8 +99,8 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 			subject = col.get("subject");
 			content = col.get("content");
 		}
-		String stringSubject = Base64Utils.encodeToString(subject);
-		String stringContent = Base64Utils.encodeToString(content);
+		String stringSubject = Base64.encodeBase64String(subject);
+		String stringContent = Base64.encodeBase64String(content);
 		j.setSubject(stringSubject);
 		j.setContent(stringContent);
 
@@ -154,8 +135,8 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 	}
 
 	private Journal undoProccess(Journal j) {
-		byte[] subject = Base64Utils.decodeFromString(j.getSubject());
-		byte[] content = Base64Utils.decodeFromString(j.getContent());
+		byte[] subject = Base64.decodeBase64(j.getSubject());
+		byte[] content = Base64.decodeBase64(j.getContent());
 		Map<Long, String> reversed = new TreeMap<>(Collections.reverseOrder());
 		reversed.putAll(j.getProcessedBy());
 		for (Entry<Long, String> entry : reversed.entrySet()) {
@@ -168,11 +149,6 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 				subject = data.get("subject");
 				content = data.get("content");
 			} catch (CipherException | CompromisedDataException e) {
-				subject = i18n.getMessage("compromisedData", null, Locale.getDefault())
-						.getBytes(StandardCharsets.UTF_8);
-				content = i18n.getMessage("compromisedData", null, Locale.getDefault())
-						.getBytes(StandardCharsets.UTF_8);
-				logger.warn("Compromised Data", e);
 				break;
 			}
 		}
@@ -206,9 +182,6 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 			try {
 				decryptInfo(e.getValue());
 			} catch (DataLengthException | IllegalStateException | InvalidCipherTextException e1) {
-				j.setSubject(i18n.getMessage("compromisedData", null, Locale.getDefault()));
-				j.setContent(i18n.getMessage("compromisedData", null, Locale.getDefault()));
-				logger.warn("Compromised Entry", e);
 				return j;
 			}
 
@@ -230,7 +203,7 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 				config.containsKey(CONFIG_KEY_ENCRYPTION_KEYLENGTH) ? config.getInt(CONFIG_KEY_ENCRYPTION_KEYLENGTH)
 						: BlockCiphers.getKeySize(config.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM)),
 				new SHA3Digest(256));
-                this.notifyObservers(masterkey);
+		this.notifyObservers(masterkey);
 	}
 
 	public void addProccessor(Processor p) {

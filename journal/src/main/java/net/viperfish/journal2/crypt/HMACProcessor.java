@@ -10,7 +10,6 @@ import org.apache.commons.configuration.Configuration;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
-import org.springframework.stereotype.Component;
 
 import net.viperfish.journal2.core.CryptoInfo;
 import net.viperfish.journal2.core.CryptoInfoGenerator;
@@ -18,7 +17,6 @@ import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
-@Component
 class HMACProcessor implements Processor {
 
 	final static String MAC_ALGORITHM = "mac.hmac.alg";

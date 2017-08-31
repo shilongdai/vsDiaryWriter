@@ -4,51 +4,36 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import javax.persistence.Basic;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
-@Entity
-@Table
+@DatabaseTable(tableName = "Journal")
 public class Journal implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5731874363027283666L;
-	@NotNull
-	@Size(max = 200)
+	@DatabaseField
 	private String subject;
-	@NotNull
-	@Size(max = 5240856)
+	@DatabaseField
 	private String content;
+	@DatabaseField(generatedId = true)
 	private Long id;
+	@DatabaseField
 	private Date timestamp;
+	@DatabaseField
+	private String processors;
 	private Map<String, CryptoInfo> infoMapping;
-	private SortedMap<Long, String> processedBy;
 
 	public Journal() {
 		this.subject = "";
 		this.content = "";
 		infoMapping = new HashMap<>();
-		processedBy = new TreeMap<>();
 	}
 
 	public Journal(Journal src) {
@@ -57,10 +42,8 @@ public class Journal implements Serializable {
 		this.id = src.id;
 		this.infoMapping = src.infoMapping;
 		this.timestamp = src.timestamp;
-		this.processedBy = src.processedBy;
 	}
 
-	@Basic
 	public String getSubject() {
 		return subject;
 	}
@@ -69,7 +52,6 @@ public class Journal implements Serializable {
 		this.subject = subject;
 	}
 
-	@Basic
 	public String getContent() {
 		return content;
 	}
@@ -78,8 +60,6 @@ public class Journal implements Serializable {
 		this.content = content;
 	}
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {
 		return id;
 	}
@@ -88,7 +68,6 @@ public class Journal implements Serializable {
 		this.id = id;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
 	public Date getTimestamp() {
 		return timestamp;
 	}
@@ -97,10 +76,14 @@ public class Journal implements Serializable {
 		this.timestamp = timestamp;
 	}
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "Journal_CryptoInfo", joinColumns = {
-			@JoinColumn(name = "Journal", referencedColumnName = "Id") })
-	@MapKeyColumn(name = "Key")
+	public String getProcessors() {
+		return processors;
+	}
+
+	public void setProcessors(String processors) {
+		this.processors = processors;
+	}
+
 	public Map<String, CryptoInfo> getInfoMapping() {
 		return infoMapping;
 	}
@@ -109,18 +92,78 @@ public class Journal implements Serializable {
 		this.infoMapping = infoMapping;
 	}
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "Journal_Processor", joinColumns = {
-			@JoinColumn(name = "Journal", referencedColumnName = "Id") })
-	@MapKeyColumn(name = "Load_Order")
-	@Column(name = "Processor")
-	@OrderBy
 	public SortedMap<Long, String> getProcessedBy() {
-		return processedBy;
+		TreeMap<Long, String> result = new TreeMap<>();
+		String[] parts = processors.split(";");
+		long i = 0;
+		for (String iter : parts) {
+			result.put(i++, iter);
+		}
+		return result;
 	}
 
 	public void setProcessedBy(SortedMap<Long, String> processedBy) {
-		this.processedBy = processedBy;
+		StringBuilder sb = new StringBuilder();
+		for (Entry<Long, String> i : processedBy.entrySet()) {
+			sb.append(i.getValue()).append(";");
+		}
+		sb.deleteCharAt(sb.length() - 1);
+		processors = sb.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((content == null) ? 0 : content.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((infoMapping == null) ? 0 : infoMapping.hashCode());
+		result = prime * result + ((processors == null) ? 0 : processors.hashCode());
+		result = prime * result + ((subject == null) ? 0 : subject.hashCode());
+		result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Journal other = (Journal) obj;
+		if (content == null) {
+			if (other.content != null)
+				return false;
+		} else if (!content.equals(other.content))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (infoMapping == null) {
+			if (other.infoMapping != null)
+				return false;
+		} else if (!infoMapping.equals(other.infoMapping))
+			return false;
+		if (processors == null) {
+			if (other.processors != null)
+				return false;
+		} else if (!processors.equals(other.processors))
+			return false;
+		if (subject == null) {
+			if (other.subject != null)
+				return false;
+		} else if (!subject.equals(other.subject))
+			return false;
+		if (timestamp == null) {
+			if (other.timestamp != null)
+				return false;
+		} else if (!timestamp.equals(other.timestamp))
+			return false;
+		return true;
 	}
 
 }

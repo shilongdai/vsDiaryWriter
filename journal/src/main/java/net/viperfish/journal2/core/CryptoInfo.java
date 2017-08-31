@@ -3,27 +3,43 @@ package net.viperfish.journal2.core;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
-@Embeddable
+@DatabaseTable(tableName = "Journal_CryptoInfo")
 public class CryptoInfo implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5696541382533899082L;
+	@DatabaseField(id = true)
+	private long journal;
+	@DatabaseField(columnName = "CryptoInfo_Key")
 	private byte[] key;
+	@DatabaseField(columnName = "CryptoInfo_Nounce")
 	private byte[] nounce;
+	@DatabaseField(columnName = "CryptoInfo_Algorithm")
 	private String algorithm;
+	@DatabaseField(columnName = "CryptoInfo_Mode")
 	private String mode;
 
 	public CryptoInfo() {
+		journal = -1;
+		key = new byte[0];
+		nounce = new byte[0];
+		algorithm = new String();
+		mode = new String();
 	}
 
-	@Basic
-	@Column(name = "CryptoInfo_Key")
+	public long getJournal() {
+		return journal;
+	}
+
+	public void setJournal(long journal) {
+		this.journal = journal;
+	}
+
 	public byte[] getKey() {
 		return key;
 	}
@@ -32,8 +48,6 @@ public class CryptoInfo implements Serializable {
 		this.key = key;
 	}
 
-	@Basic
-	@Column(name = "CryptoInfo_Nounce")
 	public byte[] getNounce() {
 		return nounce;
 	}
@@ -42,8 +56,6 @@ public class CryptoInfo implements Serializable {
 		this.nounce = nounce;
 	}
 
-	@Basic
-	@Column(name = "CryptoInfo_Algorithm")
 	public String getAlgorithm() {
 		return algorithm;
 	}
@@ -52,8 +64,6 @@ public class CryptoInfo implements Serializable {
 		this.algorithm = algorithm;
 	}
 
-	@Basic
-	@Column(name = "CryptoInfo_Mode")
 	public String getMode() {
 		return mode;
 	}
@@ -67,6 +77,7 @@ public class CryptoInfo implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((algorithm == null) ? 0 : algorithm.hashCode());
+		result = prime * result + (int) (journal ^ (journal >>> 32));
 		result = prime * result + Arrays.hashCode(key);
 		result = prime * result + ((mode == null) ? 0 : mode.hashCode());
 		result = prime * result + Arrays.hashCode(nounce);
@@ -86,6 +97,8 @@ public class CryptoInfo implements Serializable {
 			if (other.algorithm != null)
 				return false;
 		} else if (!algorithm.equals(other.algorithm))
+			return false;
+		if (journal != other.journal)
 			return false;
 		if (!Arrays.equals(key, other.key))
 			return false;
