@@ -1,0 +1,96 @@
+buildscript {
+    dependencies {
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', 
+		name: 'javafx-gradle-plugin', version: "8.8.2"
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    }
+}
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: "eclipse"
+mainClassName = 'net.viperfish.journal2.Bootstrap'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    maven { url "http://clojars.org/repo" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+dependencies {
+    compile group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.1-api', version:'1.0.0.Final'
+    compile group: 'org.jsoup', name: 'jsoup', version:'1.8.3'
+    compile group: 'org.springframework', name: 'spring-oxm', version:'4.2.6.RELEASE'
+    compile group: 'org.hibernate', name: 'hibernate-validator-annotation-processor', version:'5.2.4.Final'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version:'2.6'
+    compile group: 'org.springframework', name: 'spring-orm', version:'4.2.6.RELEASE'
+    compile group: 'org.eclipse.core', name: 'commands', version:'3.8.0.v20160316-1921'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-jcl', version:'2.6'
+    compile group: 'javax.validation', name: 'validation-api', version:'1.1.0.Final'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.4'
+    compile group: 'org.springframework.data', name: 'spring-data-jpa', version:'1.10.1.RELEASE'
+    compile group: 'javax.transaction', name: 'jta', version:'1.1'
+    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version:'5.2.1'
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version:'1.53'
+    compile group: 'org.apache.commons', name: 'commons-dbcp2', version:'2.1.1'
+    compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version:'5.2.1'
+    compile group: 'org.eclipse.swt', name: 'org.eclipse.swt.gtk.linux.x86_64', version:'4.6.1'
+    compile group: 'org.eclipse', name: 'jface', version:'3.12.0.v20160518-1929'
+    compile group: 'org.eclipse.equinox', name: 'common', version:'3.8.0.v20160509-1230'
+    compile group: 'org.eclipse.nebula', name: 'pagination', version:'1.0.0.201702021852'
+    compile group: 'org.tukaani', name: 'xz', version:'1.5'
+    compile group: 'org.apache.commons', name: 'commons-compress', version:'1.10'
+    compile group: 'commons-configuration', name: 'commons-configuration', version:'1.10'
+    compile group: 'commons-codec', name: 'commons-codec', version:'1.10'
+    runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version:'2.6'
+    runtime group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version:'2.6'
+    runtime(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.6.Final') {
+exclude(module: 'hibernate-jpa-2.1-api')
+    }
+    runtime(group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.6.Final') {
+exclude(module: 'javassist')
+    }
+    runtime group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.4.Final'
+    runtime group: 'com.h2database', name: 'h2', version:'1.4.192'
+    testCompile group: 'junit', name: 'junit', version:'4.12'
+}
+
+apply plugin: 'javafx-gradle-plugin'
+
+
+jfx {
+    mainClass = 'net.viperfish.journal2.Bootstrap'
+    vendor = 'Shilong Dai'
+    appName = 'Password Vault'
+    nativeReleaseVersion = "1.0.0"
+}
+import org.gradle.plugins.ide.eclipse.model.AccessRule
+
+eclipse {
+	project.natures 'org.eclipse.buildship.core.gradleprojectnature'
+	classpath {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+eclipse.classpath {
+    file.whenMerged {
+        entries.each { source -> 
+            if (source.kind == 'con' && source.path.startsWith('org.eclipse.jdt.launching.JRE_CONTAINER')) {
+                source.accessRules.add(new AccessRule('0', 'sun/applet/AppletAudioClip'))
+                source.accessRules.add(new AccessRule('0', 'javax/swing/**'))
+                source.accessRules.add(new AccessRule('0', 'com/sun/java/swing/**'))
+                source.accessRules.add(new AccessRule('0', 'javafx/**'))
+                source.accessRules.add(new AccessRule('0', 'sun/net/www/protocol/**'))
+            }
+        }
+    }
+}
