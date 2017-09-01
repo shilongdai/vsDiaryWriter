@@ -1,6 +1,5 @@
 package net.viperfish.journal2.swtGui;
 
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,13 +16,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
 
 import net.viperfish.journal2.core.AuthenticationManager;
+import net.viperfish.journal2.core.JournalI18NBundle;
 
-@Component
 public class LoginPrompt {
 
 	protected Shell shell;
@@ -31,14 +27,10 @@ public class LoginPrompt {
 	private String password;
 	private Display display;
 	private final ExecutorService exc = Executors.newCachedThreadPool();
-	@Autowired
 	private AuthenticationManager auth;
-	private Locale defaultLocale;
-	@Autowired
-	private MessageSource i18n;
 
-	public LoginPrompt() {
-		this.defaultLocale = Locale.getDefault();
+	public LoginPrompt(AuthenticationManager manager) {
+		this.auth = manager;
 	}
 
 	/**
@@ -69,28 +61,28 @@ public class LoginPrompt {
 		// shell.setImage(SWTResourceManager.getImage(LoginPrompt.class,
 		// "/logo.ico"));
 		shell.setSize(522, 154);
-		shell.setText(i18n.getMessage("journal2.login.welcome", null, defaultLocale));
+		shell.setText(JournalI18NBundle.getString("journal2.login.welcome"));
 		shell.setLayout(new GridLayout(4, false));
 
 		Label lblNewLabel = new Label(shell, SWT.NONE);
 		lblNewLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblNewLabel.setText(i18n.getMessage("label.password", null, defaultLocale));
+		lblNewLabel.setText(JournalI18NBundle.getString("label.password"));
 
 		text = new Text(shell, SWT.BORDER | SWT.PASSWORD);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		new Label(shell, SWT.NONE);
 
 		final Label hashPasswordLabel = new Label(shell, SWT.NONE);
-		hashPasswordLabel.setText(i18n.getMessage("label.inProgress", null, defaultLocale));
+		hashPasswordLabel.setText(JournalI18NBundle.getString("label.password"));
 
 		final ProgressBar hashBar = new ProgressBar(shell, SWT.INDETERMINATE | SWT.SMOOTH);
 		hashBar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true, 2, 1));
 
 		Button btnNewButton = new Button(shell, SWT.NONE);
-		btnNewButton.setText(i18n.getMessage("label.login", null, defaultLocale));
+		btnNewButton.setText(JournalI18NBundle.getString("label.login"));
 
 		Button btnNewButton_1 = new Button(shell, SWT.NONE);
-		btnNewButton_1.setText(i18n.getMessage("label.cancel", null, defaultLocale));
+		btnNewButton_1.setText(JournalI18NBundle.getString("label.cancel"));
 		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -103,7 +95,7 @@ public class LoginPrompt {
 		shell.setDefaultButton(btnNewButton);
 
 		final Label lblNewLabel_1 = new Label(shell, SWT.NONE);
-		lblNewLabel_1.setText(i18n.getMessage("label.loginFail", null, defaultLocale));
+		lblNewLabel_1.setText(JournalI18NBundle.getString("label.loginFail"));
 		lblNewLabel_1.setVisible(false);
 		new Label(shell, SWT.NONE);
 

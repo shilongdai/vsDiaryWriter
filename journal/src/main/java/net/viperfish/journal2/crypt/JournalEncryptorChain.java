@@ -14,7 +14,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.configuration.Configuration;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -22,6 +21,7 @@ import org.bouncycastle.crypto.digests.SHA3Digest;
 
 import net.viperfish.journal2.core.CryptoInfo;
 import net.viperfish.journal2.core.Journal;
+import net.viperfish.journal2.core.JournalConfiguration;
 import net.viperfish.journal2.core.JournalEncryptor;
 import net.viperfish.journal2.core.Observable;
 import net.viperfish.journal2.core.Observer;
@@ -45,7 +45,6 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 		lastEngine = new String();
 	}
 
-	private Configuration config;
 	private SecureRandom rand;
 	private Map<String, Processor> processors;
 	private byte[] masterkey;
@@ -82,7 +81,7 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 	private Journal proccess(Journal j) {
 		byte[] subject = j.getSubject().getBytes(StandardCharsets.UTF_8);
 		byte[] content = j.getContent().getBytes(StandardCharsets.UTF_8);
-		String[] enabledString = config.getStringArray(CONFIG_ENABLED_PROCESSORS);
+		String[] enabledString = JournalConfiguration.getStringArray(CONFIG_ENABLED_PROCESSORS);
 		SortedMap<Long, String> enabledProcessors = new TreeMap<>();
 		long loadOrder = 0;
 		for (String i : enabledString) {
@@ -91,7 +90,7 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 		j.setProcessedBy(enabledProcessors);
 		for (Entry<Long, String> e : enabledProcessors.entrySet()) {
 			Processor p = this.processors.get(e.getValue());
-			p.generator().generate(j.getInfoMapping(), config);
+			p.generator().generate(j.getInfoMapping());
 			Map<String, byte[]> col = new HashMap<>();
 			col.put("subject", subject);
 			col.put("content", content);
@@ -108,7 +107,7 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 	}
 
 	private CryptoInfo cryptInfo(CryptoInfo info) {
-		engine = initEngine(config.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM));
+		engine = initEngine(JournalConfiguration.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM));
 		byte[] key = info.getKey();
 		try {
 			if (key != null) {
@@ -123,7 +122,7 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 
 	private CryptoInfo decryptInfo(CryptoInfo info)
 			throws DataLengthException, IllegalStateException, InvalidCipherTextException {
-		engine = initEngine(config.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM));
+		engine = initEngine(JournalConfiguration.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM));
 		byte[] key = info.getKey();
 
 		if (key != null) {
@@ -200,8 +199,9 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 			throw new CipherException(e);
 		}
 		this.masterkey = CryptUtils.INSTANCE.kdfKey(password, salt,
-				config.containsKey(CONFIG_KEY_ENCRYPTION_KEYLENGTH) ? config.getInt(CONFIG_KEY_ENCRYPTION_KEYLENGTH)
-						: BlockCiphers.getKeySize(config.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM)),
+				JournalConfiguration.containsKey(CONFIG_KEY_ENCRYPTION_KEYLENGTH)
+						? JournalConfiguration.getInt(CONFIG_KEY_ENCRYPTION_KEYLENGTH)
+						: BlockCiphers.getKeySize(JournalConfiguration.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM)),
 				new SHA3Digest(256));
 		this.notifyObservers(masterkey);
 	}

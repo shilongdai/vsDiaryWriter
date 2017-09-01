@@ -6,12 +6,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import net.viperfish.journal2.core.AsyncTransactionExecutor;
 import net.viperfish.journal2.core.AuthenticationManager;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalDatabase;
 import net.viperfish.journal2.core.JournalEncryptor;
 import net.viperfish.journal2.core.JournalIndexer;
 import net.viperfish.journal2.core.JournalService;
+import net.viperfish.journal2.core.TransactionExecutor;
 import net.viperfish.journal2.crypt.TextIndexFieldEncryptor;
 import net.viperfish.journal2.error.FailToStoreCredentialException;
 
@@ -23,9 +25,17 @@ public class TransactionalJournalService implements JournalService {
 	private TransactionalUtils utils;
 	private AuthenticationManager auth;
 	private TextIndexFieldEncryptor indexCrypt;
+	private TransactionExecutor executor;
 
-	public TransactionalJournalService() {
-
+	public TransactionalJournalService(JournalDatabase db, JournalEncryptor enc, JournalIndexer indexer,
+			AuthenticationManager manager, TextIndexFieldEncryptor indexCrEncryptor) {
+		executor = new AsyncTransactionExecutor();
+		this.db = db;
+		this.auth = manager;
+		this.enc = enc;
+		this.indexCrypt = indexCrEncryptor;
+		this.indexer = indexer;
+		this.utils = new TransactionalUtils(executor);
 	}
 
 	@Override
@@ -98,6 +108,12 @@ public class TransactionalJournalService implements JournalService {
 			db.save(enc.encryptJournal(enc.decryptJournal(i)));
 		}
 
+	}
+
+	@Override
+	public void close() throws Exception {
+		db.close();
+		executor.close();
 	}
 
 }

@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-class AsyncTransactionExecutor implements TransactionExecutor {
+public class AsyncTransactionExecutor implements TransactionExecutor {
 
 	private ExecutorService thread;
 

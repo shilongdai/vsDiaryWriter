@@ -38,7 +38,7 @@ dependencies {
     compile group: 'org.eclipse.nebula', name: 'pagination', version:'1.0.0.201702021852'
     compile group: 'org.tukaani', name: 'xz', version:'1.5'
     compile group: 'org.apache.commons', name: 'commons-compress', version:'1.10'
-    compile group: 'commons-configuration', name: 'commons-configuration', version:'1.10'
+    compile group: 'org.apache.commons', name: 'commons-configuration2', version: '2.1.1'
     compile group: 'commons-codec', name: 'commons-codec', version:'1.10'
     runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version:'2.6'
     runtime group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version:'2.6'

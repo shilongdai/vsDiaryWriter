@@ -17,31 +17,20 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.springframework.context.MessageSource;
 
+import net.viperfish.journal2.core.JournalI18NBundle;
 import net.viperfish.journal2.error.FailToStoreCredentialException;
 
 abstract class UpdatePasswordPrompt {
 	private Text newPassword;
 	private Text retypePassword;
 	private boolean result;
-	private MessageSource i18n;
 	private Locale defaultLocale;
 	private Logger logger = LogManager.getLogger();
 
 	protected abstract void doUpdate(String password) throws FailToStoreCredentialException;
 
-	public MessageSource getI18n() {
-		return i18n;
-	}
-
-	public void setI18n(MessageSource i18n) {
-		this.i18n = i18n;
-	}
-
-	public UpdatePasswordPrompt(MessageSource messageSource, Locale loc) {
-		this.i18n = messageSource;
-		this.defaultLocale = loc;
+	public UpdatePasswordPrompt() {
 	}
 
 	private boolean canSavePassword() {
@@ -59,14 +48,14 @@ abstract class UpdatePasswordPrompt {
 		// shell.setImage(SWTResourceManager.getImage(UpdatePasswordPrompt.class,
 		// "/logo.ico"));
 		shell.setSize(500, 250);
-		shell.setText(i18n.getMessage("label.setPassword", null, defaultLocale));
+		shell.setText(JournalI18NBundle.getString("label.setPassword"));
 		shell.setLayout(new GridLayout(2, false));
 		new Label(shell, SWT.NONE);
 		new Label(shell, SWT.NONE);
 
 		Label newPassLabel = new Label(shell, SWT.NONE);
 		newPassLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		newPassLabel.setText(i18n.getMessage("label.newPassword", null, defaultLocale));
+		newPassLabel.setText(JournalI18NBundle.getString("label.newPassword"));
 
 		newPassword = new Text(shell, SWT.PASSWORD | SWT.BORDER);
 		newPassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -75,18 +64,18 @@ abstract class UpdatePasswordPrompt {
 
 		Label retypeLabel = new Label(shell, SWT.NONE);
 		retypeLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		retypeLabel.setText(i18n.getMessage("label.retypePassword", null, defaultLocale));
+		retypeLabel.setText(JournalI18NBundle.getString("label.retypePassword"));
 
 		retypePassword = new Text(shell, SWT.PASSWORD | SWT.BORDER);
 		retypePassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(shell, SWT.NONE);
 
 		final Label passwordMismatch = new Label(shell, SWT.NONE);
-		passwordMismatch.setText(i18n.getMessage("label.passwordMismatch", null, defaultLocale));
+		passwordMismatch.setText(JournalI18NBundle.getString("label.passwordMismatch"));
 		passwordMismatch.setVisible(false);
 
 		Button cancelButton = new Button(shell, SWT.NONE);
-		cancelButton.setText(i18n.getMessage("label.cancel", null, defaultLocale));
+		cancelButton.setText(JournalI18NBundle.getString("label.cancel"));
 
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 
@@ -99,7 +88,7 @@ abstract class UpdatePasswordPrompt {
 		});
 
 		final Button done = new Button(shell, SWT.NONE);
-		done.setText(i18n.getMessage("label.done", null, defaultLocale));
+		done.setText(JournalI18NBundle.getString("label.done"));
 
 		done.addSelectionListener(new SelectionAdapter() {
 
@@ -109,8 +98,8 @@ abstract class UpdatePasswordPrompt {
 					try {
 						doUpdate(newPassword.getText());
 					} catch (FailToStoreCredentialException e) {
-						MessageDialog.openError(shell, i18n.getMessage("label.error", null, defaultLocale),
-								i18n.getMessage("journal2.error.generic", null, defaultLocale));
+						MessageDialog.openError(shell, JournalI18NBundle.getString("label.error"),
+								JournalI18NBundle.getString("journal2.error.generic"));
 						logger.error("Cannot persist password information", e);
 					}
 					result = true;

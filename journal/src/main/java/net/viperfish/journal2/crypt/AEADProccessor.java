@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.configuration.Configuration;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.modes.AEADBlockCipher;
@@ -14,6 +13,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 
 import net.viperfish.journal2.core.CryptoInfo;
 import net.viperfish.journal2.core.CryptoInfoGenerator;
+import net.viperfish.journal2.core.JournalConfiguration;
 import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
@@ -107,16 +107,16 @@ class AEADProccessor implements Processor {
 		return new CryptoInfoGenerator() {
 
 			@Override
-			public void generate(Map<String, CryptoInfo> target, Configuration config) {
+			public void generate(Map<String, CryptoInfo> target) {
 				String algorithm;
 				String mode;
-				if (config.containsKey(CONFIG_ENCRYPTION_ALGORITHM)) {
-					algorithm = config.getString(CONFIG_ENCRYPTION_ALGORITHM);
+				if (JournalConfiguration.containsKey(CONFIG_ENCRYPTION_ALGORITHM)) {
+					algorithm = JournalConfiguration.getString(CONFIG_ENCRYPTION_ALGORITHM);
 				} else {
 					algorithm = "AES";
 				}
-				if (config.containsKey(CONFIG_ENCRYPTION_MODE)) {
-					mode = config.getString(CONFIG_ENCRYPTION_MODE);
+				if (JournalConfiguration.containsKey(CONFIG_ENCRYPTION_MODE)) {
+					mode = JournalConfiguration.getString(CONFIG_ENCRYPTION_MODE);
 				} else {
 					mode = "GCM";
 				}
@@ -126,12 +126,12 @@ class AEADProccessor implements Processor {
 				info.setAlgorithm(algorithm);
 				info.setMode(mode);
 
-				byte[] key = new byte[config.containsKey(CONFIG_ENCRYPTION_KEYLENGTH)
-						? config.getInt(CONFIG_ENCRYPTION_KEYLENGTH) / 8
-						: BlockCiphers.getKeySize(config.getString(CONFIG_ENCRYPTION_ALGORITHM)) / 8];
+				byte[] key = new byte[JournalConfiguration.containsKey(CONFIG_ENCRYPTION_KEYLENGTH)
+						? JournalConfiguration.getInt(CONFIG_ENCRYPTION_KEYLENGTH) / 8
+						: BlockCiphers.getKeySize(JournalConfiguration.getString(CONFIG_ENCRYPTION_ALGORITHM)) / 8];
 				rand.nextBytes(key);
-				byte[] iv = CryptUtils.INSTANCE
-						.generateNonce(BlockCiphers.getNounceSize(config.getString(CONFIG_ENCRYPTION_MODE)));
+				byte[] iv = CryptUtils.INSTANCE.generateNonce(
+						BlockCiphers.getNounceSize(JournalConfiguration.getString(CONFIG_ENCRYPTION_MODE)));
 
 				info.setKey(key);
 				info.setNounce(iv);

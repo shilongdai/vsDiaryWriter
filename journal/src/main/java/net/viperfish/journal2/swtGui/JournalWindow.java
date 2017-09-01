@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.logging.log4j.LogManager;
@@ -50,21 +49,13 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
 
 import net.viperfish.journal2.core.CopiablePreferencePage;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalService;
 
-@Component
 public class JournalWindow {
-
-	@Autowired
 	private JournalService journalService;
-	@Autowired
-	private MessageSource messageSource;
 
 	private Logger logger = LogManager.getLogger();
 
@@ -182,13 +173,11 @@ public class JournalWindow {
 	private DateTime lowerBound;
 	private DateTime upperBoound;
 	private PageableTable pgTable;
-	private Locale defaultLocale;
-	@Autowired
-	private List<CopiablePreferencePage> page;
+	private CopiablePreferencePage[] page;
 
-	public JournalWindow() {
-		defaultLocale = Locale.getDefault();
-
+	public JournalWindow(JournalService service, CopiablePreferencePage... page) {
+		this.journalService = service;
+		this.page = page;
 	}
 
 	private PreferenceManager createPreferences() {

@@ -5,20 +5,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.configuration.Configuration;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
-import org.springframework.stereotype.Component;
 
 import net.viperfish.journal2.core.CryptoInfo;
 import net.viperfish.journal2.core.CryptoInfoGenerator;
+import net.viperfish.journal2.core.JournalConfiguration;
 import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
-@Component
 class StreamCipherProcessor implements Processor {
 
 	private StreamCipher cipher;
@@ -83,18 +81,18 @@ class StreamCipherProcessor implements Processor {
 		return new CryptoInfoGenerator() {
 
 			@Override
-			public void generate(Map<String, CryptoInfo> target, Configuration config) {
+			public void generate(Map<String, CryptoInfo> target) {
 				String algorithm;
 				int keyLength;
 
-				if (config.containsKey(CIPHER_ALGORITHM)) {
-					algorithm = config.getString(CIPHER_ALGORITHM);
+				if (JournalConfiguration.containsKey(CIPHER_ALGORITHM)) {
+					algorithm = JournalConfiguration.getString(CIPHER_ALGORITHM);
 				} else {
 					algorithm = "XSalsa20";
 				}
 
-				if (config.containsKey(CIPHER_KEYLENGTH)) {
-					keyLength = config.getInt(CIPHER_KEYLENGTH);
+				if (JournalConfiguration.containsKey(CIPHER_KEYLENGTH)) {
+					keyLength = JournalConfiguration.getInt(CIPHER_KEYLENGTH);
 				} else {
 					keyLength = StreamCipherEncryptors.INSTANCE.getKeySize("XSalsa20");
 				}

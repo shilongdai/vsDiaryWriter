@@ -6,13 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.configuration.Configuration;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 import net.viperfish.journal2.core.CryptoInfo;
 import net.viperfish.journal2.core.CryptoInfoGenerator;
+import net.viperfish.journal2.core.JournalConfiguration;
 import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
@@ -89,17 +89,17 @@ class HMACProcessor implements Processor {
 		return new CryptoInfoGenerator() {
 
 			@Override
-			public void generate(Map<String, CryptoInfo> target, Configuration config) {
+			public void generate(Map<String, CryptoInfo> target) {
 				CryptoInfo info = new CryptoInfo();
 				String alg;
-				if (config.containsKey(MAC_ALGORITHM)) {
-					alg = config.getString(MAC_ALGORITHM);
+				if (JournalConfiguration.containsKey(MAC_ALGORITHM)) {
+					alg = JournalConfiguration.getString(MAC_ALGORITHM);
 				} else {
 					alg = "SHA256";
 				}
 				int macSize;
-				if (config.containsKey(MAC_SIZE)) {
-					macSize = config.getInt(MAC_SIZE);
+				if (JournalConfiguration.containsKey(MAC_SIZE)) {
+					macSize = JournalConfiguration.getInt(MAC_SIZE);
 				} else {
 					macSize = 32;
 				}

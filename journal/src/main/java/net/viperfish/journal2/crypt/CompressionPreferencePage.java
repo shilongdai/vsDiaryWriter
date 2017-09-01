@@ -1,37 +1,21 @@
 package net.viperfish.journal2.crypt;
 
-import java.util.Locale;
-
-import org.apache.commons.configuration.Configuration;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 
 import net.viperfish.journal2.core.CopiablePreferencePage;
+import net.viperfish.journal2.core.JournalI18NBundle;
 
 class CompressionPreferencePage extends CopiablePreferencePage {
 
-	private Configuration config;
-	private MessageSource i18n;
 	private CompressionPreferenceComposite com;
-
-	@Autowired
-	public void setConfig(Configuration config) {
-		this.config = config;
-	}
-
-	@Autowired
-	public void setI18n(MessageSource i18n) {
-		this.i18n = i18n;
-		this.setTitle(i18n.getMessage("config.compression", null, Locale.getDefault()));
-		this.setDescription(i18n.getMessage("config.compression.desc", null, Locale.getDefault()));
-	}
 
 	public CompressionPreferencePage() {
 		super();
+		this.setTitle(JournalI18NBundle.getString("config.compression"));
+		this.setDescription(JournalI18NBundle.getString("config.compression.desc"));
 	}
 
 	public CompressionPreferencePage(String title) {
@@ -47,14 +31,12 @@ class CompressionPreferencePage extends CopiablePreferencePage {
 	@Override
 	public PreferencePage copy() {
 		CompressionPreferencePage page = new CompressionPreferencePage();
-		page.setI18n(i18n);
-		page.setConfig(config);
 		return page;
 	}
 
 	@Override
 	protected Control createContents(Composite arg0) {
-		com = new CompressionPreferenceComposite(arg0, NONE, config, i18n);
+		com = new CompressionPreferenceComposite(arg0, NONE);
 		return com;
 	}
 

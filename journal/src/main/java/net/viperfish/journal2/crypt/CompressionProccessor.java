@@ -4,13 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.configuration.Configuration;
-
 import net.viperfish.framework.compression.Compressor;
 import net.viperfish.framework.compression.Compressors;
 import net.viperfish.framework.compression.FailToInitCompressionException;
 import net.viperfish.journal2.core.CryptoInfo;
 import net.viperfish.journal2.core.CryptoInfoGenerator;
+import net.viperfish.journal2.core.JournalConfiguration;
 import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
@@ -67,10 +66,10 @@ class CompressionProccessor implements Processor {
 		return new CryptoInfoGenerator() {
 
 			@Override
-			public void generate(Map<String, CryptoInfo> target, Configuration config) {
+			public void generate(Map<String, CryptoInfo> target) {
 				String algorithm;
-				if (config.containsKey(CONFIG_COMPRESSION)) {
-					algorithm = config.getString(CONFIG_COMPRESSION);
+				if (JournalConfiguration.containsKey(CONFIG_COMPRESSION)) {
+					algorithm = JournalConfiguration.getString(CONFIG_COMPRESSION);
 				} else {
 					algorithm = "GZ";
 				}

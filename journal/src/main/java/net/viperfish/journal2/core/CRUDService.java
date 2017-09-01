@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
-public interface CRUDService<T, ID extends Serializable> {
+public interface CRUDService<T, ID extends Serializable> extends AutoCloseable {
 	public T get(ID id) throws ExecutionException;
 
 	public T add(T t) throws ExecutionException;

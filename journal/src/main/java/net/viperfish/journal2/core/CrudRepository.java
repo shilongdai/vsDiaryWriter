@@ -1,6 +1,6 @@
 package net.viperfish.journal2.core;
 
-public interface CrudRepository<T, ID> {
+public interface CrudRepository<T, ID> extends AutoCloseable {
 	public T save(T data);
 
 	public void save(Iterable<T> data);

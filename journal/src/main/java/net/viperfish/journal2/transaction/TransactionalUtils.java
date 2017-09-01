@@ -9,6 +9,10 @@ class TransactionalUtils {
 
 	private TransactionExecutor executor;
 
+	public TransactionalUtils(TransactionExecutor exe) {
+		executor = exe;
+	}
+
 	<T> T transactionToResult(TransactionWithResult<T> trans) throws ExecutionException {
 		try {
 			return executor.call(trans).get();

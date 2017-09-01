@@ -11,11 +11,11 @@ import java.security.SecureRandom;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.configuration.Configuration;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 
+import net.viperfish.journal2.core.JournalConfiguration;
 import net.viperfish.journal2.core.Observer;
 import net.viperfish.journal2.error.CipherException;
 
@@ -30,15 +30,13 @@ public class TextIndexFieldEncryptor implements Observer<byte[]> {
 	public static String INDEX_ENCRYPTION_KEYSIZE = "crypt.index.keysize";
 
 	private BlockCipher cipher;
-	private Configuration config;
 	private byte[] masterKey;
 	private SecureRandom rand;
 	private byte[] key;
 	private Base32 encoder;
 
-	public TextIndexFieldEncryptor(Configuration config) {
+	public TextIndexFieldEncryptor() {
 		rand = new SecureRandom();
-		this.config = config;
 		encoder = new Base32();
 	}
 
@@ -48,20 +46,20 @@ public class TextIndexFieldEncryptor implements Observer<byte[]> {
 
 	private byte[] initKey()
 			throws NoSuchAlgorithmException, DataLengthException, IllegalStateException, InvalidCipherTextException {
-		String alg = config.getString(INDEX_ENCRYPTION_ALGORITHM, "AES");
+		String alg = JournalConfiguration.getString(INDEX_ENCRYPTION_ALGORITHM, "AES");
 		cipher = BlockCiphers.getBlockCipherEngine(alg);
 		if (cipher == null) {
 			throw new NoSuchAlgorithmException(alg);
 		}
-		String encodedEncryptedKey = config.getString(INDEX_ENCRYPTION_KEY);
+		String encodedEncryptedKey = JournalConfiguration.getString(INDEX_ENCRYPTION_KEY);
 		if (encodedEncryptedKey != null) {
-			byte[] encryptedKey = Base64.decodeBase64(config.getString(INDEX_ENCRYPTION_KEY));
+			byte[] encryptedKey = Base64.decodeBase64(JournalConfiguration.getString(INDEX_ENCRYPTION_KEY));
 			return CryptUtils.INSTANCE.ecbDecrypt(encryptedKey, masterKey, cipher);
 		} else {
-			int keySize = config.getInt(INDEX_ENCRYPTION_KEYSIZE, BlockCiphers.getKeySize(alg));
+			int keySize = JournalConfiguration.getInt(INDEX_ENCRYPTION_KEYSIZE, BlockCiphers.getKeySize(alg));
 			byte[] newKey = new byte[keySize / 8];
 			rand.nextBytes(newKey);
-			config.setProperty(INDEX_ENCRYPTION_KEY,
+			JournalConfiguration.setProperty(INDEX_ENCRYPTION_KEY,
 					Base64.encodeBase64URLSafe(CryptUtils.INSTANCE.ecbCrypt(newKey, masterKey, cipher)));
 			return newKey;
 		}
