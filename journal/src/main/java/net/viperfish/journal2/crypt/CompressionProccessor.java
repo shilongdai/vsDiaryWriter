@@ -14,7 +14,7 @@ import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
-class CompressionProccessor implements Processor {
+public class CompressionProccessor implements Processor {
 
 	public static final String CONFIG_COMPRESSION = "compressor.algorithm";
 

@@ -1,5 +1,7 @@
 package net.viperfish.journal2.transaction;
 
+import java.io.IOException;
+
 import net.viperfish.journal2.core.CrudRepository;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalEncryptor;
@@ -25,7 +27,7 @@ final class AddJournalTransaction extends TransactionWithResult<Journal> {
 	}
 
 	@Override
-	public void execute() {
+	public void execute() throws IOException {
 		Journal toIndex = new Journal(toAdd);
 		toAdd = enc.encryptJournal(toAdd);
 		toAdd = this.db.save(toAdd);

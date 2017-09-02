@@ -17,7 +17,7 @@ import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
-class HMACProcessor implements Processor {
+public class HMACProcessor implements Processor {
 
 	final static String MAC_ALGORITHM = "mac.hmac.alg";
 	final static String MAC_SIZE = "mac.hmac.keySize";

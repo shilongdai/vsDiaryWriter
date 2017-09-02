@@ -1,5 +1,6 @@
 package net.viperfish.journal2.swtGui;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Collection;
@@ -8,8 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -52,12 +51,11 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import net.viperfish.journal2.core.CopiablePreferencePage;
 import net.viperfish.journal2.core.Journal;
+import net.viperfish.journal2.core.JournalI18NBundle;
 import net.viperfish.journal2.core.JournalService;
 
 public class JournalWindow {
 	private JournalService journalService;
-
-	private Logger logger = LogManager.getLogger();
 
 	private class SearchJournal {
 
@@ -84,8 +82,8 @@ public class JournalWindow {
 					resultList.add(i);
 				}
 			} catch (ExecutionException e) {
+				e.printStackTrace();
 				displayError();
-				logger.error("Display All Error:", e);
 			}
 			setPagination(resultList);
 			Calendar cal = Calendar.getInstance();
@@ -105,8 +103,8 @@ public class JournalWindow {
 			try {
 				setPagination(journalService.getRange(lower, upper));
 			} catch (ExecutionException e) {
+				e.printStackTrace();
 				displayError();
-				logger.error("Date filter error:", e);
 			}
 		}
 
@@ -121,8 +119,8 @@ public class JournalWindow {
 			try {
 				setPagination(journalService.searchWithinRange(lower, upper, searchText.getText()));
 			} catch (ExecutionException e) {
+				e.printStackTrace();
 				displayError();
-				logger.error("Search Error:", e);
 			}
 		}
 
@@ -154,8 +152,8 @@ public class JournalWindow {
 	}
 
 	private void displayError() {
-		MessageDialog.openError(shell, messageSource.getMessage("label.error", null, defaultLocale),
-				messageSource.getMessage("journal2.error.generic", null, defaultLocale));
+		MessageDialog.openError(shell, JournalI18NBundle.getString("label.error"),
+				JournalI18NBundle.getString("journal2.error.generic"));
 	}
 
 	private Text searchText;
@@ -189,15 +187,15 @@ public class JournalWindow {
 	}
 
 	private void newJournal() {
-		Journal result = new JournalEditor(messageSource).open(new Journal());
+		Journal result = new JournalEditor().open(new Journal());
 		if (result == null) {
 			return;
 		}
 		try {
 			journalService.add(result);
 		} catch (ExecutionException e) {
+			e.printStackTrace();
 			displayError();
-			logger.error("Add journal error", e);
 		}
 		search.searchJournals();
 	}
@@ -208,15 +206,15 @@ public class JournalWindow {
 			return;
 		}
 		boolean toDelete = MessageDialog.openConfirm(shell,
-				messageSource.getMessage("journal2.main.deleteWarning.title", null, defaultLocale),
-				messageSource.getMessage("journal2.main.deleteWarning", null, defaultLocale));
+				JournalI18NBundle.getString("journal2.main.deleteWarning.title"),
+				JournalI18NBundle.getString("journal2.main.deleteWarning"));
 		if (toDelete) {
 			Journal s = (Journal) selected.getFirstElement();
 			try {
 				journalService.remove(s.getId());
 			} catch (ExecutionException e) {
+				e.printStackTrace();
 				displayError();
-				logger.error("Remove journal error", e);
 			}
 			search.searchJournals();
 		}
@@ -250,19 +248,19 @@ public class JournalWindow {
 		operationBar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 8, 1));
 
 		newJournal = new ToolItem(operationBar, SWT.NONE);
-		newJournal.setText(messageSource.getMessage("label.add", null, defaultLocale));
+		newJournal.setText(JournalI18NBundle.getString("label.add"));
 
 		deleteJournal = new ToolItem(operationBar, SWT.NONE);
-		deleteJournal.setText(messageSource.getMessage("label.delete", null, defaultLocale));
+		deleteJournal.setText(JournalI18NBundle.getString("label.delete"));
 
 		recentLabel = new Label(shell, SWT.NONE);
 		recentLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		recentLabel.setText(messageSource.getMessage("label.range", null, defaultLocale));
+		recentLabel.setText(JournalI18NBundle.getString("label.range"));
 
 		lowerBound = new DateTime(shell, SWT.DROP_DOWN);
 
 		Label lblTo = new Label(shell, SWT.NONE);
-		lblTo.setText(messageSource.getMessage("label.to", null, defaultLocale));
+		lblTo.setText(JournalI18NBundle.getString("label.to"));
 
 		upperBoound = new DateTime(shell, SWT.DROP_DOWN);
 
@@ -293,13 +291,13 @@ public class JournalWindow {
 		shell.setMenuBar(mainMenu);
 
 		MenuItem fileMenu = new MenuItem(mainMenu, SWT.CASCADE);
-		fileMenu.setText(messageSource.getMessage("label.file", null, defaultLocale));
+		fileMenu.setText(JournalI18NBundle.getString("label.file"));
 
 		Menu menu = new Menu(fileMenu);
 		fileMenu.setMenu(menu);
 
 		MenuItem newEntryMenu = new MenuItem(menu, SWT.NONE);
-		newEntryMenu.setText(messageSource.getMessage("label.add", null, defaultLocale));
+		newEntryMenu.setText(JournalI18NBundle.getString("label.add"));
 		newEntryMenu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -311,7 +309,7 @@ public class JournalWindow {
 		});
 
 		MenuItem exit = new MenuItem(menu, SWT.NONE);
-		exit.setText(messageSource.getMessage("label.exit", null, defaultLocale));
+		exit.setText(JournalI18NBundle.getString("label.exit"));
 		exit.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -322,13 +320,13 @@ public class JournalWindow {
 		});
 
 		MenuItem editMenu = new MenuItem(mainMenu, SWT.CASCADE);
-		editMenu.setText(messageSource.getMessage("label.edit", null, defaultLocale));
+		editMenu.setText(JournalI18NBundle.getString("label.edit"));
 
 		Menu menu_1 = new Menu(editMenu);
 		editMenu.setMenu(menu_1);
 
 		MenuItem deleteEntryMenu = new MenuItem(menu_1, SWT.NONE);
-		deleteEntryMenu.setText(messageSource.getMessage("label.delete", null, defaultLocale));
+		deleteEntryMenu.setText(JournalI18NBundle.getString("label.delete"));
 		deleteEntryMenu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -340,7 +338,7 @@ public class JournalWindow {
 		});
 
 		MenuItem showAllMenu = new MenuItem(menu_1, SWT.NONE);
-		showAllMenu.setText(messageSource.getMessage("label.showAll", null, defaultLocale));
+		showAllMenu.setText(JournalI18NBundle.getString("label.showAll"));
 		showAllMenu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -351,37 +349,42 @@ public class JournalWindow {
 		});
 
 		MenuItem preferenceMenu = new MenuItem(mainMenu, SWT.CASCADE);
-		preferenceMenu.setText(messageSource.getMessage("label.settings", null, defaultLocale));
+		preferenceMenu.setText(JournalI18NBundle.getString("label.settings"));
 
 		Menu settingMenu = new Menu(preferenceMenu);
 		preferenceMenu.setMenu(settingMenu);
 
 		MenuItem reCryptMenuItem = new MenuItem(settingMenu, SWT.NONE);
-		reCryptMenuItem.setText(messageSource.getMessage("label.recrypt", null, defaultLocale));
+		reCryptMenuItem.setText(JournalI18NBundle.getString("label.recrypt"));
 		reCryptMenuItem.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				journalService.reCrypt();
+				try {
+					journalService.reCrypt();
+				} catch (IOException e) {
+					e.printStackTrace();
+					JournalWindow.this.displayError();
+				}
 			}
 
 		});
 
 		MenuItem passwordMenu = new MenuItem(settingMenu, SWT.NONE);
-		passwordMenu.setText(messageSource.getMessage("label.changePasswd", null, defaultLocale));
+		passwordMenu.setText(JournalI18NBundle.getString("label.changePasswd"));
 		passwordMenu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				super.widgetSelected(arg0);
-				ChangePasswordPrompt prompt = new ChangePasswordPrompt(messageSource, defaultLocale, journalService);
+				ChangePasswordPrompt prompt = new ChangePasswordPrompt(journalService);
 				prompt.open();
 			}
 
 		});
 
 		MenuItem changeConfigMenu = new MenuItem(settingMenu, SWT.NONE);
-		changeConfigMenu.setText(messageSource.getMessage("label.preferences", null, defaultLocale));
+		changeConfigMenu.setText(JournalI18NBundle.getString("label.preferences"));
 		changeConfigMenu.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -393,13 +396,13 @@ public class JournalWindow {
 		});
 
 		MenuItem helpMenu = new MenuItem(mainMenu, SWT.CASCADE);
-		helpMenu.setText(messageSource.getMessage("label.help", null, defaultLocale));
+		helpMenu.setText(JournalI18NBundle.getString("label.help"));
 
 		Menu menu_2 = new Menu(helpMenu);
 		helpMenu.setMenu(menu_2);
 
 		MenuItem aboutMenu = new MenuItem(menu_2, SWT.NONE);
-		aboutMenu.setText(messageSource.getMessage("label.about", null, defaultLocale));
+		aboutMenu.setText(JournalI18NBundle.getString("label.about"));
 		new Label(shell, SWT.NONE);
 		new Label(shell, SWT.NONE);
 		new Label(shell, SWT.NONE);
@@ -420,7 +423,7 @@ public class JournalWindow {
 		searchResults.setLinesVisible(true);
 		final TableViewerColumn titles = new TableViewerColumn(tableViewer, SWT.NONE);
 		titles.getColumn().setWidth(200);
-		titles.getColumn().setText(messageSource.getMessage("journal.title", null, defaultLocale));
+		titles.getColumn().setText(JournalI18NBundle.getString("journal.title"));
 		titles.getColumn().setResizable(true);
 		titles.setLabelProvider(new ColumnLabelProvider() {
 			@Override
@@ -432,7 +435,7 @@ public class JournalWindow {
 		final TableViewerColumn dates = new TableViewerColumn(tableViewer, SWT.NONE);
 		dates.getColumn().setWidth(200);
 		dates.getColumn().setResizable(true);
-		dates.getColumn().setText(messageSource.getMessage("journal.timestamp", null, defaultLocale));
+		dates.getColumn().setText(JournalI18NBundle.getString("journal.timestamp"));
 		dates.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -451,15 +454,15 @@ public class JournalWindow {
 					return;
 				}
 				Journal pointer = (Journal) selected.getFirstElement();
-				Journal result = new JournalEditor(messageSource).open(pointer);
+				Journal result = new JournalEditor().open(pointer);
 				if (result == null) {
 					return;
 				}
 				try {
 					journalService.update(pointer.getId(), pointer);
 				} catch (ExecutionException e) {
+					e.printStackTrace();
 					displayError();
-					logger.error("Update journal error", e);
 				}
 				search.searchJournals();
 			}
@@ -469,8 +472,8 @@ public class JournalWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
-				MessageDialog.openInformation(shell, messageSource.getMessage("label.about", null, defaultLocale),
-						messageSource.getMessage("journa2.main.about", null, defaultLocale));
+				MessageDialog.openInformation(shell, JournalI18NBundle.getString("label.about"),
+						JournalI18NBundle.getString("journa2.main.about"));
 			}
 
 		});

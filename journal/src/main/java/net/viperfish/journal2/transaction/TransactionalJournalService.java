@@ -1,5 +1,6 @@
 package net.viperfish.journal2.transaction;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -15,7 +16,7 @@ import net.viperfish.journal2.core.JournalIndexer;
 import net.viperfish.journal2.core.JournalService;
 import net.viperfish.journal2.core.TransactionExecutor;
 import net.viperfish.journal2.crypt.TextIndexFieldEncryptor;
-import net.viperfish.journal2.error.FailToStoreCredentialException;
+import net.viperfish.journal2.error.CompromisedDataException;
 
 public class TransactionalJournalService implements JournalService {
 
@@ -89,7 +90,7 @@ public class TransactionalJournalService implements JournalService {
 	}
 
 	@Override
-	public synchronized void reCrypt(String password) throws FailToStoreCredentialException {
+	public synchronized void reCrypt(String password) throws CompromisedDataException, IOException {
 		List<Journal> decrypted = new LinkedList<>();
 		for (Journal i : db.findAll()) {
 			decrypted.add(enc.decryptJournal(i));
@@ -103,7 +104,7 @@ public class TransactionalJournalService implements JournalService {
 	}
 
 	@Override
-	public synchronized void reCrypt() {
+	public synchronized void reCrypt() throws IOException {
 		for (Journal i : db.findAll()) {
 			db.save(enc.encryptJournal(enc.decryptJournal(i)));
 		}

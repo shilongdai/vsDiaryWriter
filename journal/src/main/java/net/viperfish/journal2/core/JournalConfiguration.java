@@ -1,5 +1,6 @@
 package net.viperfish.journal2.core;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
@@ -13,7 +14,8 @@ import org.apache.commons.configuration2.ConfigurationDecoder;
 import org.apache.commons.configuration2.ImmutableConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.event.Event;
 import org.apache.commons.configuration2.event.EventListener;
 import org.apache.commons.configuration2.event.EventType;
@@ -27,12 +29,16 @@ public final class JournalConfiguration {
 		configuration = new PropertiesConfiguration();
 	}
 
-	static void load(String fileName) throws ConfigurationException {
-		configBuilder = new Configurations().propertiesBuilder(fileName);
-		configuration = configBuilder.getConfiguration();
+	public static void load(String fileName) throws ConfigurationException {
+		Parameters params = new Parameters();
+		FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<>(
+				PropertiesConfiguration.class)
+						.configure(params.fileBased().setListDelimiterHandler(new DefaultListDelimiterHandler(','))
+								.setFile(new File(fileName)));
+		configuration = builder.getConfiguration();
 	}
 
-	static void save() throws ConfigurationException {
+	public static void save() throws ConfigurationException {
 		configBuilder.save();
 	}
 

@@ -33,7 +33,7 @@ public class RichTextEditor extends Composite {
 		if (useMozilla) {
 			browser = new Browser(this, SWT.MOZILLA);
 		} else {
-			browser = new Browser(this, SWT.WEBKIT);
+			browser = new Browser(this, SWT.NATIVE);
 		}
 		browser.setJavascriptEnabled(true);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

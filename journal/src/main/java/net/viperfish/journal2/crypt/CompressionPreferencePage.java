@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Control;
 import net.viperfish.journal2.core.CopiablePreferencePage;
 import net.viperfish.journal2.core.JournalI18NBundle;
 
-class CompressionPreferencePage extends CopiablePreferencePage {
+public class CompressionPreferencePage extends CopiablePreferencePage {
 
 	private CompressionPreferenceComposite com;
 

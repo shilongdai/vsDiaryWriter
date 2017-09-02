@@ -2,12 +2,12 @@ package net.viperfish.journal2.swtGui;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -19,10 +19,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.springframework.context.MessageSource;
 
 import net.viperfish.journal2.core.Journal;
-import net.viperfish.journal2.swtGui.richTextEditor.RichTextEditor;
+import net.viperfish.journal2.core.JournalI18NBundle;
 
 public class JournalEditor {
 
@@ -31,20 +30,16 @@ public class JournalEditor {
 	private Text titleText;
 	private String initialTitle;
 	private String initialContent;
-	private RichTextEditor editor;
+	private StyledText editor;
 	private Button saveButton;
 	private Journal target;
 	private boolean savePressed;
 	private Timer dateUpdater;
 	private Label titleLabel;
-	private MessageSource i18n;
-	private Locale loc;
 
-	public JournalEditor(MessageSource international) {
+	public JournalEditor() {
 		savePressed = false;
 		dateUpdater = new Timer("dateUpdater");
-		this.i18n = international;
-		this.loc = Locale.getDefault();
 	}
 
 	/**
@@ -85,7 +80,7 @@ public class JournalEditor {
 	private void createContents() {
 		shell = new Shell();
 		shell.setSize(1000, 800);
-		shell.setText(i18n.getMessage("journal2.journalEditor", null, loc));
+		shell.setText(JournalI18NBundle.getString("journal2.journalEditor"));
 		shell.setLayout(new GridLayout(2, false));
 		shell.addDisposeListener(new DisposeListener() {
 
@@ -96,8 +91,8 @@ public class JournalEditor {
 						createTarget();
 					} else {
 						boolean confirm = MessageDialog.openConfirm(shell,
-								i18n.getMessage("journal2.journalEditor.saveBeforeExit.title", null, loc),
-								i18n.getMessage("journal2.journalEditor.saveBeforeExit", null, loc));
+								JournalI18NBundle.getString("journal2.journalEditor.saveBeforeExit.title"),
+								JournalI18NBundle.getString("journal2.journalEditor.saveBeforeExit"));
 						if (confirm) {
 							if (checkSize()) {
 								createTarget();
@@ -140,10 +135,10 @@ public class JournalEditor {
 
 		titleLabel = new Label(shell, SWT.NONE);
 		titleLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		titleLabel.setText(i18n.getMessage("journal.title", null, loc));
+		titleLabel.setText(JournalI18NBundle.getString("journal.title"));
 
 		titleText = new Text(shell, SWT.BORDER);
-		titleText.setMessage(i18n.getMessage("journal.title.placeholder", null, loc));
+		titleText.setMessage(JournalI18NBundle.getString("journal.title.placeholder"));
 		GridData gd_titleText = new GridData(SWT.LEFT, SWT.TOP, true, false);
 		gd_titleText.widthHint = 670;
 		gd_titleText.horizontalAlignment = GridData.FILL;
@@ -151,7 +146,7 @@ public class JournalEditor {
 		titleText.setLayoutData(gd_titleText);
 		titleText.pack();
 
-		editor = new RichTextEditor(shell, SWT.NONE);
+		editor = new StyledText(shell, SWT.NONE);
 		GridData gd_browser = new GridData(SWT.CENTER, SWT.CENTER, true, true);
 		gd_browser.horizontalSpan = 2;
 		gd_browser.widthHint = 690;
@@ -180,7 +175,7 @@ public class JournalEditor {
 				}
 			}
 		});
-		saveButton.setText(i18n.getMessage("label.save", null, loc));
+		saveButton.setText(JournalI18NBundle.getString("label.save"));
 
 		this.initialTitle = target.getSubject();
 		this.initialContent = target.getContent();
@@ -189,13 +184,13 @@ public class JournalEditor {
 
 	private boolean checkSize() {
 		if (titleText.getText().length() > 200) {
-			MessageDialog.openError(shell, i18n.getMessage("journal2.journalEditor.size.title", null, loc),
-					i18n.getMessage("journal2.journalEditor.size.subject", null, loc));
+			MessageDialog.openError(shell, JournalI18NBundle.getString("journal2.journalEditor.size.title"),
+					JournalI18NBundle.getString("journal2.journalEditor.size.subject"));
 			return false;
 		}
 		if (editor.getText().length() > 5240856) {
-			MessageDialog.openError(shell, i18n.getMessage("journal2.journalEditor.size.title", null, loc),
-					i18n.getMessage("journal2.journalEditor.size.content", null, loc));
+			MessageDialog.openError(shell, JournalI18NBundle.getString("journal2.journalEditor.size.title"),
+					JournalI18NBundle.getString("journal2.journalEditor.size.content"));
 			return false;
 		}
 		return true;

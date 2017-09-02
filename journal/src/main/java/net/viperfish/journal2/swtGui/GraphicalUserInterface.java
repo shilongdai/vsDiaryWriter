@@ -1,22 +1,28 @@
 package net.viperfish.journal2.swtGui;
 
 import org.eclipse.swt.widgets.Display;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import net.viperfish.journal2.core.AuthenticationManager;
+import net.viperfish.journal2.core.JournalService;
+import net.viperfish.journal2.crypt.AEADPreferencePage;
+import net.viperfish.journal2.crypt.CompressionPreferencePage;
+import net.viperfish.journal2.crypt.HMACPreferencePage;
+import net.viperfish.journal2.crypt.StreamCipherPreferencePage;
 
 public class GraphicalUserInterface {
 
-	@Autowired
 	private JournalWindow w;
 
-	@Autowired
 	private LoginPrompt prompt;
 
-	@Autowired
 	private SetPasswordPrompt setPassword;
 
-	public GraphicalUserInterface() {
+	public GraphicalUserInterface(JournalService service, AuthenticationManager authManager) {
 		Display.setAppName("VSDiaryWriter");
-		Display.setAppVersion("6.0.0");
+		w = new JournalWindow(service, new AEADPreferencePage(), new CompressionPreferencePage(),
+				new HMACPreferencePage(), new StreamCipherPreferencePage());
+		prompt = new LoginPrompt(authManager);
+		setPassword = new SetPasswordPrompt(authManager);
 	}
 
 	public void run() {

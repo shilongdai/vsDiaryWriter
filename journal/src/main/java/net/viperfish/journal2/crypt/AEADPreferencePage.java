@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Control;
 import net.viperfish.journal2.core.CopiablePreferencePage;
 import net.viperfish.journal2.core.JournalI18NBundle;
 
-class AEADPreferencePage extends CopiablePreferencePage {
+public class AEADPreferencePage extends CopiablePreferencePage {
 
 	private AEADEncryptionPreferenceComposite com;
 

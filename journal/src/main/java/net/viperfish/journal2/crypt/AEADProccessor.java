@@ -18,7 +18,7 @@ import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
-class AEADProccessor implements Processor {
+public class AEADProccessor implements Processor {
 
 	private static final String CRYPTOINFO_MAPPING = "aeadProcessor";
 

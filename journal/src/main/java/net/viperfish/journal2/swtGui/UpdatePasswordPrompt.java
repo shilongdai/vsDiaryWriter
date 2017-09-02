@@ -1,9 +1,7 @@
 package net.viperfish.journal2.swtGui;
 
-import java.util.Locale;
+import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -25,10 +23,8 @@ abstract class UpdatePasswordPrompt {
 	private Text newPassword;
 	private Text retypePassword;
 	private boolean result;
-	private Locale defaultLocale;
-	private Logger logger = LogManager.getLogger();
 
-	protected abstract void doUpdate(String password) throws FailToStoreCredentialException;
+	protected abstract void doUpdate(String password) throws FailToStoreCredentialException, IOException;
 
 	public UpdatePasswordPrompt() {
 	}
@@ -97,10 +93,9 @@ abstract class UpdatePasswordPrompt {
 				if (canSavePassword()) {
 					try {
 						doUpdate(newPassword.getText());
-					} catch (FailToStoreCredentialException e) {
+					} catch (IOException e) {
 						MessageDialog.openError(shell, JournalI18NBundle.getString("label.error"),
 								JournalI18NBundle.getString("journal2.error.generic"));
-						logger.error("Cannot persist password information", e);
 					}
 					result = true;
 					shell.dispose();

@@ -1,7 +1,8 @@
 package net.viperfish.journal2.swtGui;
 
+import java.io.IOException;
+
 import net.viperfish.journal2.core.JournalService;
-import net.viperfish.journal2.error.FailToStoreCredentialException;
 
 public class ChangePasswordPrompt extends UpdatePasswordPrompt {
 
@@ -13,7 +14,7 @@ public class ChangePasswordPrompt extends UpdatePasswordPrompt {
 	}
 
 	@Override
-	protected void doUpdate(String password) throws FailToStoreCredentialException {
+	protected void doUpdate(String password) throws IOException {
 		this.service.reCrypt(password);
 
 	}

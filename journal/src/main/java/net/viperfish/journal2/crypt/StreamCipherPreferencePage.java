@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Control;
 import net.viperfish.journal2.core.CopiablePreferencePage;
 import net.viperfish.journal2.core.JournalI18NBundle;
 
-class StreamCipherPreferencePage extends CopiablePreferencePage {
+public class StreamCipherPreferencePage extends CopiablePreferencePage {
 
 	private StreamCipherConfigComposite com;
 

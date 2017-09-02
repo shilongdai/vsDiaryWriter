@@ -1,5 +1,7 @@
 package net.viperfish.journal2.transaction;
 
+import java.io.IOException;
+
 import net.viperfish.journal2.core.CrudRepository;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalEncryptor;
@@ -22,7 +24,7 @@ final class RemoveJournalTransaction extends TransactionWithResult<Journal> {
 	}
 
 	@Override
-	public void execute() {
+	public void execute() throws IOException {
 		Journal toRemove = db.findOne(id);
 		toRemove = enc.decryptJournal(toRemove);
 

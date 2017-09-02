@@ -1,5 +1,7 @@
 package net.viperfish.journal2.transaction;
 
+import java.io.IOException;
+
 import net.viperfish.journal2.core.CrudRepository;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalEncryptor;
@@ -26,7 +28,7 @@ final class UpdateJournalTransaction extends TransactionWithResult<Journal> {
 	}
 
 	@Override
-	public void execute() {
+	public void execute() throws IOException {
 		indexer.delete(toUpdate.getId());
 		Journal toIndex = new Journal(toUpdate);
 		toIndex.setId(toUpdate.getId());

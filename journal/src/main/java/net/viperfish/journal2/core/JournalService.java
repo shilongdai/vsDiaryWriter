@@ -1,5 +1,6 @@
 package net.viperfish.journal2.core;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -14,7 +15,7 @@ public interface JournalService extends CRUDService<Journal, Long> {
 
 	public Collection<Journal> searchWithinRange(Date lower, Date upper, String keyword) throws ExecutionException;
 
-	public void reCrypt(String password) throws FailToStoreCredentialException;
+	public void reCrypt(String password) throws FailToStoreCredentialException, IOException;
 
-	public void reCrypt();
+	public void reCrypt() throws IOException;
 }

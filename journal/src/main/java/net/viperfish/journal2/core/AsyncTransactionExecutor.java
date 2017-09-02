@@ -20,7 +20,12 @@ public class AsyncTransactionExecutor implements TransactionExecutor {
 
 			@Override
 			public void run() {
-				trans.execute();
+				try {
+					trans.execute();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 	}

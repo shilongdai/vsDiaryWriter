@@ -1,5 +1,6 @@
 package net.viperfish.journal2.transaction;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import net.viperfish.journal2.core.JournalEncryptor;
 import net.viperfish.journal2.core.JournalIndexer;
 import net.viperfish.journal2.core.TransactionWithResult;
 import net.viperfish.journal2.crypt.TextIndexFieldEncryptor;
+import net.viperfish.journal2.error.CipherException;
+import net.viperfish.journal2.error.CompromisedDataException;
 
 final class SearchTransaction extends TransactionWithResult<List<Journal>> {
 
@@ -29,7 +32,7 @@ final class SearchTransaction extends TransactionWithResult<List<Journal>> {
 	}
 
 	@Override
-	public void execute() {
+	public void execute() throws CipherException, CompromisedDataException, IOException {
 		Iterable<Long> ids = indexer.search(indexCrypt.cryptStringWords(keyword));
 		List<Journal> result = new LinkedList<>();
 		for (Journal j : db.findAll(ids)) {

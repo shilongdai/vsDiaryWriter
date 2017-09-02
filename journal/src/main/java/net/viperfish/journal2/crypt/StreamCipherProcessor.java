@@ -17,7 +17,7 @@ import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
-class StreamCipherProcessor implements Processor {
+public class StreamCipherProcessor implements Processor {
 
 	private StreamCipher cipher;
 

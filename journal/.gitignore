@@ -1,2 +1,7 @@
 /target/
 /.gradle/
+/kdfSalt
+/passwd
+/config
+/data.mv.db
+/data.trace.db

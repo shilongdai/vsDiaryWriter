@@ -33,6 +33,7 @@ public class Journal implements Serializable {
 	public Journal() {
 		this.subject = "";
 		this.content = "";
+		processors = "";
 		infoMapping = new HashMap<>();
 	}
 

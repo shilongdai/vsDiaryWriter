@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Control;
 import net.viperfish.journal2.core.CopiablePreferencePage;
 import net.viperfish.journal2.core.JournalI18NBundle;
 
-class HMACPreferencePage extends CopiablePreferencePage {
+public class HMACPreferencePage extends CopiablePreferencePage {
 
 	private HMACPreferenceComposite com;
 
