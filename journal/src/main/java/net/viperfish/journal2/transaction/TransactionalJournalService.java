@@ -11,81 +11,68 @@ import net.viperfish.journal2.core.AsyncTransactionExecutor;
 import net.viperfish.journal2.core.AuthenticationManager;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalDatabase;
-import net.viperfish.journal2.core.JournalIndexer;
+import net.viperfish.journal2.core.JournalEncryptorChain;
 import net.viperfish.journal2.core.JournalService;
 import net.viperfish.journal2.core.TransactionExecutor;
-import net.viperfish.journal2.crypt.JournalEncryptorChain;
-import net.viperfish.journal2.crypt.TextIndexFieldEncryptor;
 import net.viperfish.journal2.error.CompromisedDataException;
 
 public class TransactionalJournalService implements JournalService {
 
-	private JournalIndexer indexer;
 	private JournalEncryptorChain enc;
 	private JournalDatabase db;
 	private TransactionalUtils utils;
 	private AuthenticationManager auth;
-	private TextIndexFieldEncryptor indexCrypt;
 	private TransactionExecutor executor;
 
-	public TransactionalJournalService(JournalDatabase db, JournalEncryptorChain enc, JournalIndexer indexer,
-			AuthenticationManager manager, TextIndexFieldEncryptor indexCrEncryptor) {
+	public TransactionalJournalService(JournalDatabase db, JournalEncryptorChain enc, AuthenticationManager manager) {
 		executor = new AsyncTransactionExecutor();
-		this.db = db;
+		this.db = new CryptedJournalDatabase(enc, db);
 		this.auth = manager;
 		this.enc = enc;
-		this.indexCrypt = indexCrEncryptor;
-		this.indexer = indexer;
 		this.utils = new TransactionalUtils(executor);
 	}
 
 	@Override
 	public synchronized Journal get(Long id) throws ExecutionException {
-		GetJournalTransaction trans = new GetJournalTransaction(id, db, enc);
+		GetJournalTransaction trans = new GetJournalTransaction(id, db);
 		return utils.transactionToResult(trans);
 	}
 
 	@Override
 	public synchronized Journal add(Journal t) throws ExecutionException {
-		AddJournalTransaction trans = new AddJournalTransaction(t, db, indexer, enc, indexCrypt);
+		SaveJournalTransaction trans = new SaveJournalTransaction(t, db);
 		return utils.transactionToResult(trans);
 	}
 
 	@Override
 	public synchronized Journal remove(Long id) throws ExecutionException {
-		RemoveJournalTransaction trans = new RemoveJournalTransaction(id, db, indexer, enc);
+		RemoveJournalTransaction trans = new RemoveJournalTransaction(id, db);
 		return utils.transactionToResult(trans);
 	}
 
 	@Override
 	public synchronized Journal update(Long id, Journal updated) throws ExecutionException {
-		UpdateJournalTransaction trans = new UpdateJournalTransaction(db, indexer, enc, indexCrypt, updated);
+		updated.setId(id);
+		SaveJournalTransaction trans = new SaveJournalTransaction(updated, db);
 		return utils.transactionToResult(trans);
 	}
 
 	@Override
 	public synchronized Collection<Journal> getAll() throws ExecutionException {
-		GetAllTransaction trans = new GetAllTransaction(enc, db);
-		return utils.transactionToResult(trans);
-	}
-
-	@Override
-	public synchronized List<Journal> search(String keyword) throws ExecutionException {
-		SearchTransaction trans = new SearchTransaction(indexer, enc, db, indexCrypt, keyword);
+		GetAllTransaction trans = new GetAllTransaction(db);
 		return utils.transactionToResult(trans);
 	}
 
 	@Override
 	public synchronized Collection<Journal> getRange(Date lower, Date upper) throws ExecutionException {
-		GetDateRangeTransaction trans = new GetDateRangeTransaction(lower, upper, db, enc);
+		GetDateRangeTransaction trans = new GetDateRangeTransaction(lower, upper, db);
 		return utils.transactionToResult(trans);
 	}
 
 	@Override
 	public synchronized Collection<Journal> searchWithinRange(Date lower, Date upper, String keyword)
 			throws ExecutionException {
-		SearchDateRangeTransaction trans = new SearchDateRangeTransaction(db, indexer, enc, indexCrypt, keyword, lower,
-				upper);
+		SearchDateRangeTransaction trans = new SearchDateRangeTransaction(db, keyword, lower, upper);
 		return utils.transactionToResult(trans);
 	}
 

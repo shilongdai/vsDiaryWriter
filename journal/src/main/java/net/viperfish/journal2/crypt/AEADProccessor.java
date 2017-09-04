@@ -3,7 +3,6 @@ package net.viperfish.journal2.crypt;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -59,12 +58,11 @@ public class AEADProccessor implements Processor {
 		}
 		cipher.init(true, new AEADParameters(new KeyParameter(c.getKey()), aeadSize, c.getNounce()));
 		Map<String, byte[]> result = new HashMap<>();
-		for (Entry<String, byte[]> e : data.entrySet()) {
-			try {
-				result.put(e.getKey(), CryptUtils.INSTANCE.transformData(cipher, e.getValue(), new byte[0]));
-			} catch (DataLengthException | IllegalStateException | InvalidCipherTextException ex) {
-				throw new CipherException(ex);
-			}
+		byte[] content = data.get("content");
+		try {
+			result.put("subject", CryptUtils.INSTANCE.transformData(cipher, content, data.get("subject")));
+		} catch (DataLengthException | IllegalStateException | InvalidCipherTextException ex) {
+			throw new CipherException(ex);
 		}
 		return result;
 
@@ -83,17 +81,15 @@ public class AEADProccessor implements Processor {
 		}
 		cipher.init(false, new AEADParameters(new KeyParameter(c.getKey()), aeadSize, c.getNounce()));
 		Map<String, byte[]> result = new HashMap<>();
-		for (Entry<String, byte[]> e : data.entrySet()) {
-
-			try {
-				result.put(e.getKey(), CryptUtils.INSTANCE.transformData(cipher, e.getValue(), new byte[0]));
-			} catch (DataLengthException | IllegalStateException e1) {
-				throw new CipherException(e1);
-			} catch (InvalidCipherTextException e1) {
-				throw new CompromisedDataException(e1);
-			}
-
+		byte[] contentBytes = data.get("content");
+		try {
+			result.put("content", CryptUtils.INSTANCE.transformData(cipher, contentBytes, data.get("subject")));
+		} catch (DataLengthException | IllegalStateException e1) {
+			throw new CipherException(e1);
+		} catch (InvalidCipherTextException e1) {
+			throw new CompromisedDataException(e1);
 		}
+
 		return result;
 	}
 

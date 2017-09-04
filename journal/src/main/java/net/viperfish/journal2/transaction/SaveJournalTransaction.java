@@ -6,20 +6,20 @@ import net.viperfish.journal2.core.CrudRepository;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.TransactionWithResult;
 
-final class GetJournalTransaction extends TransactionWithResult<Journal> {
+final class SaveJournalTransaction extends TransactionWithResult<Journal> {
 
-	private CrudRepository<Journal, Long> db;
-	private Long id;
+	private Journal toAdd;
+	private CrudRepository<Journal, ?> db;
 
-	public GetJournalTransaction(Long id, CrudRepository<Journal, Long> db) {
-		this.id = id;
+	public SaveJournalTransaction(Journal toAdd, CrudRepository<Journal, ?> db) {
+		this.toAdd = toAdd;
 		this.db = db;
 	}
 
 	@Override
 	public void execute() throws IOException {
-		Journal result = db.findOne(id);
-		this.setResult(result);
+		Journal added = db.save(toAdd);
+		this.setResult(added);
 	}
 
 }

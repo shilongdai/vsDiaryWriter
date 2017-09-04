@@ -43,6 +43,7 @@ public class Journal implements Serializable {
 		this.id = src.id;
 		this.infoMapping = src.infoMapping;
 		this.timestamp = src.timestamp;
+		this.processors = src.processors;
 	}
 
 	public String getSubject() {
@@ -50,6 +51,9 @@ public class Journal implements Serializable {
 	}
 
 	public void setSubject(String subject) {
+		if (subject == null) {
+			subject = "";
+		}
 		this.subject = subject;
 	}
 
@@ -58,6 +62,9 @@ public class Journal implements Serializable {
 	}
 
 	public void setContent(String content) {
+		if (content == null) {
+			content = "";
+		}
 		this.content = content;
 	}
 

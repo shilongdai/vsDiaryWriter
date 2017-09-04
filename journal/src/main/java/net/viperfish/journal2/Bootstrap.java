@@ -1,10 +1,7 @@
 package net.viperfish.journal2;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.PosixFilePermissions;
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
@@ -12,32 +9,19 @@ import net.viperfish.journal2.auth.OpenBSDBCryptAuthManager;
 import net.viperfish.journal2.core.AuthenticationManager;
 import net.viperfish.journal2.core.JournalConfiguration;
 import net.viperfish.journal2.core.JournalDatabase;
-import net.viperfish.journal2.core.JournalIndexer;
+import net.viperfish.journal2.core.JournalEncryptorChain;
 import net.viperfish.journal2.core.JournalService;
 import net.viperfish.journal2.crypt.AEADProccessor;
 import net.viperfish.journal2.crypt.CompressionProccessor;
 import net.viperfish.journal2.crypt.HMACProcessor;
-import net.viperfish.journal2.crypt.JournalEncryptorChain;
 import net.viperfish.journal2.crypt.StreamCipherProcessor;
-import net.viperfish.journal2.crypt.TextIndexFieldEncryptor;
 import net.viperfish.journal2.db.H2JournalDB;
-import net.viperfish.journal2.index.JournalLuceneIndexer;
 import net.viperfish.journal2.swtGui.GraphicalUserInterface;
 import net.viperfish.journal2.transaction.TransactionalJournalService;
 
 public class Bootstrap {
 
 	public Bootstrap() {
-	}
-
-	private static JournalIndexer createIndexer() throws IOException {
-		Path p = Paths.get("index");
-		if (!p.toFile().exists()) {
-			Files.createDirectory(p,
-					PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------")));
-		}
-		JournalLuceneIndexer indexer = new JournalLuceneIndexer(p);
-		return indexer;
 	}
 
 	private static JournalEncryptorChain journalEncryptorChain() throws IOException {
@@ -58,12 +42,6 @@ public class Bootstrap {
 		return auth;
 	}
 
-	private static TextIndexFieldEncryptor indexEncryptor(JournalEncryptorChain enc) throws IOException {
-		TextIndexFieldEncryptor crypt = new TextIndexFieldEncryptor();
-		enc.addObserver(crypt);
-		return crypt;
-	}
-
 	private static JournalDatabase createDatabase() {
 		JournalDatabase db = new H2JournalDB("./data");
 		return db;
@@ -71,8 +49,7 @@ public class Bootstrap {
 
 	private static JournalService createService(JournalEncryptorChain chain, AuthenticationManager manager)
 			throws IOException {
-		return new TransactionalJournalService(createDatabase(), chain, createIndexer(), manager,
-				indexEncryptor(chain));
+		return new TransactionalJournalService(createDatabase(), chain, manager);
 	}
 
 	public static void main(String... arguments) {

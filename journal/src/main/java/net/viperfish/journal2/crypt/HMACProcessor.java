@@ -4,7 +4,6 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.macs.HMac;
@@ -45,14 +44,17 @@ public class HMACProcessor implements Processor {
 			throws CipherException {
 		CryptoInfo c = info.get("hmac");
 		mac = initMac(c);
+		byte[] contentByte = data.get("content");
+		byte[] subjectByte = data.get("subject");
+		byte[] combined = new byte[contentByte.length + subjectByte.length];
+		System.arraycopy(subjectByte, 0, combined, 0, subjectByte.length);
+		System.arraycopy(contentByte, 0, combined, subjectByte.length, combined.length);
 		Map<String, byte[]> result = new HashMap<>();
-		for (Entry<String, byte[]> e : data.entrySet()) {
-			byte[] mac = CryptUtils.INSTANCE.calculateMac(e.getValue(), this.mac);
-			byte[] output = new byte[e.getValue().length + mac.length];
-			System.arraycopy(e.getValue(), 0, output, 0, e.getValue().length);
-			System.arraycopy(mac, 0, output, e.getValue().length, mac.length);
-			result.put(e.getKey(), output);
-		}
+		byte[] mac = CryptUtils.INSTANCE.calculateMac(combined, this.mac);
+		byte[] output = new byte[contentByte.length + mac.length];
+		System.arraycopy(contentByte, 0, output, 0, contentByte.length);
+		System.arraycopy(mac, 0, output, contentByte.length, mac.length);
+		result.put("content", output);
 		return result;
 	}
 
@@ -61,21 +63,24 @@ public class HMACProcessor implements Processor {
 			throws CipherException, CompromisedDataException {
 		CryptoInfo c = info.get("hmac");
 		mac = initMac(c);
+		byte[] contentByte = data.get("content");
 		Map<String, byte[]> result = new HashMap<>();
-		for (Entry<String, byte[]> e : data.entrySet()) {
-			byte[] merged = e.getValue();
-			byte[] macBytes = new byte[mac.getMacSize()];
-			System.arraycopy(merged, merged.length - mac.getMacSize(), macBytes, 0, mac.getMacSize());
-			byte[] dataSection = new byte[merged.length - macBytes.length];
-			System.arraycopy(merged, 0, dataSection, 0, dataSection.length);
-
-			byte[] calculatedMac = CryptUtils.INSTANCE.calculateMac(dataSection, mac);
-			if (!Arrays.equals(macBytes, calculatedMac)) {
-				throw new CompromisedDataException();
-			}
-
-			result.put(e.getKey(), dataSection);
+		byte[] merged = contentByte;
+		byte[] macBytes = new byte[mac.getMacSize()];
+		System.arraycopy(merged, merged.length - mac.getMacSize(), macBytes, 0, mac.getMacSize());
+		byte[] dataSection = new byte[merged.length - macBytes.length];
+		System.arraycopy(merged, 0, dataSection, 0, dataSection.length);
+		byte[] subjectByte = data.get("subject");
+		byte[] combined = new byte[dataSection.length + subjectByte.length];
+		System.arraycopy(subjectByte, 0, combined, 0, subjectByte.length);
+		System.arraycopy(dataSection, 0, combined, subjectByte.length, combined.length);
+		byte[] calculatedMac = CryptUtils.INSTANCE.calculateMac(combined, mac);
+		if (!Arrays.equals(macBytes, calculatedMac)) {
+			throw new CompromisedDataException();
 		}
+
+		result.put("content", dataSection);
+
 		return result;
 	}
 

@@ -1,4 +1,4 @@
-package net.viperfish.journal2.crypt;
+package net.viperfish.journal2.core;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -19,12 +19,8 @@ import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.digests.SHA3Digest;
 
-import net.viperfish.journal2.core.CryptoInfo;
-import net.viperfish.journal2.core.Journal;
-import net.viperfish.journal2.core.JournalConfiguration;
-import net.viperfish.journal2.core.Observable;
-import net.viperfish.journal2.core.Observer;
-import net.viperfish.journal2.core.Processor;
+import net.viperfish.journal2.crypt.BlockCiphers;
+import net.viperfish.journal2.crypt.CryptUtils;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
@@ -41,26 +37,108 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Observe
 		processors = new HashMap<>();
 		this.saltFile = salt;
 		this.salt = new byte[0];
-		lastEngine = new String();
+		engine = BlockCiphers
+				.getBlockCipherEngine(JournalConfiguration.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM, "AES"));
+	}
+
+	public Journal encryptJournal(Journal j) {
+		j = proccess(j);
+
+		Map<String, CryptoInfo> infos = j.getInfoMapping();
+		// encrypt with master key
+		for (Entry<String, CryptoInfo> e : infos.entrySet()) {
+			cryptInfo(e.getValue());
+		}
+		j.setInfoMapping(infos);
+		return j;
+	}
+
+	public Journal decryptJournal(Journal j) {
+		Map<String, CryptoInfo> infos = j.getInfoMapping();
+		for (Entry<String, CryptoInfo> e : infos.entrySet()) {
+
+			try {
+				decryptInfo(e.getValue());
+			} catch (DataLengthException | IllegalStateException | InvalidCipherTextException e1) {
+				return j;
+			}
+
+		}
+		j.setInfoMapping(infos);
+
+		j = undoProccess(j);
+		return j;
+	}
+
+	public String encryptSubject(String subject) {
+		StringBuilder sb = new StringBuilder();
+		try {
+			for (String w : subject.split(" ")) {
+				byte[] cryptedWord = CryptUtils.INSTANCE.ecbCrypt(w.getBytes(StandardCharsets.UTF_8), subjectKey,
+						engine);
+				sb.append(Base64.encodeBase64URLSafeString(cryptedWord)).append(" ");
+			}
+			return sb.toString().trim();
+		} catch (DataLengthException | IllegalStateException | InvalidCipherTextException e) {
+			throw new CipherException(e);
+		}
+	}
+
+	public String decryptSubject(String cryptSubject) {
+		String[] words = cryptSubject.split(" ");
+		StringBuilder sb = new StringBuilder();
+		try {
+			for (String i : words) {
+				byte[] cryptWord = Base64.decodeBase64(i);
+				byte[] plainWord = CryptUtils.INSTANCE.ecbDecrypt(cryptWord, subjectKey, engine);
+				sb.append(new String(plainWord, StandardCharsets.UTF_8)).append(" ");
+			}
+			return sb.toString().trim();
+		} catch (DataLengthException | IllegalStateException | InvalidCipherTextException e) {
+			throw new CipherException(e);
+		}
+	}
+
+	public void setPassword(String password) {
+		try {
+			loadSalt();
+		} catch (IOException e) {
+			throw new CipherException(e);
+		}
+		this.masterkey = CryptUtils.INSTANCE.kdfKey(password, salt,
+				JournalConfiguration.getInt(CONFIG_KEY_ENCRYPTION_KEYLENGTH,
+						BlockCiphers
+								.getKeySize(JournalConfiguration.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM, "AES"))),
+				new SHA3Digest(256));
+		this.subjectKey = CryptUtils.INSTANCE.kdfKey(Base64.encodeBase64String(masterkey), salt,
+				JournalConfiguration.getInt(CONFIG_KEY_ENCRYPTION_KEYLENGTH,
+						BlockCiphers
+								.getKeySize(JournalConfiguration.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM, "AES"))),
+				new SHA3Digest(256));
+		this.notifyObservers(masterkey);
+	}
+
+	public void addProccessor(Processor p) {
+		this.processors.put(p.getId(), p);
+	}
+
+	public void clear() throws IOException {
+		this.processors.clear();
+		Files.deleteIfExists(saltFile);
+	}
+
+	@Override
+	public void beNotified(String data) {
+		this.setPassword(data);
 	}
 
 	private SecureRandom rand;
 	private Map<String, Processor> processors;
 	private byte[] masterkey;
+	private byte[] subjectKey;
 	private Path saltFile;
 	private byte[] salt;
 	private BlockCipher engine;
-	private String lastEngine;
-
-	private BlockCipher initEngine(String cipher) {
-		if (cipher.equalsIgnoreCase(lastEngine)) {
-			return engine;
-		} else {
-			engine = BlockCiphers.getBlockCipherEngine(cipher);
-			lastEngine = cipher;
-			return engine;
-		}
-	}
 
 	private void loadSalt() throws IOException {
 		if (saltFile.toFile().exists()) {
@@ -94,10 +172,9 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Observe
 			col.put("subject", subject);
 			col.put("content", content);
 			col = p.doProccess(col, j.getInfoMapping());
-			subject = col.get("subject");
 			content = col.get("content");
 		}
-		String stringSubject = Base64.encodeBase64String(subject);
+		String stringSubject = new String(subject, StandardCharsets.UTF_8);
 		String stringContent = Base64.encodeBase64String(content);
 		j.setSubject(stringSubject);
 		j.setContent(stringContent);
@@ -106,7 +183,6 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Observe
 	}
 
 	private CryptoInfo cryptInfo(CryptoInfo info) {
-		engine = initEngine(JournalConfiguration.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM));
 		byte[] key = info.getKey();
 		try {
 			if (key != null) {
@@ -121,7 +197,6 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Observe
 
 	private CryptoInfo decryptInfo(CryptoInfo info)
 			throws DataLengthException, IllegalStateException, InvalidCipherTextException {
-		engine = initEngine(JournalConfiguration.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM));
 		byte[] key = info.getKey();
 
 		if (key != null) {
@@ -133,7 +208,7 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Observe
 	}
 
 	private Journal undoProccess(Journal j) {
-		byte[] subject = Base64.decodeBase64(j.getSubject());
+		byte[] subject = j.getSubject().getBytes(StandardCharsets.UTF_8);
 		byte[] content = Base64.decodeBase64(j.getContent());
 		Map<Long, String> reversed = new TreeMap<>(Collections.reverseOrder());
 		reversed.putAll(j.getProcessedBy());
@@ -144,7 +219,6 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Observe
 				data.put("subject", subject);
 				data.put("content", content);
 				data = p.undoProccess(data, j.getInfoMapping());
-				subject = data.get("subject");
 				content = data.get("content");
 			} catch (CipherException | CompromisedDataException e) {
 				break;
@@ -157,63 +231,6 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Observe
 		j.setSubject(subjectString);
 		j.setContent(contentString);
 		return j;
-	}
-
-	public Journal encryptJournal(Journal j) {
-		j = proccess(j);
-
-		Map<String, CryptoInfo> infos = j.getInfoMapping();
-		// encrypt with master key
-		for (Entry<String, CryptoInfo> e : infos.entrySet()) {
-			cryptInfo(e.getValue());
-		}
-		j.setInfoMapping(infos);
-		return j;
-	}
-
-	public Journal decryptJournal(Journal j) {
-		Map<String, CryptoInfo> infos = j.getInfoMapping();
-		for (Entry<String, CryptoInfo> e : infos.entrySet()) {
-
-			try {
-				decryptInfo(e.getValue());
-			} catch (DataLengthException | IllegalStateException | InvalidCipherTextException e1) {
-				return j;
-			}
-
-		}
-		j.setInfoMapping(infos);
-
-		j = undoProccess(j);
-		return j;
-	}
-
-	public void setPassword(String password) {
-		try {
-			loadSalt();
-		} catch (IOException e) {
-			throw new CipherException(e);
-		}
-		this.masterkey = CryptUtils.INSTANCE.kdfKey(password, salt,
-				JournalConfiguration.containsKey(CONFIG_KEY_ENCRYPTION_KEYLENGTH)
-						? JournalConfiguration.getInt(CONFIG_KEY_ENCRYPTION_KEYLENGTH)
-						: BlockCiphers.getKeySize(JournalConfiguration.getString(CONFIG_KEY_ENCRYPTION_ALGORITHM)),
-				new SHA3Digest(256));
-		this.notifyObservers(masterkey);
-	}
-
-	public void addProccessor(Processor p) {
-		this.processors.put(p.getId(), p);
-	}
-
-	public void clear() throws IOException {
-		this.processors.clear();
-		Files.deleteIfExists(saltFile);
-	}
-
-	@Override
-	public void beNotified(String data) {
-		this.setPassword(data);
 	}
 
 }

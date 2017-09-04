@@ -3,7 +3,6 @@ package net.viperfish.journal2.crypt;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.StreamCipher;
@@ -51,9 +50,7 @@ public class StreamCipherProcessor implements Processor {
 		CryptoInfo keyInfo = info.get(CONFIG_MAPPING);
 		cipher = initCipher(true, keyInfo);
 		Map<String, byte[]> result = new HashMap<>();
-		for (Entry<String, byte[]> e : data.entrySet()) {
-			result.put(e.getKey(), CryptUtils.INSTANCE.transformData(e.getValue(), cipher));
-		}
+		result.put("content", CryptUtils.INSTANCE.transformData(data.get("content"), cipher));
 		cipher.reset();
 		return result;
 	}
@@ -64,9 +61,7 @@ public class StreamCipherProcessor implements Processor {
 		CryptoInfo keyInfo = info.get(CONFIG_MAPPING);
 		cipher = initCipher(false, keyInfo);
 		Map<String, byte[]> result = new HashMap<>();
-		for (Entry<String, byte[]> e : data.entrySet()) {
-			result.put(e.getKey(), CryptUtils.INSTANCE.transformData(e.getValue(), cipher));
-		}
+		result.put("content", CryptUtils.INSTANCE.transformData(data.get("content"), cipher));
 		cipher.reset();
 		return result;
 	}

@@ -12,6 +12,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.db.H2DatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
 import net.viperfish.journal2.core.CryptoInfo;
 import net.viperfish.journal2.core.Journal;
@@ -130,6 +131,30 @@ public final class H2JournalDB implements JournalDatabase {
 		QueryBuilder<Journal, Long> queryBuild = dao.queryBuilder();
 		try {
 			queryBuild.where().between("Timestamp", lower, upper).and().in("Id", id);
+			List<Journal> result = dao.query(queryBuild.prepare());
+			for (Journal j : result) {
+				j.setInfoMapping(cryptoInfoDB.findbyJournal(j.getId()));
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new IOException(e);
+		}
+	}
+
+	@Override
+	public Iterable<Journal> findBySubjectAndTimestampBetween(String[] subjectKeyWord, Date lower, Date upper)
+			throws IOException {
+		if (subjectKeyWord.length == 0) {
+			return new LinkedList<>();
+		}
+		QueryBuilder<Journal, Long> queryBuild = dao.queryBuilder();
+		try {
+			Where<Journal, Long> where = queryBuild.where().between("Timestamp", lower, upper).and();
+			where.like("Subject", "%" + subjectKeyWord[0] + "%");
+			for (int i = 1; i < subjectKeyWord.length; ++i) {
+				where = where.or();
+				where.like("Subject", "%" + subjectKeyWord[i] + "%");
+			}
 			List<Journal> result = dao.query(queryBuild.prepare());
 			for (Journal j : result) {
 				j.setInfoMapping(cryptoInfoDB.findbyJournal(j.getId()));

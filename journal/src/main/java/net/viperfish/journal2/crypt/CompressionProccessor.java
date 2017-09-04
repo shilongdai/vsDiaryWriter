@@ -33,9 +33,7 @@ public class CompressionProccessor implements Processor {
 		}
 
 		Map<String, byte[]> result = new HashMap<>();
-		for (Entry<String, byte[]> e : data.entrySet()) {
-			result.put(e.getKey(), compressor.compress(e.getValue()));
-		}
+		result.put("content", compressor.compress(data.get("content")));
 		return result;
 	}
 
