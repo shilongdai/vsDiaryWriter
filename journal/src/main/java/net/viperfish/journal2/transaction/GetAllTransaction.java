@@ -7,17 +7,17 @@ import java.util.List;
 
 import net.viperfish.journal2.core.CrudRepository;
 import net.viperfish.journal2.core.Journal;
-import net.viperfish.journal2.core.JournalEncryptor;
 import net.viperfish.journal2.core.TransactionWithResult;
+import net.viperfish.journal2.crypt.JournalEncryptorChain;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
 final class GetAllTransaction extends TransactionWithResult<Collection<Journal>> {
 
-	private JournalEncryptor enc;
+	private JournalEncryptorChain enc;
 	private CrudRepository<Journal, ?> db;
 
-	GetAllTransaction(JournalEncryptor enc, CrudRepository<Journal, ?> db) {
+	GetAllTransaction(JournalEncryptorChain enc, CrudRepository<Journal, ?> db) {
 		super();
 		this.enc = enc;
 		this.db = db;

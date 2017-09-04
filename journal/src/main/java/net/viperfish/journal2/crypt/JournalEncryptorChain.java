@@ -22,14 +22,13 @@ import org.bouncycastle.crypto.digests.SHA3Digest;
 import net.viperfish.journal2.core.CryptoInfo;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalConfiguration;
-import net.viperfish.journal2.core.JournalEncryptor;
 import net.viperfish.journal2.core.Observable;
 import net.viperfish.journal2.core.Observer;
 import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
-public class JournalEncryptorChain extends Observable<byte[]> implements JournalEncryptor, Observer<String> {
+public class JournalEncryptorChain extends Observable<byte[]> implements Observer<String> {
 
 	public static final String CONFIG_KEY_ENCRYPTION_ALGORITHM = "crypt.keyEncryption.algorithm";
 
@@ -160,7 +159,6 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 		return j;
 	}
 
-	@Override
 	public Journal encryptJournal(Journal j) {
 		j = proccess(j);
 
@@ -173,7 +171,6 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 		return j;
 	}
 
-	@Override
 	public Journal decryptJournal(Journal j) {
 		Map<String, CryptoInfo> infos = j.getInfoMapping();
 		for (Entry<String, CryptoInfo> e : infos.entrySet()) {
@@ -191,7 +188,6 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Journal
 		return j;
 	}
 
-	@Override
 	public void setPassword(String password) {
 		try {
 			loadSalt();

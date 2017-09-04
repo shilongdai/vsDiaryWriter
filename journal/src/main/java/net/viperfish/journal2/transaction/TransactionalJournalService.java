@@ -11,24 +11,24 @@ import net.viperfish.journal2.core.AsyncTransactionExecutor;
 import net.viperfish.journal2.core.AuthenticationManager;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalDatabase;
-import net.viperfish.journal2.core.JournalEncryptor;
 import net.viperfish.journal2.core.JournalIndexer;
 import net.viperfish.journal2.core.JournalService;
 import net.viperfish.journal2.core.TransactionExecutor;
+import net.viperfish.journal2.crypt.JournalEncryptorChain;
 import net.viperfish.journal2.crypt.TextIndexFieldEncryptor;
 import net.viperfish.journal2.error.CompromisedDataException;
 
 public class TransactionalJournalService implements JournalService {
 
 	private JournalIndexer indexer;
-	private JournalEncryptor enc;
+	private JournalEncryptorChain enc;
 	private JournalDatabase db;
 	private TransactionalUtils utils;
 	private AuthenticationManager auth;
 	private TextIndexFieldEncryptor indexCrypt;
 	private TransactionExecutor executor;
 
-	public TransactionalJournalService(JournalDatabase db, JournalEncryptor enc, JournalIndexer indexer,
+	public TransactionalJournalService(JournalDatabase db, JournalEncryptorChain enc, JournalIndexer indexer,
 			AuthenticationManager manager, TextIndexFieldEncryptor indexCrEncryptor) {
 		executor = new AsyncTransactionExecutor();
 		this.db = db;

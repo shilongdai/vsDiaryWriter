@@ -6,9 +6,9 @@ import java.util.List;
 
 import net.viperfish.journal2.core.CrudRepository;
 import net.viperfish.journal2.core.Journal;
-import net.viperfish.journal2.core.JournalEncryptor;
 import net.viperfish.journal2.core.JournalIndexer;
 import net.viperfish.journal2.core.TransactionWithResult;
+import net.viperfish.journal2.crypt.JournalEncryptorChain;
 import net.viperfish.journal2.crypt.TextIndexFieldEncryptor;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
@@ -16,12 +16,12 @@ import net.viperfish.journal2.error.CompromisedDataException;
 final class SearchTransaction extends TransactionWithResult<List<Journal>> {
 
 	private JournalIndexer indexer;
-	private JournalEncryptor enc;
+	private JournalEncryptorChain enc;
 	private CrudRepository<Journal, Long> db;
 	private String keyword;
 	private TextIndexFieldEncryptor indexCrypt;
 
-	SearchTransaction(JournalIndexer indexer, JournalEncryptor enc, CrudRepository<Journal, Long> db,
+	SearchTransaction(JournalIndexer indexer, JournalEncryptorChain enc, CrudRepository<Journal, Long> db,
 			TextIndexFieldEncryptor indexCrypt, String keyword) {
 		super();
 		this.indexer = indexer;

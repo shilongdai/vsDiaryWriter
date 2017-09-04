@@ -4,21 +4,21 @@ import java.io.IOException;
 
 import net.viperfish.journal2.core.CrudRepository;
 import net.viperfish.journal2.core.Journal;
-import net.viperfish.journal2.core.JournalEncryptor;
 import net.viperfish.journal2.core.JournalIndexer;
 import net.viperfish.journal2.core.TransactionWithResult;
+import net.viperfish.journal2.crypt.JournalEncryptorChain;
 import net.viperfish.journal2.crypt.TextIndexFieldEncryptor;
 
 final class AddJournalTransaction extends TransactionWithResult<Journal> {
 
 	private Journal toAdd;
 	private CrudRepository<Journal, ?> db;
-	private JournalEncryptor enc;
+	private JournalEncryptorChain enc;
 	private JournalIndexer indexer;
 	private TextIndexFieldEncryptor indexCrypt;
 
 	public AddJournalTransaction(Journal toAdd, CrudRepository<Journal, ?> db, JournalIndexer indexer,
-			JournalEncryptor enc, TextIndexFieldEncryptor indexCrypt) {
+			JournalEncryptorChain enc, TextIndexFieldEncryptor indexCrypt) {
 		this.toAdd = toAdd;
 		this.db = db;
 		this.enc = enc;

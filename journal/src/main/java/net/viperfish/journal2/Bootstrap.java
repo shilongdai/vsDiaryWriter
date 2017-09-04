@@ -81,27 +81,28 @@ public class Bootstrap {
 		try {
 			enc = journalEncryptorChain();
 			manager = authManager(enc);
+			try (JournalService service = createService(enc, manager)) {
+				JournalConfiguration.load("config");
+				GraphicalUserInterface ui = new GraphicalUserInterface(service, manager);
+				if (!manager.isSetup()) {
+					ui.setFirstPassword();
+				}
+				ui.promptPassword();
+				ui.run();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					JournalConfiguration.save();
+				} catch (ConfigurationException e) {
+					e.printStackTrace();
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
 		}
-		try (JournalService service = createService(enc, manager)) {
-			JournalConfiguration.load("config");
-			GraphicalUserInterface ui = new GraphicalUserInterface(service, manager);
-			if (!manager.isSetup()) {
-				ui.setFirstPassword();
-			}
-			ui.promptPassword();
-			ui.run();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				JournalConfiguration.save();
-			} catch (ConfigurationException e) {
-				e.printStackTrace();
-			}
-		}
+
 	}
 
 }

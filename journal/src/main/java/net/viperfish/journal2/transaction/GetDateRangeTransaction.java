@@ -8,8 +8,8 @@ import java.util.List;
 
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalDatabase;
-import net.viperfish.journal2.core.JournalEncryptor;
 import net.viperfish.journal2.core.TransactionWithResult;
+import net.viperfish.journal2.crypt.JournalEncryptorChain;
 import net.viperfish.journal2.error.CipherException;
 import net.viperfish.journal2.error.CompromisedDataException;
 
@@ -17,9 +17,9 @@ final class GetDateRangeTransaction extends TransactionWithResult<Collection<Jou
 	private Date lower;
 	private Date upper;
 	private JournalDatabase db;
-	private JournalEncryptor enc;
+	private JournalEncryptorChain enc;
 
-	GetDateRangeTransaction(Date lower, Date upper, JournalDatabase db, JournalEncryptor enc) {
+	GetDateRangeTransaction(Date lower, Date upper, JournalDatabase db, JournalEncryptorChain enc) {
 		super();
 		this.lower = lower;
 		this.upper = upper;
