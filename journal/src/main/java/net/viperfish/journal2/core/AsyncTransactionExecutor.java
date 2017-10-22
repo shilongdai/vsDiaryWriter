@@ -8,46 +8,45 @@ import java.util.concurrent.TimeUnit;
 
 public class AsyncTransactionExecutor implements TransactionExecutor {
 
-	private ExecutorService thread;
+    private final ExecutorService thread;
 
-	public AsyncTransactionExecutor() {
-		thread = Executors.newSingleThreadExecutor();
-	}
+    public AsyncTransactionExecutor() {
+        thread = Executors.newSingleThreadExecutor();
+    }
 
-	@Override
-	public void run(final Transaction trans) {
-		thread.submit(new Runnable() {
+    @Override
+    public void run(final Transaction trans) {
+        thread.submit(new Runnable() {
 
-			@Override
-			public void run() {
-				try {
-					trans.execute();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+            @Override
+            public void run() {
+                try {
+                    trans.execute();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
-	@Override
-	public <T> Future<T> call(final TransactionWithResult<T> trans) {
-		return thread.submit(new Callable<T>() {
+    @Override
+    public <T> Future<T> call(final TransactionWithResult<T> trans) {
+        return thread.submit(new Callable<T>() {
 
-			@Override
-			public T call() throws Exception {
-				trans.execute();
-				return trans.getResult();
-			}
-		});
-	}
+            @Override
+            public T call() throws Exception {
+                trans.execute();
+                return trans.getResult();
+            }
+        });
+    }
 
-	@Override
-	public void close() throws Exception {
-		thread.shutdown();
-		if (!thread.awaitTermination(5, TimeUnit.SECONDS)) {
-			thread.shutdownNow();
-		}
-	}
+    @Override
+    public void close() throws Exception {
+        thread.shutdown();
+        if (!thread.awaitTermination(5, TimeUnit.SECONDS)) {
+            thread.shutdownNow();
+        }
+    }
 
 }
