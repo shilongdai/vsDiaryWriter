@@ -1,5 +1,6 @@
 package net.viperfish.journal2.crypt;
 
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,10 +29,14 @@ public class HMACProcessor implements Processor {
 
 	private HMac initMac(CryptoInfo info) {
 		if (lastAlg == null || !info.getAlgorithm().equalsIgnoreCase(lastAlg)) {
-			Digest digest = Digesters.getDigester(info.getAlgorithm());
-			digest.reset();
-			mac = new HMac(digest);
-			lastAlg = info.getAlgorithm();
+			try {
+				Digest digest = Digesters.getDigester(info.getAlgorithm());
+				digest.reset();
+				mac = new HMac(digest);
+				lastAlg = info.getAlgorithm();
+			} catch (NoSuchAlgorithmException ex) {
+				throw new CipherException(ex);
+			}
 		}
 		mac.reset();
 		mac.init(new KeyParameter(info.getKey()));
@@ -49,10 +54,10 @@ public class HMACProcessor implements Processor {
 		System.arraycopy(subjectByte, 0, combined, 0, subjectByte.length);
 		System.arraycopy(contentByte, 0, combined, subjectByte.length, combined.length);
 		Map<String, byte[]> result = new HashMap<>();
-		byte[] mac = CryptUtils.INSTANCE.calculateMac(combined, this.mac);
-		byte[] output = new byte[contentByte.length + mac.length];
+		byte[] macResult = CryptUtils.INSTANCE.calculateMac(combined, this.mac);
+		byte[] output = new byte[contentByte.length + macResult.length];
 		System.arraycopy(contentByte, 0, output, 0, contentByte.length);
-		System.arraycopy(mac, 0, output, contentByte.length, mac.length);
+		System.arraycopy(macResult, 0, output, contentByte.length, macResult.length);
 		result.put("content", output);
 		return result;
 	}

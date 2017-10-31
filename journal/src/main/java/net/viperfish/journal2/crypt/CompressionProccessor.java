@@ -1,11 +1,11 @@
 package net.viperfish.journal2.crypt;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.viperfish.framework.compression.Compressor;
 import net.viperfish.framework.compression.Compressors;
-import net.viperfish.framework.compression.FailToInitCompressionException;
 import net.viperfish.journal2.core.CryptoInfo;
 import net.viperfish.journal2.core.CryptoInfoGenerator;
 import net.viperfish.journal2.core.JournalConfiguration;
@@ -26,7 +26,7 @@ public class CompressionProccessor implements Processor {
 			throws CipherException {
 		try {
 			compressor = Compressors.getCompressor(info.get(CRYPTOINFO_MAPPING_KEY).getAlgorithm());
-		} catch (FailToInitCompressionException e) {
+		} catch (NoSuchAlgorithmException e) {
 			CipherException e1 = new CipherException(e);
 			throw e1;
 		}
@@ -41,7 +41,7 @@ public class CompressionProccessor implements Processor {
 			throws CipherException, CompromisedDataException {
 		try {
 			compressor = Compressors.getCompressor(info.get(CRYPTOINFO_MAPPING_KEY).getAlgorithm());
-		} catch (FailToInitCompressionException e) {
+		} catch (NoSuchAlgorithmException e) {
 			CipherException e1 = new CipherException(e);
 			throw e1;
 		}
@@ -62,12 +62,7 @@ public class CompressionProccessor implements Processor {
 
 			@Override
 			public void generate(Map<String, CryptoInfo> target) {
-				String algorithm;
-				if (JournalConfiguration.containsKey(CONFIG_COMPRESSION)) {
-					algorithm = JournalConfiguration.getString(CONFIG_COMPRESSION);
-				} else {
-					algorithm = "GZ";
-				}
+				String algorithm = JournalConfiguration.getString(CONFIG_COMPRESSION, "GZ");
 				CryptoInfo info = new CryptoInfo();
 				info.setAlgorithm(algorithm);
 				target.put(CRYPTOINFO_MAPPING_KEY, info);

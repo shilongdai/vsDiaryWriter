@@ -90,28 +90,18 @@ public class AEADProccessor implements Processor {
 			public void generate(Map<String, CryptoInfo> target) {
 				String algorithm;
 				String mode;
-				if (JournalConfiguration.containsKey(CONFIG_ENCRYPTION_ALGORITHM)) {
-					algorithm = JournalConfiguration.getString(CONFIG_ENCRYPTION_ALGORITHM);
-				} else {
-					algorithm = "AES";
-				}
-				if (JournalConfiguration.containsKey(CONFIG_ENCRYPTION_MODE)) {
-					mode = JournalConfiguration.getString(CONFIG_ENCRYPTION_MODE);
-				} else {
-					mode = "GCM";
-				}
+				algorithm = JournalConfiguration.getString(CONFIG_ENCRYPTION_ALGORITHM, "AES");
+				mode = JournalConfiguration.getString(CONFIG_ENCRYPTION_MODE, "GCM");
 
 				SecureRandom rand = new SecureRandom();
 				CryptoInfo info = new CryptoInfo();
 				info.setAlgorithm(algorithm);
 				info.setMode(mode);
 
-				byte[] key = new byte[JournalConfiguration.containsKey(CONFIG_ENCRYPTION_KEYLENGTH)
-						? JournalConfiguration.getInt(CONFIG_ENCRYPTION_KEYLENGTH) / 8
-						: BlockCiphers.getKeySize(JournalConfiguration.getString(CONFIG_ENCRYPTION_ALGORITHM)) / 8];
+				byte[] key = new byte[JournalConfiguration.getInt(CONFIG_ENCRYPTION_KEYLENGTH,
+						BlockCiphers.getKeySize(algorithm)) / 8];
 				rand.nextBytes(key);
-				byte[] iv = CryptUtils.INSTANCE.generateNonce(
-						BlockCiphers.getNounceSize(JournalConfiguration.getString(CONFIG_ENCRYPTION_MODE)));
+				byte[] iv = CryptUtils.INSTANCE.generateNonce(BlockCiphers.getNounceSize(mode));
 
 				info.setKey(key);
 				info.setNounce(iv);

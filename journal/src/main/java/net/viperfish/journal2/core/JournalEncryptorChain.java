@@ -80,6 +80,7 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Observe
 			}
 			return sb.toString().trim();
 		} catch (DataLengthException | IllegalStateException | InvalidCipherTextException e) {
+			engine.reset();
 			throw new CipherException(e);
 		}
 	}
@@ -95,6 +96,7 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Observe
 			}
 			return sb.toString().trim();
 		} catch (DataLengthException | IllegalStateException | InvalidCipherTextException e) {
+			engine.reset();
 			throw new CipherException(e);
 		}
 	}
@@ -155,15 +157,20 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Observe
 		Files.write(saltFile, salt, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 	}
 
+	private SortedMap<Long, String> enabledToMap(String[] enabledString) {
+		SortedMap<Long, String> result = new TreeMap<>();
+		long loadOrder = 0;
+		for (String i : enabledString) {
+			result.put(loadOrder++, i);
+		}
+		return result;
+	}
+
 	private Journal proccess(Journal j) {
 		byte[] subject = j.getSubject().getBytes(StandardCharsets.UTF_8);
 		byte[] content = j.getContent().getBytes(StandardCharsets.UTF_8);
 		String[] enabledString = JournalConfiguration.getStringArray(CONFIG_ENABLED_PROCESSORS);
-		SortedMap<Long, String> enabledProcessors = new TreeMap<>();
-		long loadOrder = 0;
-		for (String i : enabledString) {
-			enabledProcessors.put(loadOrder++, i);
-		}
+		SortedMap<Long, String> enabledProcessors = enabledToMap(enabledString);
 		j.setProcessedBy(enabledProcessors);
 		for (Entry<Long, String> e : enabledProcessors.entrySet()) {
 			Processor p = this.processors.get(e.getValue());
@@ -178,7 +185,6 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Observe
 		String stringContent = Base64.encodeBase64String(content);
 		j.setSubject(stringSubject);
 		j.setContent(stringContent);
-
 		return j;
 	}
 
