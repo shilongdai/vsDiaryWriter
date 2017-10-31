@@ -31,11 +31,9 @@ public final class JournalConfiguration {
 
 	public static void load(String fileName) throws ConfigurationException {
 		Parameters params = new Parameters();
-		FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<>(
-				PropertiesConfiguration.class)
-						.configure(params.fileBased().setListDelimiterHandler(new DefaultListDelimiterHandler(','))
-								.setFile(new File(fileName)));
-		configuration = builder.getConfiguration();
+		configBuilder = new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class).configure(params.fileBased()
+				.setListDelimiterHandler(new DefaultListDelimiterHandler(',')).setFile(new File(fileName)));
+		configuration = configBuilder.getConfiguration();
 	}
 
 	public static void save() throws ConfigurationException {

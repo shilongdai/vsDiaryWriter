@@ -7,7 +7,6 @@ import java.util.TimerTask;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -22,6 +21,7 @@ import org.eclipse.swt.widgets.Text;
 
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalI18NBundle;
+import net.viperfish.journal2.swtGui.richTextEditor.RichTextEditor;
 
 public class JournalEditor {
 
@@ -30,7 +30,7 @@ public class JournalEditor {
 	private Text titleText;
 	private String initialTitle;
 	private String initialContent;
-	private StyledText editor;
+	private RichTextEditor editor;
 	private Button saveButton;
 	private Journal target;
 	private boolean savePressed;
@@ -146,7 +146,7 @@ public class JournalEditor {
 		titleText.setLayoutData(gd_titleText);
 		titleText.pack();
 
-		editor = new StyledText(shell, SWT.NONE);
+		editor = new RichTextEditor(shell, SWT.DEFAULT);
 		GridData gd_browser = new GridData(SWT.CENTER, SWT.CENTER, true, true);
 		gd_browser.horizontalSpan = 2;
 		gd_browser.widthHint = 690;

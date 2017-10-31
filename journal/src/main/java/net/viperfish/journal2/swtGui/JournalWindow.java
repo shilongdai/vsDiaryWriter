@@ -53,6 +53,7 @@ import net.viperfish.journal2.core.CopiablePreferencePage;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalI18NBundle;
 import net.viperfish.journal2.core.JournalService;
+import net.viperfish.journal2.error.CompromisedDataException;
 
 public class JournalWindow {
 	private JournalService journalService;
@@ -83,7 +84,7 @@ public class JournalWindow {
 				}
 			} catch (ExecutionException e) {
 				e.printStackTrace();
-				displayError();
+				handleError(e.getCause());
 			}
 			setPagination(resultList);
 			Calendar cal = Calendar.getInstance();
@@ -104,7 +105,7 @@ public class JournalWindow {
 				setPagination(journalService.getRange(lower, upper));
 			} catch (ExecutionException e) {
 				e.printStackTrace();
-				displayError();
+				handleError(e.getCause());
 			}
 		}
 
@@ -120,7 +121,7 @@ public class JournalWindow {
 				setPagination(journalService.searchWithinRange(lower, upper, searchText.getText()));
 			} catch (ExecutionException e) {
 				e.printStackTrace();
-				displayError();
+				handleError(e.getCause());
 			}
 		}
 
@@ -151,9 +152,20 @@ public class JournalWindow {
 		}
 	}
 
-	private void displayError() {
-		MessageDialog.openError(shell, JournalI18NBundle.getString("label.error"),
-				JournalI18NBundle.getString("journal2.error.generic"));
+	private void handleError(Throwable throwable) {
+		if (throwable instanceof CompromisedDataException) {
+			MessageDialog.openError(shell, JournalI18NBundle.getString("label.error"),
+					JournalI18NBundle.getString("journal2.error.compromised"));
+			long id = ((CompromisedDataException) throwable).getID();
+			try {
+				journalService.purge(id);
+			} catch (ExecutionException e1) {
+				handleError(e1.getCause());
+			}
+		} else {
+			MessageDialog.openError(shell, JournalI18NBundle.getString("label.error"),
+					JournalI18NBundle.getString("journal2.error.generic"));
+		}
 	}
 
 	private Text searchText;
@@ -195,7 +207,7 @@ public class JournalWindow {
 			journalService.add(result);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
-			displayError();
+			handleError(e.getCause());
 		}
 		search.searchJournals();
 	}
@@ -214,7 +226,7 @@ public class JournalWindow {
 				journalService.remove(s.getId());
 			} catch (ExecutionException e) {
 				e.printStackTrace();
-				displayError();
+				handleError(e.getCause());
 			}
 			search.searchJournals();
 		}
@@ -364,7 +376,7 @@ public class JournalWindow {
 					journalService.reCrypt();
 				} catch (IOException e) {
 					e.printStackTrace();
-					JournalWindow.this.displayError();
+					JournalWindow.this.handleError(e.getCause());
 				}
 			}
 
@@ -462,7 +474,7 @@ public class JournalWindow {
 					journalService.update(pointer.getId(), pointer);
 				} catch (ExecutionException e) {
 					e.printStackTrace();
-					displayError();
+					handleError(e.getCause());
 				}
 				search.searchJournals();
 			}

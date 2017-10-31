@@ -6,6 +6,8 @@ import java.util.Date;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalDatabase;
 import net.viperfish.journal2.core.JournalEncryptorChain;
+import net.viperfish.journal2.error.CipherException;
+import net.viperfish.journal2.error.CompromisedDataException;
 
 public final class CryptedJournalDatabase implements JournalDatabase {
 
@@ -39,7 +41,11 @@ public final class CryptedJournalDatabase implements JournalDatabase {
 		Iterable<Journal> result = src.findAll();
 		for (Journal j : result) {
 			chain.decryptJournal(j);
-			j.setSubject(chain.decryptSubject(j.getSubject()));
+			try {
+				j.setSubject(chain.decryptSubject(j.getSubject()));
+			} catch (CipherException e) {
+				throw new CompromisedDataException(j.getId());
+			}
 		}
 		return result;
 	}
@@ -49,7 +55,11 @@ public final class CryptedJournalDatabase implements JournalDatabase {
 		Iterable<Journal> result = src.findAll(ids);
 		for (Journal j : result) {
 			chain.decryptJournal(j);
-			j.setSubject(chain.decryptSubject(j.getSubject()));
+			try {
+				j.setSubject(chain.decryptSubject(j.getSubject()));
+			} catch (CipherException e) {
+				throw new CompromisedDataException(j.getId());
+			}
 		}
 		return result;
 	}
@@ -58,7 +68,11 @@ public final class CryptedJournalDatabase implements JournalDatabase {
 	public Journal findOne(Long id) throws IOException {
 		Journal j = src.findOne(id);
 		chain.decryptJournal(j);
-		j.setSubject(chain.decryptSubject(j.getSubject()));
+		try {
+			j.setSubject(chain.decryptSubject(j.getSubject()));
+		} catch (CipherException e) {
+			throw new CompromisedDataException(id);
+		}
 		return j;
 	}
 
@@ -78,7 +92,11 @@ public final class CryptedJournalDatabase implements JournalDatabase {
 		for (Journal j : result) {
 			System.out.println("Subject:" + j.getSubject());
 			chain.decryptJournal(j);
-			j.setSubject(chain.decryptSubject(j.getSubject()));
+			try {
+				j.setSubject(chain.decryptSubject(j.getSubject()));
+			} catch (CipherException e) {
+				throw new CompromisedDataException(j.getId());
+			}
 		}
 		return result;
 	}
@@ -89,7 +107,11 @@ public final class CryptedJournalDatabase implements JournalDatabase {
 		Iterable<Journal> result = src.findByIdInAndTimestampBetween(id, lower, upper);
 		for (Journal j : result) {
 			chain.decryptJournal(j);
-			j.setSubject(chain.decryptSubject(j.getSubject()));
+			try {
+				j.setSubject(chain.decryptSubject(j.getSubject()));
+			} catch (CipherException e) {
+				throw new CompromisedDataException(j.getId());
+			}
 		}
 		return result;
 	}
@@ -98,17 +120,23 @@ public final class CryptedJournalDatabase implements JournalDatabase {
 	public Iterable<Journal> findBySubjectAndTimestampBetween(String[] subjectKeyWord, Date lower, Date upper)
 			throws IOException {
 		String[] cryptedSearch = new String[subjectKeyWord.length];
-		System.out.println("Search String");
 		for (int i = 0; i < subjectKeyWord.length; ++i) {
 			cryptedSearch[i] = chain.encryptSubject(subjectKeyWord[i]);
-			System.out.println(cryptedSearch[i] + " ");
 		}
 		Iterable<Journal> result = src.findBySubjectAndTimestampBetween(cryptedSearch, lower, upper);
 		for (Journal j : result) {
 			chain.decryptJournal(j);
-			j.setSubject(chain.decryptSubject(j.getSubject()));
+			try {
+				j.setSubject(chain.decryptSubject(j.getSubject()));
+			} catch (CipherException e) {
+				throw new CompromisedDataException(j.getId());
+			}
 		}
 		return result;
+	}
+
+	public JournalDatabase getSource() {
+		return this.src;
 	}
 
 }

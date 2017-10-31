@@ -220,8 +220,8 @@ public class JournalEncryptorChain extends Observable<byte[]> implements Observe
 				data.put("content", content);
 				data = p.undoProccess(data, j.getInfoMapping());
 				content = data.get("content");
-			} catch (CipherException | CompromisedDataException e) {
-				break;
+			} catch (CipherException e) {
+				throw new CompromisedDataException(e, j.getId());
 			}
 		}
 

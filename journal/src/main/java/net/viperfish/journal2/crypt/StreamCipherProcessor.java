@@ -14,7 +14,6 @@ import net.viperfish.journal2.core.CryptoInfoGenerator;
 import net.viperfish.journal2.core.JournalConfiguration;
 import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
-import net.viperfish.journal2.error.CompromisedDataException;
 
 public class StreamCipherProcessor implements Processor {
 
@@ -57,7 +56,7 @@ public class StreamCipherProcessor implements Processor {
 
 	@Override
 	public Map<String, byte[]> undoProccess(Map<String, byte[]> data, Map<String, CryptoInfo> info)
-			throws CipherException, CompromisedDataException {
+			throws CipherException {
 		CryptoInfo keyInfo = info.get(CONFIG_MAPPING);
 		cipher = initCipher(false, keyInfo);
 		Map<String, byte[]> result = new HashMap<>();

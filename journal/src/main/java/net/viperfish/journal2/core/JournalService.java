@@ -15,4 +15,6 @@ public interface JournalService extends CRUDService<Journal, Long> {
 	public void reCrypt(String password) throws FailToStoreCredentialException, IOException;
 
 	public void reCrypt() throws IOException;
+
+	public void purge(long id) throws ExecutionException;
 }

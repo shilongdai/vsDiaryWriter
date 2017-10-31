@@ -14,7 +14,6 @@ import net.viperfish.journal2.core.CryptoInfoGenerator;
 import net.viperfish.journal2.core.JournalConfiguration;
 import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
-import net.viperfish.journal2.error.CompromisedDataException;
 
 public class HMACProcessor implements Processor {
 
@@ -60,7 +59,7 @@ public class HMACProcessor implements Processor {
 
 	@Override
 	public Map<String, byte[]> undoProccess(Map<String, byte[]> data, Map<String, CryptoInfo> info)
-			throws CipherException, CompromisedDataException {
+			throws CipherException {
 		CryptoInfo c = info.get("hmac");
 		mac = initMac(c);
 		byte[] contentByte = data.get("content");
@@ -76,7 +75,7 @@ public class HMACProcessor implements Processor {
 		System.arraycopy(dataSection, 0, combined, subjectByte.length, combined.length);
 		byte[] calculatedMac = CryptUtils.INSTANCE.calculateMac(combined, mac);
 		if (!Arrays.equals(macBytes, calculatedMac)) {
-			throw new CompromisedDataException();
+			throw new CipherException();
 		}
 
 		result.put("content", dataSection);

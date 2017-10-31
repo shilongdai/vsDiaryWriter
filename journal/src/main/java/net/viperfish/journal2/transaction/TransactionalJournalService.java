@@ -104,4 +104,11 @@ public class TransactionalJournalService implements JournalService {
 		executor.close();
 	}
 
+	@Override
+	public void purge(long id) throws ExecutionException {
+		PurgeEntryTransaction trans = new PurgeEntryTransaction(id, db);
+		utils.transactionToResult(trans);
+
+	}
+
 }

@@ -15,7 +15,6 @@ import net.viperfish.journal2.core.CryptoInfoGenerator;
 import net.viperfish.journal2.core.JournalConfiguration;
 import net.viperfish.journal2.core.Processor;
 import net.viperfish.journal2.error.CipherException;
-import net.viperfish.journal2.error.CompromisedDataException;
 
 public class AEADProccessor implements Processor {
 
@@ -25,31 +24,18 @@ public class AEADProccessor implements Processor {
 	public static final String CONFIG_ENCRYPTION_KEYLENGTH = "crypt.encryption.keyLength";
 	public static final String CONFIG_ENCRYPTION_MODE = "crypt.encryption.mode";
 
-	private AEADBlockCipher cipher;
-	private String lastCipher;
-	private String lastMode;
-
 	public AEADProccessor() {
-		lastCipher = new String();
-		lastMode = new String();
 	}
 
 	private AEADBlockCipher initCipher(CryptoInfo info) {
-		if (info.getAlgorithm().equalsIgnoreCase(lastCipher) && info.getMode().equalsIgnoreCase(lastMode)) {
-			return cipher;
-		} else {
-			cipher = BlockCiphers.useAEADMode(BlockCiphers.getBlockCipherEngine(info.getAlgorithm()), info.getMode());
-			this.lastCipher = info.getAlgorithm();
-			this.lastMode = info.getMode();
-			return cipher;
-		}
+		return BlockCiphers.useAEADMode(BlockCiphers.getBlockCipherEngine(info.getAlgorithm()), info.getMode());
 	}
 
 	@Override
 	public Map<String, byte[]> doProccess(Map<String, byte[]> data, Map<String, CryptoInfo> info)
 			throws CipherException {
 		CryptoInfo c = info.get(CRYPTOINFO_MAPPING);
-		cipher = initCipher(c);
+		AEADBlockCipher cipher = initCipher(c);
 		int aeadSize;
 		if (c.getMode().equalsIgnoreCase("GCM") || c.getMode().equalsIgnoreCase("OCB")) {
 			aeadSize = 128;
@@ -60,7 +46,7 @@ public class AEADProccessor implements Processor {
 		Map<String, byte[]> result = new HashMap<>();
 		byte[] content = data.get("content");
 		try {
-			result.put("subject", CryptUtils.INSTANCE.transformData(cipher, content, data.get("subject")));
+			result.put("content", CryptUtils.INSTANCE.transformData(cipher, content, data.get("subject")));
 		} catch (DataLengthException | IllegalStateException | InvalidCipherTextException ex) {
 			throw new CipherException(ex);
 		}
@@ -70,9 +56,9 @@ public class AEADProccessor implements Processor {
 
 	@Override
 	public Map<String, byte[]> undoProccess(Map<String, byte[]> data, Map<String, CryptoInfo> info)
-			throws CipherException, CompromisedDataException {
+			throws CipherException {
 		CryptoInfo c = info.get(CRYPTOINFO_MAPPING);
-		cipher = initCipher(c);
+		AEADBlockCipher cipher = initCipher(c);
 		int aeadSize;
 		if (c.getMode().equalsIgnoreCase("GCM") || c.getMode().equalsIgnoreCase("OCB")) {
 			aeadSize = 128;
@@ -84,10 +70,8 @@ public class AEADProccessor implements Processor {
 		byte[] contentBytes = data.get("content");
 		try {
 			result.put("content", CryptUtils.INSTANCE.transformData(cipher, contentBytes, data.get("subject")));
-		} catch (DataLengthException | IllegalStateException e1) {
+		} catch (DataLengthException | IllegalStateException | InvalidCipherTextException e1) {
 			throw new CipherException(e1);
-		} catch (InvalidCipherTextException e1) {
-			throw new CompromisedDataException(e1);
 		}
 
 		return result;

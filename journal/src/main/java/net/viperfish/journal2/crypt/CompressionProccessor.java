@@ -2,7 +2,6 @@ package net.viperfish.journal2.crypt;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import net.viperfish.framework.compression.Compressor;
 import net.viperfish.framework.compression.Compressors;
@@ -48,9 +47,7 @@ public class CompressionProccessor implements Processor {
 		}
 
 		Map<String, byte[]> result = new HashMap<>();
-		for (Entry<String, byte[]> e : data.entrySet()) {
-			result.put(e.getKey(), compressor.deflate(e.getValue()));
-		}
+		result.put("content", compressor.deflate(data.get("content")));
 		return result;
 	}
 

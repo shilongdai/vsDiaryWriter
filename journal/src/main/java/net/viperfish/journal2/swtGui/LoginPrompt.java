@@ -73,7 +73,7 @@ public class LoginPrompt {
 		new Label(shell, SWT.NONE);
 
 		final Label hashPasswordLabel = new Label(shell, SWT.NONE);
-		hashPasswordLabel.setText(JournalI18NBundle.getString("label.password"));
+		hashPasswordLabel.setText(JournalI18NBundle.getString("label.inProgress"));
 
 		final ProgressBar hashBar = new ProgressBar(shell, SWT.INDETERMINATE | SWT.SMOOTH);
 		hashBar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true, 2, 1));

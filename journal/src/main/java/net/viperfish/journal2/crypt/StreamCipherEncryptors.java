@@ -1,12 +1,8 @@
 package net.viperfish.journal2.crypt;
 
-import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.bouncycastle.crypto.StreamCipher;
@@ -99,12 +95,40 @@ public enum StreamCipherEncryptors {
 	}
 
 	public StreamCipher getEncryptor(String cipher) throws NoSuchAlgorithmException {
-		try {
-			StreamCipher resultCipher = this.streamCipherCache.getObject(ciphers.get(cipher), new Object[0]);
-			return resultCipher;
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException e) {
+		switch (cipher) {
+		case "RC4": {
+			return new RC4Engine();
+		}
+		case "HC128": {
+			return new HC128Engine();
+		}
+		case "HC256": {
+			return new HC256Engine();
+		}
+		case "ChaCha": {
+			return new ChaChaEngine();
+		}
+		case "Salsa20": {
+			return new Salsa20Engine();
+		}
+		case "XSalsa20": {
+			return new XSalsa20Engine();
+		}
+		case "ISACC": {
+			return new ISAACEngine();
+		}
+		case "VMPC": {
+			return new VMPCEngine();
+		}
+		case "Grainv1": {
+			return new Grainv1Engine();
+		}
+		case "Grain128": {
+			return new Grain128Engine();
+		}
+		default: {
 			throw new NoSuchAlgorithmException(cipher);
+		}
 		}
 	}
 
@@ -121,11 +145,8 @@ public enum StreamCipherEncryptors {
 	}
 
 	public String[] getSupported() {
-		List<String> result = new LinkedList<>();
-		for (Entry<String, Class<? extends StreamCipher>> i : ciphers.entrySet()) {
-			result.add(i.getKey());
-		}
-		return result.toArray(new String[ciphers.size()]);
+		return new String[] { "RC4", "HC128", "HC256", "ChaCha", "Salsa20", "XSalsa20", "ISACC", "VMPC", "Grainv1",
+				"Grain128" };
 	}
 
 }

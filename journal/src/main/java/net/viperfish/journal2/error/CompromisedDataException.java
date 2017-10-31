@@ -1,29 +1,35 @@
 package net.viperfish.journal2.error;
 
-public final class CompromisedDataException extends SecurityException {
+public final class CompromisedDataException extends RuntimeException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7656502099149561709L;
 
-	public CompromisedDataException() {
-		// TODO Auto-generated constructor stub
+	private long id;
+
+	public CompromisedDataException(long id) {
+		this.id = id;
 	}
 
-	public CompromisedDataException(String s) {
+	public CompromisedDataException(String s, long id) {
 		super(s);
-		// TODO Auto-generated constructor stub
+		this.id = id;
 	}
 
-	public CompromisedDataException(Throwable cause) {
+	public CompromisedDataException(Throwable cause, long id) {
 		super(cause);
-		// TODO Auto-generated constructor stub
+		this.id = id;
 	}
 
-	public CompromisedDataException(String message, Throwable cause) {
+	public CompromisedDataException(String message, Throwable cause, long id) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
+		this.id = id;
+	}
+
+	public long getID() {
+		return id;
 	}
 
 }
