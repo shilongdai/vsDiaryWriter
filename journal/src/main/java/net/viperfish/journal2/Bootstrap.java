@@ -1,6 +1,9 @@
 package net.viperfish.journal2;
 
 import java.io.IOException;
+
+import org.apache.commons.configuration2.ex.ConfigurationException;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,37 +13,47 @@ import javafx.stage.StageStyle;
 import net.viperfish.journal2.core.JournalConfiguration;
 import net.viperfish.journal2.core.JournalI18NBundle;
 import net.viperfish.journal2.transaction.JournalServices;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 
 public class Bootstrap extends Application {
 
-    @Override
-    public void start(Stage stage) throws Exception {
-        try {
-            JournalConfiguration.load("config");
-            JournalServices.init();
-            if (!JournalServices.isSetup()) {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/createPassword.fxml"), JournalI18NBundle.getBundle());
-                fxmlLoader.setController(new NewPasswordController());
-                Parent newPassword = fxmlLoader.load();
-                Scene scene = new Scene(newPassword, 400, 190);
-                stage.initStyle(StageStyle.UNDECORATED);
-                stage.setScene(scene);
-                stage.show();
-            }
-
-        } catch (IOException | ConfigurationException e) {
-            e.printStackTrace();
-            return;
-        } finally {
-            try {
-                JournalConfiguration.save();
-                JournalServices.close();
-            } catch (ConfigurationException | IOException e) {
-                e.printStackTrace();
-                return;
-            }
-        }
-    }
+	@Override
+	public void start(Stage stage) throws Exception {
+		try {
+			JournalConfiguration.load("config");
+			JournalServices.init();
+			if (!JournalServices.isSetup()) {
+				Stage setPassWindow = new Stage();
+				FXMLLoader fxmlLoader = new FXMLLoader(
+						getClass().getClassLoader().getResource("fxml/createPassword.fxml"),
+						JournalI18NBundle.getBundle());
+				fxmlLoader.setController(new NewPasswordController());
+				Parent newPassword = fxmlLoader.load();
+				Scene scene = new Scene(newPassword, 400, 190);
+				setPassWindow.initStyle(StageStyle.UNDECORATED);
+				setPassWindow.setScene(scene);
+				setPassWindow.showAndWait();
+			}
+			Stage loginWindow = new Stage();
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/login.fxml"),
+					JournalI18NBundle.getBundle());
+			fxmlLoader.setController(new LoginController());
+			Parent login = fxmlLoader.load();
+			Scene scene = new Scene(login, 400, 130);
+			loginWindow.initStyle(StageStyle.UNDECORATED);
+			loginWindow.setScene(scene);
+			loginWindow.showAndWait();
+		} catch (IOException | ConfigurationException e) {
+			e.printStackTrace();
+			return;
+		} finally {
+			try {
+				JournalConfiguration.save();
+				JournalServices.close();
+			} catch (ConfigurationException | IOException e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+	}
 
 }

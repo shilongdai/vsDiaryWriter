@@ -7,6 +7,8 @@ package net.viperfish.journal2;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
@@ -28,81 +30,81 @@ import net.viperfish.journal2.transaction.JournalServices;
  */
 public class NewPasswordController implements Initializable {
 
-    @FXML
-    private PasswordField firstTimeText;
+	@FXML
+	private PasswordField firstTimeText;
 
-    @FXML
-    private PasswordField secondTimeText;
+	@FXML
+	private PasswordField secondTimeText;
 
-    @FXML
-    private Button loginButton;
+	@FXML
+	private Button loginButton;
 
-    @FXML
-    private Label warningText;
+	@FXML
+	private Label warningText;
 
-    @FXML
-    private ProgressIndicator progress;
+	@FXML
+	private ProgressIndicator progress;
 
-    public NewPasswordController() {
-    }
+	public NewPasswordController() {
+	}
 
-    @FXML
-    public void setPassword(ActionEvent e) {
-        progress.setVisible(true);
-        final Service<Void> setPassword = JournalServices.newSetPasswordService(firstTimeText.getText());
-        System.out.printf("state: %s\n", setPassword.getState().toString());
-        setPassword.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-            @Override
-            public void handle(WorkerStateEvent event) {
-                System.out.println("Success!");
-                progress.setVisible(false);
-                ((Stage) loginButton.getScene().getWindow()).close();
-            }
-        });
-        setPassword.setOnFailed(new EventHandler<WorkerStateEvent>() {
-            @Override
-            public void handle(WorkerStateEvent event) {
-                event.getSource().getException().printStackTrace();
-            }
-        });
-        setPassword.start();
-    }
+	@FXML
+	public void setPassword(ActionEvent e) {
+		progress.setVisible(true);
+		final Service<Void> setPassword = JournalServices.newSetPasswordService(firstTimeText.getText());
+		System.out.printf("state: %s\n", setPassword.getState().toString());
+		setPassword.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				System.out.println("Success!");
+				progress.setVisible(false);
+				((Stage) loginButton.getScene().getWindow()).close();
+			}
+		});
+		setPassword.setOnFailed(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				event.getSource().getException().printStackTrace();
+			}
+		});
+		setPassword.start();
+	}
 
-    @FXML
-    public void cancelSetPassword(ActionEvent e) {
-        System.exit(0);
-    }
+	@FXML
+	public void cancelSetPassword(ActionEvent e) {
+		Platform.exit();
+	}
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        firstTimeText.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                warningText.setVisible(false);
-                loginButton.setDisable(false);
-                if (!isMatch()) {
-                    warningText.setVisible(true);
-                    loginButton.setDisable(true);
-                }
-            }
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		firstTimeText.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				warningText.setVisible(false);
+				loginButton.setDisable(false);
+				if (!isMatch()) {
+					warningText.setVisible(true);
+					loginButton.setDisable(true);
+				}
+			}
 
-        });
-        secondTimeText.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                warningText.setVisible(false);
-                loginButton.setDisable(false);
-                if (!isMatch()) {
-                    warningText.setVisible(true);
-                    loginButton.setDisable(true);
-                }
-            }
+		});
+		secondTimeText.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				warningText.setVisible(false);
+				loginButton.setDisable(false);
+				if (!isMatch()) {
+					warningText.setVisible(true);
+					loginButton.setDisable(true);
+				}
+			}
 
-        });
-    }
+		});
+	}
 
-    private boolean isMatch() {
-        return firstTimeText.getText().equals(secondTimeText.getText());
-    }
+	private boolean isMatch() {
+		return firstTimeText.getText().equals(secondTimeText.getText());
+	}
 
 }
