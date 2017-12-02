@@ -1,50 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.HTMLEditor?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="430.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.viperfish.journal2.MainController">
-   <children>
-      <TextField>
-         <VBox.margin>
-            <Insets bottom="20.0" left="10.0" right="10.0" top="20.0" />
-         </VBox.margin>
-      </TextField>
-      <HBox prefHeight="35.0" prefWidth="430.0">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="880.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <HBox prefHeight="55.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <Label prefHeight="30.0" prefWidth="34.0" text="Label">
+            <TextField fx:id="searchText" prefHeight="27.0" prefWidth="200.0" promptText="%label.search.placeholder">
                <HBox.margin>
-                  <Insets left="10.0" right="5.0" />
+                  <Insets left="5.0" top="13.0" />
                </HBox.margin>
-            </Label>
-            <DatePicker prefHeight="30.0" prefWidth="140.0">
+            </TextField>
+            <Button fx:id="saveBtn" defaultButton="true" disable="true" mnemonicParsing="false" onAction="#saveJournal" text="%label.save">
                <HBox.margin>
-                  <Insets right="5.0" />
+                  <Insets left="5.0" top="13.0" />
                </HBox.margin>
-            </DatePicker>
-            <Label prefHeight="30.0" prefWidth="34.0" text="Label">
+            </Button>
+            <Button mnemonicParsing="false" onAction="#newJournal" text="%label.add">
                <HBox.margin>
-                  <Insets right="5.0" />
+                  <Insets left="5.0" top="13.0" />
                </HBox.margin>
-            </Label>
-            <DatePicker prefHeight="30.0" prefWidth="140.0" />
+            </Button>
+            <Button mnemonicParsing="false" onAction="#deleteJournal" text="%label.delete">
+               <HBox.margin>
+                  <Insets left="5.0" top="13.0" />
+               </HBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" text="%label.settings">
+               <HBox.margin>
+                  <Insets left="10.0" top="13.0" />
+               </HBox.margin>
+            </Button>
          </children>
       </HBox>
-      <ListView prefHeight="329.0" prefWidth="430.0">
-         <VBox.margin>
-            <Insets left="10.0" right="10.0" top="20.0" />
-         </VBox.margin>
+   </top>
+   <left>
+      <ListView fx:id="journalList" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" />
+         </BorderPane.margin>
       </ListView>
-      <Pagination prefHeight="33.0" prefWidth="430.0">
-         <VBox.margin>
-            <Insets left="10.0" right="10.0" />
-         </VBox.margin>
-      </Pagination>
-   </children>
-</VBox>
+   </left>
+   <center>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" />
+         </BorderPane.margin>
+         <children>
+            <TextField fx:id="keywordText" promptText="%label.keywords" />
+            <HTMLEditor fx:id="journalEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" prefHeight="200.0" prefWidth="506.0" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </HTMLEditor>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

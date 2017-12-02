@@ -42,6 +42,15 @@ public class Bootstrap extends Application {
 			loginWindow.initStyle(StageStyle.UNDECORATED);
 			loginWindow.setScene(scene);
 			loginWindow.showAndWait();
+
+			Stage mainStage = new Stage();
+			fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/journal.fxml"),
+					JournalI18NBundle.getBundle());
+			fxmlLoader.setController(new JournalController());
+			Parent journal = fxmlLoader.load();
+			scene = new Scene(journal, 880, 585);
+			mainStage.setScene(scene);
+			mainStage.showAndWait();
 		} catch (IOException | ConfigurationException e) {
 			e.printStackTrace();
 			return;
