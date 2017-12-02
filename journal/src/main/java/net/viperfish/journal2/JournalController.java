@@ -3,7 +3,6 @@ package net.viperfish.journal2;
 import java.net.URL;
 import java.util.Collection;
 import java.util.ResourceBundle;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -28,138 +27,141 @@ import net.viperfish.journal2.transaction.JournalServices;
 
 public final class JournalController implements Initializable {
 
-	@FXML
-	private ListView<Journal> journalList;
+    @FXML
+    private ListView<Journal> journalList;
 
-	@FXML
-	private TextField searchText;
+    @FXML
+    private TextField searchText;
 
-	@FXML
-	private TextField keywordText;
+    @FXML
+    private TextField keywordText;
 
-	@FXML
-	private HTMLEditor journalEditor;
+    @FXML
+    private HTMLEditor journalEditor;
 
-	@FXML
-	private Button saveBtn;
+    @FXML
+    private Button saveBtn;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		journalList.setCellFactory(new Callback<ListView<Journal>, ListCell<Journal>>() {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        journalList.setCellFactory(new Callback<ListView<Journal>, ListCell<Journal>>() {
 
-			@Override
-			public ListCell<Journal> call(ListView<Journal> param) {
-				return new ListCell<Journal>() {
+            @Override
+            public ListCell<Journal> call(ListView<Journal> param) {
+                return new ListCell<Journal>() {
 
-					@Override
-					protected void updateItem(Journal item, boolean empty) {
-						System.out.println(item);
-						super.updateItem(item, empty);
-						if (item != null) {
-							setText(item.getTimestamp().toString());
-						}
-					}
+                    @Override
+                    protected void updateItem(Journal item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item != null) {
+                            setText(item.getTimestamp().toString());
+                        } else {
+                            setGraphic(null);
+                            setText("");
+                        }
+                    }
 
-				};
-			}
-		});
+                };
+            }
+        });
 
-		journalList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Journal>() {
+        journalList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Journal>() {
 
-			@Override
-			public void changed(ObservableValue<? extends Journal> observable, Journal oldValue, Journal newValue) {
-				keywordText.setText(newValue.getSubject());
-				journalEditor.setHtmlText(newValue.getContent());
-			}
-		});
+            @Override
+            public void changed(ObservableValue<? extends Journal> observable, Journal oldValue, Journal newValue) {
+                if (newValue != null) {
+                    keywordText.setText(newValue.getSubject());
+                    journalEditor.setHtmlText(newValue.getContent());
+                } else {
+                    keywordText.setText("");
+                    journalEditor.setHtmlText("");
+                }
+            }
+        });
 
-		showAll();
+        journalEditor.addEventHandler(InputEvent.ANY, new EventHandler<InputEvent>() {
 
-		journalEditor.addEventHandler(InputEvent.ANY, new EventHandler<InputEvent>() {
+            @Override
+            public void handle(InputEvent arg0) {
+                saveBtn.setDisable(false);
+            }
 
-			@Override
-			public void handle(InputEvent arg0) {
-				saveBtn.setDisable(false);
-			}
+        });
 
-		});
-	}
+        refreshList(0);
+    }
 
-	@FXML
-	public void newJournal(ActionEvent e) {
-		Service<Journal> addEmpty = JournalServices.newSaveJournalService(new Journal());
-		addEmpty.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+    @FXML
+    public void newJournal(ActionEvent e) {
+        Service<Journal> addEmpty = JournalServices.newSaveJournalService(new Journal());
+        addEmpty.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-			@Override
-			public void handle(WorkerStateEvent event) {
-				refreshList();
-				journalList.getSelectionModel().select(0);
-			}
-		});
-		addEmpty.start();
-	}
+            @Override
+            public void handle(WorkerStateEvent event) {
+                refreshList(0);
+            }
+        });
+        addEmpty.start();
+    }
 
-	@FXML
-	public void saveJournal(ActionEvent e) {
-		Journal selected = journalList.getSelectionModel().getSelectedItem();
-		selected.setSubject(keywordText.getText());
-		selected.setContent(journalEditor.getHtmlText());
-		Service<Journal> save = JournalServices.newSaveJournalService(selected);
-		save.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+    @FXML
+    public void saveJournal(ActionEvent e) {
+        final int selectedIndex = journalList.getSelectionModel().getSelectedIndex();
+        Journal selected = journalList.getSelectionModel().getSelectedItem();
+        selected.setSubject(keywordText.getText());
+        selected.setContent(journalEditor.getHtmlText());
+        Service<Journal> save = JournalServices.newSaveJournalService(selected);
+        save.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                refreshList(selectedIndex);
+            }
+        });
+        save.start();
+        saveBtn.setDisable(true);
+    }
 
-			@Override
-			public void handle(WorkerStateEvent event) {
-				refreshList();
+    @FXML
+    public void deleteJournal(ActionEvent e) {
+        final Journal selected = journalList.getSelectionModel().getSelectedItem();
+        long id = selected.getId();
 
-			}
-		});
-		save.start();
-		saveBtn.setDisable(true);
-	}
+        Service<Journal> delete = JournalServices.newRemoveJournalService(id);
+        delete.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-	@FXML
-	public void deleteJournal(ActionEvent e) {
-		Journal selected = journalList.getSelectionModel().getSelectedItem();
-		long id = selected.getId();
+            @Override
+            public void handle(WorkerStateEvent event) {
+                refreshList(0);
+            }
+        });
+        delete.start();
+    }
 
-		Service<Journal> delete = JournalServices.newRemoveJournalService(id);
-		delete.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+    private void refreshList(final int select) {
+        if (searchText.getText().trim().isEmpty()) {
+            Service<Collection<Journal>> getAll = JournalServices.newGetAllService();
+            getAll.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-			@Override
-			public void handle(WorkerStateEvent event) {
-				refreshList();
-			}
-		});
-		delete.start();
-	}
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    journalList.getItems().clear();
+                    Collection<Journal> result = (Collection<Journal>) event.getSource().getValue();
+                    System.out.println("Result:" + result);
+                    ObservableList<Journal> toView = FXCollections.observableArrayList(result);
+                    journalList.setItems(toView);
+                    journalList.getSelectionModel().select(select);
+                }
+            });
+            getAll.setOnFailed(new EventHandler<WorkerStateEvent>() {
 
-	private void refreshList() {
-		if (searchText.getText().trim().isEmpty()) {
-			showAll();
-		}
-	}
-
-	private void showAll() {
-		Service<Collection<Journal>> getAll = JournalServices.newGetAllService();
-		getAll.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				Collection<Journal> result = (Collection<Journal>) event.getSource().getValue();
-				System.out.println("Result:" + result);
-				ObservableList<Journal> toView = FXCollections.observableArrayList(result);
-				journalList.setItems(toView);
-			}
-		});
-		getAll.setOnFailed(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				Alert error = new Alert(AlertType.ERROR, "Cannot get all entries");
-				error.showAndWait();
-			}
-		});
-		getAll.start();
-	}
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    Alert error = new Alert(AlertType.ERROR, "Cannot get all entries");
+                    error.showAndWait();
+                }
+            });
+            getAll.start();
+        }
+    }
 
 }
