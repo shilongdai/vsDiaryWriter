@@ -2,6 +2,7 @@ package net.viperfish.journal2;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.Date;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -42,6 +43,8 @@ public final class JournalController implements Initializable {
     @FXML
     private Button saveBtn;
 
+    private String currentText;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         journalList.setCellFactory(new Callback<ListView<Journal>, ListCell<Journal>>() {
@@ -72,6 +75,7 @@ public final class JournalController implements Initializable {
                 if (newValue != null) {
                     keywordText.setText(newValue.getSubject());
                     journalEditor.setHtmlText(newValue.getContent());
+                    currentText = newValue.getContent();
                 } else {
                     keywordText.setText("");
                     journalEditor.setHtmlText("");
@@ -83,12 +87,31 @@ public final class JournalController implements Initializable {
 
             @Override
             public void handle(InputEvent arg0) {
-                saveBtn.setDisable(false);
+                if (!journalEditor.getHtmlText().equals(currentText) && journalList.getSelectionModel().getSelectedItem() != null) {
+                    saveBtn.setDisable(false);
+                }
             }
 
         });
 
+        keywordText.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (journalList.getSelectionModel().getSelectedItem() != null) {
+                    saveBtn.setDisable(false);
+                }
+            }
+
+        });
+
+        searchText.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                refreshList(0);
+            }
+        });
         refreshList(0);
+        saveBtn.setDisable(true);
     }
 
     @FXML
@@ -111,12 +134,6 @@ public final class JournalController implements Initializable {
         selected.setSubject(keywordText.getText());
         selected.setContent(journalEditor.getHtmlText());
         Service<Journal> save = JournalServices.newSaveJournalService(selected);
-        save.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-            @Override
-            public void handle(WorkerStateEvent event) {
-                refreshList(selectedIndex);
-            }
-        });
         save.start();
         saveBtn.setDisable(true);
     }
@@ -146,10 +163,11 @@ public final class JournalController implements Initializable {
                 public void handle(WorkerStateEvent event) {
                     journalList.getItems().clear();
                     Collection<Journal> result = (Collection<Journal>) event.getSource().getValue();
-                    System.out.println("Result:" + result);
                     ObservableList<Journal> toView = FXCollections.observableArrayList(result);
+                    currentText = journalEditor.getHtmlText();
                     journalList.setItems(toView);
                     journalList.getSelectionModel().select(select);
+                    saveBtn.setDisable(true);
                 }
             });
             getAll.setOnFailed(new EventHandler<WorkerStateEvent>() {
@@ -161,6 +179,29 @@ public final class JournalController implements Initializable {
                 }
             });
             getAll.start();
+        } else {
+            Service<Collection<Journal>> serv = JournalServices.newSearchDateRangeService(searchText.getText(), new Date(Long.MIN_VALUE), new Date());
+            serv.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    journalList.getItems().clear();
+                    Collection<Journal> result = (Collection<Journal>) event.getSource().getValue();
+                    ObservableList<Journal> toView = FXCollections.observableArrayList(result);
+                    currentText = new String();
+                    journalList.setItems(toView);
+                    journalList.getSelectionModel().select(select);
+                    saveBtn.setDisable(true);
+                }
+            });
+            serv.setOnFailed(new EventHandler<WorkerStateEvent>() {
+
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    Alert error = new Alert(AlertType.ERROR, "Cannot get all entries");
+                    error.showAndWait();
+                }
+            });
+            serv.start();
         }
     }
 
