@@ -42,13 +42,12 @@ public enum StreamCipherEncryptors {
 	private final static int HC128_IV = 128;
 	private final static int VMPC_IV = 512;
 
-	private TypeCache streamCipherCache;
 	private Map<String, Class<? extends StreamCipher>> ciphers;
 	private Map<String, Integer> keysizes;
 	private Map<String, Integer> ivs;
 
 	private StreamCipherEncryptors() {
-		streamCipherCache = new TypeCache();
+		new TypeCache();
 		ciphers = new TreeMap<>();
 		keysizes = new HashMap<>();
 		ivs = new HashMap<>();

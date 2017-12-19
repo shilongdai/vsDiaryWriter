@@ -10,6 +10,8 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.lang.model.type.NullType;
+
 import javafx.concurrent.Service;
 import net.viperfish.journal2.auth.OpenBSDBCryptAuthManager;
 import net.viperfish.journal2.core.Journal;
@@ -93,6 +95,10 @@ public final class JournalServices {
 
 	public static Service<Boolean> newLoginService(String password) {
 		return new LoginService(auth, password);
+	}
+
+	public static Service<NullType> newChangePasswordService(String newPass) {
+		return new ChangePasswordService(newPass, (CryptedJournalDatabase) db, auth);
 	}
 
 }

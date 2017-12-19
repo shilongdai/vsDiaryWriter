@@ -3,13 +3,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.HTMLEditor?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="880.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="880.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <HBox prefHeight="55.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -33,11 +35,16 @@
                   <Insets left="5.0" top="13.0" />
                </HBox.margin>
             </Button>
-            <Button mnemonicParsing="false" text="%label.settings">
+            <MenuButton mnemonicParsing="false" text="%label.options">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#changePassword" text="%label.changePasswd" />
+                <MenuItem mnemonicParsing="false" text="Action 2" />
+                  <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+              </items>
                <HBox.margin>
-                  <Insets left="10.0" top="13.0" />
+                  <Insets left="5.0" top="13.0" />
                </HBox.margin>
-            </Button>
+            </MenuButton>
          </children>
       </HBox>
    </top>
