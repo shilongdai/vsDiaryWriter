@@ -45,11 +45,9 @@ public class ChangePasswordController implements Initializable {
 	public void setPassword(ActionEvent e) {
 		progress.setVisible(true);
 		final Service<NullType> changePassword = JournalServices.newChangePasswordService(firstTimeText.getText());
-		System.out.printf("state: %s\n", changePassword.getState().toString());
 		changePassword.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
-				System.out.println("Success!");
 				progress.setVisible(false);
 				((Stage) loginButton.getScene().getWindow()).close();
 			}
