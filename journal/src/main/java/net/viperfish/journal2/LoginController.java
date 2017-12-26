@@ -2,8 +2,6 @@ package net.viperfish.journal2;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -19,54 +17,46 @@ import net.viperfish.journal2.transaction.JournalServices;
 
 public final class LoginController implements Initializable {
 
-	@FXML
-	private Button loginButton;
+    @FXML
+    private Button loginButton;
 
-	@FXML
-	private Label warningText;
+    @FXML
+    private Label warningText;
 
-	@FXML
-	private ProgressIndicator progress;
+    @FXML
+    private ProgressIndicator progress;
 
-	@FXML
-	private PasswordField passwordPrompt;
+    @FXML
+    private PasswordField passwordPrompt;
 
-	@FXML
-	public void login(ActionEvent e) {
-		Service<Boolean> login = JournalServices.newLoginService(passwordPrompt.getText());
-		progress.setVisible(true);
-		login.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+    @FXML
+    public void login(ActionEvent e) {
+        Service<Boolean> login = JournalServices.newLoginService(passwordPrompt.getText());
+        progress.setVisible(true);
+        login.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-			@Override
-			public void handle(WorkerStateEvent event) {
-				boolean success = (boolean) event.getSource().getValue();
-				if (success) {
-					((Stage) loginButton.getScene().getWindow()).close();
-				} else {
-					warningText.setVisible(true);
-					progress.setVisible(false);
-				}
-			}
-		});
-		login.start();
-	}
+            @Override
+            public void handle(WorkerStateEvent event) {
+                boolean success = (boolean) event.getSource().getValue();
+                if (success) {
+                    ((Stage) loginButton.getScene().getWindow()).close();
+                } else {
+                    warningText.setVisible(true);
+                    progress.setVisible(false);
+                }
+            }
+        });
+        login.start();
+    }
 
-	@FXML
-	public void quitApp(ActionEvent e) {
-		Platform.runLater(new Runnable() {
+    @FXML
+    public void quitApp(ActionEvent e) {
+        System.exit(0);
+    }
 
-			@Override
-			public void run() {
-				Platform.exit();
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
 
-			}
-		});
-		((Stage) loginButton.getScene().getWindow()).close();
-	}
-
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-
-	}
+    }
 
 }
