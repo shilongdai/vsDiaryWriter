@@ -42,8 +42,6 @@ dependencies {
 
 apply plugin: 'javafx-gradle-plugin'
 
-applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
-
 jfx {
     mainClass = 'net.viperfish.journal2.Bootstrap'
     vendor = 'Shilong Dai'

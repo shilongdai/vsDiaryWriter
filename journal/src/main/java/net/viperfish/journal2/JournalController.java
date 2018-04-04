@@ -203,6 +203,19 @@ public final class JournalController implements Initializable {
 		changePasswordWindow.showAndWait();
 	}
 
+	@FXML
+	public void openConfigWindow(ActionEvent e) throws IOException {
+		Stage changePasswordWindow = new Stage();
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/Config.fxml"),
+				JournalI18NBundle.getBundle());
+		fxmlLoader.setController(new ConfigController());
+		Parent newPassword = fxmlLoader.load();
+		Scene scene = new Scene(newPassword, 511, 340);
+		changePasswordWindow.initStyle(StageStyle.DECORATED);
+		changePasswordWindow.setScene(scene);
+		changePasswordWindow.showAndWait();
+	}
+
 	private void refreshList(final int select) {
 		if (searchText.getText().trim().isEmpty()) {
 			Service<Collection<Journal>> getAll = JournalServices.newGetAllService();

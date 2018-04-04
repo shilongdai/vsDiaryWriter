@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.HTMLEditor?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="880.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="880.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <HBox prefHeight="55.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -38,8 +38,8 @@
             <MenuButton mnemonicParsing="false" text="%label.options">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#changePassword" text="%label.changePasswd" />
-                <MenuItem mnemonicParsing="false" text="Action 2" />
-                  <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                <MenuItem mnemonicParsing="false" text="%label.recrypt" />
+                  <MenuItem mnemonicParsing="false" onAction="#openConfigWindow" text="%label.preferences" />
               </items>
                <HBox.margin>
                   <Insets left="5.0" top="13.0" />
