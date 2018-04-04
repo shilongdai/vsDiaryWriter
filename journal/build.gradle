@@ -47,7 +47,7 @@ applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
 jfx {
     mainClass = 'net.viperfish.journal2.Bootstrap'
     vendor = 'Shilong Dai'
-    appName = 'Password Vault'
+    appName = 'vsDiary'
     nativeReleaseVersion = "1.0.0"
 }
 import org.gradle.plugins.ide.eclipse.model.AccessRule
