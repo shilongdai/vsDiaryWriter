@@ -47,6 +47,7 @@ jfx {
     vendor = 'Shilong Dai'
     appName = 'vsDiary'
     nativeReleaseVersion = "1.0.0"
+    additionalAppResources = "src/dist"
 }
 import org.gradle.plugins.ide.eclipse.model.AccessRule
 

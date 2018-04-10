@@ -1,6 +1,9 @@
 package net.viperfish.journal2;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
@@ -10,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import net.viperfish.journal2.core.FileUtils;
 import net.viperfish.journal2.core.JournalConfiguration;
 import net.viperfish.journal2.core.JournalI18NBundle;
 import net.viperfish.journal2.transaction.JournalServices;
@@ -18,8 +22,11 @@ public class Bootstrap extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+		Path workingDir = FileUtils.getWorkingDirectoryUnderHome();
+		workingDir.toFile().mkdirs();
+		FileUtils.copyFilesRecusively(new File("."), workingDir.toFile());
 		try {
-			JournalConfiguration.load("config");
+			JournalConfiguration.load(Paths.get(workingDir.toString(), "config").toString());
 			JournalServices.init();
 			if (!JournalServices.isSetup()) {
 				Stage setPassWindow = new Stage();

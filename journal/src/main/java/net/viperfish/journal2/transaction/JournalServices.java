@@ -14,6 +14,7 @@ import javax.lang.model.type.NullType;
 
 import javafx.concurrent.Service;
 import net.viperfish.journal2.auth.OpenBSDBCryptAuthManager;
+import net.viperfish.journal2.core.FileUtils;
 import net.viperfish.journal2.core.Journal;
 import net.viperfish.journal2.core.JournalDatabase;
 import net.viperfish.journal2.core.JournalEncryptorChain;
@@ -38,19 +39,20 @@ public final class JournalServices {
 	private static OpenBSDBCryptAuthManager auth;
 
 	public static void init() throws IOException {
-		enc = new JournalEncryptorChain(Paths.get("kdfSalt"));
+		enc = new JournalEncryptorChain(Paths.get(FileUtils.getWorkingDirectoryUnderHome().toString(), "kdfSalt"));
 		enc.addProccessor(new AEADProccessor());
 		enc.addProccessor(new CompressionProccessor());
 		enc.addProccessor(new HMACProcessor());
 		enc.addProccessor(new StreamCipherProcessor());
 
-		auth = new OpenBSDBCryptAuthManager(Paths.get("passwd"));
+		auth = new OpenBSDBCryptAuthManager(Paths.get(FileUtils.getWorkingDirectoryUnderHome().toString(), "passwd"));
 		if (auth.isSetup()) {
 			auth.load();
 		}
 		auth.addObserver(enc);
 
-		db = new CryptedJournalDatabase(enc, new H2JournalDB("./data"));
+		db = new CryptedJournalDatabase(enc,
+				new H2JournalDB(Paths.get(FileUtils.getWorkingDirectoryUnderHome().toString(), "data").toString()));
 	}
 
 	public static boolean isSetup() {

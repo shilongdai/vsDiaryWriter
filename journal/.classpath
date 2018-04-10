@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry path="bin/default" kind="output"/>
-	<classpathentry output="bin/main" kind="src" path="src/main/java">
+	<classpathentry kind="src" output="bin/main" path="src/main/java">
 		<attributes>
 			<attribute name="gradle_scope" value="main"/>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry output="bin/main" kind="src" path="src/main/resources">
+	<classpathentry kind="src" output="bin/main" path="src/main/resources">
 		<attributes>
 			<attribute name="gradle_scope" value="main"/>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry output="bin/test" kind="src" path="src/test/java">
+	<classpathentry kind="src" output="bin/test" path="src/test/java">
 		<attributes>
 			<attribute name="gradle_scope" value="test"/>
 			<attribute name="gradle_used_by_scope" value="test"/>
@@ -21,110 +20,13 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7/">
 		<accessrules>
-			<accessrule kind="0" pattern="sun/applet/AppletAudioClip"/>
-			<accessrule kind="0" pattern="javax/swing/**"/>
-			<accessrule kind="0" pattern="com/sun/java/swing/**"/>
-			<accessrule kind="0" pattern="javafx/**"/>
-			<accessrule kind="0" pattern="sun/net/www/protocol/**"/>
+			<accessrule kind="accessible" pattern="sun/applet/AppletAudioClip"/>
+			<accessrule kind="accessible" pattern="javax/swing/**"/>
+			<accessrule kind="accessible" pattern="com/sun/java/swing/**"/>
+			<accessrule kind="accessible" pattern="javafx/**"/>
+			<accessrule kind="accessible" pattern="sun/net/www/protocol/**"/>
 		</accessrules>
 	</classpathentry>
-	<classpathentry sourcepath="/home/sdai/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-configuration2/2.1.1/8a83b0672d6d38dc4f339e1cd330a83965ba9bd0/commons-configuration2-2.1.1-sources.jar" kind="lib" path="/home/sdai/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-configuration2/2.1.1/d97d5b3f8b58c52730d47e1a63c8d3258f41ca6c/commons-configuration2-2.1.1.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/home/sdai/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-configuration2/2.1.1/8bcba252ffb93779800ea1b2b1d7961e5c46b562/commons-configuration2-2.1.1-javadoc.jar!/"/>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/sdai/.m2/repository/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="/home/sdai/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bcprov-jdk15on/1.53/938411095f52fd118d98a1753d21517a546199bd/bcprov-jdk15on-1.53-sources.jar" kind="lib" path="/home/sdai/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bcprov-jdk15on/1.53/9d3def2fa5a0d2ed0c1146e9945df10d29eb4ccb/bcprov-jdk15on-1.53.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/home/sdai/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bcprov-jdk15on/1.53/6daa19deb416212a3bedec29cfe403e8dbfdd118/bcprov-jdk15on-1.53-javadoc.jar!/"/>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="/home/sdai/.gradle/caches/modules-2/files-2.1/org.tukaani/xz/1.5/66cf970ae7a73d9c3eb7d0ad3e901c43591139c3/xz-1.5-sources.jar" kind="lib" path="/home/sdai/.gradle/caches/modules-2/files-2.1/org.tukaani/xz/1.5/9c64274b7dbb65288237216e3fae7877fd3f2bee/xz-1.5.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/home/sdai/.gradle/caches/modules-2/files-2.1/org.tukaani/xz/1.5/e943933934fd5ffbf46067d564537764308150b4/xz-1.5-javadoc.jar!/"/>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/sdai/.m2/repository/org/apache/commons/commons-compress/1.10/commons-compress-1.10.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="/home/sdai/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.10/11fb3d88ae7e3b757d70237064210ceb954a5a04/commons-codec-1.10-sources.jar" kind="lib" path="/home/sdai/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.10/4b95f4897fa13f2cd904aee711aeafc0c5295cd8/commons-codec-1.10.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/home/sdai/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.10/8176f1eb181cde7c9e4b5290f0365652777b3b87/commons-codec-1.10-javadoc.jar!/"/>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="/home/sdai/.gradle/caches/modules-2/files-2.1/com.j256.ormlite/ormlite-jdbc/5.0/4438bc12ec8905f09e7ac5e64fae7afa313064bb/ormlite-jdbc-5.0-sources.jar" kind="lib" path="/home/sdai/.gradle/caches/modules-2/files-2.1/com.j256.ormlite/ormlite-jdbc/5.0/176115dac16d5800ec90ca38d1141002bd2b57c6/ormlite-jdbc-5.0.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/home/sdai/.gradle/caches/modules-2/files-2.1/com.j256.ormlite/ormlite-jdbc/5.0/afed6372779577cbd9953de04b2a772c83b32ced/ormlite-jdbc-5.0-javadoc.jar!/"/>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="/home/sdai/.gradle/caches/modules-2/files-2.1/com.j256.ormlite/ormlite-core/5.0/a83e0dea72fc8aaddd1e54650e220d54a13b6eeb/ormlite-core-5.0-sources.jar" kind="lib" path="/home/sdai/.gradle/caches/modules-2/files-2.1/com.j256.ormlite/ormlite-core/5.0/3382b8260646dd334a1b9c1b3d412fcb73d8b21/ormlite-core-5.0.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/home/sdai/.gradle/caches/modules-2/files-2.1/com.j256.ormlite/ormlite-core/5.0/ca16f704497989e76165186ce00fcd61f6d08b84/ormlite-core-5.0-javadoc.jar!/"/>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="/home/sdai/.gradle/caches/modules-2/files-2.1/com.h2database/h2/1.4.195/2a18aa022eaed2556318daf6e250fc694c481665/h2-1.4.195-sources.jar" kind="lib" path="/home/sdai/.gradle/caches/modules-2/files-2.1/com.h2database/h2/1.4.195/b25cc38f12b977694b8c85848e5bbecb2d88fd96/h2-1.4.195.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/home/sdai/.gradle/caches/modules-2/files-2.1/com.h2database/h2/1.4.195/48b7a8ef44503de077fbb9da4ff0e8e96900306f/h2-1.4.195-javadoc.jar!/"/>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/sdai/.m2/repository/commons-logging/commons-logging/1.2/commons-logging-1.2.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/sdai/.m2/repository/org/apache/logging/log4j/log4j-core/2.6/log4j-core-2.6.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/sdai/.m2/repository/org/apache/logging/log4j/log4j-slf4j-impl/2.6/log4j-slf4j-impl-2.6.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="/home/sdai/.gradle/caches/modules-2/files-2.1/commons-beanutils/commons-beanutils/1.9.3/9d70af7c5982bd09c33efa97ac98cee6363ba0f0/commons-beanutils-1.9.3-sources.jar" kind="lib" path="/home/sdai/.gradle/caches/modules-2/files-2.1/commons-beanutils/commons-beanutils/1.9.3/c845703de334ddc6b4b3cd26835458cb1cba1f3d/commons-beanutils-1.9.3.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/home/sdai/.gradle/caches/modules-2/files-2.1/commons-beanutils/commons-beanutils/1.9.3/84b8fbacdf1e778d700c49057ddc876bea234839/commons-beanutils-1.9.3-javadoc.jar!/"/>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/sdai/.m2/repository/org/apache/logging/log4j/log4j-api/2.6/log4j-api-2.6.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/sdai/.m2/repository/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="/home/sdai/.gradle/caches/modules-2/files-2.1/commons-collections/commons-collections/3.2.2/78c50ebda5784937ca1615fc0e1d0cb35857d572/commons-collections-3.2.2-sources.jar" kind="lib" path="/home/sdai/.gradle/caches/modules-2/files-2.1/commons-collections/commons-collections/3.2.2/8ad72fe39fa8c91eaaf12aadb21e0c3661fe26d5/commons-collections-3.2.2.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/home/sdai/.gradle/caches/modules-2/files-2.1/commons-collections/commons-collections/3.2.2/ea9a113ab0147c4d48dda62dff207be07374c590/commons-collections-3.2.2-javadoc.jar!/"/>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/sdai/.m2/repository/junit/junit/4.12/junit-4.12.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value="test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/sdai/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value="test"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
+	<classpathentry kind="output" path="bin/default"/>
 </classpath>
