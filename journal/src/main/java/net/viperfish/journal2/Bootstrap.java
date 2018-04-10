@@ -24,7 +24,7 @@ public class Bootstrap extends Application {
 	public void start(Stage stage) throws Exception {
 		Path workingDir = FileUtils.getWorkingDirectoryUnderHome();
 		workingDir.toFile().mkdirs();
-		FileUtils.copyFilesRecusively(new File("."), workingDir.toFile());
+		FileUtils.copyFilesRecusively(new File("vsDiary"), workingDir.getParent().toFile());
 		try {
 			JournalConfiguration.load(Paths.get(workingDir.toString(), "config").toString());
 			JournalServices.init();

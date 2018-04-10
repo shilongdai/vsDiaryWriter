@@ -8,7 +8,6 @@ package net.viperfish.journal2;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
@@ -72,7 +71,7 @@ public class NewPasswordController implements Initializable {
 
 	@FXML
 	public void cancelSetPassword(ActionEvent e) {
-		Platform.exit();
+		System.exit(0);
 	}
 
 	@Override
