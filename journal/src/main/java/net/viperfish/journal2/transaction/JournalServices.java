@@ -103,4 +103,8 @@ public final class JournalServices {
 		return new ChangePasswordService(newPass, (CryptedJournalDatabase) db, auth);
 	}
 
+	public static Service<NullType> newResyncEncryptionService() {
+		return new ResyncCryptService((CryptedJournalDatabase) db);
+	}
+
 }

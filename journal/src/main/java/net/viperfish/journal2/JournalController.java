@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.ResourceBundle;
 
+import javax.lang.model.type.NullType;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -201,6 +203,23 @@ public final class JournalController implements Initializable {
 		changePasswordWindow.initStyle(StageStyle.UNDECORATED);
 		changePasswordWindow.setScene(scene);
 		changePasswordWindow.showAndWait();
+	}
+
+	public void recryptAll(ActionEvent e) {
+		Service<NullType> recrypt = JournalServices.newResyncEncryptionService();
+		recrypt.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				refreshList(0);
+			}
+		});
+		recrypt.setOnFailed(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				event.getSource().getException().printStackTrace();
+			}
+		});
 	}
 
 	@FXML
