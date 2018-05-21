@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.lang.model.type.NullType;
@@ -24,6 +25,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -57,8 +59,11 @@ public final class JournalController implements Initializable {
 
 	private boolean itemChanged;
 
+	private ResourceBundle i18nBundle;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		i18nBundle = ResourceBundle.getBundle("journal", Locale.getDefault());
 		itemChanged = false;
 		journalList.setCellFactory(new Callback<ListView<Journal>, ListCell<Journal>>() {
 
@@ -87,6 +92,14 @@ public final class JournalController implements Initializable {
 			public void changed(ObservableValue<? extends Journal> observable, Journal oldValue, Journal newValue) {
 				if (newValue != null) {
 					itemChanged = true;
+					if (!saveBtn.isDisabled()) {
+						Alert saveConfirm = new Alert(AlertType.CONFIRMATION, i18nBundle.getString("confirmation.save"),
+								ButtonType.YES, ButtonType.NO);
+						saveConfirm.showAndWait();
+						if (saveConfirm.getResult() == ButtonType.YES) {
+							saveJournal_impl(oldValue);
+						}
+					}
 					keywordText.setText(newValue.getSubject());
 					journalEditor.setHtmlText(newValue.getContent());
 					currentText = newValue.getContent();
@@ -94,6 +107,7 @@ public final class JournalController implements Initializable {
 					keywordText.setText("");
 					journalEditor.setHtmlText("");
 				}
+				saveBtn.setDisable(true);
 			}
 		});
 
@@ -151,22 +165,7 @@ public final class JournalController implements Initializable {
 	@FXML
 	public void saveJournal(ActionEvent e) {
 		Journal selected = journalList.getSelectionModel().getSelectedItem();
-		selected.setSubject(keywordText.getText());
-		selected.setContent(journalEditor.getHtmlText());
-		Service<Journal> save = JournalServices.newSaveJournalService(selected);
-		save.setOnFailed(new EventHandler<WorkerStateEvent>() {
-			@Override
-			public void handle(WorkerStateEvent event) {
-				event.getSource().getException().printStackTrace();
-			}
-		});
-		save.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-			@Override
-			public void handle(WorkerStateEvent event) {
-				refreshList(journalList.getSelectionModel().getSelectedIndex());
-			}
-		});
-		save.start();
+		saveJournal_impl(selected);
 		saveBtn.setDisable(true);
 	}
 
@@ -289,6 +288,26 @@ public final class JournalController implements Initializable {
 			});
 			serv.start();
 		}
+	}
+
+	private void saveJournal_impl(Journal j) {
+		j.setSubject(keywordText.getText());
+		j.setContent(journalEditor.getHtmlText());
+
+		Service<Journal> save = JournalServices.newSaveJournalService(j);
+		save.setOnFailed(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				event.getSource().getException().printStackTrace();
+			}
+		});
+		save.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				refreshList(journalList.getSelectionModel().getSelectedIndex());
+			}
+		});
+		save.start();
 	}
 
 }
